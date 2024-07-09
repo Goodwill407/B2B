@@ -1,0 +1,63 @@
+.main-content {
+  position: relative;
+  padding: 20px;
+}
+  
+  .sub-navbar {
+    background-color: #868FDD;
+  }
+  
+  .sub-navbar-ss {
+    background-color: #EFF9FA;
+  }
+  
+  .Box-1, .Box-2 {
+    background-color: #dfe2ff8f;
+  }
+    
+  .marquee-container {
+    overflow: hidden;
+    white-space: nowrap;
+    background-color: #ebe5e5;
+    padding: 10px;
+    width: 100%;
+    margin: 5vh auto;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+  }
+  
+  .marquee {
+    display: inline-block;
+    animation: marquee 20s linear infinite;
+  }
+  
+  .marquee span {
+    display: inline-block;
+    padding-left: 100%; /* Ensures that the text starts off-screen */
+  }
+  
+  @keyframes marquee {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+  
+  .pointer{
+    cursor: pointer;
+  }
+  .main-content::before {
+    content: "";
+    background: url('../../../assets/images/pages/mapImage.png') no-repeat center center / cover;
+    opacity: 0.5; /* Adjust the opacity to your desired transparency level */
+    background-size:cover; /* Adjust to 'contain' or 'cover' as needed */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Place it behind the content */
+  }
+  

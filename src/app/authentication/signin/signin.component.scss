@@ -1,0 +1,26 @@
+.login-btn {
+    padding-right: 3rem !important;
+    padding-left: 3rem !important;
+    margin-top: 1rem !important;
+    background-color: #3BBBEC;
+    color: #fff;
+}
+
+.welcome-msg-log {
+    font-weight: 610;
+    color: #0c70ae;
+}
+
+.navigation-link-log {
+    position: absolute;
+    bottom: 24px;
+
+    &>div {
+        font-size: 16px;
+        font-weight: 500;
+        color: #19b8f7;
+    }
+}
+.validate-form input {
+    height: 44px;
+}

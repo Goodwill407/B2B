@@ -1,0 +1,13 @@
+.image-dialog {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    overflow: auto; /* Allows scrolling if content is too large */
+  }
+  
+  .full-size-img {
+    max-width: 100%;
+    max-height: 100%;
+  }

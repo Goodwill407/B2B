@@ -1,0 +1,122 @@
+import { RouteInfo } from './sidebar.metadata';
+export const ROUTES: RouteInfo[] = [
+  // Admin Modules
+
+  {
+    path: '',
+    title: 'MAIN MENU',
+    iconType: '',
+    icon: '',
+    class: '',
+    groupTitle: true,
+    badge: '',
+    badgeClass: '',
+    role: ['All'],
+    submenu: [],
+  },
+  
+  {
+    path: '',
+    title: 'User Management',
+    iconType: 'material-icons-outlined',
+    icon: 'group_add',
+    class: 'menu-toggle',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['cluster'],
+    submenu: [
+      {
+        path: '/users/trainer',
+        title: 'Career Counsellor',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+      {
+        path: '/users/skill-trainer',
+        title: 'Life Skill Trainer',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+    ],
+  },
+
+  // ----------------------- Student Modules ---------------------
+
+ 
+  {
+    path: '',
+    title: 'User Management',
+    iconType: 'material-icons-outlined',
+    icon: 'group_add',
+    class: 'menu-toggle',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['superadmin'],
+    submenu: [
+      
+      {
+        path: '/users/cluster',
+        title: 'Cluster Users',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [],
+        submenu: [],
+      },
+      // {
+      //   path: '/users/district',
+      //   title: 'District Users',
+      //   iconType: '',
+      //   icon: '',
+      //   class: 'ml-menu',
+      //   groupTitle: false,
+      //   badge: '',
+      //   badgeClass: '',
+      //   role: [''],
+      //   submenu: [],
+      // },
+      {
+        path: '/users/trainer',
+        title: 'Career Counsellor',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+      {
+        path: '/users/skill-trainer',
+        title: 'Life Skill Trainer',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+    ],
+  },
+  
+];

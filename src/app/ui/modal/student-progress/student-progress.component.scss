@@ -1,0 +1,19 @@
+.labels-values {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 30px;
+  }
+  
+  .label-value-pair {
+    margin-top: 5px;
+  }
+  
+  .label {
+    font-weight: bold;
+    color: #a8a8a8;
+  }
+  
+  .value {
+    margin-left: 5px;
+  }

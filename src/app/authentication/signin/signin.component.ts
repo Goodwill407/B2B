@@ -1,0 +1,113 @@
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { UntypedFormBuilder, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AuthService, CommunicationService, DirectionService, Role } from '@core';
+import { UnsubscribeOnDestroyAdapter } from '@shared';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+import { MatTabsModule } from '@angular/material/tabs';
+@Component({
+  selector: 'app-signin',
+  templateUrl: './signin.component.html',
+  styleUrls: ['./signin.component.scss'],
+  standalone: true,
+  imports: [
+    RouterLink,
+    MatButtonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatTabsModule
+  ],
+})
+export class SigninComponent
+  extends UnsubscribeOnDestroyAdapter
+  implements OnInit {
+  
+    authForm!: UntypedFormGroup;
+    submitted = false;
+    loading = false;
+    error = '';
+    hide = true;
+    constructor(
+      private formBuilder: UntypedFormBuilder,
+      private route: ActivatedRoute,
+      private router: Router,
+      private communicationService: CommunicationService,
+      private authService: AuthService,
+    ) {
+      super();
+    }
+  
+    ngOnInit() {
+      this.authForm = this.formBuilder.group({
+        username: ['', Validators.required],
+        password: ['', Validators.required],
+      });
+    }
+  
+    get f() {
+      return this.authForm.controls;
+    }
+  
+    onSubmit() {
+      this.router.navigateByUrl('/pages/registration');
+      this.submitted = true;
+      this.loading = true;
+      this.error = '';
+      if (this.authForm.invalid) {
+        this.error = 'Username and Password not valid !';
+        return;
+      } else {
+       
+        const data = {
+          username: this.f['username'].value,
+          password: this.f['password'].value
+        }
+        this.router.navigate(['/pages/registration']);
+        this.authService.post('auth/login', data).subscribe({
+          next: (res) => {
+            if (res) {
+              setTimeout(() => {
+                res.user.token = res.tokens.access.token;
+                this.authService.setLoginDetails(res);
+                localStorage.setItem('currentUser', JSON.stringify(res.user));
+                this.authService.currentUserSubject.next(res.user);
+                // const role = this.authService.currentUserValue.role;
+                if (res.user.role === Role.Superadmin || res.user.role === Role.State) {
+                  this.router.navigate(['/admin/dashboard/main']);
+                // } else if (role === Role.District) {
+                //   this.router.navigate(['/teacher/dashboard']);
+                // } else if (role === Role.Block) {
+                //   this.router.navigate(['/student/dashboard']);
+                } else {
+                  this.router.navigate(['/authentication/signin']);
+                }
+                this.communicationService.showNotification(
+                  'snackbar-success',
+                  `${res.user.name} Login Successfully...!!!`,
+                  'bottom',
+                  'center'
+                );
+                this.loading = false;
+              }, 500);
+            } else {
+              this.error = 'Invalid Login';
+            }
+          },
+          error: (error) => {
+            this.error = 'Invalid Credentials';
+            this.submitted = false;
+            this.loading = false;
+          },
+        })
+      }
+    }
+  }
+  
+  

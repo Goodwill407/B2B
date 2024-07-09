@@ -1,0 +1,209 @@
+<nav #navbar class="navbar active">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a href="#" onClick="return false;" class="navbar-toggle collapsed"
+        (click)="isNavbarCollapsed = !isNavbarCollapsed" aria-expanded="false"></a>
+      <a href="#" onClick="return false;" class="bars" (click)="mobileMenuSidebarOpen($event,'overlay-open')"></a>
+      <a class="navbar-brand">
+        <img src="assets/images/dmflogo.png" width="40px" alt="" />
+        <span class="logo-name">DMF</span>
+      </a>
+    </div>
+    <div class="collapse navbar-collapse" [ngClass]="isNavbarCollapsed ? '' : 'show'">
+      <ul class="float-start collapse-menu-icon">
+        <li>
+          <button mat-button (click)="callSidemenuCollapse()" class="sidemenu-collapse nav-notification-icons"> <i
+              class="material-icons-outlined icon-color">
+              menu
+            </i></button>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <!-- Full Screen Button -->
+        <li class="fullscreen">
+          <button mat-button class="nav-notification-icons" (click)="callFullscreen()"> <i
+              class="material-icons-outlined icon-color">
+              fullscreen
+            </i></button>
+        </li>
+        <!-- #END# Full Screen Button -->
+        <!-- #START# Notifications-->
+        <li *ngIf="userDetail.role =='trainer'||userDetail.role =='school'||userDetail.role =='skillTrainer'">
+          <button mat-button (click)="markNotificationRead()" [matMenuTriggerFor]="notificationMenu"
+            [matBadge]="unreadNotificationCount" matBadgeOverlap="true" class="nav-notification-icons"> <i
+              class="material-icons-outlined icon-color">
+              notifications_active
+            </i></button>
+          <mat-menu #notificationMenu="matMenu" class="nfc-menu" (click)="$event.stopPropagation()">
+            <div class="nfc-header">
+              <h5 class="mb-0">Notitications</h5>
+              <!-- <a class="nfc-mark-as-read">Mark all as read</a> -->
+            </div>
+            <div class="nfc-dropdown">
+              <ng-scrollbar style="height: 250px" visibility="hover">
+                <div class="noti-list header-menu">
+                  <div class="menu">
+                    <div>
+                      @for (notification of notifications; track notification) {
+                      <button mat-menu-item (click)="deleteNotification(notification.id)"
+                        [ngClass]="[notification.status]">
+                        <span class="table-img msg-user ">
+                          <i class="material-icons-outlined nfc-type-icon"
+                            [ngClass]="[notification.color]">{{notification.icon}}</i>
+                        </span>
+                        <span class="menu-info">
+                          <span class="menu-title">{{notification.message}}</span>
+                          <span class="menu-desc mt-2">
+                            <i class="material-icons">access_time</i> {{timeAgo(notification.time)}}
+                          </span>
+                        </span>
+                        <!-- <span class="nfc-close" (click)="deleteNotification(notification.id)">
+                          <app-feather-icons [icon]="'x'"  [class]="'user-menu-icons'"></app-feather-icons>
+                        </span> -->
+                      </button>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </ng-scrollbar>
+            </div>
+            <!-- <div class="nfc-footer">
+              <a class="nfc-read-all">Read
+                All Notifications</a>
+            </div> -->
+          </mat-menu>
+        </li>
+        <!-- #END# Notifications-->
+        <!-- <li class="nav-item">
+          <button mat-button [matMenuTriggerFor]="languagemenu" class="lang-dropdown nav-notification-icons"> @if
+            (flagvalue !== undefined) {
+            <img src="{{flagvalue}}" height="16">
+            }
+            @if (flagvalue === undefined) {
+            <img src="{{defaultFlag}}" height="16">
+            }</button>
+          <mat-menu #languagemenu="matMenu">
+            @for (item of listLang; track item) {
+            <div class="lang-item">
+              <button mat-menu-item class="dropdown-item lang-item-list"
+                (click)="setLanguage(item.text, item.lang, item.flag)"
+                [ngClass]="{'active': langStoreValue === item.lang}">
+                <img src="{{item.flag}}" class="flag-img" height="12"> <span class="align-middle">{{item.text}}</span>
+              </button>
+            </div>
+            }
+          </mat-menu>
+        </li> -->
+        <li class="nav-item user_profile">
+          <button mat-button [matMenuTriggerFor]="profilemenu">
+            <div class="chip dropdown-toggle" ngbDropdownToggle class="pt-0">
+              <img src="{{userImg}}" class="user_img" width="32" height="32" alt="User">
+              <!-- <span>{{userName}}</span> -->
+            </div>
+          </button>
+          <mat-menu #profilemenu="matMenu" class="profile-menu">
+            <div class="noti-list">
+              <div class="menu ">
+                <div class="user_dw_menu">
+                  <button mat-menu-item class="user-item-list" (click)="showDialog()">
+                    <app-feather-icons [icon]="'user'" [class]="'user-menu-icons'"></app-feather-icons>Reset Password
+                  </button>
+                  <!-- <button mat-menu-item class="user-item-list">
+                    <app-feather-icons [icon]="'mail'" [class]="'user-menu-icons'"></app-feather-icons>Inbox
+                  </button>
+                  <button mat-menu-item class="user-item-list">
+                    <app-feather-icons [icon]="'settings'" [class]="'user-menu-icons'"></app-feather-icons>Settings
+                  </button> -->
+                  <button mat-menu-item (click)="logout()" class="user-item-list">
+                    <app-feather-icons [icon]="'log-out'" [class]="'user-menu-icons'"></app-feather-icons>Logout
+                  </button>
+                </div>
+              </div>
+            </div>
+          </mat-menu>
+        </li>
+        <!-- #END# Tasks -->
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="flex justify-content-center">
+  <p-button (click)="showDialog()" label="Show" class="d-none" />
+  <p-dialog header="Reset Your Password" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }">
+    <form [formGroup]="passwordForm" (ngSubmit)="onSubmit()">
+      <div class="row mt-1">
+        <div class="col-4">
+          <label for="oldPassword" class="font-semibold w-6rem">Old Password</label>
+        </div>
+        <div class="col-8">
+          <div class="d-flex form-control">
+            <input [type]="o_hide ? 'password' : 'text'" class="form-control shadow-none border-0 p-0"
+              style="height: 30px !important;" formControlName="oldPassword">
+            <mat-icon class="material-icons-outlined pwd-toggle form-control border-0 ps-1 pb-3"
+              style="height: 30px !important;" matSuffix (click)="o_hide = !o_hide">
+              {{o_hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </div>
+          <!-- <input pInputText id="oldPassword" formControlName="oldPassword" class="flex-auto" autocomplete="off" type="password" /> -->
+          <div *ngIf="passwordForm.controls['oldPassword'].invalid && (passwordForm.controls['oldPassword'].dirty || passwordForm.controls['oldPassword'].touched)" class="text-danger">
+            <small *ngIf="passwordForm.controls['oldPassword'].errors?.['required']">Old Password is required</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-4">
+          <label for="newPassword" class="font-semibold w-6rem">New Password</label>
+        </div>
+        <div class="col-8">
+          <!-- <input pInputText id="newPassword" formControlName="newPassword" class="flex-auto" autocomplete="off"
+            type="password" /> -->
+            <div class="d-flex form-control">
+              <input [type]="hide ? 'password' : 'text'" class="form-control shadow-none border-0 p-0"
+                style="height: 30px !important;" formControlName="newPassword">
+              <mat-icon class="material-icons-outlined pwd-toggle form-control border-0 ps-1 pb-3"
+                style="height: 30px !important;" matSuffix (click)="hide = !hide">
+                {{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </div>
+          <div
+            *ngIf="passwordForm.controls['newPassword'].invalid && (passwordForm.controls['newPassword'].dirty || passwordForm.controls['newPassword'].touched)"
+            class="text-danger">
+            <small *ngIf="passwordForm.controls['newPassword'].errors?.['required']">New Password is required</small>
+            <small *ngIf="passwordForm.controls['newPassword'].errors?.['minlength']">New Password must be at least 8
+              characters</small>
+            <small *ngIf="passwordForm.controls['newPassword'].errors?.['pattern']">Password must contain at least one
+              number, one uppercase letter, and one lowercase letter</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-4">
+          <label for="confirmPassword" class="font-semibold w-6rem">Confirm Password</label>
+        </div>
+        <div class="col-8">
+          <!-- <input pInputText id="confirmPassword" formControlName="confirmPassword" class="flex-auto" autocomplete="off" type="password" /> -->
+          <div class="d-flex form-control">
+            <input [type]="c_hide ? 'password' : 'text'" class="form-control shadow-none border-0 p-0"
+              style="height: 30px !important;" formControlName="confirmPassword">
+            <mat-icon class="material-icons-outlined pwd-toggle form-control border-0 ps-1 pb-3"
+              style="height: 30px !important;" matSuffix (click)="c_hide = !c_hide">
+              {{c_hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </div>
+          <div
+            *ngIf="passwordForm.controls['confirmPassword'].invalid && (passwordForm.controls['confirmPassword'].dirty || passwordForm.controls['confirmPassword'].touched)"
+            class="text-danger">
+            <small *ngIf="passwordForm.controls['confirmPassword'].errors?.['required']">Confirm Password is
+              required</small>
+            <small *ngIf="passwordForm.errors?.['mismatch']">Passwords must match</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-content-end mt-3">
+        <p-button label="Cancel" class="mx-5" severity="secondary" (click)="visible = false"
+          (onClick)="passwordForm.reset()" type="button" />
+        <p-button label="Save" type="submit" [disabled]="passwordForm.invalid" />
+      </div>
+    </form>
+  </p-dialog>
+</div>

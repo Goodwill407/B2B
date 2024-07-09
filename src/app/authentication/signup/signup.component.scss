@@ -1,0 +1,45 @@
+.registration-form {
+    .lable-input {
+        margin-top: 15px;
+
+        span {
+            color: red;
+        }
+    }
+}
+
+.form-control {
+    height: 34px;
+}
+
+.submit-btn {
+    padding-right: 3rem !important;
+    padding-left: 3rem !important;
+    margin: 2rem !important;
+    background-color: #f0ad4e;
+    color: #fff;
+}
+
+.otp-input {
+    display: flex;
+    justify-content: space-between;
+
+    .otp-box {
+        width: 3rem;
+        height: 3rem;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        text-align: center;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+}
+
+.text-danger {
+    font-size: small;
+}
+
+.welcome-msg-log {
+    font-weight: 610;
+    color: #0c70ae;
+}
