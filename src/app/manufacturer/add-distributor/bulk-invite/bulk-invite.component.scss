@@ -1,0 +1,63 @@
+form {
+    padding: 10px;
+    margin-top: 24px;
+  
+    .d-flex {
+      margin-bottom: 15px;
+    }
+  
+    .form-control {
+      margin-right: 10px;
+    }
+  
+    .mt-3 {
+      margin-top: 1rem;
+    }
+  
+    .mt-5 {
+      margin-top: 2rem;
+    }
+  
+    .btn {
+    //   margin-top: 19px;
+      height: fit-content;
+    }
+  
+    .buttons {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+  
+    .navigation-link-log {
+      & > div {
+        font-size: 16px;
+        font-weight: 450;
+        color: #19b8f7;
+      }
+    }
+  
+    .submit-btn {
+      padding-right: 3rem !important;
+      padding-left: 3rem !important;
+      margin: 2rem !important;
+      background-color: #f0ad4e;
+      color: #fff;
+    }
+  }
+  
+  .d-flex{
+    .label{
+        width: 208px;
+    }
+    .mob-label{
+        width: 350px;
+    }
+    .button{
+        width: 47px;
+    }
+    label{
+        font-weight:450;
+        font-size: 14px;
+    }
+  }

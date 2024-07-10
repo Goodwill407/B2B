@@ -56,7 +56,7 @@ export class SigninComponent
     }
   
     onSubmit() {
-      this.router.navigateByUrl('/pages/registration');
+      this.router.navigateByUrl('/mnf/profile');
       this.submitted = true;
       this.loading = true;
       this.error = '';
@@ -80,7 +80,7 @@ export class SigninComponent
                 this.authService.currentUserSubject.next(res.user);
                 // const role = this.authService.currentUserValue.role;
                 if (res.user.role === Role.Superadmin || res.user.role === Role.State) {
-                  this.router.navigate(['/admin/dashboard/main']);
+                  this.router.navigate(['/mnf/profile']);
                 // } else if (role === Role.District) {
                 //   this.router.navigate(['/teacher/dashboard']);
                 // } else if (role === Role.Block) {

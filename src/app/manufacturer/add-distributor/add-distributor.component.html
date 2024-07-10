@@ -1,0 +1,71 @@
+<section class="content">
+    <div class="content-block">
+
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Invite New Distributor</h4>
+
+        <div class="registration-form px-4 mt-4">
+            <form [formGroup]="mgfRegistrationForm" (ngSubmit)="onSubmit()">
+                <div class="d-flex">
+                    <h5>Invite Single Distributor</h5>
+                    <div class="ms-auto navigation-link-log">
+                        <div type="button" class="" routerLink="/mnf/bulk-invite">Invite Bulk Distributors</div>
+                    </div>
+                </div>
+                <div class="row ms-4">
+
+                    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+                        <label class="lable-input" for="fullName">Distributor's Name<span>*</span>:</label>
+                        <input type="text" id="fullName" formControlName="fullName" class="form-control" placeholder="Distributor's Name" />
+                        <div *ngIf="mgfRegistrationForm.get('fullName')?.touched && mgfRegistrationForm.get('fullName')?.invalid"
+                            class="text-danger">
+                            Distributor's Name is required.
+                        </div>
+                    </div>
+
+                    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+                        <label class="lable-input" for="companyName">Company Name :</label>
+                        <input type="text" id="companyName" formControlName="companyName" class="form-control" placeholder="Company Name" />
+                        <div *ngIf="mgfRegistrationForm.get('companyName')?.touched && mgfRegistrationForm.get('companyName')?.invalid"
+                            class="text-danger">
+                            Company Name is required.
+                        </div>
+                    </div>
+
+                    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+                        <label class="lable-input" for="mobileNumber">Mobile Number<span>*</span>:</label>
+                        <input type="text" id="mobileNumber" formControlName="mobileNumber" class="form-control" placeholder="Mobile Number"/>
+                        <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.touched && mgfRegistrationForm.get('mobileNumber')?.invalid"
+                            class="text-danger">
+                            <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.errors?.['required']">Mobile
+                                number
+                                is required.</div>
+                            <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.errors?.['pattern']">Mobile
+                                number
+                                must be 10 digits.</div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+                        <label class="lable-input" for="emailAddress">Email Address<span>*</span>:</label>
+                        <input type="text" id="emailAddress" formControlName="emailAddress" class="form-control" placeholder="Email Address"/>
+                        <div *ngIf="mgfRegistrationForm.get('emailAddress')?.touched && mgfRegistrationForm.get('emailAddress')?.invalid"
+                            class="text-danger">
+                            <div *ngIf="mgfRegistrationForm.get('emailAddress')?.errors?.['required']">Email is
+                                required.</div>
+                            <div *ngIf="mgfRegistrationForm.get('emailAddress')?.errors?.['email']">Invalid email
+                                format.</div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="col-8 text-center ">
+                        <button type="submit" class="btn submit-btn"
+                            [disabled]="mgfRegistrationForm.invalid">Invite</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</section>

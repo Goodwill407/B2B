@@ -1,4 +1,6 @@
 .registration-form {
+    padding: 10px;
+    background-color: #fff;
     .lable-input {
         margin-top: 15px;
 
@@ -6,12 +8,22 @@
             color: red;
         }
     }
+    input{
+        height: 44px;
+    }
 }
-
 .submit-btn {
     padding-right: 3rem !important;
     padding-left: 3rem !important;
     margin: 2rem !important;
     background-color: #f0ad4e;
     color: #fff;
+}
+.navigation-link-log {
+   
+    &>div {
+        font-size: 16px;
+        font-weight: 450;
+        color: #19b8f7;
+    }
 }

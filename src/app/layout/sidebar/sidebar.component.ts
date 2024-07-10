@@ -115,7 +115,7 @@ export class SidebarComponent extends UnsubscribeOnDestroyAdapter implements OnI
         this.userType = this.authService.currentUserValue.cluster;
       }
        else {
-        this.userType = "Admin";
+        this.userType = "Manufacturer";
       }
     }
 
