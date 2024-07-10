@@ -4,17 +4,25 @@
       <div class="card p-2">
         <h5 class="mt-2">Send Bulk Invite</h5>
         <hr>
-        <div class="file-upload-container w-50">
+
+        <div class="mb-4">
+          <button class="btn btn-secondary-type cc" title="Download Template" (click)="downloadExcel('sample_file')">
+            <i class="fas fa-download"></i>
+            Download Formate For Bulk Upload
+          </button>
+        </div>
+
+        <div class="file-upload-container w-50 mb-3">
           <input type="file" class="form-control w-75" (change)="onFileChange($event)" />
-          <button class="btn btn-secondary-type" (click)="uploadFile()">
-            <i class="fas fa-cloud-upload-alt"></i> UPLOAD
+          <button class="btn btn-secondary-type cc " (click)="uploadFile()">
+            <i class="fas fa-cloud-upload-alt "></i> UPLOAD
           </button>
+          
+          <!-- <button class="btn btn-download-template cc" title="Download Template" (click)="downloadExcel('sample_file')">
+            <i class="fas fa-download"></i>
+          </button> -->
         </div>
-        <div class="download-template-container">
-          <button class="btn btn-secondary-type" title="Download Template" (click)="downloadExcel('sample_file')">
-            Download Format For Bulk Upload
-          </button>
-        </div>
+        
   
         @if(showTable) {
           <div class="buttons-container mt-4 ms-4">

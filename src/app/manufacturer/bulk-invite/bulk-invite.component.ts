@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
 import { AuthService, CommunicationService } from '@core';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-bulk-invite',
   standalone: true,
-  imports: [],
+  imports: [
+    ButtonModule 
+  ],
   templateUrl: './bulk-invite.component.html',
   styleUrl: './bulk-invite.component.scss'
 })
