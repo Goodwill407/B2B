@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { UntypedFormBuilder, UntypedFormGroup, Validators, FormsModule, ReactiveFormsModule, FormGroup, FormArray, FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { AuthService } from '@core';
-import { MatSnackBarVerticalPosition, MatSnackBarHorizontalPosition, MatSnackBar } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
@@ -27,10 +26,16 @@ import { CommonModule } from '@angular/common';
   ],
 })
 export class SignupComponent implements OnInit {
- 
   mgfRegistrationForm!: FormGroup;
   otpStep: boolean = false;
   otpFields: string[] = ['', '', '', '', '', ''];
+
+  countryCode = [
+    { countryName: 'United States', flag: 'assets/images/flags/us.jpg', code: '+1' },
+    { countryName: 'India', flag: 'assets/images/flags/ind.png', code: '+91' },
+    { countryName: 'United Kingdom', flag: 'assets/images/flags/uk.png', code: '+44' },
+    { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
+  ];
 
   constructor(private fb: FormBuilder) {}
 
@@ -43,6 +48,7 @@ export class SignupComponent implements OnInit {
       fullName: ['', Validators.required],
       companyName: ['', Validators.required],
       designation: ['', Validators.required],
+      code: ['+91', Validators.required],
       mobileNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       emailAddress: ['', [Validators.required, Validators.email]],
       otp: ['']
