@@ -1,108 +1,115 @@
 <div class="auth-container">
-  <div class="row auth-main">
-      <div class="col-sm-6 px-0 d-none d-sm-block">
-          <div class="left-img" style="background-image: url(assets/images/auth-image/registration.png);"></div>
-      </div>
-      <div class="col-sm-6 auth-form-section">
-          <h2 class="welcome-msg-log mb-0 text-center mt-5">Garment Trade Hub</h2>
-          <p class="auth-signup-text text-muted mb-0 w-100 text-center">Manufacture's Registration</p>
-          <div class="auth-wrapper"></div>
-          <div class="registration-form px-4 mt-5">
-              <form [formGroup]="mgfRegistrationForm" (ngSubmit)="onSubmit()">
-                  <div class="row d-flex justify-content-center">
-                      <div *ngIf="!otpStep" class=" row d-flex justify-content-center">
-                          <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                              <label class="lable-input" for="fullName">Full Name<span>*</span>:</label>
-                              <input type="text" id="fullName" formControlName="fullName" class="form-control" />
-                              <div *ngIf="mgfRegistrationForm.get('fullName')?.touched && mgfRegistrationForm.get('fullName')?.invalid"
-                                  class="text-danger">
-                                  Full Name is required.
-                              </div>
-                          </div>
+    <div class="row auth-main">
+        <div class="col-sm-6 px-0 d-none d-sm-block">
+            <div class="left-img" style="background-image: url(assets/images/auth-image/registration.png);"></div>
+        </div>
+        <div class="col-sm-6 auth-form-section">
+            <h2 class="welcome-msg-log mb-0 text-center mt-5">Garment Trade Hub</h2>
+            <p class="auth-signup-text text-muted mb-0 w-100 text-center">Manufacture's Registration</p>
+            <div class="auth-wrapper"></div>
+            <div class="registration-form px-4 mt-5">
+                <form [formGroup]="mgfRegistrationForm" (ngSubmit)="onSubmit()">
+                    <div class="row d-flex justify-content-center">
+                        <div *ngIf="!otpStep" class="row d-flex justify-content-center">
+                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+                                <label class="lable-input" for="fullName">Full Name<span>*</span>:</label>
+                                <input type="text" id="fullName" formControlName="fullName" class="form-control" />
+                                <div *ngIf="mgfRegistrationForm.get('fullName')?.touched && mgfRegistrationForm.get('fullName')?.invalid"
+                                    class="text-danger">
+                                    Full Name is required.
+                                </div>
+                            </div>
 
-                          <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                              <label class="lable-input" for="companyName">Company Name<span>*</span>:</label>
-                              <input type="text" id="companyName" formControlName="companyName"
-                                  class="form-control" />
-                              <div *ngIf="mgfRegistrationForm.get('companyName')?.touched && mgfRegistrationForm.get('companyName')?.invalid"
-                                  class="text-danger">
-                                  Company Name is required.
-                              </div>
-                          </div>
+                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+                                <label class="lable-input" for="companyName">Company Name<span>*</span>:</label>
+                                <input type="text" id="companyName" formControlName="companyName"
+                                    class="form-control" />
+                                <div *ngIf="mgfRegistrationForm.get('companyName')?.touched && mgfRegistrationForm.get('companyName')?.invalid"
+                                    class="text-danger">
+                                    Company Name is required.
+                                </div>
+                            </div>
 
-                          <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                              <label class="lable-input" for="designation">Designation<span>*</span>:</label>
-                              <input type="text" id="designation" formControlName="designation"
-                                  class="form-control" />
-                              <div *ngIf="mgfRegistrationForm.get('designation')?.touched && mgfRegistrationForm.get('designation')?.invalid"
-                                  class="text-danger">
-                                  Designation is required.
-                              </div>
-                          </div>
+                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+                                <label class="lable-input" for="designation">Designation<span>*</span>:</label>
+                                <input type="text" id="designation" formControlName="designation"
+                                    class="form-control" />
+                                <div *ngIf="mgfRegistrationForm.get('designation')?.touched && mgfRegistrationForm.get('designation')?.invalid"
+                                    class="text-danger">
+                                    Designation is required.
+                                </div>
+                            </div>
 
-                          <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                              <label class="lable-input" for="mobileNumber">Mobile Number<span>*</span>:</label>
-                              <input type="text" id="mobileNumber" formControlName="mobileNumber"
-                                  class="form-control" />
-                              <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.touched && mgfRegistrationForm.get('mobileNumber')?.invalid"
-                                  class="text-danger">
-                                  <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.errors?.['required']">Mobile
-                                      number
-                                      is required.</div>
-                                  <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.errors?.['pattern']">Mobile
-                                      number
-                                      must be 10 digits.</div>
-                              </div>
-                          </div>
+                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+                                <label class="lable-input" for="mobileNumber">Mobile Number<span>*</span>:</label>
+                                <div class="d-flex mat-select">
+                                    <mat-form-field appearance="outline" class="w-25 me-2">
+                                        <mat-select formControlName="code">
+                                            <mat-option *ngFor="let country of countryCode" [value]="country.code">
+                                                <img [src]="country.flag" alt="{{ country.countryName }}"
+                                                    class="country-flag" /> {{ country.code }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <input type="number" id="mobileNumber" formControlName="mobileNumber"
+                                        class="form-control w-75" />
+                                </div>
+                                <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.touched && mgfRegistrationForm.get('mobileNumber')?.invalid"
+                                    class="text-danger">
+                                    <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.errors?.['required']">Mobile
+                                        number is required.</div>
+                                    <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.errors?.['pattern']">Mobile
+                                        number must be 10 digits.</div>
+                                </div>
+                            </div>
 
-                          <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                              <label class="lable-input" for="emailAddress">Email Address<span>*</span>:</label>
-                              <input type="text" id="emailAddress" formControlName="emailAddress"
-                                  class="form-control" />
-                              <div *ngIf="mgfRegistrationForm.get('emailAddress')?.touched && mgfRegistrationForm.get('emailAddress')?.invalid"
-                                  class="text-danger">
-                                  <div *ngIf="mgfRegistrationForm.get('emailAddress')?.errors?.['required']">Email is
-                                      required.</div>
-                                  <div *ngIf="mgfRegistrationForm.get('emailAddress')?.errors?.['email']">Invalid
-                                      email
-                                      format.</div>
-                              </div>
-                          </div>
-                          <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 text-danger mt-2">
-                              <small>* Please provide a valid mobile number & email - this is required for validation
-                                  purpose.</small>
-                          </div>
-                      </div>
+                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+                                <label class="lable-input" for="emailAddress">Email Address<span>*</span>:</label>
+                                <input type="text" id="emailAddress" formControlName="emailAddress"
+                                    class="form-control" />
+                                <div *ngIf="mgfRegistrationForm.get('emailAddress')?.touched && mgfRegistrationForm.get('emailAddress')?.invalid"
+                                    class="text-danger">
+                                    <div *ngIf="mgfRegistrationForm.get('emailAddress')?.errors?.['required']">Email is
+                                        required.</div>
+                                    <div *ngIf="mgfRegistrationForm.get('emailAddress')?.errors?.['email']">Invalid
+                                        email format.</div>
+                                </div>
+                            </div>
+                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 text-danger mt-2">
+                                <small>* Please provide a valid mobile number & email - this is required for validation
+                                    purpose.</small>
+                            </div>
+                        </div>
 
-                      <div *ngIf="otpStep" class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                          <label class="lable-input">Enter OTP<span>*</span>:</label>
-                          <div class="otp-input">
-                              <input type="text" id="otp1" maxlength="1" (input)="onOtpChange(0, $event)"
-                                  class="form-control otp-box" />
-                              <input type="text" id="otp2" maxlength="1" (input)="onOtpChange(1, $event)"
-                                  class="form-control otp-box" />
-                              <input type="text" id="otp3" maxlength="1" (input)="onOtpChange(2, $event)"
-                                  class="form-control otp-box" />
-                              <input type="text" id="otp4" maxlength="1" (input)="onOtpChange(3, $event)"
-                                  class="form-control otp-box" />
-                              <input type="text" id="otp5" maxlength="1" (input)="onOtpChange(4, $event)"
-                                  class="form-control otp-box" />
-                              <input type="text" id="otp6" maxlength="1" (input)="onOtpChange(5, $event)"
-                                  class="form-control otp-box" />
-                          </div>
-                          <div *ngIf="mgfRegistrationForm.get('otp')?.touched && mgfRegistrationForm.get('otp')?.invalid"
-                              class="text-danger">
-                              OTP is required.
-                          </div>
-                      </div>
+                        <div *ngIf="otpStep" class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+                            <label class="lable-input">Enter OTP<span>*</span>:</label>
+                            <div class="otp-input">
+                                <input type="text" id="otp1" maxlength="1" (input)="onOtpChange(0, $event)"
+                                    class="form-control otp-box" />
+                                <input type="text" id="otp2" maxlength="1" (input)="onOtpChange(1, $event)"
+                                    class="form-control otp-box" />
+                                <input type="text" id="otp3" maxlength="1" (input)="onOtpChange(2, $event)"
+                                    class="form-control otp-box" />
+                                <input type="text" id="otp4" maxlength="1" (input)="onOtpChange(3, $event)"
+                                    class="form-control otp-box" />
+                                <input type="text" id="otp5" maxlength="1" (input)="onOtpChange(4, $event)"
+                                    class="form-control otp-box" />
+                                <input type="text" id="otp6" maxlength="1" (input)="onOtpChange(5, $event)"
+                                    class="form-control otp-box" />
+                            </div>
+                            <div *ngIf="mgfRegistrationForm.get('otp')?.touched && mgfRegistrationForm.get('otp')?.invalid"
+                                class="text-danger">
+                                OTP is required.
+                            </div>
+                        </div>
 
-                      <div class="col-12 text-center">
-                          <button type="submit" class="btn submit-btn" [disabled]="mgfRegistrationForm.invalid">{{
-                              otpStep ? 'Submit Otp' : 'Submit' }}</button>
-                      </div>
-                  </div>
-              </form>
-          </div>
-      </div>
-  </div>
+                        <div class="col-12 text-center">
+                            <button type="submit" class="btn submit-btn" [disabled]="mgfRegistrationForm.invalid">{{
+                                otpStep ? 'Submit Otp' : 'Submit' }}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
