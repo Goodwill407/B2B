@@ -1,6 +1,8 @@
 import { NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { RouterModule } from '@angular/router';
 import { CommunicationService } from '@core';
 import { json } from 'd3';
@@ -11,7 +13,9 @@ import { json } from 'd3';
   imports: [
     ReactiveFormsModule,
     NgFor, NgIf,
-    RouterModule
+    RouterModule,
+    MatInputModule,
+    MatSelectModule,
   ],
   templateUrl: './bulk-invite.component.html',
   styleUrls: ['./bulk-invite.component.scss']
@@ -36,11 +40,19 @@ export class BulkInviteSingleComponent {
     return this.fb.group({
       distributorName: ['', Validators.required],
       companyName: [''],
-      mobileCountryCode: ['', Validators.required],
+      code: ['+91', Validators.required],
       mobileNumber: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]]
     });
   }
+
+  countryCode = [
+    { countryName: 'United States', flag: 'assets/images/flags/us.jpg', code: '+1' },
+    { countryName: 'India', flag: 'assets/images/flags/ind.png', code: '+91' },
+    { countryName: 'United Kingdom', flag: 'assets/images/flags/uk.png', code: '+44' },
+    { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
+  ];
+
 
   addDistributor(): void {
     this.distributors.push(this.createDistributorFormGroup());

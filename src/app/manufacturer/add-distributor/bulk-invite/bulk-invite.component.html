@@ -45,13 +45,17 @@
             </div>
             <div>
               <!-- <label>Mobile Number</label> -->
-              <span class="d-flex" style="width: 350px;">
-                <input class="form-control w-25" formControlName="mobileCountryCode" type="text" placeholder="Code">
+              <span class="d-flex mat-select" style="width: 350px; height: 22px;">
+                <mat-form-field appearance="outline" class="w-25 me-2">
+                  <mat-select formControlName="code">
+                      <mat-option *ngFor="let country of countryCode" [value]="country.code">
+                          <img [src]="country.flag" alt="{{ country.countryName }}"
+                              class="country-flag" /> {{ country.code }}
+                      </mat-option>
+                  </mat-select>
+              </mat-form-field>
                 <input class="form-control w-75" formControlName="mobileNumber" type="number" placeholder="Number">
               </span>
-              <div *ngIf="distributor.get('mobileCountryCode')?.invalid && (distributor.get('mobileCountryCode')?.touched || isSubmitted)" class="text-danger">
-                {{ getErrorMessage('mobileCountryCode', i) }}
-              </div>
               <div *ngIf="distributor.get('mobileNumber')?.invalid && (distributor.get('mobileNumber')?.touched || isSubmitted)" class="text-danger">
                 {{ getErrorMessage('mobileNumber', i) }}
               </div>
