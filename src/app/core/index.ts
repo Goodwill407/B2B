@@ -7,7 +7,6 @@ export { LanguageService } from './service/language.service';
 export { RightSidebarService } from './service/rightsidebar.service';
 export { GraphService } from './service/graph.service';
 export { CommunicationService } from './service/communication.service';
-export { ChatService } from './service/chatService.service'
 // models
 
 export { User } from './models/user';

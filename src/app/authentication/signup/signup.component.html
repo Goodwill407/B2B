@@ -9,6 +9,7 @@
             <div class="auth-wrapper"></div>
             <div class="registration-form px-4 mt-5">
                 <form [formGroup]="mgfRegistrationForm" (ngSubmit)="onSubmit()">
+                    @if(!showPasswordForm) {
                     <div class="row d-flex justify-content-center">
                         <div *ngIf="!otpStep" class="row d-flex justify-content-center">
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
@@ -21,20 +22,15 @@
                             </div>
 
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                                <label class="lable-input" for="companyName">Company Name<span>*</span>:</label>
+                                <label class="lable-input" for="companyName">Company Name:</label>
                                 <input type="text" id="companyName" formControlName="companyName"
                                     class="form-control" />
-                                <div *ngIf="mgfRegistrationForm.get('companyName')?.touched && mgfRegistrationForm.get('companyName')?.invalid"
-                                    class="text-danger">
-                                    Company Name is required.
-                                </div>
                             </div>
 
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                                <label class="lable-input" for="designation">Designation<span>*</span>:</label>
-                                <input type="text" id="designation" formControlName="designation"
-                                    class="form-control" />
-                                <div *ngIf="mgfRegistrationForm.get('designation')?.touched && mgfRegistrationForm.get('designation')?.invalid"
+                                <label class="lable-input" for="role">Designation<span>*</span>:</label>
+                                <input type="text" id="role" formControlName="role" class="form-control" />
+                                <div *ngIf="mgfRegistrationForm.get('role')?.touched && mgfRegistrationForm.get('role')?.invalid"
                                     class="text-danger">
                                     Designation is required.
                                 </div>
@@ -64,14 +60,14 @@
                             </div>
 
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                                <label class="lable-input" for="emailAddress">Email Address<span>*</span>:</label>
-                                <input type="text" id="emailAddress" formControlName="emailAddress"
+                                <label class="lable-input" for="email">Email Address<span>*</span>:</label>
+                                <input type="text" id="email" formControlName="email"
                                     class="form-control" />
-                                <div *ngIf="mgfRegistrationForm.get('emailAddress')?.touched && mgfRegistrationForm.get('emailAddress')?.invalid"
+                                <div *ngIf="mgfRegistrationForm.get('email')?.touched && mgfRegistrationForm.get('email')?.invalid"
                                     class="text-danger">
-                                    <div *ngIf="mgfRegistrationForm.get('emailAddress')?.errors?.['required']">Email is
+                                    <div *ngIf="mgfRegistrationForm.get('email')?.errors?.['required']">Email is
                                         required.</div>
-                                    <div *ngIf="mgfRegistrationForm.get('emailAddress')?.errors?.['email']">Invalid
+                                    <div *ngIf="mgfRegistrationForm.get('email')?.errors?.['email']">Invalid
                                         email format.</div>
                                 </div>
                             </div>
@@ -83,7 +79,7 @@
 
                         <div *ngIf="otpStep" class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                             <label class="lable-input">Enter OTP<span>*</span>:</label>
-                            <div class="otp-input">
+                            <div class="otp-input mt-4">
                                 <input type="text" id="otp1" maxlength="1" (input)="onOtpChange(0, $event)"
                                     class="form-control otp-box" />
                                 <input type="text" id="otp2" maxlength="1" (input)="onOtpChange(1, $event)"
@@ -108,6 +104,61 @@
                                 otpStep ? 'Submit Otp' : 'Submit' }}</button>
                         </div>
                     </div>
+                    }
+                </form>
+
+                <form [formGroup]="setPasswordFrom" (ngSubmit)="passwordSubmit()">
+                    @if(showPasswordForm){
+                    <div class="row justify-content-center">
+                        <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 mb-2">
+                            <label for="pass" class="form-label">Password<span class="required">*</span></label>
+                            <div class="d-flex form-control py-0">
+                                <input [type]="hide ? 'password' : 'text'" class="form-control shadow-none border-0 p-0"
+                                    formControlName="password">
+                                <mat-icon class="material-icons-outlined pwd-toggle form-control border-0 ps-1 pb-3"
+                                    matSuffix (click)="hide = !hide">
+                                    {{ hide ? 'visibility_off' : 'visibility' }}
+                                </mat-icon>
+                            </div>
+                            <div *ngIf="setPasswordFrom.get('password')?.touched && setPasswordFrom.get('password')?.invalid"
+                                class="text-danger">
+                                <div *ngIf="setPasswordFrom.get('password')?.errors?.['required']">Password is required.
+                                </div>
+                                <div *ngIf="setPasswordFrom.get('password')?.errors?.['minlength']">Password must be at
+                                    least 8 characters long.</div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 mb-2">
+                            <label for="confirmPass" class="form-label">Confirm Password<span
+                                    class="required">*</span></label>
+                            <div class="d-flex form-control py-0">
+                                <input [type]="c_hide ? 'password' : 'text'"
+                                    class="form-control shadow-none border-0 p-0" formControlName="confirmPassword">
+                                <mat-icon class="material-icons-outlined pwd-toggle form-control border-0 ps-1 pb-3"
+                                    matSuffix (click)="c_hide = !c_hide">
+                                    {{ c_hide ? 'visibility_off' : 'visibility' }}
+                                </mat-icon>
+                            </div>
+                            <div *ngIf="setPasswordFrom.get('confirmPassword')?.touched && setPasswordFrom.get('confirmPassword')?.invalid"
+                                class="text-danger">
+                                <div *ngIf="setPasswordFrom.get('confirmPassword')?.errors?.['required']">Confirm
+                                    Password is required.</div>
+                                <div *ngIf="setPasswordFrom.get('confirmPassword')?.errors?.['mustMatch']">Passwords
+                                    must match.</div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 text-center">
+                            <!-- @if(!(submitted && setPasswordFrom.get('password')?.errors)){ -->
+                            <p class="mb-0" style="color:#864f20;">
+                                Create a Strong password (ex.Abcd$123)
+                            </p>
+                            <!-- } -->
+                            <button class="btn submit-btn" type="submit">Set Password</button>
+                        </div>
+                    </div>
+                    }
                 </form>
             </div>
         </div>

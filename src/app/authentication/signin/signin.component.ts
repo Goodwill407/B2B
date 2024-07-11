@@ -46,7 +46,7 @@ export class SigninComponent
   
     ngOnInit() {
       this.authForm = this.formBuilder.group({
-        username: ['', Validators.required],
+        email: ['', Validators.required],
         password: ['', Validators.required],
       });
     }
@@ -54,9 +54,12 @@ export class SigninComponent
     get f() {
       return this.authForm.controls;
     }
+
+    togglePasswordVisibility() {
+      this.hide = !this.hide;
+    }
   
     onSubmit() {
-      this.router.navigateByUrl('/mnf/profile');
       this.submitted = true;
       this.loading = true;
       this.error = '';
@@ -66,10 +69,9 @@ export class SigninComponent
       } else {
        
         const data = {
-          username: this.f['username'].value,
+          email: this.f['email'].value,
           password: this.f['password'].value
         }
-        this.router.navigate(['/pages/registration']);
         this.authService.post('auth/login', data).subscribe({
           next: (res) => {
             if (res) {
