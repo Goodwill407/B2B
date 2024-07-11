@@ -1,0 +1,95 @@
+<section class="content">
+    <div class="content-block">
+      <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Bulk Invite </h4>
+      <div class="card p-2">
+        <h5 class="mt-2">Send Bulk Invite</h5>
+        <hr>
+
+        <div class="mb-4">
+          <button class="btn btn-secondary-type cc" title="Download Template" (click)="downloadExcel('sample_file')">
+            <i class="fas fa-download"></i>
+            Download Formate For Bulk Upload
+          </button>
+        </div>
+
+        <div class="file-upload-container w-50 mb-3">
+          <input type="file" class="form-control w-75" (change)="onFileChange($event)" />
+          <button class="btn btn-secondary-type cc " (click)="uploadFile()">
+            <i class="fas fa-cloud-upload-alt "></i> UPLOAD
+          </button>
+          
+          <!-- <button class="btn btn-download-template cc" title="Download Template" (click)="downloadExcel('sample_file')">
+            <i class="fas fa-download"></i>
+          </button> -->
+        </div>
+        
+  
+        @if(showTable) {
+          <div class="buttons-container mt-4 ms-4">
+            <button class="btn btn-primary-type" (click)="showDuplicates()">Show Duplicates ({{ duplicates.length }})</button>
+            <button class="btn btn-primary-type ms-3" (click)="showNonDuplicates()">Show Non-Duplicates ({{ nonduplicates.length }})</button>
+            <hr>
+          </div>
+        }
+  
+        <!-- Duplicate Table -->
+        @if(showDuplicateTable) {
+          <div class="mx-5">
+            <h6 class="header">Duplicate Data : {{duplicates.length}}</h6>
+            @if(duplicates && duplicates.length > 0) {
+              <table class="table table-hover table-striped">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Udise code</th>
+                    <th>District</th>
+                    <th>Block</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for(duplicate of duplicates; track duplicate) {
+                    <tr>
+                      <td>{{ duplicate.name }}</td>
+                      <td>{{ duplicate.udisecode }}</td>
+                      <td>{{ duplicate.district }}</td>
+                      <td>{{ duplicate.block }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
+          </div>
+        }
+  
+        <!-- Non-Duplicate Table -->
+        @if(showNonDuplicateTable) {
+          <div class="mx-5">
+            <h6 class="header">Non-Duplicate Data : {{nonduplicates.length}}</h6>
+            @if(duplicates && nonduplicates.length > 0) {
+              <table class="table table-hover table-striped">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Udise code</th>
+                    <th>District</th>
+                    <th>Block</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for(nonDuplicate of nonduplicates; track nonduplicates) {
+                    <tr>
+                      <td>{{ nonDuplicate.name }}</td>
+                      <td>{{ nonDuplicate.udisecode }}</td>
+                      <td>{{ nonDuplicate.district }}</td>
+                      <td>{{ nonDuplicate.block }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+  

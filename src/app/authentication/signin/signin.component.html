@@ -17,47 +17,45 @@
             <form class="validate-form" [formGroup]="authForm" (ngSubmit)="onSubmit()">
               <div class="row">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-4">
-                  <!-- <mat-form-field class="example-full-width" appearance="outline">
-                    <mat-label>Username</mat-label>
-                    <input matInput formControlName="username" />
-                    <mat-icon class="material-icons-outlined color-icon p-3" matSuffix>face</mat-icon>
-                    @if (authForm.get('username')?.hasError('required')) {
-                    <mat-error>
-                      Username is required
-                    </mat-error>
-                    }
-                  </mat-form-field> -->
                   <label class="lable-input" for="id">User Id</label>
-                  <input type="text" id="id" formControlName="username" class="form-control">
+                  <input type="text" id="id" formControlName="email" class="form-control">
                 </div>
               </div>
-              <div class="row">
+              <!-- <div class="row">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-4">
-                  <!-- <mat-form-field class="example-full-width" appearance="outline">
-                    <mat-label>Password</mat-label>
-                    <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">
-                    <mat-icon class="material-icons-outlined pwd-toggle p-3" matSuffix (click)="hide = !hide">
-                      {{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                    @if (authForm.get('password')?.hasError('required')) {
-                    <mat-error>
-                      Password is required
-                    </mat-error>
-                    }
-                  </mat-form-field> -->
                   <label class="lable-input" for="password">Password</label>
                   <input type="password" id="password" formControlName="password" class="form-control">
                 </div>
+              </div> -->
+              <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-4">
+                  <label class="lable-input" for="password">Password</label>
+                  <div class="d-flex form-control">
+                    <input [type]="hide ? 'password' : 'text'" class="form-control shadow-none border-0 p-0"
+                        style="height: 30px !important;" formControlName="password">
+                    <mat-icon class="material-icons-outlined pwd-toggle form-control border-0 ps-1 pb-3"
+                        style="height: 30px !important;" matSuffix (click)="hide = !hide">
+                        {{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </div>
+                </div>
               </div>
+              <!-- <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-4">
+                  <label class="lable-input" for="password">Password</label>
+                  <div class="input-group">
+                    <input [type]="hide ? 'password' : 'text'" id="password" formControlName="password" class="form-control">
+                    <div class="input-group-append">
+                      <button type="button" class="btn btn-outline-secondary" (click)="togglePasswordVisibility()">
+                        <mat-icon>{{ hide ? 'visibility' : 'visibility_off' }}</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div> -->
               
               @if (error) {
               <div class="alert alert-danger mt-3 mb-0">{{error}}</div>
               }
-              <!-- <div class="container-auth-form-btn">
-                <div style="text-align:center">
-                  <button mat-raised-button color="primary" [class.auth-spinner]="loading" [disabled]="loading"
-                    class="auth-form-btn" [disabled]="!authForm.valid " type="submit">Login</button>
-                </div>
-              </div> -->
 
               <div class="row">
                 <div class="col-12 text-center">

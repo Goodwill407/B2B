@@ -1,0 +1,114 @@
+$btn-primary-color: #5061bc;
+$btn-secondary-color: #8595eb;
+
+.file-upload-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 20px;
+    gap: 15px;
+  
+    .form-control {
+      height: fit-content;
+    }
+  
+    button {
+      height: 42px;
+      width: 28%;
+      font-size: 13px !important;
+    }
+  }
+  
+  .download-template-container {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+  
+    button {
+      height: 42px;
+      width: 50%;
+      font-size: 13px !important;
+    }
+  }
+  
+  .buttons-container {
+    margin-top: 20px;
+  
+    .btn {
+      margin-right: 10px;
+    }
+  }
+  
+
+.btn-secondary-type {
+  border: 1px solid var(--gray-01);
+  background-color: $btn-primary-color;
+  color: #fff;
+}
+
+.btn-secondary-type:hover,
+.btn-secondary-type:active,
+:not(.btn-check)+.btn:active,
+.btn-secondary-type:first-child:active {
+  border: 1px solid var(--gray-01);
+  background-color: var(--white);
+  color: var(--black-01);
+  box-shadow: 2px 6px 4px 0px rgba(0, 0, 0, 0.12);
+}
+
+.form-control,
+.form-select {
+  height: 42px !important;
+}
+.form-label{
+  font-size: 14px;
+  line-height: 1.42857;
+  color: #4f4f50;
+  font-weight: 400;
+  margin-bottom: 3px !important;
+}
+
+.register-form{
+  width: 700px;
+}
+
+.form-control[type='file']{
+  line-height: 29px !important;
+}
+
+.btn-primary-type {
+  border: 1px solid var(--gray-01);
+  background-color: $btn-secondary-color;
+  color: #fff;
+}
+
+.btn-primary-type:hover,
+.btn-primary-type:active,
+:not(.btn-check)+.btn:active,
+.btn-primary-type:first-child:active {
+  border: 1px solid var(--gray-01);
+  background-color: var(--white);
+  color: var(--black-01);
+  box-shadow: 2px 6px 4px 0px rgba(0, 0, 0, 0.12);
+}
+
+.btn-download-template {
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+  width: 35px !important;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.btn-download-template i {
+  font-size: 15px;
+}
+
+.cc{
+  background-color: #f7971e    ;
+ color:black        
+}

@@ -13,7 +13,7 @@ export class AuthService {
   public currentUserSubject: BehaviorSubject<User>;
   public currentUser: Observable<User>;
   // apiURL: any = 'https://pathadarshi.dmfkeonjhar.in/v1/'; // main server
-  apiURL: any = 'http://64.227.178.34:3001/v1/'; // local server
+  apiURL: any = 'http://165.22.211.140:3000/v1/'; // local server
 
   token = '';
   headerToken: any;
