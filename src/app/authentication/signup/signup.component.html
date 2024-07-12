@@ -1,5 +1,8 @@
 <div class="auth-container">
     <div class="row auth-main">
+        <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="default" color="#fff" type="square-jelly-box" [fullScreen]="true">
+            <p style="color: rgb(242, 94, 94)"> Loading... </p>
+          </ngx-spinner>
         <div class="col-sm-6 px-0 d-none d-sm-block">
             <div class="left-img" style="background-image: url(assets/images/auth-image/registration.png);"></div>
         </div>
@@ -7,14 +10,14 @@
             <h2 class="welcome-msg-log mb-0 text-center mt-5">Garment Trade Hub</h2>
             <p class="auth-signup-text text-muted mb-0 w-100 text-center">Manufacture's Registration</p>
             <div class="auth-wrapper"></div>
-            <div class="registration-form px-4 mt-5">
+            <div class="registration-form px-4">
                 <form [formGroup]="mgfRegistrationForm" (ngSubmit)="onSubmit()">
                     @if(!showPasswordForm) {
                     <div class="row d-flex justify-content-center">
                         <div *ngIf="!otpStep" class="row d-flex justify-content-center">
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                                 <label class="lable-input" for="fullName">Full Name<span>*</span>:</label>
-                                <input type="text" id="fullName" formControlName="fullName" class="form-control" />
+                                <input type="text" id="fullName" formControlName="fullName" placeholder="Jay Amit Shah" class="form-control" />
                                 <div *ngIf="mgfRegistrationForm.get('fullName')?.touched && mgfRegistrationForm.get('fullName')?.invalid"
                                     class="text-danger">
                                     Full Name is required.
@@ -23,13 +26,19 @@
 
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                                 <label class="lable-input" for="companyName">Company Name:</label>
-                                <input type="text" id="companyName" formControlName="companyName"
+                                <input type="text" id="companyName" formControlName="companyName" placeholder="BCCI"
                                     class="form-control" />
                             </div>
 
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                                 <label class="lable-input" for="role">Designation<span>*</span>:</label>
-                                <input type="text" id="role" formControlName="role" class="form-control" />
+                                <!-- <input type="text" id="role" formControlName="role" class="form-control" /> -->
+                                 <select formControlName="role" class="form-select" placeholder="Select Designation">
+                                    <!-- <option value="">Select Designation</option> -->
+                                    <option value="manufacture">Manufacture</option>
+                                    <option value="wholesaler ">Wholesaler </option>
+                                    <option value="retailer">Retailer</option>
+                                 </select>
                                 <div *ngIf="mgfRegistrationForm.get('role')?.touched && mgfRegistrationForm.get('role')?.invalid"
                                     class="text-danger">
                                     Designation is required.
@@ -47,7 +56,7 @@
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
-                                    <input type="number" id="mobileNumber" formControlName="mobileNumber"
+                                    <input type="number" id="mobileNumber" placeholder="7799886655" formControlName="mobileNumber"
                                         class="form-control w-75" />
                                 </div>
                                 <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.touched && mgfRegistrationForm.get('mobileNumber')?.invalid"
@@ -61,7 +70,7 @@
 
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                                 <label class="lable-input" for="email">Email Address<span>*</span>:</label>
-                                <input type="text" id="email" formControlName="email"
+                                <input type="text" id="email" formControlName="email" placeholder="Jayshah@gmail.com"
                                     class="form-control" />
                                 <div *ngIf="mgfRegistrationForm.get('email')?.touched && mgfRegistrationForm.get('email')?.invalid"
                                     class="text-danger">
@@ -109,10 +118,11 @@
 
                 <form [formGroup]="setPasswordFrom" (ngSubmit)="passwordSubmit()">
                     @if(showPasswordForm){
+                        <h4 class="text-muted text-center">Set Your Password</h4>
                     <div class="row justify-content-center">
                         <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 mb-2">
                             <label for="pass" class="form-label">Password<span class="required">*</span></label>
-                            <div class="d-flex form-control py-0">
+                            <div class="d-flex form-control py-0" style="height: 36px;">
                                 <input [type]="hide ? 'password' : 'text'" class="form-control shadow-none border-0 p-0"
                                     formControlName="password">
                                 <mat-icon class="material-icons-outlined pwd-toggle form-control border-0 ps-1 pb-3"
@@ -132,7 +142,7 @@
                         <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 mb-2">
                             <label for="confirmPass" class="form-label">Confirm Password<span
                                     class="required">*</span></label>
-                            <div class="d-flex form-control py-0">
+                            <div class="d-flex form-control py-0" style="height: 36px;">
                                 <input [type]="c_hide ? 'password' : 'text'"
                                     class="form-control shadow-none border-0 p-0" formControlName="confirmPassword">
                                 <mat-icon class="material-icons-outlined pwd-toggle form-control border-0 ps-1 pb-3"
