@@ -5,17 +5,13 @@ import { ForgotPasswordComponent } from "./forgot-password/forgot-password.compo
 import { LockedComponent } from "./locked/locked.component";
 import { Page404Component } from "./page404/page404.component";
 import { Page500Component } from "./page500/page500.component";
-import { FirstLandingPageComponent } from "./first-landing-page/first-landing-page.component";
 export const AUTH_ROUTE: Route[] = [
   {
     path: "",
-    redirectTo: "landingPage",
+    redirectTo: "signin",
     pathMatch: "full",
   },
-  {
-    path: "landingPage",
-    component: FirstLandingPageComponent,
-  },
+  
   {
     path: "signin",
     component: SigninComponent,

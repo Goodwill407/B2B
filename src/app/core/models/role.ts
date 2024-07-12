@@ -10,4 +10,5 @@ export enum Role {
   school = 'school',
   counsellor = 'trainer',
   skillCounsellor = 'skillTrainer',
+  Manufacture = 'manufacture'
 }

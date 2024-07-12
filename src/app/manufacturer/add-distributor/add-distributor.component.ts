@@ -49,7 +49,7 @@ export class AddDistributorComponent {
       companyName: ['',],
       code: ['+91', Validators.required],
       mobileNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
-      emailAddress: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email]],
     });
   }
 

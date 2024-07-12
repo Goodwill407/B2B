@@ -8,6 +8,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { AuthService, CommunicationService } from '@core';
+import { HttpClient } from '@angular/common/http';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-signup',
@@ -23,7 +25,8 @@ import { AuthService, CommunicationService } from '@core';
     MatIconModule,
     RouterLink,
     MatButtonModule,
-    CommonModule
+    CommonModule,
+    NgxSpinnerModule
   ],
 })
 export class SignupComponent implements OnInit {
@@ -42,7 +45,7 @@ export class SignupComponent implements OnInit {
     { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
   ];
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService) { }
+  constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private http: HttpClient, private router: Router, private spinner: NgxSpinnerService) { }
 
   ngOnInit() {
     this.initializeForm();
@@ -81,16 +84,20 @@ export class SignupComponent implements OnInit {
       if (this.mgfRegistrationForm.valid) {
         delete data.otp;
         data.mobileNumber = String(data.mobileNumber);
+        this.spinner.show();
         this.authService.post('auth/register', data).subscribe((res: any) => {
           this.authService.post(`auth/send-verification-email?email=${data.email}`, {}).subscribe((res: any) => {
             this.otpStep = true;
             this.mgfRegistrationForm.controls['otp'].setValidators([Validators.required, Validators.minLength(6)]);
             this.mgfRegistrationForm.controls['otp'].updateValueAndValidity();
             console.log('Verification email sent successfully');
+            this.spinner.hide();
           }, (err: any) => {
+            this.spinner.hide();
             this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
           });
         }, (err: any) => {
+          this.spinner.hide();
           this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
         });
       }
@@ -100,9 +107,13 @@ export class SignupComponent implements OnInit {
   passwordSubmit() {
     if (this.setPasswordFrom.valid) {
       console.log('Password Form Submitted:', this.setPasswordFrom.value);
-      this.authService.post(`sdf`, this.setPasswordFrom.value).subscribe((res: any) => {
-
-      })
+      const data = this.setPasswordFrom.value;
+      delete data.confirmPassword
+      this.http.patch(`http://165.22.211.140:3000/v1/users/update-pass?email=${this.mgfRegistrationForm.value.email}`, data).subscribe((res: any) => {
+        this.router.navigate([`/authentication/signin`]);
+      }, (err: any) => {
+        this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
+      });
     }
   }
 

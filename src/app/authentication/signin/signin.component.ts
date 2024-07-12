@@ -80,13 +80,13 @@ export class SigninComponent
                 this.authService.setLoginDetails(res);
                 localStorage.setItem('currentUser', JSON.stringify(res.user));
                 this.authService.currentUserSubject.next(res.user);
-                // const role = this.authService.currentUserValue.role;
+                const role = this.authService.currentUserValue.role;
                 if (res.user.role === Role.Superadmin || res.user.role === Role.State) {
                   this.router.navigate(['/mnf/profile']);
-                // } else if (role === Role.District) {
-                //   this.router.navigate(['/teacher/dashboard']);
-                // } else if (role === Role.Block) {
-                //   this.router.navigate(['/student/dashboard']);
+                } else if (role == Role.Manufacture) {
+                  this.router.navigate(['/mnf/profile']);
+                } else if (role === Role.Block) {
+                  this.router.navigate(['/student/dashboard']);
                 } else {
                   this.router.navigate(['/authentication/signin']);
                 }

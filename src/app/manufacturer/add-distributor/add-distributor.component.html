@@ -67,13 +67,13 @@
                     </div>
 
                     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                        <label class="lable-input" for="emailAddress">Email Address<span>*</span>:</label>
-                        <input type="text" id="emailAddress" formControlName="emailAddress" class="form-control" placeholder="Email Address"/>
-                        <div *ngIf="mgfRegistrationForm.get('emailAddress')?.touched && mgfRegistrationForm.get('emailAddress')?.invalid"
+                        <label class="lable-input" for="email">Email Address<span>*</span>:</label>
+                        <input type="text" id="email" formControlName="email" class="form-control" placeholder="Email Address"/>
+                        <div *ngIf="mgfRegistrationForm.get('email')?.touched && mgfRegistrationForm.get('email')?.invalid"
                             class="text-danger">
-                            <div *ngIf="mgfRegistrationForm.get('emailAddress')?.errors?.['required']">Email is
+                            <div *ngIf="mgfRegistrationForm.get('email')?.errors?.['required']">Email is
                                 required.</div>
-                            <div *ngIf="mgfRegistrationForm.get('emailAddress')?.errors?.['email']">Invalid email
+                            <div *ngIf="mgfRegistrationForm.get('email')?.errors?.['email']">Invalid email
                                 format.</div>
                         </div>
                     </div>
