@@ -1,113 +1,171 @@
 <section class="content">
     <div class="content-block">
-
-
         <div class="registration-form p-4 mt-4">
-            <form [formGroup]="mgfRegistrationForm">
-                <div class="card p-4">
-                    <h4 class="text-center">Manufacture's Profile</h4>
+            <form [formGroup]="mgfRegistrationForm" >
+                <div class="card p-4 pt-2">
+                    <h5 class="text-center mb-0">Manufacturer's Profile</h5>
+                    <hr class="mt-2">
                     <div class="row">
-
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                            <label class="lable-input" for="id">Company/Firm Name :</label>
-                            <input type="text" id="id" formControlName="comName" class="form-control">
+                            <label class="label-input" for="comName">Company/Firm Name :</label>
+                            <input type="text" id="comName" formControlName="companyName" class="form-control"
+                                   [ngClass]="{ 'is-invalid': submitted && f.companyName.errors }">
+                            <div *ngIf="submitted && f.companyName.errors" class="invalid-feedback">
+                                <div *ngIf="f.companyName.errors.required">Company/Firm Name is required.</div>
+                            </div>
                         </div>
-
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                            <label class="lable-input" for="id">Address :</label>
-                            <input type="text" id="id" formControlName="address" class="form-control">
-                        </div>
-
-                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
-                            <label class="lable-input" for="id">State :</label>
-                            <input type="text" id="id" formControlName="state" class="form-control">
-                        </div>
-                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
-                            <label class="lable-input" for="id">City :</label>
-                            <input type="text" id="id" formControlName="city" class="form-control">
+                            <label class="label-input" for="address">Address :</label>
+                            <input type="text" id="address" formControlName="address" class="form-control"
+                                   [ngClass]="{ 'is-invalid': submitted && f.address.errors }">
+                            <div *ngIf="submitted && f.address.errors" class="invalid-feedback">
+                                <div *ngIf="f.address.errors.required">Address is required.</div>
+                            </div>
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
-                            <label class="lable-input" for="id">Pin Code :</label>
-                            <input type="text" id="id" formControlName="pincode" class="form-control">
+                            <label class="label-input" for="state">State :</label>
+                            <input type="text" id="state" formControlName="state" class="form-control"
+                                   [ngClass]="{ 'is-invalid': submitted && f.state.errors }">
+                            <div *ngIf="submitted && f.state.errors" class="invalid-feedback">
+                                <div *ngIf="f.state.errors.required">State is required.</div>
+                            </div>
                         </div>
-
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                            <label class="label-input" for="city">City :</label>
+                            <input type="text" id="city" formControlName="city" class="form-control"
+                                   [ngClass]="{ 'is-invalid': submitted && f.city.errors }">
+                            <div *ngIf="submitted && f.city.errors" class="invalid-feedback">
+                                <div *ngIf="f.city.errors.required">City is required.</div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                            <label class="label-input" for="pincode">Pin Code :</label>
+                            <input type="text" id="pincode" formControlName="pinCode" class="form-control"
+                                   [ngClass]="{ 'is-invalid': submitted && f.pinCode.errors }">
+                            <div *ngIf="submitted && f.pinCode.errors" class="invalid-feedback">
+                                <div *ngIf="f.pinCode.errors.required">Pin Code is required.</div>
+                                <div *ngIf="f.pinCode.errors.pattern">Pin Code must be 6 digits.</div>
+                            </div>
+                        </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="lable-input" for="id">Primary Mobile Number:</label>
-                            <input type="text" id="id" formControlName="mobNumber" class="form-control">
+                            <label class="label-input" for="mobNumber">Primary Mobile Number :</label>
+                            <input type="text" id="mobNumber" formControlName="mobNumber" class="form-control"
+                                   [ngClass]="{ 'is-invalid': submitted && f.mobNumber.errors }">
+                            <div *ngIf="submitted && f.mobNumber.errors" class="invalid-feedback">
+                                <div *ngIf="f.mobNumber.errors.required">Primary Mobile Number is required.</div>
+                                <div *ngIf="f.mobNumber.errors.pattern">Mobile Number must be 10 digits.</div>
+                            </div>
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
-                            <label class="lable-input" for="id">Alternative Mobile Number:</label>
-                            <input type="text" id="id" formControlName="mobNumberAlt" class="form-control">
+                            <label class="label-input" for="mobNumberAlt">Alternative Mobile Number :</label>
+                            <input type="text" id="mobNumberAlt" formControlName="mobNumber2" class="form-control"
+                                   [ngClass]="{ 'is-invalid': submitted && f.mobNumber2.errors }">
                         </div>
-
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="lable-input" for="id">Primary Email:</label>
-                            <input type="text" id="id" formControlName="email" class="form-control">
+                            <label class="label-input" for="email">Primary Email :</label>
+                            <input type="text" id="email" formControlName="email" class="form-control"
+                                   [ngClass]="{ 'is-invalid': submitted && f.email.errors }">
+                            <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                                <div *ngIf="f.email.errors.required">Primary Email is required.</div>
+                                <div *ngIf="f.email.errors.email">Email must be valid.</div>
+                            </div>
                         </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6  ps-4">
-                            <label class="lable-input" for="id">Alternative Email:</label>
-                            <input type="text" id="id" formControlName="emailAlt" class="form-control">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
+                            <label class="label-input" for="emailAlt">Alternative Email :</label>
+                            <input type="text" id="emailAlt" formControlName="email2" class="form-control"
+                                   [ngClass]="{ 'is-invalid': submitted && f.email2.errors }">
+                            <div *ngIf="submitted && f.email2.errors" class="invalid-feedback">
+                                <div *ngIf="f.email2.errors.email">Email must be valid.</div>
+                            </div>
                         </div>
-
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="lable-input" for="id">GSTIN:</label>
-                            <input type="text" id="id" formControlName="gstin" class="form-control">
+                            <label class="label-input" for="gstin">GSTIN :</label>
+                            <input type="text" id="gstin" formControlName="GSTIN" class="form-control"
+                                   [ngClass]="{ 'is-invalid': submitted && f.GSTIN.errors }">
+                            <div *ngIf="submitted && f.GSTIN.errors" class="invalid-feedback">
+                                <div *ngIf="f.GSTIN.errors.required">GSTIN is required.</div>
+                                <div *ngIf="f.GSTIN.errors.pattern">GSTIN must be 15 digits.</div>
+                            </div>
                         </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6  ps-4">
-                            <label class="lable-input" for="id">PAN:</label>
-                            <input type="text" id="id" formControlName="pan" class="form-control">
-                        </div>
-
-                    </div>
-                </div>
-                <div class="card p-4">
-                    <h4 class="text-center mb-0">Social Media</h4>
-                    <div class="row">
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="lable-input" for="id">Facebook:</label>
-                            <input type="text" id="id" formControlName="fb" class="form-control">
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6  ps-4">
-                            <label class="lable-input" for="id">Linkedin:</label>
-                            <input type="text" id="id" formControlName="linkedin" class="form-control">
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="lable-input" for="id">Instagram:</label>
-                            <input type="text" id="id" formControlName="insta" class="form-control">
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6  ps-4">
-                            <label class="lable-input" for="id">Company Website</label>
-                            <input type="text" id="id" formControlName="web" class="form-control">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
+                            <label class="label-input" for="pan">PAN :</label>
+                            <input type="text" id="pan" formControlName="pan" class="form-control"
+                                   [ngClass]="{ 'is-invalid': submitted && f.pan.errors }">
+                            <div *ngIf="submitted && f.pan.errors" class="invalid-feedback">
+                                <div *ngIf="f.pan.errors.required">PAN is required.</div>
+                                <div *ngIf="f.pan.errors.pattern">PAN must be in valid format (AAAAA9999A).</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="card p-4 mb-0">
-                    <h4 class="text-center mb-0">Bank Account Details</h4>
-                    <div class="row">
+                <div class="card p-4 pt-2">
+                    <h5 class="text-center mb-0">Social Media</h5>
+                    <hr class="mt-2">
+                    <div class="row" formGroupName="socialMedia">
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="lable-input" for="id">Account Number:</label>
-                            <input type="text" id="id" formControlName="acNo" class="form-control">
+                            <label class="label-input" for="fb">Facebook :</label>
+                            <input type="text" id="fb" formControlName="facebook" class="form-control"
+                                   [ngClass]="{ 'is-invalid': submitted && f.socialMedia.get('facebook').errors }">
                         </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6  ps-4">
-                            <label class="lable-input" for="id">Account Type:</label>
-                            <input type="text" id="id" formControlName="acType" class="form-control">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
+                            <label class="label-input" for="linkedin">Linkedin :</label>
+                            <input type="text" id="linkedin" formControlName="linkedIn" class="form-control"
+                                   [ngClass]="{ 'is-invalid': submitted && f.socialMedia.get('linkedIn').errors }">
                         </div>
-
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="lable-input" for="id">Bank Name:</label>
-                            <input type="text" id="id" formControlName="bankName" class="form-control">
+                            <label class="label-input" for="insta">Instagram :</label>
+                            <input type="text" id="insta" formControlName="instagram" class="form-control"
+                                   [ngClass]="{ 'is-invalid': submitted && f.socialMedia.get('instagram').errors }">
                         </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6  ps-4">
-                            <label class="lable-input" for="id">IFSC Code</label>
-                            <input type="text" id="id" formControlName="ifsc" class="form-control">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
+                            <label class="label-input" for="web">Company Website :</label>
+                            <input type="text" id="web" formControlName="webSite" class="form-control"
+                                   [ngClass]="{ 'is-invalid': submitted && f.socialMedia.get('webSite').errors }">
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-4 pt-2 mb-0">
+                    <h5 class="text-center mb-0">Bank Account Details</h5>
+                    <hr class="mt-2">
+                    <div class="row" formGroupName="BankDetails">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
+                            <label class="label-input" for="acNo">Account Number :</label>
+                            <input type="text" id="acNo" formControlName="accountNumber" class="form-control"
+                                   [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('accountNumber').errors }">
+                            <div *ngIf="submitted && f.BankDetails.get('accountNumber').errors" class="invalid-feedback">
+                                <div *ngIf="f.BankDetails.get('accountNumber').errors.required">Account Number is required.</div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
+                            <label class="label-input" for="acType">Account Type :</label>
+                            <input type="text" id="acType" formControlName="accountType" class="form-control"
+                                   [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('accountType').errors }">
+                            <div *ngIf="submitted && f.BankDetails.get('accountType').errors" class="invalid-feedback">
+                                <div *ngIf="f.BankDetails.get('accountType').errors.required">Account Type is required.</div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
+                            <label class="label-input" for="bankName">Bank Name :</label>
+                            <input type="text" id="bankName" formControlName="bankName" class="form-control"
+                                   [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('bankName').errors }">
+                            <div *ngIf="submitted && f.BankDetails.get('bankName').errors" class="invalid-feedback">
+                                <div *ngIf="f.BankDetails.get('bankName').errors.required">Bank Name is required.</div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
+                            <label class="label-input" for="ifsc">IFSC Code :</label>
+                            <input type="text" id="ifsc" formControlName="IFSCcode" class="form-control"
+                                   [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('IFSCcode').errors }">
+                            <div *ngIf="submitted && f.BankDetails.get('IFSCcode').errors" class="invalid-feedback">
+                                <div *ngIf="f.BankDetails.get('IFSCcode').errors.required">IFSC Code is required.</div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-12 text-center">
-                        <button type="submit" class="btn submit-btn">Submit</button>
+                    <div class="col-12 d-flex justify-content-center mt-5">
+                        <button type="submit" class="btn submit-btn me-3" (click)="onSubmit('Save')">Submit</button>
+                        <button type="button" class="btn submit-btn" (click)="onSubmit('Update')">Update</button>
                     </div>
                 </div>
             </form>
