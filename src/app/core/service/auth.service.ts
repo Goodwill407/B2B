@@ -69,6 +69,12 @@ export class AuthService {
     return this.http.delete<any>(this.apiURL + url + "/" + id, { headers: this.headerToken });
   }
 
+  // patch when email send for patch
+  patchWithEmail(url:any,data:any){
+    return this.http.patch<any>(this.apiURL + url, data, { headers: this.headerToken });
+
+  }
+
   setTokens() {
     const token = JSON.parse(sessionStorage.getItem('tokens') || '{}');
     if (token && token.access) {
