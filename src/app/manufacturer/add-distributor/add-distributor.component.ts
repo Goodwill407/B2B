@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterLink, RouterModule } from '@angular/router';
+import { AuthService, CommunicationService } from '@core';
 
 @Component({
   selector: 'app-add-distributor',
@@ -37,7 +38,7 @@ export class AddDistributorComponent {
     { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
   ];
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService) {}
 
   ngOnInit() {
     this.initializeForm();
@@ -47,6 +48,7 @@ export class AddDistributorComponent {
     this.mgfRegistrationForm = this.fb.group({
       fullName: ['', Validators.required],
       companyName: ['',],
+      role: ['wholesaler',],
       code: ['+91', Validators.required],
       mobileNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       email: ['', [Validators.required, Validators.email]],
@@ -54,7 +56,13 @@ export class AddDistributorComponent {
   }
 
   onSubmit() {
-    
+    this.authService.post(`invitations`,this.mgfRegistrationForm.value).subscribe((res:any) =>{
+      this.communicationService.showNotification('snackbar-success', 'Distributor invitation sent successfully', 'bottom', 'center');
+      this.mgfRegistrationForm.reset();
+      this.initializeForm();
+    },(err:any) =>{
+      this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
+    })
   }
 
   

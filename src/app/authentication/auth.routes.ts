@@ -17,6 +17,10 @@ export const AUTH_ROUTE: Route[] = [
     component: SigninComponent,
   },
   {
+    path: 'signup/:email', 
+    component: SignupComponent,
+  },
+  {
     path: "signup",
     component: SignupComponent,
   },

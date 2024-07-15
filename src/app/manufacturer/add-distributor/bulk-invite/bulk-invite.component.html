@@ -1,86 +1,80 @@
 <section class="content">
-    <div class="content-block">
-      <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Invite New Distributor</h4>
-      <form [formGroup]="inviteForm" (ngSubmit)="onSubmit()" class="card">
-        <div formArrayName="distributors">
-          <div class="d-flex mt-2">
-            <h5>Invite Bulk Distributor</h5>
-            <div class="ms-auto navigation-link-log">
-              <div type="button" class="" routerLink="/mnf/new-distributor">Invite Single Distributors</div>
+  <div class="content-block">
+    <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Invite New Distributor</h4>
+    <form [formGroup]="inviteForm" (ngSubmit)="onSubmit()" class="card">
+      <div formArrayName="invitations">
+        <div class="d-flex mt-2">
+          <h5>Invite Bulk Distributor</h5>
+          <div class="ms-auto navigation-link-log">
+            <div type="button" class="" routerLink="/mnf/new-distributor">Invite Single Distributors</div>
+          </div>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between">
+          <div class="label">
+            <label>Distributor’s Name*</label>
+          </div>
+          <div class="label">
+            <label>Company’s Name</label>
+          </div>
+          <div class="mob-label">
+            <label>Mobile Number</label>
+          </div>
+          <div class="label">
+            <label>Email</label>
+          </div>
+          <div class="button">
+            <!-- <label>Email</label> -->
+          </div>
+        </div>
+        <hr>
+        <div *ngFor="let distributor of invitations.controls; let i = index" class="d-flex justify-content-between" [formGroupName]="i">
+          <div>
+            <input class="form-control" formControlName="fullName" placeholder="Distributor's Name" type="text">
+            <div *ngIf="distributor.get('fullName')?.invalid && (distributor.get('fullName')?.touched || isSubmitted)" class="text-danger">
+              {{ getErrorMessage('fullName', i) }}
             </div>
           </div>
-          <hr>
-          <div class="d-flex justify-content-between">
-            <div class="label">
-              <label>Distributor’s Name*</label>
-            </div>
-            <div class="label">
-              <label>Company’s Name</label>
-            </div>
-            <div class="mob-label">
-              <label>Mobile Number</label>
-            </div>
-            <div class="label">
-              <label>Email</label>
-            </div>
-            <div class="button">
-              <!-- <label>Email</label> -->
+          <div>
+            <input class="form-control" formControlName="companyName" placeholder="Company's Name" type="text">
+            <div *ngIf="distributor.get('companyName')?.invalid && (distributor.get('companyName')?.touched || isSubmitted)" class="text-danger">
+              {{ getErrorMessage('companyName', i) }}
             </div>
           </div>
-          <hr>
-          <div *ngFor="let distributor of distributors.controls; let i = index" class="d-flex justify-content-between" [formGroupName]="i">
-            <div>
-              <!-- <label>Distributor’s Name*</label> -->
-              <input class="form-control" formControlName="distributorName" placeholder="Distributor's Name" type="text">
-              <div *ngIf="distributor.get('distributorName')?.invalid && (distributor.get('distributorName')?.touched || isSubmitted)" class="text-danger">
-                {{ getErrorMessage('distributorName', i) }}
-              </div>
-            </div>
-            <div>
-              <!-- <label>Company’s Name</label> -->
-              <input class="form-control" formControlName="companyName" placeholder="Company's Name" type="text">
-              <div *ngIf="distributor.get('companyName')?.invalid && (distributor.get('companyName')?.touched || isSubmitted)" class="text-danger">
-                {{ getErrorMessage('companyName', i) }}
-              </div>
-            </div>
-            <div>
-              <!-- <label>Mobile Number</label> -->
-              <span class="d-flex mat-select" style="width: 350px; height: 22px;">
-                <mat-form-field appearance="outline" class="w-25 me-2">
-                  <mat-select formControlName="code">
-                      <mat-option *ngFor="let country of countryCode" [value]="country.code">
-                          <img [src]="country.flag" alt="{{ country.countryName }}"
-                              class="country-flag" /> {{ country.code }}
-                      </mat-option>
-                  </mat-select>
+          <div>
+            <span class="d-flex mat-select" style="width: 350px; height: 22px;">
+              <mat-form-field appearance="outline" class="w-25 me-2">
+                <mat-select formControlName="code">
+                  <mat-option *ngFor="let country of countryCode" [value]="country.code">
+                    <img [src]="country.flag" alt="{{ country.countryName }}" class="country-flag" /> {{ country.code }}
+                  </mat-option>
+                </mat-select>
               </mat-form-field>
-                <input class="form-control w-75" formControlName="mobileNumber" type="number" placeholder="Number">
-              </span>
-              <div *ngIf="distributor.get('mobileNumber')?.invalid && (distributor.get('mobileNumber')?.touched || isSubmitted)" class="text-danger">
-                {{ getErrorMessage('mobileNumber', i) }}
-              </div>
-            </div>
-            <div>
-              <!-- <label>Email</label> -->
-              <input class="form-control" formControlName="email" placeholder="Email" type="email">
-              <div *ngIf="distributor.get('email')?.invalid && (distributor.get('email')?.touched || isSubmitted)" class="text-danger">
-                {{ getErrorMessage('email', i) }}
-              </div>
-            </div>
-            <div class="d-flex align-items-center">
-              <button *ngIf="distributors.length > 1 && !(i === distributors.length - 1)" type="button" class="btn btn-outline-danger" (click)="removeDistributor(i)">
-                <i class="bi bi-trash"></i>
-              </button>
-              <button *ngIf="i === distributors.length - 1" type="button" class="btn btn-outline-success" (click)="addDistributor()">
-                <i class="bi bi-plus-lg"></i>
-              </button>
+              <input class="form-control w-75" formControlName="mobileNumber" type="tel" placeholder="Number">
+            </span>
+            <div *ngIf="distributor.get('mobileNumber')?.invalid && (distributor.get('mobileNumber')?.touched || isSubmitted)" class="text-danger">
+              {{ getErrorMessage('mobileNumber', i) }}
             </div>
           </div>
+          <div>
+            <input class="form-control" formControlName="email" placeholder="Email" type="email">
+            <div *ngIf="distributor.get('email')?.invalid && (distributor.get('email')?.touched || isSubmitted)" class="text-danger">
+              {{ getErrorMessage('email', i) }}
+            </div>
+          </div>
+          <div class="d-flex align-items-center">
+            <button *ngIf="invitations.length > 1 && !(i === invitations.length - 1)" type="button" class="btn btn-outline-danger" (click)="removeDistributor(i)">
+              <i class="bi bi-trash"></i>
+            </button>
+            <button *ngIf="i === invitations.length - 1" type="button" class="btn btn-outline-success" (click)="addDistributor()">
+              <i class="bi bi-plus-lg"></i>
+            </button>
+          </div>
         </div>
-        <div class="d-flex justify-content-center mt-3">
-          <button type="submit" class="btn submit-btn">Invite</button>
-        </div>
-      </form>
-    </div>
-  </section>
-  
+      </div>
+      <div class="d-flex justify-content-center mt-3">
+        <button type="submit" class="btn submit-btn">Invite</button>
+      </div>
+    </form>
+  </div>
+</section>

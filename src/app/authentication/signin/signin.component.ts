@@ -92,7 +92,7 @@ export class SigninComponent
                 }
                 this.communicationService.showNotification(
                   'snackbar-success',
-                  `${res.user.name} Login Successfully...!!!`,
+                  `Login Successfully...!!!`,
                   'bottom',
                   'center'
                 );
