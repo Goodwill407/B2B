@@ -18,11 +18,6 @@ export const APP_ROUTE: Route[] = [
         loadChildren: () => import('./ui/ui.routes').then((m) => m.UI_ROUTE),
       },
       {
-        path: 'icons',
-        loadChildren: () =>
-          import('./icons/icons.routes').then((m) => m.ICONS_ROUTE),
-      },
-      {
         path: 'mnf',
         loadChildren: () =>
           import('./manufacturer/manufacturer.routes').then((m) => m.M_Auth),

@@ -30,15 +30,15 @@ export class BulkInviteComponent {
     if (this.selectedFile) {
       const formData = new FormData();
       formData.append('file', this.selectedFile);
-      this.http.post('schools/bulkupload', formData).subscribe(
+      this.http.post('invitations/bulk-upload', formData).subscribe(
         (response) => {
           this.communicationService.showNotification('snackbar-success', 'File Uploaded Successfully...!!!', 'bottom', 'center')
-          this.duplicates = response.duplicates.data;
-          this.nonduplicates = response.nonduplicates.data;
-          this.showTable = true;
+          // this.duplicates = response.duplicates.data;
+          // this.nonduplicates = response.nonduplicates.data;
+          // this.showTable = true;
         },
         (error) => {
-          this.communicationService.showNotification('snackbar-danger', 'Error uploading file...!!!', 'bottom', 'center')
+          this.communicationService.showNotification('snackbar-danger', error.error.message, 'bottom', 'center')
         }
       );
     } else {
@@ -59,21 +59,14 @@ export class BulkInviteComponent {
     let templateData: any[] = [];
     templateData = [
       {
-        name: "",
-        district: "",
-        contact_number: "",
-        address: "",
-        udisecode: "",
-        locationType: "",
-        schoolType: "",
-        districtCode: "",
-        cluster: "",
-        clusterCode: "",
-        highestClass: "",
-        lowestClass: "",
-        contactPersonName: "",
+        fullName: "",
+        companyName: "",
+        role: "",
+        code: "",
+        mobileNumber: "",
+        email: "",
       },
     ];
-    this.communicationService.exportToCSV(templateData, 'samepleCSV');
+    this.communicationService.exportToCSV(templateData, 'Template_CSV');
   }
 }

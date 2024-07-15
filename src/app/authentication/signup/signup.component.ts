@@ -37,6 +37,7 @@ export class SignupComponent implements OnInit {
   hide = true;
   c_hide = true;
   otpFields: string[] = ['', '', '', '', '', ''];
+  email: any = '';
 
   countryCode = [
     { countryName: 'United States', flag: 'assets/images/flags/us.jpg', code: '+1' },
@@ -45,11 +46,20 @@ export class SignupComponent implements OnInit {
     { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
   ];
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private http: HttpClient, private router: Router, private spinner: NgxSpinnerService) { }
+  constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private http: HttpClient, private router: Router, private spinner: NgxSpinnerService, private route:ActivatedRoute) { }
 
   ngOnInit() {
+    this.email = this.route.snapshot.paramMap.get('email')||'';
     this.initializeForm();
     this.initializePasswordForm();
+    if(this.email){
+      this.authService.get(`invitations/${this.email}`).subscribe((res:any) => {
+        this.mgfRegistrationForm.patchValue(res);
+      },(err:any) => {
+        this.communicationService.showNotification('snackbar-danger', err.error.message,'bottom','center');
+      });
+
+    }
   }
 
   initializeForm() {
@@ -59,7 +69,7 @@ export class SignupComponent implements OnInit {
       role: ['', Validators.required],
       code: ['+91', Validators.required],
       mobileNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
-      email: ['', [Validators.required, Validators.email]],
+      email: [this.email, [Validators.required, Validators.email]],
       otp: ['']
     });
   }

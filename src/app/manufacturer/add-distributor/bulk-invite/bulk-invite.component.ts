@@ -4,8 +4,7 @@ import { FormGroup, FormBuilder, FormArray, Validators, ReactiveFormsModule } fr
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterModule } from '@angular/router';
-import { CommunicationService } from '@core';
-import { json } from 'd3';
+import { AuthService, CommunicationService } from '@core';
 
 @Component({
   selector: 'app-bulk-invite',
@@ -24,24 +23,24 @@ export class BulkInviteSingleComponent {
   inviteForm!: FormGroup;
   isSubmitted: boolean = false;
 
-  constructor(private fb: FormBuilder, private communicationService: CommunicationService) { }
+  constructor(private fb: FormBuilder, private communicationService: CommunicationService, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.inviteForm = this.fb.group({
-      distributors: this.fb.array([this.createDistributorFormGroup()])
+      invitations: this.fb.array([this.createDistributorFormGroup()])
     });
   }
 
-  get distributors(): FormArray {
-    return this.inviteForm.get('distributors') as FormArray;
+  get invitations(): FormArray {
+    return this.inviteForm.get('invitations') as FormArray;
   }
 
   createDistributorFormGroup(): FormGroup {
     return this.fb.group({
-      distributorName: ['', Validators.required],
+      fullName: ['', Validators.required],
       companyName: [''],
       code: ['+91', Validators.required],
-      mobileNumber: ['', Validators.required],
+      mobileNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       email: ['', [Validators.required, Validators.email]]
     });
   }
@@ -53,14 +52,13 @@ export class BulkInviteSingleComponent {
     { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
   ];
 
-
   addDistributor(): void {
-    this.distributors.push(this.createDistributorFormGroup());
+    this.invitations.push(this.createDistributorFormGroup());
   }
 
   removeDistributor(index: number): void {
-    if (this.distributors.length > 1) {
-      this.distributors.removeAt(index);
+    if (this.invitations.length > 1) {
+      this.invitations.removeAt(index);
     }
   }
 
@@ -70,21 +68,34 @@ export class BulkInviteSingleComponent {
       this.inviteForm.markAllAsTouched();
       return;
     }
-    else {
-      this.communicationService.showNotification('snackbar-success', 'Invitation Sent Successfully', 'bottom', 'center');
-      alert(this.inviteForm.value.toString());
-      this.isSubmitted = false;
-      this.inviteForm.reset();
-    }
+    this.authService.post('invitations/array-upload', this.inviteForm.value).subscribe(
+      invite => {
+        this.communicationService.showNotification('snackbar-success', 'Invitation Sent Successfully', 'bottom', 'center');
+        this.isSubmitted = false;
+        this.resetForm();
+      }, 
+      error => {
+        this.communicationService.showNotification('snackbar-error', error.error.message, 'bottom', 'center');
+        this.isSubmitted = false;
+        this.resetForm();
+      }
+    );
     console.log(this.inviteForm.value);
   }
 
+  resetForm(): void {
+    this.inviteForm.reset();
+    this.inviteForm.setControl('invitations', this.fb.array([this.createDistributorFormGroup()]));
+  }
+
   getErrorMessage(controlName: string, index: number): string {
-    const control = this.distributors.at(index).get(controlName);
+    const control = this.invitations.at(index).get(controlName);
     if (control?.hasError('required')) {
       return `${controlName.replace(/([A-Z])/g, ' $1')} is required.`;
     } else if (control?.hasError('email')) {
       return 'Please enter a valid email address.';
+    } else if (control?.hasError('pattern') && controlName === 'mobileNumber') {
+      return 'Please enter a valid 10-digit mobile number.';
     }
     return '';
   }
