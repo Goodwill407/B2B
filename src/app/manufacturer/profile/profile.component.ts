@@ -55,6 +55,8 @@ export class ProfileComponent {
       email2: ['', Validators.email],
       GSTIN: ['', [Validators.required, Validators.pattern(/^[0-9]{15}$/)]],
       pan: ['', [Validators.required, Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/)]],
+      // merchantImg: ['', ],
+      // companyLogo: ['', ],
       socialMedia: this.fb.group({
         facebook: [''],
         linkedIn: [''],
