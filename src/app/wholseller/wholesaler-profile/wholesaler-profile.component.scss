@@ -11,7 +11,18 @@
 .submit-btn {
     padding-right: 3rem !important;
     padding-left: 3rem !important;
-    margin: 2rem !important;
+    // margin: 2rem !important;
     background-color: #f0ad4e;
     color: #fff;
+}
+
+.form-control {
+    margin-bottom: 1rem !important; /* Adjust the value as needed */
+}
+
+// for disbled feilds
+input:disabled {
+  background-color: #f0f0f0; /* Light gray background */
+  color: #666; /* Gray text color */
+  border-color: #ddd; /* Light gray border color */
 }
