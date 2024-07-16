@@ -431,4 +431,64 @@ export class GraphService {
     return graphData
   }
 
+  // for line chart 
+  getLineChartData() {
+    return {
+      series: [
+        {
+          name: "Shirt",
+          data: [0.5, 0.7, 1.0, 0.5, 2.5, 3.0, 4.5, 0.5, 3.5, 2.0, 1.5, 3.0, 4.0, 2.0, 3.5, 1.0, 2.5, 3.5, 4.0, 2.5, 3.0, 2.0, 4.5, 3.0, 4.0, 5.5, 6.0, 2.5, 4.0, 3.5, 3.0]
+        },
+        {
+          name: "Jeans",
+          data: [1.0, 2.5, 3.5, 2.0, 4.5, 3.0, 4.0, 5.5, 6.0, 2.5, 4.0, 3.5, 3.0, 5.0, 6.5, 7.0, 4.5, 6.0, 7.5, 3.0, 5.5, 4.5, 6.5, 7.5, 9.0, 5.0, 7.5, 8.5, 4.0, 6.5, 8.0]
+        }        
+      ],
+      chart: {
+        height: 360,
+        type: 'line',
+        zoom: {
+          enabled: false // Disable zooming
+        }
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        curve: "smooth",
+        width: 4 // Adjust the line width
+      },
+      title: {
+        text: 'Day-wise Total orders:',
+        align: 'left'
+      },
+      grid: {
+        row: {
+          colors: ['#f3f3f3', 'transparent'],
+          opacity: 0
+        },
+      },
+      xaxis: {
+        categories: Array.from({ length: 31 }, (_, i) => (i + 1).toString()),
+        title: {
+          text: 'Day'
+        }
+      },
+      yaxis: {
+        title: {
+          text: 'Orders'
+        }
+      },
+      colors: ['#800080', '#ADFF2F'], // Colors for the lines
+      markers: {
+        size: 0,
+        colors: ['#black', 'black'], // Colors for the markers
+      },
+      legend: {
+        position: 'bottom',
+        horizontalAlign: 'left'
+      }
+    };
+  }
+
 }

@@ -15,6 +15,18 @@ export const ROUTES: RouteInfo[] = [
     submenu: [],
   },
   {
+    path: '/mnf/dashboard',
+    title: `Dashboard`,
+    iconType: 'material-icons-outlined',
+    icon: 'space_dashboard',
+    class: '',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['manufacture'],
+    submenu: []
+  }, 
+  {
     path: '/mnf/profile',
     title: `Profile`,
     iconType: 'material-icons-outlined',
@@ -25,7 +37,7 @@ export const ROUTES: RouteInfo[] = [
     badgeClass: '',
     role: ['manufacture'],
     submenu: []
-  },  
+  },    
   {
     path: '',
     title: `Distributor's Management`,
@@ -99,7 +111,7 @@ export const ROUTES: RouteInfo[] = [
     role: ['manufacture'],
     submenu: [
       {
-        path: '/users/trainer',
+        path: '/mnf/add-new-product',
         title: 'Add new Product',
         iconType: '',
         icon: '',
@@ -107,7 +119,7 @@ export const ROUTES: RouteInfo[] = [
         groupTitle: false,
         badge: '',
         badgeClass: '',
-        role: [''],
+        role: ['manufacture'],
         submenu: [],
       },
       {
