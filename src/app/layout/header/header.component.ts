@@ -96,57 +96,7 @@ export class HeaderComponent
     { text: 'Spanish', flag: 'assets/images/flags/spain.svg', lang: 'es' },
     { text: 'German', flag: 'assets/images/flags/germany.svg', lang: 'de' },
   ];
-  // notifications: Notifications[] = [
-  //   {
-  //     message: 'Please check your mail',
-  //     time: '14 mins ago',
-  //     icon: 'mail',
-  //     color: 'nfc-green',
-  //     status: 'msg-unread',
-  //   },
-  //   {
-  //     message: 'New Patient Added..',
-  //     time: '22 mins ago',
-  //     icon: 'person_add',
-  //     color: 'nfc-blue',
-  //     status: 'msg-read',
-  //   },
-  //   {
-  //     message: 'Your leave is approved!! ',
-  //     time: '3 hours ago',
-  //     icon: 'event_available',
-  //     color: 'nfc-orange',
-  //     status: 'msg-read',
-  //   },
-  //   {
-  //     message: 'Lets break for lunch...',
-  //     time: '5 hours ago',
-  //     icon: 'lunch_dining',
-  //     color: 'nfc-blue',
-  //     status: 'msg-read',
-  //   },
-  //   {
-  //     message: 'Patient report generated',
-  //     time: '14 mins ago',
-  //     icon: 'description',
-  //     color: 'nfc-green',
-  //     status: 'msg-read',
-  //   },
-  //   {
-  //     message: 'Please check your mail',
-  //     time: '22 mins ago',
-  //     icon: 'mail',
-  //     color: 'nfc-red',
-  //     status: 'msg-read',
-  //   },
-  //   {
-  //     message: 'Salary credited...',
-  //     time: '3 hours ago',
-  //     icon: 'paid',
-  //     color: 'nfc-purple',
-  //     status: 'msg-read',
-  //   },
-  // ];
+ 
   ngOnInit() {
     this.config = this.configService.configData;
     this.href = this.router.url;
@@ -155,16 +105,6 @@ export class HeaderComponent
     this.userImg = 'https://e7.pngegg.com/pngimages/81/570/png-clipart-profile-logo-computer-icons-user-user-blue-heroes-thumbnail.png';
     this.docElement = document.documentElement;
     this.getNotification();
-    this.langStoreValue = localStorage.getItem('lang') as string;
-    const val = this.listLang.filter((x) => x.lang === this.langStoreValue);
-    this.countryName = val.map((element) => element.text);
-    if (val.length === 0) {
-      if (this.flagvalue === undefined) {
-        this.defaultFlag = 'assets/images/flags/us.svg';
-      }
-    } else {
-      this.flagvalue = val.map((element) => element.flag);
-    }
     this.formValidate();
     this.directionService.dialogVisibility$.subscribe(visible => {
       this.visible = visible;

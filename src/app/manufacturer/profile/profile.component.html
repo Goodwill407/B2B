@@ -136,7 +136,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card p-4 pt-2 mb-0">
+                <div class="card p-4 pt-2">
                     <h5 class="text-center mb-0">Bank Account Details</h5>
                     <hr class="mt-2">
                     <div class="row" formGroupName="BankDetails">
@@ -177,6 +177,29 @@
                         </div>
                     </div>
                 </div>
+                <!-- <div class="card p-4 pt-2 mb-2">
+                    <h5 class="text-center mb-0">Images</h5>
+                    <hr class="mt-2">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <label class="label-input" for="merchantImg">Company Merchant Image :</label>
+                            <input type="file" id="merchantImg" formControlName="merchantImg" class="form-control"
+                                [ngClass]="{ 'is-invalid': submitted && f.merchantImg.errors }">
+                            <div *ngIf="submitted && f.merchantImg.errors" class="invalid-feedback">
+                                <div *ngIf="f.merchantImg.errors.required">Merchant Image is required.</div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <label class="label-input" for="comName">Company Logo :</label>
+                            <input type="file" id="comName" formControlName="companyLogo" class="form-control"
+                                [ngClass]="{ 'is-invalid': submitted && f.companyLogo.errors }">
+                            <div *ngIf="submitted && f.companyLogo.errors" class="invalid-feedback">
+                                <div *ngIf="f.companyLogo.errors.required">Company Logo required.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
                 <div class="row">
                     <div class="col-12 d-flex justify-content-center mt-5">
                         <button *ngIf="!isDataSaved" type="submit" class="btn submit-btn me-3"

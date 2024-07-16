@@ -1,7 +1,7 @@
 /* distributors.component.scss */
 
-::ng-deep .p-datatable {
-    font-size: 12px; /* Set your desired font size */
+::ng-deep .p-datatable, .btn {
+    font-size: 13px !important; /* Set your desired font size */
   }
   
   ::ng-deep .p-datatable-header,
