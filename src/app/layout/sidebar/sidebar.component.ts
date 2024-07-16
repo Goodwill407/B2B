@@ -94,17 +94,8 @@ export class SidebarComponent extends UnsubscribeOnDestroyAdapter implements OnI
       this.userFullName = this.authService.currentUserValue.username;
       if (userRole === Role.Superadmin) {
         this.userType = "Admin";
-      } else if (userRole === Role.department) {
-        this.userType = 'Department';
-      } else if (userRole === Role.Block) {
-        this.userType = Role.Block;
-      } else if (userRole === Role.State) {
-        this.userType = Role.State
-      } else if (userRole === Role.school) {
-        this.userType = 'School';
-      } else if (userRole === Role.Student) {
-        this.userImg = 'assets/images/banner/studentBoy.png';
-        this.userType = this.authService.currentUserValue.firstName;
+      } else if(userRole === Role.Wholesaler){
+        this.userType = 'Wholesaler'
       } else if (userRole === Role.counsellor) {
         this.userType = 'Career Counsellor';
       }
