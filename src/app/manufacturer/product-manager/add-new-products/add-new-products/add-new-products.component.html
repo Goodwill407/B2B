@@ -1,7 +1,445 @@
 <section class="content">
     <div class="content-block">
-       <div class="p-4">
-        <h4>Add New Product</h4>
-       </div>
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Add New Product</h4>
+        <div class="card p-4">
+
+            <form [formGroup]="addProductForm">
+                <!-- Step 1 -->
+                <div *ngIf="currentStep === 1" [formGroup]="stepOne">
+                    <div class="row">
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="designNumber">Design No.</label>
+                            <input type="text" id="designNumber" formControlName="designNumber" class="form-control">
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="brand">Brand</label>
+                            <input type="text" id="brand" formControlName="brand" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="productType">Product Type</label>
+                            <select name="productType" id="productType" class="form-select"
+                                formControlName="productType">
+                                <option value="" disabled selected>Select</option>
+                                <option [value]="type" *ngFor="let type of allProductType">{{type}}</option>
+                            </select>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="gender">Gender</label>
+                            <select name="gender" id="gender" class="form-select" formControlName="gender">
+                                <option value="" disabled selected>Select</option>
+                                <option [value]="gender" *ngFor="let gender of allGender">{{gender}}</option>
+                            </select>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="clothing">Clothing</label>
+                            <select name="clothing" id="clothing" class="form-select" formControlName="clothing">
+                                <option value="" disabled selected>Select</option>
+                                <option [value]="clothing.name" *ngFor="let clothing of allClothingType">
+                                    {{clothing.name}}</option>
+                            </select>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="subCategory">Sub Category</label>
+                            <select name="subCategory" id="subCategory" class="form-select"
+                                formControlName="subCategory">
+                                <option value="" disabled selected>Select</option>
+                                <option [value]="subCategory" *ngFor="let subCategory of allSubCategory">{{subCategory}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+
+
+                    <div class="row mt-2">
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                            <label class="label-input" for="productTitle">Product Title</label>
+                            <input type="text" id="productTitle" formControlName="productTitle" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8">
+                            <label class="label-input" for="productDescription">Product Description</label>
+                            <textarea name="productDescription" id="productDescription" class="form-control"
+                                formControlName="productDescription"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="material">Material</label>
+                            <select name="material" id="material" class="form-select" formControlName="material">
+                                <option value="" disabled selected>Select</option>
+                                <option [value]="type.name" *ngFor="let type of allMaterialType">{{type.name}}</option>
+                            </select>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                            <label class="label-input" for="materialvariety">Material Variety of any</label>
+                            <input type="text" id="materialvariety" formControlName="materialvariety"
+                                class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="fabricPattern">Fabric Pattern</label>
+                            <select name="fabricPattern" id="fabricPattern" class="form-select"
+                                formControlName="fabricPattern">
+                                <option value="" disabled selected>Select</option>
+                                <option [value]="type.name" *ngFor="let type of allFabricPattern">{{type.name}}</option>
+                            </select>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="fitStyle">Occasion</label>
+                            <p-multiSelect [options]="demo" placeholder="Select Occasion" optionLabel="name"
+                                formControlName="selectedOccasion"></p-multiSelect>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="lifeStyle">Life Style</label>
+                            <p-multiSelect [options]="demo" placeholder="Select Style" optionLabel="name"
+                                formControlName="selectedlifeStyle"></p-multiSelect>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="fitStyle">Fit Style</label>
+                            <select name="fitStyle" id="fitStyle" class="form-select" formControlName="fitStyle">
+                                <option value="" disabled selected>Select</option>
+                                <option [value]="type.name" *ngFor="let type of allFitStyle">{{type.name}}</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="neckStyle">Neck Style</label>
+                            <select name="neckStyle" id="neckStyle" class="form-select" formControlName="neckStyle">
+                                <option value="" disabled selected>Select</option>
+                                <option [value]="type.name" *ngFor="let type of allNeckStyle">{{type.name}}</option>
+                            </select>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="closureType">Closure Type</label>
+                            <select name="closureType" id="closureType" class="form-select"
+                                formControlName="closureType">
+                                <option value="" disabled selected>Select</option>
+                                <option [value]="type.name" *ngFor="let type of allClosureType">{{type.name}}</option>
+
+                            </select>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="pocketDescription">Pocket Description</label>
+                            <select name="pocketDescription" id="pocketDescription" class="form-select"
+                                formControlName="pocketDescription">
+                                <option value="" disabled selected>Select</option>
+                                <option [value]="type.name" *ngFor="let type of allPocketDiscription">{{type.name}}
+                                </option>
+
+                            </select>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="sleeveCuffStyle">Sleeve Cuff Style</label>
+                            <select name="sleeveCuffStyle" id="sleeveCuffStyle" class="form-select"
+                                formControlName="sleeveCuffStyle">
+                                <option value="" disabled selected>Select</option>
+                                <option [value]="type.name" *ngFor="let type of allPocketDiscription">{{type.name}}
+                                </option>
+
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="sleeveLength">Sleeve Length</label>
+                            <select name="sleeveLength" id="sleeveLength" class="form-select"
+                                formControlName="sleeveLength">
+                                <option value="" disabled selected>Select</option>
+                                <option [value]="type.name" *ngFor="let type of allSleeveLength">{{type.name}}</option>
+                            </select>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="specialFeature">Special Feature</label>
+                            <p-multiSelect [options]="demo" placeholder="Select" optionLabel="name"
+                                formControlName="specialFeature"></p-multiSelect>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="careInstructions">Care Instructions</label>
+                            <select name="careInstructions" id="careInstructions" class="form-select"
+                                formControlName="careInstructions">
+                                <option value="" disabled selected>Select</option>
+                                <option [value]="type.name" *ngFor="let type of allCareInstruction">{{type.name}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="m-0 p-4 border mt-2 pt-2 " style="background-color: aliceblue;">
+                        <div class="row">
+                            <h5 class="mb-2">Standard Size Set :</h5>
+                            <div class="size-checkboxes">
+                                <label class="me-4" *ngFor="let size of sizes">
+                                    <input type="checkbox" [value]="size" (change)="onSizeChange($event, size)" />
+                                    {{ size }}
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Dynamically added size details fields -->
+                        <div *ngIf="sizesArray.controls.length > 0" class="row mt-2" formArrayName="sizes">
+                            <h5 class="mt-4">Size Chart :</h5>
+                            <div class="col-12">
+                                <div class="row mb-2">
+                                    <div class="col-md-2">Standard Size</div>
+                                    <div class="col-md-2">Brand Size</div>
+                                    <div class="col-md-2">Chest Size</div>
+                                    <div class="col-md-2">Shoulder Size</div>
+                                    <div class="col-md-2">Front Length</div>
+
+                                </div>
+                                <hr>
+                            </div>
+                            <div class="col-12" *ngFor="let sizeGroup of sizesArray.controls; let i = index"
+                                [formGroupName]="i">
+                                <div class="row">
+                                    <div class="col-md-2 mt-2">
+                                        <label>{{ sizeGroup.get('size')?.value }}</label>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="text" formControlName="brandSize" class="form-control"
+                                            placeholder="Brand Size">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="text" formControlName="chest" class="form-control"
+                                            placeholder="Chest">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="text" formControlName="shoulder" class="form-control"
+                                            placeholder="Shoulder">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="text" formControlName="frontLength" class="form-control"
+                                            placeholder="Front Length">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="m-0 p-4 border mt-4 pt-2" style="background-color: aliceblue;">
+                        <div class="row  " formGroupName="ProductDeimension">
+                            <h5>Product Dimension (in CM):</h5>
+
+                            <div class="col-3">
+                                <label for="">Length</label>
+                                <input type="text" formControlName="length" class="form-control">
+                            </div>
+                            <div class="col-3">
+                                <label for="">Width</label>
+                                <input type="text" formControlName="width" class="form-control">
+                            </div>
+                            <div class="col-3">
+                                <label for="">Height</label>
+                                <input type="text" formControlName="height" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-3">
+                            <label for="">Net weight (in Grams)</label>
+                            <input type="text" formControlName="netWeight" class="form-control">
+                        </div>
+                        <div class="col-3">
+                            <label for="">MRP</label>
+                            <input type="text" formControlName="MRP" class="form-control">
+                        </div>
+                    </div>
+
+
+                    <div class="d-flex justify-content-center  mt-4">
+                        <button type="button" class="btn btn-info me-2" (click)="nextStep()">Save and Next >></button>
+                    </div>
+
+                </div>
+
+
+
+                <!-- second-step -->
+                <!-- <div *ngIf="currentStep === 2" class="p-4 border mt-2 pt-2" style="background-color: aliceblue;">
+            <h5>Colour Collection:</h5>
+            <button type="button" class="btn btn-info" (click)="addColorGroup()">+ Add Color</button>
+            <div formArrayName="colorCollection">
+                <div *ngFor="let colorGroup of colorCollection.controls; let i = index" [formGroupName]="i">
+                    <div class="row">
+                        <div class="col-2 mt-2">
+                            <label for="colorCode">Color Code</label>
+                            <input type="color" id="colorCode" formControlName="colorCode" class="form-control" style="height: 35px;">
+                        </div>
+                        <div class="col-2 mt-2">
+                            <label for="colorName">Color Name</label>
+                            <input type="text" id="colorName" formControlName="colorName" class="form-control" placeholder="Color Name">
+                        </div>
+                        <div class="col-2 mt-2">
+                            <label for="colorImage">Color Image</label>
+                            <input type="file" id="colorImage" (change)="onFileChange($event, 'colorImage', i)" class="form-control">
+                        </div>
+                        <div class="col-2 mt-2">                            
+                            <label>Product Images</label>
+                            <div class="div">
+                                <button type="button" class="p-2 text-center border-0" (click)="showProductImageDialog(i)">show pop-up</button>
+                            </div>
+
+
+                                                       
+                            
+                          
+                            <p-dialog  [(visible)]="displayProductImageDialog"  [modal]="true"  [style]="{ 'width': '30%' }">
+                                <ng-template pTemplate="header p-0" hidden>
+                                   
+                                </ng-template>
+                            <div formArrayName="productImages" class="d-flex">
+                                <div *ngFor="let productImage of getFormArray(colorGroup, 'productImages').controls; let j = index" [formGroupName]="j" class="product-image-container">
+                                    <div *ngIf="productImage.value" class="image-preview-container position-relative">
+                                        <button type="button" style="border: none;font-size: 14px;" class="cancel-button position-relative" (click)="removeProductImageGroup(i, j)">X</button>
+                                        <img [src]="productImage.value" width="60px" height="60px" alt="Product Image" class="image-preview">                                
+                                         
+                                    </div>
+                                </div>
+                                <button type="button" class="p-4 text-center border-0 ms-5" (click)="triggerFileInput(i)"><i class="bi bi-plus-square-dotted"></i></button>
+                            </div>
+                            <input type="file" #fileInput hidden (change)="onFileChange($event, 'productImages', i)">
+                        </p-dialog>
+                        </div>
+
+                       
+                        <div class="col-2 mt-2">
+                            <label>Product Video</label>
+                            <div class="video-upload">
+                            <input type="file" id="videoUpload" class="form-control" (change)="onFileChange($event, 'colorImage', i)" accept="video/*">
+                           </div>
+                        </div>
+
+
+                        <div class="col-1 d-flex justify-content-end mt-2">
+                            <button type="button" (click)="removeColorGroup(i)" class="btn">
+                                <i class="fs-4 bi bi-dash-circle-fill text-success"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+                <!-- Step 2 -->
+                <!-- Step 2 -->
+                <div *ngIf="currentStep === 2" [formGroup]="stepTwo" class="p-4 border mt-2 pt-2"
+                    style="background-color: aliceblue;">
+                    <h5>Color Collection:</h5>
+                    <button type="button" class="btn btn-info" (click)="addColorGroup()">+ Add Color</button>
+                    <div formArrayName="colorCollection">
+                        <div *ngFor="let colorGroup of colorCollection.controls; let i = index" [formGroupName]="i">
+                            <div class="row">
+                                <div class="col-2 mt-2">
+                                    <label for="colorCode">Color Code</label>
+                                    <input type="color" id="colorCode" formControlName="colour" class="form-control"
+                                        style="height: 35px;">
+                                </div>
+                                <div class="col-2 mt-2">
+                                    <label for="colorName">Color Name</label>
+                                    <input type="text" id="colorName" formControlName="colourName" class="form-control"
+                                        placeholder="Color Name">
+                                </div>
+                                <div class="col-2 mt-2">
+                                    <label for="colorImage">Color Image</label>
+                                    <input type="file" id="colourImage" (change)="onFileChange($event, 'colorImage', i)"
+                                        class="form-control">
+                                </div>
+                                <div class="col-2 mt-2">
+                                    <label>Product Images</label>
+                                    <div class="div">
+                                        <button type="button" class="add-product-Image-btn"
+                                            (click)="showProductImageDialog(i)"><i
+                                                class="fs-6 bi bi-plus-circle-fill text-success"></i> ADD Product
+                                            Images</button>
+                                    </div>
+
+                                    
+                                    <!-- Dialog Box for Product Images -->
+                                    <p-dialog [(visible)]="displayProductImageDialog" [modal]="true"  [dismissableMask]="true"
+                                        [style]="{ 'width': '30%' }" [contentStyle]="{ 'padding': '20px' }"
+                                        [closable]="true">
+                                        <ng-template pTemplate="header">
+                                            <h5>Product Images</h5>
+                                        </ng-template>
+                                        <div formArrayName="productImages" class="d-flex flex-wrap border p-2">
+                                            <div *ngFor="let productImage of getFormArray(colorGroup, 'productImages').controls; let j = index"
+                                                [formGroupName]="j" class="product-image-container m-2">
+                                                <div *ngIf="productImage.value"
+                                                    class="image-preview-container position-relative">
+                                                    <button type="button" class="cancel-button"
+                                                        (click)="removeProductImageGroup(i, j)">X</button>
+                                                    <img [src]="productImage.value" width="60px" height="60px"
+                                                        alt="Product Image" class="image-preview">
+                                                </div>
+                                            </div>
+                                            <button *ngIf="getFormArray(colorGroup, 'productImages').controls.length < 5" type="button" class="add-image-button p-4 text-center"
+                                                (click)="triggerFileInput(i)">
+                                                <i class="bi bi-plus-square-dotted"></i>
+                                            </button>
+                                        </div>
+                                        <input type="file" #fileInput hidden
+                                            (change)="onFileChange($event, 'productImages', i)">
+                                            <div class="d-flex justify-content-end p-2">
+                                                <button type="button" class="p-button p-component p-button-text me-2"
+                                                (click)="saveProductImages()">Cancel</button>
+                                                <button type="button" class="p-button p-component p-button-text"
+                                                (click)="saveProductImages()">Save</button>
+                                            </div>
+                                        
+                                    </p-dialog>
+                                    </div>
+
+                                    <!-- For Video -->
+                                    <div class="col-2 mt-2">
+                                        <label>Product Video</label>
+                                        <div class="video-upload">
+                                            <input type="file" id="videoUpload" class="form-control"
+                                                (change)="onFileChange($event, 'productVideo', i)" accept="video/*">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-1 d-flex justify-content-end mt-2">
+                                        <button type="button" (click)="removeColorGroup(i)" class="btn">
+                                            <i class="fs-4 bi bi-dash-circle-fill text-danger"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-center mt-3">
+                            <button type="button" class="btn btn-info me-2" (click)="prevStep()">
+                                << Previous</button>
+                                    <button type="submit" class="btn btn-info"
+                                        (click)="saveStepTwoData()">Submit</button>
+                        </div>
+
+
+                    </div>
+
+            </form>
+
+
+        </div>
     </div>
 </section>
