@@ -456,7 +456,7 @@ export class GraphService {
       },
       stroke: {
         curve: "smooth",
-        width: 4 // Adjust the line width
+        width: 2 // Adjust the line width
       },
       title: {
         text: 'Day-wise Total orders:',
