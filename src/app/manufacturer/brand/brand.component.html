@@ -1,0 +1,94 @@
+<section class="content">
+    <div class="content-block">
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Brands</h4>
+        <div class="card px-4 py-2">
+            <h5 class="">Add Brands</h5>
+            <hr class="mt-0">
+            <form [formGroup]="brandForm" (ngSubmit)="onSubmit()">
+                <div class="w-75">
+                    <label for="brandName">Brand Name:</label>
+                    <input type="text" id="brandName" formControlName="brandName" class="form-control" />
+                    <div *ngIf="brandForm.get('brandName')?.touched && brandForm.get('brandName')?.invalid"
+                        class="text-danger">
+                        Brand Name is required.
+                    </div>
+                </div>
+
+                <div class="mt-2 w-75">
+                    <label for="brandDescription">Brand Description:</label>
+                    <textarea id="brandDescription" formControlName="brandDescription" class="form-control"></textarea>
+                    <div *ngIf="brandForm.get('brandDescription')?.touched && brandForm.get('brandDescription')?.invalid"
+                        class="text-danger">
+                        Brand Description is required.
+                    </div>
+                </div>
+
+                <div class="mt-2 w-50">
+                    <label for="brandLogo">Brand Logo:</label>
+                    <input type="file" id="brandLogo" (change)="onImageChange($event)" class="form-control" />
+                    <div *ngIf="imageFormatError" class="text-danger">{{ imageFormatError }}</div>
+                    <!-- <div *ngIf="imageDimensionError" class="text-danger">{{ imageDimensionError }}</div> -->
+                    <div *ngIf="imagePreview">
+                        <img [src]="imagePreview" alt="Image Preview" class="img-thumbnail"
+                            style="width: 150px; height: 150px;" />
+                    </div>
+                </div>
+                <div class="mt-2 text-danger" style="font-size: small;">Note : Upload Image in .jpeg or .png format,
+                    Dimension - 300 x 300 px</div>
+                <div class="form-group text-center mt-3">
+                    <button type="submit" class="btn submit-btn" [disabled]="brandForm.invalid">
+                        {{formType}}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- table -->
+        <div class="card p-2">
+            <h5 class="mt-2">Brand List:</h5>
+            <hr>
+            <div class="p-grid p-fluid ">
+                <div class="p-col-12 text-center">
+                    <p-table [value]="distributors">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Brand Name</th>
+                                <th>Brand Description</th>
+                                <th>Brand Logo</th>
+                                <th>Action</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-distributors>
+                            <tr>
+                                <td class="text-center py-0">{{distributors.brandName}}</td>
+                                <td class="text-center py-0">{{distributors.brandDescription}}</td>
+                                <td class="text-center py-0">
+                                    <img [src]="cdnPath+distributors.brandLogo" alt="Brand Logo" class="img-thumbnail"
+                                        style="width: 60px; height: 60px;" />
+                                </td>
+                                <td class="py-0">
+                                    <div class="button-container text-center">
+
+                                        <button class="btn btn-icon p-2" pTooltip="Edit"
+                                            (click)="editForm(distributors)" tooltipPosition="top">
+                                            <!-- <i class="fas fa-eye"></i> -->
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </button>
+
+                                        <button class="btn btn-icon p-2" (click)="deleteData(distributors)" pTooltip="Delete" tooltipPosition="top">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    <p-paginator *ngIf="distributors && distributors.length > 0" (onPageChange)="onPageChange($event)"
+                        [first]="first" [rows]="rows" [totalRecords]="totalResults"
+                        [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

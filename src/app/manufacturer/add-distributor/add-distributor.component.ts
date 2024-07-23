@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterLink, RouterModule } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-add-distributor',
@@ -23,7 +24,8 @@ import { AuthService, CommunicationService } from '@core';
     MatIconModule,
     RouterLink,
     MatButtonModule,
-    CommonModule
+    CommonModule,
+    NgxSpinnerModule
   ],
   templateUrl: './add-distributor.component.html',
   styleUrl: './add-distributor.component.scss'
@@ -38,7 +40,7 @@ export class AddDistributorComponent {
     { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
   ];
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService) {}
+  constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private spinner: NgxSpinnerService) {}
 
   ngOnInit() {
     this.initializeForm();
@@ -56,11 +58,14 @@ export class AddDistributorComponent {
   }
 
   onSubmit() {
+    this.spinner.show();
     this.authService.post(`invitations`,this.mgfRegistrationForm.value).subscribe((res:any) =>{
       this.communicationService.showNotification('snackbar-success', 'Distributor invitation sent successfully', 'bottom', 'center');
       this.mgfRegistrationForm.reset();
       this.initializeForm();
+      this.spinner.hide();
     },(err:any) =>{
+      this.spinner.hide();
       this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
     })
   }

@@ -160,7 +160,7 @@ export class SignupComponent implements OnInit {
   }
 
   changeUserStatus(user: any){
-    this.authService.patchWithEmail(`invitations/${user.email}`,{status:'accepted'}).subscribe((res)=>{
+    this.authService.patchWithEmail(`invitations/${user}`,{status:'accepted'}).subscribe((res)=>{
       this.communicationService.showNotification('snackbar-success', 'User status updated successfully','bottom','center');
     });
   }
