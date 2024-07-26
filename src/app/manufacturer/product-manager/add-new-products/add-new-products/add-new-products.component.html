@@ -1,3 +1,5 @@
+
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-scale-multiple"></ngx-spinner>
 <section class="content">
     <div class="content-block">
         <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Add New Product</h4>
@@ -50,7 +52,8 @@
                             <select name="subCategory" id="subCategory" class="form-select"
                                 formControlName="subCategory">
                                 <option value="" disabled selected>Select</option>
-                                <option [value]="subCategory" *ngFor="let subCategory of allSubCategory">{{subCategory}}
+                                <option [value]="subCategory.subCategory" *ngFor="let subCategory of allSubCategory">
+                                    {{subCategory.subCategory}}
                                 </option>
                             </select>
                         </div>
@@ -101,13 +104,13 @@
 
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                             <label class="label-input" for="fitStyle">Occasion</label>
-                            <p-multiSelect [options]="demo" placeholder="Select Occasion" optionLabel="name"
+                            <p-multiSelect [options]="allOccasionType" placeholder="Select Occasion" optionLabel=""
                                 formControlName="selectedOccasion"></p-multiSelect>
                         </div>
 
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                             <label class="label-input" for="lifeStyle">Life Style</label>
-                            <p-multiSelect [options]="demo" placeholder="Select Style" optionLabel="name"
+                            <p-multiSelect [options]="allLifeStyle" placeholder="Select Style" optionLabel=""
                                 formControlName="selectedlifeStyle"></p-multiSelect>
                         </div>
 
@@ -153,7 +156,7 @@
                             <select name="sleeveCuffStyle" id="sleeveCuffStyle" class="form-select"
                                 formControlName="sleeveCuffStyle">
                                 <option value="" disabled selected>Select</option>
-                                <option [value]="type.name" *ngFor="let type of allPocketDiscription">{{type.name}}
+                                <option [value]="type.name" *ngFor="let type of allSleeveCutStyle">{{type.name}}
                                 </option>
 
                             </select>
@@ -171,7 +174,7 @@
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                             <label class="label-input" for="specialFeature">Special Feature</label>
-                            <p-multiSelect [options]="demo" placeholder="Select" optionLabel="name"
+                            <p-multiSelect [options]="allSpecialFeature" placeholder="Select" optionLabel=""
                                 formControlName="specialFeature"></p-multiSelect>
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
@@ -185,7 +188,7 @@
                         </div>
                     </div>
 
-                    <div class="m-0 p-4 border mt-2 pt-2 " style="background-color: aliceblue;">
+                    <div class="m-0 p-4 border mt-2 pt-2 rounded " style="background-color: aliceblue;">
                         <div class="row">
                             <h5 class="mb-2">Standard Size Set :</h5>
                             <div class="size-checkboxes">
@@ -238,7 +241,7 @@
                     </div>
 
 
-                    <div class="m-0 p-4 border mt-4 pt-2" style="background-color: aliceblue;">
+                    <div class="m-0 p-4 border mt-4 pt-2 rounded" style="background-color: aliceblue;">
                         <div class="row  " formGroupName="ProductDeimension">
                             <h5>Product Dimension (in CM):</h5>
 
@@ -275,169 +278,128 @@
 
                 </div>
 
-
-
-                <!-- second-step -->
-                <!-- <div *ngIf="currentStep === 2" class="p-4 border mt-2 pt-2" style="background-color: aliceblue;">
-            <h5>Colour Collection:</h5>
-            <button type="button" class="btn btn-info" (click)="addColorGroup()">+ Add Color</button>
-            <div formArrayName="colorCollection">
-                <div *ngFor="let colorGroup of colorCollection.controls; let i = index" [formGroupName]="i">
-                    <div class="row">
-                        <div class="col-2 mt-2">
-                            <label for="colorCode">Color Code</label>
-                            <input type="color" id="colorCode" formControlName="colorCode" class="form-control" style="height: 35px;">
-                        </div>
-                        <div class="col-2 mt-2">
-                            <label for="colorName">Color Name</label>
-                            <input type="text" id="colorName" formControlName="colorName" class="form-control" placeholder="Color Name">
-                        </div>
-                        <div class="col-2 mt-2">
-                            <label for="colorImage">Color Image</label>
-                            <input type="file" id="colorImage" (change)="onFileChange($event, 'colorImage', i)" class="form-control">
-                        </div>
-                        <div class="col-2 mt-2">                            
-                            <label>Product Images</label>
-                            <div class="div">
-                                <button type="button" class="p-2 text-center border-0" (click)="showProductImageDialog(i)">show pop-up</button>
-                            </div>
-
-
-                                                       
-                            
-                          
-                            <p-dialog  [(visible)]="displayProductImageDialog"  [modal]="true"  [style]="{ 'width': '30%' }">
-                                <ng-template pTemplate="header p-0" hidden>
-                                   
-                                </ng-template>
-                            <div formArrayName="productImages" class="d-flex">
-                                <div *ngFor="let productImage of getFormArray(colorGroup, 'productImages').controls; let j = index" [formGroupName]="j" class="product-image-container">
-                                    <div *ngIf="productImage.value" class="image-preview-container position-relative">
-                                        <button type="button" style="border: none;font-size: 14px;" class="cancel-button position-relative" (click)="removeProductImageGroup(i, j)">X</button>
-                                        <img [src]="productImage.value" width="60px" height="60px" alt="Product Image" class="image-preview">                                
-                                         
-                                    </div>
-                                </div>
-                                <button type="button" class="p-4 text-center border-0 ms-5" (click)="triggerFileInput(i)"><i class="bi bi-plus-square-dotted"></i></button>
-                            </div>
-                            <input type="file" #fileInput hidden (change)="onFileChange($event, 'productImages', i)">
-                        </p-dialog>
-                        </div>
-
-                       
-                        <div class="col-2 mt-2">
-                            <label>Product Video</label>
-                            <div class="video-upload">
-                            <input type="file" id="videoUpload" class="form-control" (change)="onFileChange($event, 'colorImage', i)" accept="video/*">
-                           </div>
-                        </div>
-
-
-                        <div class="col-1 d-flex justify-content-end mt-2">
-                            <button type="button" (click)="removeColorGroup(i)" class="btn">
-                                <i class="fs-4 bi bi-dash-circle-fill text-success"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-                <!-- Step 2 -->
-                <!-- Step 2 -->
-                <div *ngIf="currentStep === 2" [formGroup]="stepTwo" class="p-4 border mt-2 pt-2"
+            <div *ngIf="currentStep === 2" class="">
+                <div  [formGroup]="stepTwo" class="border p-4 rounded"
                     style="background-color: aliceblue;">
-                    <h5>Color Collection:</h5>
-                    <button type="button" class="btn btn-info" (click)="addColorGroup()">+ Add Color</button>
-                    <div formArrayName="colorCollection">
-                        <div *ngFor="let colorGroup of colorCollection.controls; let i = index" [formGroupName]="i">
-                            <div class="row">
-                                <div class="col-2 mt-2">
-                                    <label for="colorCode">Color Code</label>
-                                    <input type="color" id="colorCode" formControlName="colour" class="form-control"
-                                        style="height: 35px;">
-                                </div>
-                                <div class="col-2 mt-2">
-                                    <label for="colorName">Color Name</label>
-                                    <input type="text" id="colorName" formControlName="colourName" class="form-control"
-                                        placeholder="Color Name">
-                                </div>
-                                <div class="col-2 mt-2">
-                                    <label for="colorImage">Color Image</label>
-                                    <input type="file" id="colourImage" (change)="onFileChange($event, 'colorImage', i)"
-                                        class="form-control">
-                                </div>
-                                <div class="col-2 mt-2">
-                                    <label>Product Images</label>
-                                    <div class="div">
-                                        <button type="button" class="add-product-Image-btn"
-                                            (click)="showProductImageDialog(i)"><i
-                                                class="fs-6 bi bi-plus-circle-fill text-success"></i> ADD Product
-                                            Images</button>
-                                    </div>
+                    <h5>Add Color Collection:</h5>
+                    <div class="row">
+                        <!-- Color Code -->
+                        <div class="col-2">
+                            <label for="colorCode">Color Code</label>
+                            <input type="color" id="colorCode" formControlName="colour"
+                                class="form-control color-input">
+                        </div>
 
-                                    
-                                    <!-- Dialog Box for Product Images -->
-                                    <p-dialog [(visible)]="displayProductImageDialog" [modal]="true"  [dismissableMask]="true"
-                                        [style]="{ 'width': '30%' }" [contentStyle]="{ 'padding': '20px' }"
-                                        [closable]="true">
-                                        <ng-template pTemplate="header">
-                                            <h5>Product Images</h5>
-                                        </ng-template>
-                                        <div formArrayName="productImages" class="d-flex flex-wrap border p-2">
-                                            <div *ngFor="let productImage of getFormArray(colorGroup, 'productImages').controls; let j = index"
-                                                [formGroupName]="j" class="product-image-container m-2">
-                                                <div *ngIf="productImage.value"
-                                                    class="image-preview-container position-relative">
-                                                    <button type="button" class="cancel-button"
-                                                        (click)="removeProductImageGroup(i, j)">X</button>
-                                                    <img [src]="productImage.value" width="60px" height="60px"
-                                                        alt="Product Image" class="image-preview">
-                                                </div>
-                                            </div>
-                                            <button *ngIf="getFormArray(colorGroup, 'productImages').controls.length < 5" type="button" class="add-image-button p-4 text-center"
-                                                (click)="triggerFileInput(i)">
-                                                <i class="bi bi-plus-square-dotted"></i>
-                                            </button>
-                                        </div>
-                                        <input type="file" #fileInput hidden
-                                            (change)="onFileChange($event, 'productImages', i)">
-                                            <div class="d-flex justify-content-end p-2">
-                                                <button type="button" class="p-button p-component p-button-text me-2"
-                                                (click)="saveProductImages()">Cancel</button>
-                                                <button type="button" class="p-button p-component p-button-text"
-                                                (click)="saveProductImages()">Save</button>
-                                            </div>
-                                        
-                                    </p-dialog>
-                                    </div>
-
-                                    <!-- For Video -->
-                                    <div class="col-2 mt-2">
-                                        <label>Product Video</label>
-                                        <div class="video-upload">
-                                            <input type="file" id="videoUpload" class="form-control"
-                                                (change)="onFileChange($event, 'productVideo', i)" accept="video/*">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-1 d-flex justify-content-end mt-2">
-                                        <button type="button" (click)="removeColorGroup(i)" class="btn">
-                                            <i class="fs-4 bi bi-dash-circle-fill text-danger"></i>
-                                        </button>
-                                    </div>
-                                </div>
+                        <!-- Color Name -->
+                        <div class="col-2">
+                            <label for="colorName">Color Name</label>
+                            <input type="text" id="colorName" formControlName="colourName" class="form-control"
+                                placeholder="Color Name">
+                            <div *ngIf="stepTwo.get('colourName')?.touched && stepTwo.get('colourName')?.invalid"
+                                class="text-danger">
+                                Color Name is required
                             </div>
                         </div>
-                        <div class="d-flex justify-content-center mt-3">
-                            <button type="button" class="btn btn-info me-2" (click)="prevStep()">
-                                << Previous</button>
-                                    <button type="submit" class="btn btn-info"
-                                        (click)="saveStepTwoData()">Submit</button>
+
+                        <!-- Color Image -->
+                        <div class="col-2">
+                            <label for="colourImage">Product Icon</label>
+                            <input type="file" id="colourImage" (change)="onFileChange($event, 'colourImage')"
+                                class="form-control file-input">
+                            <div *ngIf="stepTwo.get('colourImage')?.touched && stepTwo.get('colourImage')?.invalid"
+                                class="text-danger">
+                                Color Image is required
+                            </div>
                         </div>
 
-
+                        <!-- Product Video -->
+                        <div class="col-3">
+                            <label for="videoUpload">Product Video</label>
+                            <input type="file" id="videoUpload" class="form-control file-input"
+                                (change)="onFileChange($event, 'productVideo')" accept="video/*">
+                            <div *ngIf="stepTwo.get('productVideo')?.touched && stepTwo.get('productVideo')?.invalid"
+                                class="text-danger">
+                                Product Video is required
+                            </div>
+                            <div *ngIf="videoSizeError" class="text-danger">
+                                {{ videoSizeError }}
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- for product Images -->
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="">Add Product Images &nbsp;<small style="color: brown;">(max 5 images
+                                    add)</small></label>
+                            <div class="d-flex flex-wrap align-items-center product-box">
+                                <div *ngFor="let image of productImages.controls; let i = index"
+                                    class="position-relative m-1 image-container">
+                                    <img [src]="image.value ? createObjectURL(image.value) : ''" alt="Product Image"
+                                        class="image-preview">
+                                    <button type="button" class="cancel-button"
+                                        (click)="removeProductImage(i)">X</button>
+                                </div>
+                                <button *ngIf="productImages.length < 5" type="button" class="add-image-button"
+                                    (click)="triggerFileInput()">
+                                    <i class="bi bi-plus-square-dotted"></i>
+                                </button>
+                                <input type="file" id="productImageInput" (change)="onProductImageChange($event)"
+                                    hidden>
+                            </div>
+                            <div *ngIf="productImages.length === 0 && stepTwo.get('productImages')?.touched"
+                                class="text-danger mt-2">
+                                At least one product image is required
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center mt-3">
+                        <!-- <button type="button" class="btn btn-info me-2" (click)="prevStep()">
+                            &lt;&lt; Previous
+                        </button> -->
+                        <button type="submit" class="btn btn-info d-flex" (click)="saveStepTwoData()"><i class="bi bi-plus"></i> Add New Color</button>
+                    </div>                   
+                </div>
+
+                 <!-- show added color collection -->
+                                  
+                    <div class="border p-4 rounded mt-4" [ngClass]="colourCollections?.length > 0 ? '' :'d-none'" >
+                        <h5>Added Colour-Collection</h5>
+                   <div  class="table-container rounded" >
+                    <table>
+                      <thead>
+                        <tr>
+                            <th>Sr. NO.</th>
+                           <th>Colour Name</th>
+                          <th>Colour Image</th>
+                          <th>Product Video</th>
+                          <th>Product Images</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let collection of colourCollections;let i = index">
+                            <td>{{ i+1 }}</td>
+                          <td>{{ collection.colourName | titlecase }}</td>
+                          <td><img [src]="CloudPath+collection.colourImage" alt="{{ collection.colourName }}"></td>
+                          <td><video controls [src]="collection.productVideo"></video></td>
+                          <td>
+                            <div class="product-images">
+                              <img *ngFor="let image of collection.productImages" [src]="CloudPath+image" alt="Product Image">
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+            </div>
+        </div>
+
 
             </form>
+
+
 
 
         </div>

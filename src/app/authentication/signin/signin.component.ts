@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
+import { NgxSpinner } from 'ngx-spinner';
 @Component({
   selector: 'app-signin',
   templateUrl: './signin.component.html',
@@ -40,6 +41,7 @@ export class SigninComponent
       private router: Router,
       private communicationService: CommunicationService,
       private authService: AuthService,
+      
     ) {
       super();
     }

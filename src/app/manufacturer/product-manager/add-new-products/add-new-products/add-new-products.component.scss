@@ -63,112 +63,179 @@
             accent-color: #000; /* Customize the checkbox color */
           }
         }
-      }
+      }     
 
-      // for color collection
-      
-      ::ng-deep .p-dialog .p-dialog-header {
-        display: none; /* Hide the default header */
-      }
-      
-      
-      ::ng-deep .p-dialog .p-dialog-content {
-        padding: 20px !important;
-        border-radius: 8px;
-      }
-      
-      .product-image-container {
-        position: relative;
-      }
-      
-      .image-preview-container {
-        position: relative;
-      }
-      
-      .image-preview {
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 5px;
-        width:60px;
-        height:60px
-      }
-      
-      .cancel-button {
-        position: absolute;
-        top: -10px;
-        right: -10px;
-        background: red;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        width: 20px;
-        height: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      
-      .add-image-button {
-        border: 2px dotted grey;
-        border-radius: 4px;
-        background-color: #f8f9fa;
-        cursor: pointer;
-      }
-      
-      .add-image-button:hover {
-        background-color: #e9ecef;
-      }
-      
-      .d-flex {
-        display: flex;
-      }
-      
-      .flex-wrap {
-        flex-wrap: wrap;
-      }
-      
-      .m-2 {
-        margin: 0.5rem;
-      }
-      
-      .p-2 {
-        padding: 0.5rem;
-      }
-      
-      .p-4 {
-        padding: 1rem;
-      }
-      
-      .text-center {
-        text-align: center;
-      }
-      
-      .border {
-        border: 1px solid #ccc;
-        border-radius: 4px;
-      }
-      .p-button.p-component.p-button-text {
-        background-color: #007bff;
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      
-      .p-button.p-component.p-button-text:hover {
-        background-color: #0056b3;
-      }  
+  //   // step 2 design
+  //   .form-container {
+  //     padding: 20px;
+  //     background-color: aliceblue;
+  //     border-radius: 5px;
+  //     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  // }
+  
+  .row {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+  }
+  
+  .col-2, .col-3 {
+      flex: 1;
+      margin-right: 10px;
+  }
+  
+  .col-2:last-child, .col-3:last-child {
+      margin-right: 0;
+  }
+  
 
-     
+  
+  // .form-control, .file-input, .form-select {
+  //     width: 100%;
+  //     padding: 8px;
+  //     box-sizing: border-box;
+  //     border: 1px solid #ccc;
+  //     border-radius: 4px;
+  //     // margin-bottom: 5px;
+  // }
+  
+  .color-input {
+      padding: 10px;
+      height: 34px;
+  }
+  
+  .text-danger {
+      color: red;
+      font-size: 12px;
+      margin-top: -12px;
+  }
+  
+  .d-flex {
+      display: flex;
+  }
+  
+  .flex-wrap {
+      flex-wrap: wrap;
+  }
+  
+  // for product image
+  
+  .product-box {
+    border: 1px solid gainsboro;
+    background-color: #ffff;
+    padding: 7px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
 
-    .add-product-Image-btn{
-      height: 35px;
-      border: 1px dotted rgb(14, 124, 29);
-      // border: dotted;
-      color: gray;
-    }
+.image-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.image-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.cancel-button {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-image-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    border: 1px dashed #ccc;
+    background: #f8f9fa;
+    cursor: pointer;
+    font-size: 24px;
+    color: #888;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+.add-image-button:hover {
+    background: #e2e6ea;
+}
+
+
+/* color-collections.component.css */
+/* color-collections.component.css */
+/* General Styles */
+.table-container {
+  max-width: 100%;
+  overflow-x: auto; 
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+ 
+}
+
+thead {
+  background-color: #e9eef4;
+  color: rgb(10, 6, 6);
+}
+
+th, td {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+th {
+  text-transform: uppercase;
+  // font-weight: 600;
+  color: #6b7280;
+  padding: 5px 15px;
+}
+
+img, video {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+}
+
+.product-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.product-images img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+  
+  
+  
+
+  
 
     
    
