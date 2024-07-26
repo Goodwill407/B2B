@@ -55,7 +55,7 @@
                                 <select id="state" formControlName="state" (change)="stateWiseCity($event)" class="form-select"
                                     [ngClass]="{ 'is-invalid': submitted && f.state.errors }">
                                     <option value="">Select State</option>
-                                    <option *ngFor="let state of allState" [value]="state.name">{{ state.name }}</option>
+                                    <option *ngFor="let state of allState" [value]="state.iso2">{{ state.name }}</option>
                                 </select>                        
                             <div *ngIf="submitted && f.state.errors" class="invalid-feedback">
                                 <div *ngIf="f.state.errors.required">State is required.</div>
@@ -68,7 +68,7 @@
                                 <select id="city" formControlName="city" class="form-select"
                                     [ngClass]="{ 'is-invalid': submitted && f.city.errors }">
                                     <option value="">Select City</option>
-                                    <option *ngFor="let city of cityList" [value]="city">{{ city }}</option>
+                                    <option *ngFor="let city of cityList" [value]="city.name">{{ city.name }}</option>
                                 </select>                        
                             <div *ngIf="submitted && f.city.errors" class="invalid-feedback">
                                 <div *ngIf="f.city.errors.required">City is required.</div>

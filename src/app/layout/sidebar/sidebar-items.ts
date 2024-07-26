@@ -51,6 +51,18 @@ export const ROUTES: RouteInfo[] = [
     submenu: []
   },    
   {
+    path: '/mnf/category',
+    title: `Category`,
+    iconType: 'material-icons-outlined',
+    icon: 'view_timeline',
+    class: '',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['manufacture'],
+    submenu: []
+  },    
+  {
     path: '',
     title: `Distributor's Management`,
     iconType: 'material-icons-outlined',

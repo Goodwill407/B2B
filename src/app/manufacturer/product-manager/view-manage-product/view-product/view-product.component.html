@@ -1,94 +1,99 @@
 <section class="content">
     <div class="content-block">
-        <h4 class="mt-3 flex-grow-1"><button class="btn text-start" (click)="navigateFun()">
-                <i class="bi bi-arrow-left-circle h4"></i>
-            </button> <span class="text-center" style="margin-left: 474px;">Product Details</span></h4>
-        <div class="card p-4">
-            <div class="product-details-content">
-                <div class="product-images">
-                    <div class="main-image">
-                        <img src="https://m.media-amazon.com/images/I/71ac4lX5hOL._SX569_.jpg" alt="Main Product Image">
-                    </div>
-                    <div class="thumbnail-images">
-                        <div class="thumbnail" *ngFor="let image of product.images">
-                            <img [src]="image" alt="Product Thumbnail">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="product-info">
-                    <div class="">
-                        <h5 class="mb-0">Brand</h5>
-                        <div class="d-flex justify-content-between">
-                            <p><small>Design No. </small> <br> {{ product.designNumber }}</p>
-                            <p><small>Clothing</small> <br> {{ product.clothingType }}</p>
-                            <p><small>Sub Category</small> <br>{{ product.subCategory }}</p>
-                            <p><small>Gender</small> <br>{{ product.gender }}</p>
-                        </div>
-                        <hr class="m-0">
-                    </div>
-
-                    <div class="product-info-section">
-                        <p><small>Title:</small></p>
-                        <p>{{ product.title }}</p>
-                    </div>
-
-                    <div class="product-info-section">
-                        <p><small>Description:</small></p>
-                        <p>{{ product.description }}</p>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <p class="col-md-4 col-sm-6"><small>Material</small> <br> {{ product.material }}</p>
-                        <p class="col-md-4 col-sm-6"><small>Material Variety</small> <br> {{ product.materialVariety }}</p>
-                        <p class="col-md-4 col-sm-6"><small>Pattern</small> <br> {{ product.pattern }}</p>
-                    </div>
-                    <div class="row">
-                        <p class="col-md-4 col-sm-6"><small>Fit Type</small> <br> {{ product.fitType }}</p>
-                        <p class="col-md-4 col-sm-6"><small>Occasion</small> <br> {{ product.occasion }}</p>
-                        <p class="col-md-4 col-sm-6"><small>Lifestyle</small> <br> {{ product.lifestyle }}</p>
-                    </div>
-
-                    <div class="row">
-                        <p class="col-md-4 col-sm-6"><small>Closure Type</small><br> {{ product.closureType }}</p>
-                        <p class="col-md-4 col-sm-6"><small>Pocket Description</small><br> {{ product.pocketDescription }}</p>
-                        <p class="col-md-4 col-sm-6"><small>Sleeve Cuff Style</small><br> {{ product.sleeveCuffStyle }}</p>
-                    </div>
-                    <div class="row">
-                        <p class="col-md-4 col-sm-6"><small>Neck / Collar Style</small><br> {{ product.neckCollarStyle }}</p>
-                        <p class="col-md-4 col-sm-6"><small>Special Features</small><br> {{ product.specialFeatures }}</p>
-                        <p class="col-md-4 col-sm-6"><small>Care Instructions</small><br> {{ product.careInstructions }}</p>
-                    </div>
-
-                    <hr>
-
-                    <div class="">
-                        <p><small>Sizes in Each Set</small> <br> {{ product.sizes }}</p>
-                    </div>
-
-                    <hr>
-                    
-                    <div class="">
-                        <p><small>Colours / Designs</small> <br> {{ product.colours }}</p>
-                    </div>
-                    
-                    <hr>
-
-                    <div class="row">
-                        <p class="col-md-6 col-sm-12"><small>Item Weight</small><br> {{ product.itemWeight }}</p>
-                        <p class="col-md-6 col-sm-12"><small>Item Dimensions (in CM)</small><br> {{ product.dimensions }}</p>
-                    </div>
-
-                    <hr>
-
-                    <div class="">
-                        <p><small class="col-md-3">Date First Available</small> <span>{{ product.dateAvailable }}</span></p>
-                        <p><small class="col-md-3">Availability</small> <span>{{ product.availability }}</span></p>
-                    </div>
-                </div>
+      <h4 class="mt-3 flex-grow-1">
+        <button class="btn text-start" (click)="navigateFun()">
+          <i class="bi bi-arrow-left-circle h4"></i>
+        </button> 
+        <span class="text-center" style="margin-left: 474px;">Product Details</span>
+      </h4>
+      <div class="card p-4">
+        <div class="product-details-content">
+          <div class="product-images">
+            <div class="main-image">
+              <img [src]="selectedImage" alt="Main Product Image">
             </div>
+            <div class="thumbnail-images">
+              <div class="thumbnail" 
+                   *ngFor="let image of product.images" 
+                   (click)="changeMainImage(image)" 
+                   [class.active]="image === selectedImage">
+                <img [src]="image" alt="Product Thumbnail">
+              </div>
+            </div>
+          </div>
+  
+          <div class="product-info">
+            <div class="">
+              <h5 class="mb-0">Brand</h5>
+              <div class="d-flex justify-content-between">
+                <p><small>Design No. </small> <br> {{ product.designNumber }}</p>
+                <p><small>Clothing</small> <br> {{ product.clothingType }}</p>
+                <p><small>Sub Category</small> <br>{{ product.subCategory }}</p>
+                <p><small>Gender</small> <br>{{ product.gender }}</p>
+              </div>
+              <hr class="m-0">
+            </div>
+  
+            <div class="product-info-section">
+              <p><small>Title:</small></p>
+              <p>{{ product.title }}</p>
+            </div>
+  
+            <div class="product-info-section">
+              <p><small>Description:</small></p>
+              <p>{{ product.description }}</p>
+            </div>
+            <hr>
+            <div class="row">
+              <p class="col-md-4 col-sm-6"><small>Material</small> <br> {{ product.material }}</p>
+              <p class="col-md-4 col-sm-6"><small>Material Variety</small> <br> {{ product.materialVariety }}</p>
+              <p class="col-md-4 col-sm-6"><small>Pattern</small> <br> {{ product.pattern }}</p>
+            </div>
+            <div class="row">
+              <p class="col-md-4 col-sm-6"><small>Fit Type</small> <br> {{ product.fitType }}</p>
+              <p class="col-md-4 col-sm-6"><small>Occasion</small> <br> {{ product.occasion }}</p>
+              <p class="col-md-4 col-sm-6"><small>Lifestyle</small> <br> {{ product.lifestyle }}</p>
+            </div>
+  
+            <div class="row">
+              <p class="col-md-4 col-sm-6"><small>Closure Type</small><br> {{ product.closureType }}</p>
+              <p class="col-md-4 col-sm-6"><small>Pocket Description</small><br> {{ product.pocketDescription }}</p>
+              <p class="col-md-4 col-sm-6"><small>Sleeve Cuff Style</small><br> {{ product.sleeveCuffStyle }}</p>
+            </div>
+            <div class="row">
+              <p class="col-md-4 col-sm-6"><small>Neck / Collar Style</small><br> {{ product.neckCollarStyle }}</p>
+              <p class="col-md-4 col-sm-6"><small>Special Features</small><br> {{ product.specialFeatures }}</p>
+              <p class="col-md-4 col-sm-6"><small>Care Instructions</small><br> {{ product.careInstructions }}</p>
+            </div>
+  
+            <hr>
+  
+            <div class="">
+              <p><small>Sizes in Each Set</small> <br> {{ product.sizes }}</p>
+            </div>
+  
+            <hr>
+            
+            <div class="">
+              <p><small>Colours / Designs</small> <br> {{ product.colours }}</p>
+            </div>
+            
+            <hr>
+  
+            <div class="row">
+              <p class="col-md-6 col-sm-12"><small>Item Weight</small><br> {{ product.itemWeight }}</p>
+              <p class="col-md-6 col-sm-12"><small>Item Dimensions (in CM)</small><br> {{ product.dimensions }}</p>
+            </div>
+  
+            <hr>
+  
+            <div class="">
+              <p><small class="col-md-3">Date First Available</small> <span>{{ product.dateAvailable }}</span></p>
+              <p><small class="col-md-3">Availability</small> <span>{{ product.availability }}</span></p>
+            </div>
+          </div>
         </div>
-
-
+      </div>
     </div>
-</section>
+  </section>
+  

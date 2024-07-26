@@ -10,6 +10,7 @@ import { AddNewProductsComponent } from "./product-manager/add-new-products/add-
 import { ViewManageProductComponent } from "./product-manager/view-manage-product/view-manage-product.component";
 import { BrandComponent } from "./brand/brand.component";
 import { ViewProductComponent } from "./product-manager/view-manage-product/view-product/view-product.component";
+import { CategoryComponent } from "./category/category.component";
 
 
 export const M_Auth:Route[] = [
@@ -24,4 +25,5 @@ export const M_Auth:Route[] = [
     {path: 'manage-distributor', component: ManageDistributorComponent},
     {path: 'manage-product', component: ViewManageProductComponent},
     {path: 'view-product', component: ViewProductComponent},
+    {path: 'category', component: CategoryComponent},
 ]

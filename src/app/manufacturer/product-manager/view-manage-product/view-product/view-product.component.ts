@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Location } from '@angular/common';
 
-
 @Component({
   selector: 'app-view-product',
   standalone: true,
@@ -10,11 +9,11 @@ import { Location } from '@angular/common';
     CommonModule
   ],
   templateUrl: './view-product.component.html',
-  styleUrl: './view-product.component.scss'
+  styleUrls: ['./view-product.component.scss']
 })
 export class ViewProductComponent {
-  constructor(private location: Location){    
-  }
+  constructor(private location: Location){}
+
   product: any = {
     brand: 'Brand Name',
     designNumber: 'DN0010A',
@@ -49,12 +48,15 @@ export class ViewProductComponent {
     ]
   };
 
+  selectedImage: string = this.product.images[0];
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
 
+  navigateFun() {
+    this.location.back();
   }
 
-  navigateFun(){
-    this.location.back();
+  changeMainImage(image: string) {
+    this.selectedImage = image;
   }
 }

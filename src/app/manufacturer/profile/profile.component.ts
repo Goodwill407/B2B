@@ -1,8 +1,8 @@
-import { CommonModule, NgClass } from '@angular/common';
+import { CommonModule, JsonPipe, NgClass } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService, CommunicationService } from '@core';
+import { AuthService, CommunicationService, DirectionService } from '@core';
 
 @Component({
   selector: 'app-profile',
@@ -10,7 +10,8 @@ import { AuthService, CommunicationService } from '@core';
   imports: [
     ReactiveFormsModule,
     CommonModule,
-    NgClass
+    NgClass,
+    JsonPipe
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
@@ -27,10 +28,10 @@ export class ProfileComponent {
   submitFlag = false;
   isUpdateBtn = false;
   isEditFlag = false
-  allState: { name: string; cities: string[]; }[] = [];
-  cityList: string[] | undefined;
+  allState: { name: string; cities: string[]; iso2: String }[] = [];
+  cityList: any;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService) { }
+  constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private http: HttpClient, private direction: DirectionService) { }
 
   countries: any[] = [
     'United States',
@@ -113,7 +114,7 @@ export class ProfileComponent {
       if (res) {
         const allData = res
         this.mgfRegistrationForm.patchValue(allData);
-        this.stateWiseCity(null,allData.state,allData.city);
+        this.stateWiseCity(null, allData.state, allData.city);
         this.mgfRegistrationForm.disable();
         this.isDataSaved = true;
         this.isEditFlag = true
@@ -172,12 +173,16 @@ export class ProfileComponent {
   }
 
   getAllState() {
-    this.allState = this.communicationService.allState();
+    this.direction.getStates('https://api.countrystatecity.in/v1/countries/IN/states').subscribe(res => {
+      this.allState = res;
+    });
   }
 
-  stateWiseCity(event: any, stateName:any='',cityName:any=''){
-    const state = event === null?stateName:event.target.value;
-    this.cityList = this.allState.find(s => s.name === state)?.cities;
-    this.mgfRegistrationForm.get('city')?.setValue(cityName);
+  stateWiseCity(event: any, stateName: any = '', cityName: any = '') {
+    const state = event === null ? stateName : event.target.value;
+    this.direction.getCities(`https://api.countrystatecity.in/v1/countries/IN/states/${state}/cities`).subscribe((res: any) => {
+      this.cityList = res;
+      this.mgfRegistrationForm.get('city')?.setValue(cityName);
+    });
   }
 }

@@ -1,29 +1,27 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
-import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
-  selector: 'app-brand',
+  selector: 'app-category',
   standalone: true,
   imports: [
     ReactiveFormsModule,
     CommonModule,
     PaginatorModule,
     TooltipModule,
-    TableModule,
-    NgxSpinnerModule
+    TableModule
   ],
-  templateUrl: './brand.component.html',
-  styleUrls: ['./brand.component.scss']
+  templateUrl: './category.component.html',
+  styleUrl: './category.component.scss'
 })
-export class BrandComponent {
-  brandForm!: FormGroup;
+export class CategoryComponent {
+  categoryForm!: FormGroup;
   imagePreview: string | ArrayBuffer | null = null;
   formType: string = 'Save';
   imageError: string = '';
@@ -35,24 +33,19 @@ export class BrandComponent {
   first: number = 0;
   rows: number = 10;
   cdnPath: string = '';
-  userProfile: any;
-  @ViewChild('fileInput') fileInput!: ElementRef;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private router: Router, private spinner: NgxSpinnerService) { }
+  constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private router: Router) { }
 
   ngOnInit() {
     this.cdnPath = this.authService.cdnPath;
-    this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
     this.initializeForm();
     this.getAllBrands();
   }
 
   initializeForm() {
-    this.brandForm = this.fb.group({
-      brandName: ['', Validators.required],
-      brandDescription: ['', Validators.required],
-      brandLogo: [null, [Validators.required]],
-      brandOwner: [this.userProfile.email],
+    this.categoryForm = this.fb.group({
+      category: ['', Validators.required],
+      categoryBy: ['', Validators.required],
       id: ['']
     });
   }
@@ -76,11 +69,11 @@ export class BrandComponent {
 
           if (validFormat) {
             this.imagePreview = reader.result;
-            this.brandForm.patchValue({ brandLogo: file });
-            this.brandForm.get('brandLogo')?.updateValueAndValidity();
+            this.categoryForm.patchValue({ brandLogo: file });
+            this.categoryForm.get('brandLogo')?.updateValueAndValidity();
           } else {
             this.imagePreview = null;
-            this.brandForm.patchValue({ brandLogo: null });
+            this.categoryForm.patchValue({ brandLogo: null });
           }
         };
       };
@@ -89,43 +82,31 @@ export class BrandComponent {
   }
 
   onSubmit() {
-    if (this.brandForm.valid) {
-      this.spinner.show();
+    if (this.categoryForm.valid) {
       const formData = new FormData();
-      formData.append('brandName', this.brandForm.get('brandName')?.value);
-      formData.append('brandDescription', this.brandForm.get('brandDescription')?.value);
-      formData.append('brandLogo', this.brandForm.get('brandLogo')?.value);
+      formData.append('brandName', this.categoryForm.get('brandName')?.value);
+      formData.append('brandDescription', this.categoryForm.get('brandDescription')?.value);
+      formData.append('brandLogo', this.categoryForm.get('brandLogo')?.value);
 
       if (this.formType === 'Save') {
         this.authService.post('brand', formData).subscribe((res: any) => {
           this.communicationService.showNotification('snackbar-success', 'Brand created successfully', 'bottom', 'center');
           this.resetForm();
-        },(err: any) => {
-          this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
-          this.spinner.hide();
         });
       } else {
-        formData.append('id', this.brandForm.get('id')?.value);
+        formData.append('id', this.categoryForm.get('id')?.value);
         this.authService.patch(`brand`, formData).subscribe((res: any) => {
           this.communicationService.showNotification('snackbar-success', 'Brand updated successfully', 'bottom', 'center');
           this.resetForm();
-        },(err: any) => {
-          this.spinner.hide();
-          this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
         });
       }
     }
   }
 
   getAllBrands() {
-    this.spinner.show();
-    this.authService.get(`brand?page=${this.page}&limit=${this.limit}&brandOwner=${this.userProfile.email}`).subscribe((res: any) => {
+    this.authService.get(`brand?page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
       this.distributors = res.results;
       this.totalResults = res.totalResults;
-      this.spinner.hide();
-    },(err: any) => {
-      this.spinner.hide();
-      this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
     });
   }
 
@@ -143,20 +124,20 @@ export class BrandComponent {
   }
 
   editForm(data: any) {
-    this.brandForm.patchValue(data);
+    this.categoryForm.patchValue(data);
     this.formType = 'Update';
     this.imagePreview = this.cdnPath + data.brandLogo;
-    this.brandForm.get('brandLogo')?.setValidators(null); // Remove validators for editing
-    this.brandForm.get('brandLogo')?.updateValueAndValidity();
+    this.categoryForm.get('brandLogo')?.setValidators(null); // Remove validators for editing
+    this.categoryForm.get('brandLogo')?.updateValueAndValidity();
   }
 
   resetForm() {
-    this.brandForm.reset();
+    this.categoryForm.reset();
     this.imagePreview = null;
     this.formType = 'Save';
-    this.fileInput.nativeElement.value = '';
-    this.brandForm.get('brandLogo')?.setValidators([Validators.required]); // Re-add validators for new entries
-    this.brandForm.get('brandLogo')?.updateValueAndValidity();
+    this.categoryForm.get('brandLogo')?.setValidators([Validators.required]); // Re-add validators for new entries
+    this.categoryForm.get('brandLogo')?.updateValueAndValidity();
     this.getAllBrands();
   }
 }
+

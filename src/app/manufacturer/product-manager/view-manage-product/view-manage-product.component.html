@@ -3,18 +3,33 @@
       <h4 class="mt-4">View Products</h4>
       <div class="card p-4">
         <div class="search-bar">
-          <input type="text" class="form-control" placeholder="Brand" [(ngModel)]="filters.brand">
-          <input type="text" class="form-control" placeholder="Product type" [(ngModel)]="filters.productType">
-          <input type="text" class="form-control" placeholder="Gender" [(ngModel)]="filters.gender">
-          <input type="text" class="form-control" placeholder="Clothing" [(ngModel)]="filters.clothing">
-          <input type="text" class="form-control" placeholder="Sub-Category" [(ngModel)]="filters.subCategory">
+           <select name="" class="form-select" [(ngModel)]="filters.brand">
+             <option value="">Select Brand</option>
+             <option *ngFor="let brand of allBrand" [value]="brand.brandName">{{brand.brandName}}</option>
+           </select>
+           <select name="" class="form-select" [(ngModel)]="filters.productType" (change)="getSubCategory()">
+             <option value="">Select Product Type</option>
+             <option *ngFor="let type of allProductType" [value]="type">{{type}}</option>
+           </select>
+           <select name="" class="form-select" [(ngModel)]="filters.gender" (change)="getSubCategory()">
+             <option value="">Select Gender</option>
+             <option *ngFor="let gender of allGender" [value]="gender">{{gender}}</option>
+           </select>
+           <select name="" class="form-select" [(ngModel)]="filters.clothing" (change)="getSubCategory()">
+             <option value="">Select Clothing</option>
+             <option *ngFor="let clothing of allClothing" [value]="clothing.name">{{clothing.name}}</option>
+           </select>
+           <select name="" class="form-select" [(ngModel)]="filters.subCategory">
+             <option value="">Select Sub-Category</option>
+             <option *ngFor="let subCategory of allSubCategory" [value]="subCategory.subCategory">{{subCategory.subCategory}}</option>
+           </select>
           <button class="btn btn-info" (click)="applyFilters()">Display</button>
         </div>
         <hr>
         <div class="cards-container">
           <div *ngFor="let product of products" class="product-card">
-            <div class="design-no">Design No: {{product.designNo}}</div>
-            <img [src]="product.selectedImageUrl" alt="{{product.title}}" routerLink="/mnf/view-product">
+            <div class="design-no">Design No : {{product.designNo}}</div>
+            <img class="main-img" [src]="authService.cdnPath + product.selectedImageUrl" alt="{{product.title}}" routerLink="/mnf/view-product">
             <div class="product-details">
               <div class="color-options mt-0">
                 <button *ngFor="let color of product.colors"
@@ -23,7 +38,7 @@
                         (click)="changeProductImage(product, color)">
                 </button>
               </div>
-              <h6>{{product.title}}</h6>
+              <h6 class="title"  routerLink="/mnf/view-product">{{product.title}}</h6>
               <p>{{product.description}}</p>
               <div class="availability">
                 <span *ngIf="product.stock > 0" class="in-stock">In stock - Qty {{product.stock}}</span>

@@ -1,45 +1,41 @@
-<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="default" color="#fff" type="square-jelly-box" [fullScreen]="true">
-    <p style="color: rgb(242, 94, 94)"> Loading... </p>
-  </ngx-spinner>
 <section class="content">
     <div class="content-block">
-        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Brands</h4>
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Category</h4>
         <div class="card px-4 py-2">
-            <h5 class="">Add Brands</h5>
+            <h5 class="">Add Category</h5>
             <hr class="mt-0">
-            <form [formGroup]="brandForm" (ngSubmit)="onSubmit()">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Home</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Profile</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">Contact</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="disabled-tab" data-bs-toggle="tab" data-bs-target="#disabled-tab-pane" type="button" role="tab" aria-controls="disabled-tab-pane" aria-selected="false" disabled>Disabled</button>
+                </li>
+              </ul>
+              <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">...</div>
+                <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">...</div>
+                <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">...</div>
+                <div class="tab-pane fade" id="disabled-tab-pane" role="tabpanel" aria-labelledby="disabled-tab" tabindex="0">...</div>
+              </div>
+            <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
                 <div class="w-75">
-                    <label for="brandName">Brand Name:</label>
-                    <input type="text" id="brandName" formControlName="brandName" class="form-control" />
-                    <div *ngIf="brandForm.get('brandName')?.touched && brandForm.get('brandName')?.invalid"
+                    <label for="category">Brand Name:</label>
+                    <input type="text" id="category" formControlName="category" class="form-control" />
+                    <div *ngIf="categoryForm.get('category')?.touched && categoryForm.get('category')?.invalid"
                         class="text-danger">
-                        Brand Name is required.
+                        Category is required.
                     </div>
                 </div>
 
-                <div class="mt-2 w-75">
-                    <label for="brandDescription">Brand Description:</label>
-                    <textarea id="brandDescription" formControlName="brandDescription" class="form-control"></textarea>
-                    <div *ngIf="brandForm.get('brandDescription')?.touched && brandForm.get('brandDescription')?.invalid"
-                        class="text-danger">
-                        Brand Description is required.
-                    </div>
-                </div>
-
-                <div class="mt-2 w-50">
-                    <label for="brandLogo">Brand Logo:</label>
-                    <input type="file" id="brandLogo" (change)="onImageChange($event)" class="form-control" #fileInput />
-                    <div *ngIf="imageFormatError" class="text-danger">{{ imageFormatError }}</div>
-                    <!-- <div *ngIf="imageDimensionError" class="text-danger">{{ imageDimensionError }}</div> -->
-                    <div *ngIf="imagePreview">
-                        <img [src]="imagePreview" alt="Image Preview" class="img-thumbnail"
-                            style="width: 150px; height: 150px;" />
-                    </div>
-                </div>
-                <div class="mt-2 text-danger" style="font-size: small;">Note : Upload Image in .jpeg or .png format,
-                    Dimension - 300 x 300 px</div>
                 <div class="form-group text-center mt-3">
-                    <button type="submit" class="btn submit-btn" [disabled]="brandForm.invalid">
+                    <button type="submit" class="btn submit-btn" [disabled]="categoryForm.invalid">
                         {{formType}}
                     </button>
                 </div>
@@ -48,7 +44,7 @@
 
         <!-- table -->
         <div class="card p-2">
-            <h5 class="mt-2">Brand List:</h5>
+            <h5 class="mt-2">Category List:</h5>
             <hr>
             <div class="p-grid p-fluid ">
                 <div class="p-col-12 text-center">

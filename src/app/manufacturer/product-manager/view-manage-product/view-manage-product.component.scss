@@ -2,20 +2,33 @@
     display: flex;
     justify-content: space-between;
   
-    input {
+    input,select {
       padding: 10px;
       margin-right: 10px;
       flex: 1;
     }
+    .form-select{
+      color: #666565 !important;
+    }
   
     button {
       padding: 10px 20px;
+      color: #fff;
+      &:hover{
+        color: #007bff; 
+      }
     }
   }
   
   .cards-container {
     display: flex;
     flex-wrap: wrap;
+    .design-no{
+      color: #fff;
+      background-color: #050505;
+      text-align: start;
+      padding-left: 7px;
+    }
   
     .product-card {
       width: calc(20% - 20px);
@@ -71,5 +84,8 @@
         }
       }
     }
+  }
+  .main-img, .title{
+    cursor: pointer;
   }
   
