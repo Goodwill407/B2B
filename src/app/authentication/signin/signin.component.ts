@@ -87,6 +87,8 @@ export class SigninComponent
                   this.router.navigate(['/mnf/dashboard']);
                 } else if (role === Role.Wholesaler) {
                   this.router.navigate(['/wholesaler/dashboard']);
+                } else if (role === Role.Retailer) {
+                  this.router.navigate(['/retailer/dashboard']);
                 } else {
                   this.router.navigate(['/authentication/signin']);
                 }
