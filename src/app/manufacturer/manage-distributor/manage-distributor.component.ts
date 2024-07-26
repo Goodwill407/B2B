@@ -1,8 +1,13 @@
+import { query } from '@angular/animations';
 import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
-import { AuthService } from '@core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { AuthService, CommunicationService } from '@core';
+import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.component';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table'; // Import TableModule from PrimeNG
+import { TooltipModule } from 'primeng/tooltip';
 
 
 @Component({
@@ -11,7 +16,8 @@ import { TableModule } from 'primeng/table'; // Import TableModule from PrimeNG
   imports: [
     TableModule,
     PaginatorModule,
-    NgIf
+    NgIf,
+    TooltipModule,
   ],
   templateUrl: './manage-distributor.component.html',
   styleUrl: './manage-distributor.component.scss'
@@ -24,7 +30,7 @@ export class ManageDistributorComponent {
   first: number = 0;
   rows: number = 10;
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private communicationService:CommunicationService,private router: Router) { }
 
   ngOnInit() {
     this.user = this.authService.currentUserValue
@@ -51,5 +57,23 @@ export class ManageDistributorComponent {
     { fullName: 'Lisa Johnson', companyName: '789 LLC', mobileNumber: '4321098765', email: 'lisa@example.com', city: 'Houston', country: 'USA', status: 'Inactive' }
   ];
 
+  changeUserStatus(user: any){
+    this.authService.patchWithEmail(`invitations/${user}`,{status:'accepted'}).subscribe((res)=>{
+      this.communicationService.showNotification('snackbar-success', 'User status updated successfully','bottom','center');
+    });
+  }
+
+  viewProfile(distributors:any){
+    this.router.navigate(['/common/view-profile'],{queryParams:{email:distributors.email}});
+    // this.authService.get(`wholesaler/${distributors.email}`).subscribe((res: any) => {
+    //   if (res) {
+    //   } else {
+    //   }
+    // }, error => {
+    //   if (error.error.message === "Manufacturer not found") {
+
+    //   }
+    // })
+  }
 
 }

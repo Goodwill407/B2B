@@ -1,5 +1,8 @@
 <section class="content">
     <div class="content-block">
+        <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="default" color="#fff" type="square-jelly-box" [fullScreen]="true">
+            <p style="color: rgb(242, 94, 94)"> Sending Invitation By Mail ... </p>
+          </ngx-spinner>
 
         <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Invite New Distributor</h4>
 
@@ -14,11 +17,11 @@
                 <div class="row ms-4">
 
                     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                        <label class="lable-input" for="fullName">Distributor's Name<span>*</span>:</label>
-                        <input type="text" id="fullName" formControlName="fullName" class="form-control" placeholder="Distributor's Name" />
+                        <label class="lable-input" for="fullName">Distributor's / Retailer Name<span>*</span>:</label>
+                        <input type="text" id="fullName" formControlName="fullName" class="form-control" placeholder="Full Name" />
                         <div *ngIf="mgfRegistrationForm.get('fullName')?.touched && mgfRegistrationForm.get('fullName')?.invalid"
                             class="text-danger">
-                            Distributor's Name is required.
+                            Full Name is required.
                         </div>
                     </div>
 
@@ -31,18 +34,19 @@
                         </div>
                     </div>
 
-                    <!-- <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                        <label class="lable-input" for="mobileNumber">Mobile Number<span>*</span>:</label>
-                        <input type="text" id="mobileNumber" formControlName="mobileNumber" class="form-control" placeholder="Mobile Number"/>
-                        <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.touched && mgfRegistrationForm.get('mobileNumber')?.invalid"
+                    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+                        <label class="lable-input" for="role">Designation<span>*</span>:</label>
+                         <select formControlName="role" class="form-select" placeholder="Select Designation">
+                            <option value="">Select Designation</option>
+                            <option value="wholesaler">Distributer </option>
+                            <option value="retailer">Retailer</option>
+                         </select>
+                        <div *ngIf="mgfRegistrationForm.get('role')?.touched && mgfRegistrationForm.get('role')?.invalid"
                             class="text-danger">
-                            <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.errors?.['required']">Mobile
-                                number
-                                is required.</div>
-                            <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.errors?.['pattern']">Mobile
-                                number must be 10 digits.</div>
+                            Designation is required.
                         </div>
-                    </div> -->
+                    </div>
+                    
                     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                         <label class="lable-input" for="mobileNumber">Mobile Number<span>*</span>:</label>
                         <div class="d-flex mat-select">
@@ -77,8 +81,6 @@
                                 format.</div>
                         </div>
                     </div>
-
-
 
                     <div class="col-8 text-center ">
                         <button type="submit" class="btn submit-btn"

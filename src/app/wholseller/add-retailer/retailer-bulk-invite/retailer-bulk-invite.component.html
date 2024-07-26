@@ -1,18 +1,18 @@
 <section class="content">
     <div class="content-block">
-      <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Invite New Distributor</h4>
+      <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Invite New Retailer</h4>
       <form [formGroup]="inviteForm" (ngSubmit)="onSubmit()" class="card">
         <div formArrayName="distributors">
           <div class="d-flex mt-2">
-            <h5>Invite Bulk Distributor</h5>
+            <h5>Invite Bulk Retailer</h5>
             <div class="ms-auto navigation-link-log">
-              <div type="button" class="" routerLink="/mnf/new-distributor">Invite Single Distributors</div>
+              <div type="button" class="" routerLink="/wholesaler/new-retailer">Invite Single Retailer</div>
             </div>
           </div>
           <hr>
           <div class="d-flex justify-content-between">
             <div class="label">
-              <label>Distributor’s Name*</label>
+              <label>Retailer’s Name*</label>
             </div>
             <div class="label">
               <label>Company’s Name</label>

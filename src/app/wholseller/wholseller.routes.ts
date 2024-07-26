@@ -5,11 +5,13 @@ import { RetailerBulkUploadComponent } from "./retailer-bulk-upload/retailer-bul
 import { RetailerInviteStatusComponent } from "./retailer-invite-status/retailer-invite-status.component";
 import { ManageRetailerComponent } from "./manage-retailer/manage-retailer.component";
 import { WholesalerProfileComponent } from "./wholesaler-profile/wholesaler-profile.component";
+import { DashboardComponent } from "./dashboard/dashboard.component";
 
 export const R_Auth:Route[] = [
-    {path: 'wholesaler-profile', component: WholesalerProfileComponent},
+    {path: 'dashboard', component: DashboardComponent},
+    {path: 'profile', component: WholesalerProfileComponent},
     {path: 'new-retailer', component: AddRetailerComponent},
-    {path: 'bulk-invite-retailer', component: RetailerBulkInviteComponent},
+    {path: 'bulk-invite', component: RetailerBulkInviteComponent},
     {path: 'bulk-upload', component: RetailerBulkUploadComponent},
     {path: 'invite-status', component: RetailerInviteStatusComponent},
     {path: 'manage-retailer', component: ManageRetailerComponent},

@@ -82,11 +82,11 @@ export class SigninComponent
                 this.authService.currentUserSubject.next(res.user);
                 const role = this.authService.currentUserValue.role;
                 if (res.user.role === Role.Superadmin || res.user.role === Role.State) {
-                  this.router.navigate(['/mnf/profile']);
+                  this.router.navigate(['/mnf/dashboard']);
                 } else if (role == Role.Manufacture) {
-                  this.router.navigate(['/mnf/profile']);
+                  this.router.navigate(['/mnf/dashboard']);
                 } else if (role === Role.Wholesaler) {
-                  this.router.navigate(['/wholesaler/wholesaler-profile']);
+                  this.router.navigate(['/wholesaler/dashboard']);
                 } else {
                   this.router.navigate(['/authentication/signin']);
                 }

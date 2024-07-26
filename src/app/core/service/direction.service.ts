@@ -1,5 +1,6 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable()
 export class DirectionService {
@@ -17,8 +18,26 @@ export class DirectionService {
     this.dialogVisibilitySource.next(false);
   }
 
-  constructor() {
-    //constructor
+  private apiUrl = 'https://api.countrystatecity.in/v1/countries/IN/states/MH/cities';
+  private apiKey = 'cjhjU3JQdjZlaThGSWtBOGxHYlUxVm9tSjk3ZFFQQ211MDlwWWNVbw=='; // Replace with your actual API key
+
+
+  constructor(private http: HttpClient) { }
+
+  getStates(url: any): Observable<any> {
+    const headers = new HttpHeaders({
+      'X-CSCAPI-KEY': this.apiKey
+    });
+
+    return this.http.get(url, { headers });
+  }
+
+  getCities(url: any): Observable<any> {
+    const headers = new HttpHeaders({
+      'X-CSCAPI-KEY': this.apiKey
+    });
+
+    return this.http.get(url, { headers });
   }
 
   updateDirection(item: string) {

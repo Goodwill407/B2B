@@ -61,6 +61,7 @@ export class AddNewProductsComponent {
     { name: 'Istanbul', code: 'IST' },
     { name: 'Paris', code: 'PRS' }
   ];
+  allBrand: any;
 
   constructor(private fb: FormBuilder,private authService:AuthService)
    {
@@ -115,7 +116,8 @@ export class AddNewProductsComponent {
    this.getSleeveCutStyle()
    this.getSleeveLength()
    this.getSpecialFeature()
-   this.getallCareInstruction()
+   this.getallCareInstruction();
+   this.getAllBrands();
   }
 
   // stepOne vlidation
@@ -393,5 +395,11 @@ errpr=>{
     })
       
     }
+  }
+
+  getAllBrands() {
+    this.authService.get(`brand?page=1`).subscribe((res: any) => {
+      this.allBrand = res.results;
+    });
   }
 }
