@@ -12,3 +12,6 @@
   text-align: center;
   /* Center align text in table headers and cells */
 }
+::ng-deep .p-tooltip-text{
+  font-size: 10px !important;
+}

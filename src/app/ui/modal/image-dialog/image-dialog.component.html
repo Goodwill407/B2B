@@ -1,3 +1,94 @@
-<div class="image-dialog">
-    <img [src]="data.imageUrl" alt="Full-size Image" class="full-size-img" />
-</div>
+<!-- HTML code for the dialog component -->
+<mat-dialog-content>
+    <h4 class="text-center text-muted fw-bold">Manufacturer's Profile</h4>
+    <mat-divider></mat-divider>
+    <div class="dialog-row">
+      <div class="dialog-col">
+        <h5>Company Name:</h5>
+        <p>{{ data.companyName }}</p>
+      </div>
+      <div class="dialog-col">
+        <h5>Address:</h5>
+        <p>{{ data.address }}, {{ data.city }}, {{ data.state }} - {{ data.pinCode }}</p>
+      </div>
+    </div>
+    <div class="dialog-row">
+      <div class="dialog-col">
+        <h5>Primary Mobile:</h5>
+        <p>{{ data.mobNumber }}</p>
+      </div>
+      <div class="dialog-col">
+        <h5>Alternative Mobile:</h5>
+        <p>{{ data.mobNumber2 }}</p>
+      </div>
+    </div>
+    <div class="dialog-row">
+      <div class="dialog-col">
+        <h5>Primary Email:</h5>
+        <p>{{ data.email }}</p>
+      </div>
+      <div class="dialog-col">
+        <h5>Alternative Email:</h5>
+        <p>{{ data.email2 }}</p>
+      </div>
+    </div>
+    <div class="dialog-row">
+      <div class="dialog-col">
+        <h5>GSTIN:</h5>
+        <p>{{ data.GSTIN }}</p>
+      </div>
+      <div class="dialog-col">
+        <h5>PAN:</h5>
+        <p>{{ data.pan }}</p>
+      </div>
+    </div>
+    <h4 class="text-center text-muted fw-bold mt-4">Bank Details</h4>
+    <mat-divider></mat-divider>
+    <div class="dialog-row">
+      <div class="dialog-col">
+        <h5>Account Number:</h5>
+        <p>{{ data.BankDetails.accountNumber }}</p>
+      </div>
+      <div class="dialog-col">
+        <h5>Account Type:</h5>
+        <p>{{ data.BankDetails.accountType }}</p>
+      </div>
+    </div>
+    <div class="dialog-row">
+      <div class="dialog-col">
+        <h5>Bank Name:</h5>
+        <p>{{ data.BankDetails.bankName }}</p>
+      </div>
+      <div class="dialog-col">
+        <h5>IFSC Code:</h5>
+        <p>{{ data.BankDetails.IFSCcode }}</p>
+      </div>
+    </div>
+    <h4 class="text-center text-muted fw-bold mt-4">Social Media</h4>
+    <mat-divider></mat-divider>
+    <div class="dialog-row">
+      <div class="dialog-col">
+        <h5>Facebook:</h5>
+        <a href="{{ data.socialMedia.facebook }}" target="_blank">{{ data.socialMedia.facebook }}</a>
+      </div>
+      <div class="dialog-col">
+        <h5>LinkedIn:</h5>
+        <a href="{{ data.socialMedia.linkedIn }}" target="_blank">{{ data.socialMedia.linkedIn }}</a>
+      </div>
+    </div>
+    <div class="dialog-row">
+      <div class="dialog-col">
+        <h5>Instagram:</h5>
+        <a href="{{ data.socialMedia.instagram }}" target="_blank">{{ data.socialMedia.instagram }}</a>
+      </div>
+      <div class="dialog-col">
+        <h5>Website:</h5>
+        <a href="mailto:{{ data.socialMedia.webSite }}">{{ data.socialMedia.webSite }}</a>
+      </div>
+    </div>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions align="end">
+    <button class="btn btn-outline-danger" mat-dialog-close>Close</button>
+  </mat-dialog-actions>
+  

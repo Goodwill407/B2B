@@ -7,15 +7,23 @@ import { ManageDistributorComponent } from "./manage-distributor/manage-distribu
 import { BulkInviteSingleComponent } from "./add-distributor/bulk-invite/bulk-invite.component";
 import { DashboardComponent } from "./dashboard/dashboard.component";
 import { AddNewProductsComponent } from "./product-manager/add-new-products/add-new-products/add-new-products.component";
+import { ViewManageProductComponent } from "./product-manager/view-manage-product/view-manage-product.component";
+import { BrandComponent } from "./brand/brand.component";
+import { ViewProductComponent } from "./product-manager/view-manage-product/view-product/view-product.component";
+import { CategoryComponent } from "./category/category.component";
 
 
 export const M_Auth:Route[] = [
     {path: 'dashboard', component: DashboardComponent},
     {path: 'profile', component: ProfileComponent}, 
+    {path: 'brand', component: BrandComponent}, 
     {path: 'add-new-product', component: AddNewProductsComponent},   
     {path: 'new-distributor', component: AddDistributorComponent},
     {path: 'bulk-invite', component: BulkInviteSingleComponent},
     {path: 'bulk-upload', component: BulkInviteComponent},
     {path: 'invite-status', component: InviteStatusComponent},
     {path: 'manage-distributor', component: ManageDistributorComponent},
+    {path: 'manage-product', component: ViewManageProductComponent},
+    {path: 'view-product', component: ViewProductComponent},
+    {path: 'category', component: CategoryComponent},
 ]

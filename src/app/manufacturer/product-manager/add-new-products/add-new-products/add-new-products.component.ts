@@ -24,8 +24,9 @@ import { MultiSelectModule } from 'primeng/multiselect';
   styleUrls: ['./add-new-products.component.scss']
 })
 export class AddNewProductsComponent {
-  addProductForm: FormGroup;
-  submitted: boolean = false;
+  addProductForm:any= FormGroup;
+  submittedStep2: boolean = false;
+  submittedStep1=false;
   displayProductImageDialog: boolean = false;
   selectedColorGroupIndex: number | null = null;
   @ViewChild('fileInput') fileInput!: ElementRef;
@@ -61,6 +62,7 @@ export class AddNewProductsComponent {
   allCareInstruction: any;
   allSubCategory: any;
   allLifeStyle:any 
+  allBrands:any
 
   constructor(private fb: FormBuilder,
     private authService: AuthService,
@@ -80,16 +82,16 @@ export class AddNewProductsComponent {
         material: ['', Validators.required],
         materialvariety: [''],
         fabricPattern: ['', Validators.required],
-        selectedOccasion: [[], Validators.required],
-        selectedlifeStyle: [[], Validators.required],
-        specialFeature: [[], Validators.required],
+        selectedOccasion: [[]],
+        selectedlifeStyle: [[]],
+        specialFeature: [[]],
         fitStyle: ['', Validators.required],
         neckStyle: ['', Validators.required],
         closureType: ['', Validators.required],
         pocketDescription: ['', Validators.required],
         sleeveCuffStyle: ['', Validators.required],
         sleeveLength: ['', Validators.required],
-        careInstructions: ['', Validators.required],
+        careInstructions: [''],
         sizes: this.fb.array([]),
         ProductDeimension: this.fb.group({
           length: ['', Validators.required],
@@ -104,13 +106,15 @@ export class AddNewProductsComponent {
         colourName: ['', Validators.required],
         colourImage: [null, Validators.required],
         productVideo: [null, Validators.required],
-        productImages: this.fb.array([])
+        productImages: this.fb.array([], Validators.required)
       })
     });
+   
+    
   }
 
   ngOnInit() {
-    // call master
+    // call master    
     this.getProductDataById()
     this.getClothingType()
     this.getMaterial()
@@ -126,6 +130,9 @@ export class AddNewProductsComponent {
     this.getallCareInstruction()
     this.getAllSubCategory()
     this.getAllLifeStyle()
+    this.getAllBrands()
+     this.updateValidators()
+    
   }
 
   // stepOne vlidation
@@ -138,6 +145,18 @@ export class AddNewProductsComponent {
     this.authService.get('clothing-mens').subscribe(res => {
       if (res) {
         this.allClothingType = res.results
+      }
+
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getAllBrands(){
+    this.authService.get('brand').subscribe(res => {
+      if (res) {
+        this.allBrands = res.results.map((item: any) => item.brandName);
       }
 
     },
@@ -325,10 +344,10 @@ export class AddNewProductsComponent {
     if (event.target.checked) {
       this.sizesArray.push(this.fb.group({
         size: size,
-        brandSize: [''],
-        chest: [''],
-        shoulder: [''],
-        frontLength: ['']
+        brandSize: ['',Validators.required],
+        chest: ['',Validators.required],
+        shoulder: ['',Validators.required],
+        frontLength: ['',Validators.required]
       }));
     } else {
       const index = this.sizesArray.controls.findIndex(x => x.get('size')?.value === size);
@@ -338,6 +357,7 @@ export class AddNewProductsComponent {
 
   // save Forms step One
   saveStepOneData() {
+    this.submittedStep1=true
     if (this.stepOne.valid) {
       this.spinner.show()
       this.authService.post('products', this.stepOne.value).subscribe(res => {
@@ -372,8 +392,8 @@ export class AddNewProductsComponent {
   onFileChange(event: any, controlName: string) {
     const file = event.target.files[0];
     if (file) {
-      if (controlName === 'productVideo' && file.size > 10 * 1024 * 1024) { // 10 MB in bytes
-        this.videoSizeError = 'Product video must be less than 10 MB';
+      if (controlName === 'productVideo' && file.size > 50 * 1024 * 1024) { // 50 MB in bytes
+        this.videoSizeError = 'Product video must be less than 50 MB';
         this.stepTwo.get(controlName)?.reset();
       } else {
         this.videoSizeError = '';
@@ -401,7 +421,39 @@ export class AddNewProductsComponent {
     fileInput.click();
   }
 
+  // saveStepTwoData() {
+  //   this.stepTwo.markAllAsTouched();
+  //   if (this.stepTwo.valid && !this.videoSizeError) {
+  //     const formData = this.createFormData();
+  //     this.spinner.show();
+  //     this.authService.post(`products/upload/colour-collection/${this.ProductId}`, formData).subscribe(
+  //       response => {
+  //         if (response) {
+  //           this.spinner.hide();
+
+  //           this.resetForm()
+  //           this.colourCollections = response.colourCollections
+  //           this.communicationService.showNotification(
+  //             'snackbar-success',
+  //             `Saved Successfully...!!!`,
+  //             'bottom',
+  //             'center'
+  //           );
+  //         }
+  //       },
+  //       error => {
+  //         console.log('Error', error);
+  //         this.spinner.hide();
+  //       }
+  //     );
+  //   } else {
+  //     console.log('Form is invalid');
+  //     this.spinner.hide();
+  //   }
+  // }
+
   saveStepTwoData() {
+    this.submittedStep2 = true;
     this.stepTwo.markAllAsTouched();
     if (this.stepTwo.valid && !this.videoSizeError) {
       const formData = this.createFormData();
@@ -410,15 +462,15 @@ export class AddNewProductsComponent {
         response => {
           if (response) {
             this.spinner.hide();
-
-            this.resetForm()
-            this.colourCollections = response.colourCollections
+            this.resetForm();
+            this.colourCollections = response.colourCollections;
             this.communicationService.showNotification(
               'snackbar-success',
               `Saved Successfully...!!!`,
               'bottom',
               'center'
             );
+            this.updateValidators();
           }
         },
         error => {
@@ -454,6 +506,7 @@ export class AddNewProductsComponent {
     // Manually reset the file inputs
     (document.getElementById('colourImage') as HTMLInputElement).value = '';
     (document.getElementById('videoUpload') as HTMLInputElement).value = '';
+    this.submittedStep2 = false;
   }
 
   createObjectURL(file: File): string {
@@ -466,6 +519,40 @@ export class AddNewProductsComponent {
       console.log(res)
     })
 
+  }
+
+  // for update validation
+  updateValidators() {
+    if (this.colourCollections.length === 0) {
+      this.setValidators([
+        'colour',
+        'colourImage',
+        'productVideo',
+        'productImages'
+      ]);
+    } else {
+      this.clearValidators([
+        'colour',
+        'colourImage',
+        'productVideo',
+        'productImages'
+      ]);
+      this.setValidators(['colourName']);
+    }
+  }
+
+  setValidators(fields: string[]) {
+    fields.forEach(field => {
+      this.stepTwo.get(field)?.setValidators(Validators.required);
+      this.stepTwo.get(field)?.updateValueAndValidity();
+    });
+  }
+
+  clearValidators(fields: string[]) {
+    fields.forEach(field => {
+      this.stepTwo.get(field)?.clearValidators();
+      this.stepTwo.get(field)?.updateValueAndValidity();
+    });
   }
 
 

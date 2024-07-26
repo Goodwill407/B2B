@@ -39,6 +39,30 @@ export const ROUTES: RouteInfo[] = [
     submenu: []
   },    
   {
+    path: '/mnf/brand',
+    title: `Brand`,
+    iconType: 'material-icons-outlined',
+    icon: 'business',
+    class: '',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['manufacture'],
+    submenu: []
+  },    
+  {
+    path: '/mnf/category',
+    title: `Category`,
+    iconType: 'material-icons-outlined',
+    icon: 'view_timeline',
+    class: '',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['manufacture'],
+    submenu: []
+  },    
+  {
     path: '',
     title: `Distributor's Management`,
     iconType: 'material-icons-outlined',
@@ -123,7 +147,7 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
       },
       {
-        path: '/users/skill-trainer',
+        path: '/mnf/manage-product',
         title: 'View And Manage Product',
         iconType: '',
         icon: '',
@@ -249,9 +273,20 @@ export const ROUTES: RouteInfo[] = [
   },
 
   // -------------------------------------- wholesaler -------------------------------------//
-  
   {
-    path: '/mnf/profile',
+    path: '/wholesaler/dashboard',
+    title: `Dashboard`,
+    iconType: 'material-icons-outlined',
+    icon: 'space_dashboard',
+    class: '',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['wholesaler'],
+    submenu: []
+  }, 
+  {
+    path: '/wholesaler/profile',
     title: `Profile`,
     iconType: 'material-icons-outlined',
     icon: 'person',
@@ -274,8 +309,8 @@ export const ROUTES: RouteInfo[] = [
     role: ['wholesaler'],
     submenu: [
       {
-        path: '/mnf/new-distributor',
-        title: 'Invite New Distributor',
+        path: '/wholesaler/new-retailer',
+        title: 'Invite New Retailer',
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -286,7 +321,7 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
       },
       {
-        path: '/mnf/manage-distributor',
+        path: '/wholesaler/manage-retailer',
         title: 'View And Manage Retailer',
         iconType: '',
         icon: '',
@@ -298,7 +333,7 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
       },
       {
-        path: '/mnf/bulk-upload',
+        path: '/wholesaler/bulk-upload',
         title: 'Bulk Invite',
         iconType: '',
         icon: '',
@@ -310,7 +345,7 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
       },
       {
-        path: '/mnf/invite-status',
+        path: '/wholesaler/invite-status',
         title: 'Invite Status',
         iconType: '',
         icon: '',

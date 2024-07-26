@@ -1,48 +1,56 @@
-import { NgClass } from '@angular/common';
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '@core';
+import { AuthService, CommunicationService, DirectionService } from '@core';
 
 @Component({
   selector: 'app-wholesaler-profile',
   standalone: true,
   imports: [
-    ReactiveFormsModule,NgClass
+    ReactiveFormsModule, NgClass,
+    NgIf,NgFor
   ],
   templateUrl: './wholesaler-profile.component.html',
   styleUrl: './wholesaler-profile.component.scss'
 })
 export class WholesalerProfileComponent {
 
-  mgfRegistrationForm:any= FormGroup;
+  mgfRegistrationForm: any = FormGroup;
   submitted: boolean = false;
   userProfile: any
-  getResisterData:any
+  getResisterData: any
 
   // btn flag
   isDataSaved = false;  // Flag to track if data is saved
   submitFlag = false;
-  isUpdateBtn=false;
-  isEditFlag=false
+  isUpdateBtn = false;
+  isEditFlag = false
+  allState: { name: string; cities: string[]; iso2: String }[] = [];
+  cityList: any;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService,private direction:DirectionService) { }
 
-  }
-
-
+  countries: any[] = [
+    'United States',
+    'United Kingdom',
+    'Australia',
+    'India',
+  ]
 
   ngOnInit(): void {
-    this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);    
-    this.InisilizeValidation()     
-    this.getSavedProfileData()   
-    this.disbledFeilds()
+    this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
+    this.initializeForm();
+    this.getSavedProfileData()
+    this.disabledFields();
+    this.getAllState();
   }
 
-  InisilizeValidation() {
+  initializeForm() {
     this.mgfRegistrationForm = this.fb.group({
       fullName: ['', Validators.required],
       companyName: ['', Validators.required],
       address: ['', Validators.required],
+      country: ['India', Validators.required],
       state: ['', Validators.required],
       city: ['', Validators.required],
       pinCode: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
@@ -53,10 +61,10 @@ export class WholesalerProfileComponent {
       GSTIN: ['', [Validators.required, Validators.pattern(/^[0-9]{15}$/)]],
       pan: ['', [Validators.required, Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/)]],
       socialMedia: this.fb.group({
-        facebook: [''],
-        linkedIn: [''],
-        instagram: [''],
-        webSite: ['']
+        facebook: ['', [Validators.required, Validators.pattern(/^(https?:\/\/)?(www\.)?(facebook|fb)\.com\/.+$/)]],
+        linkedIn: ['', [Validators.required, Validators.pattern(/^(https?:\/\/)?(www\.)?linkedin\.com\/.+$/)]],
+        instagram: ['', [Validators.required, Validators.pattern(/^(https?:\/\/)?(www\.)?instagram\.com\/.+$/)]],
+        webSite: ['', [Validators.required, Validators.pattern(/^(https?:\/\/)?(www\.)?[^ "]+$/)]]
       }),
       BankDetails: this.fb.group({
         accountNumber: ['', Validators.required],
@@ -66,113 +74,112 @@ export class WholesalerProfileComponent {
       })
     });
   }
-  
-  get f(){
+
+  get f() {
     return this.mgfRegistrationForm.controls;
   }
 
-  // get resisterd data
-  getResistereduserData(){
-    this.authService.get(`users/registered-user/${this.userProfile.email}`).subscribe(res=>{
-      this.getResisterData=res
+  // get registered data
+  getRegisteredUserData() {
+    this.authService.get(`users/registered-user/${this.userProfile.email}`).subscribe(res => {
+      this.getResisterData = res;
       this.mgfRegistrationForm.patchValue({
         companyName: this.getResisterData.companyName,
-        mobNumber:this.getResisterData.mobileNumber,
-        email:this.getResisterData.email,
-        fullName:this.getResisterData.fullName
+        mobNumber: this.getResisterData.mobileNumber,
+        email: this.getResisterData.email,
+        fullName: this.getResisterData.fullName
       });
 
     },
-    error=>{
+      error => {
 
-    }
-  )
+      }
+    )
   }
 
-  // disbled some resistered feilds
-  disbledFeilds(){
+  // disabled some registered fields
+  disabledFields() {
     this.mgfRegistrationForm.get('fullName')?.disable();
     this.mgfRegistrationForm.get('email')?.disable();
     this.mgfRegistrationForm.get('mobNumber')?.disable();
     this.mgfRegistrationForm.get('companyName')?.disable();
-}
+  }
 
 
   getSavedProfileData() {
-    this.authService.get(`manufacturers/${this.userProfile.email}`).subscribe((res: any) => {
+    this.authService.get(`wholesaler/${this.userProfile.email}`).subscribe((res: any) => {
       if (res) {
         const allData = res
-        this.mgfRegistrationForm.patchValue(allData)
-        this.mgfRegistrationForm.disable()
-        this.isDataSaved=true
-        this.isEditFlag=true;
+        this.mgfRegistrationForm.patchValue(allData);
+        this.stateWiseCity(null,allData.state,allData.city);
+        this.mgfRegistrationForm.disable();
+        this.isDataSaved = true;
+        this.isEditFlag = true
+      } else {
       }
-      else {
-      
+    }, error => {
+      if (error.error.message === "Manufacturer not found") {
+        this.getRegisteredUserData();
       }
-    }
-  ,error=>{
-    if(error.error.message == "Manufaturer not found"){
-    this.getResistereduserData()
-  }
-  })
+    })
   }
 
-
-
-  onSubmit(Type: any): void {
-    this.mgfRegistrationForm
+  onSubmit(type: string): void {
     this.submitted = true;
     if (this.mgfRegistrationForm.invalid) {
       return;
     }
-    else if (Type == 'Save') {
-      this.SaveProfileData()
+    else if (type === 'Save') {
+      this.saveProfileData()
     }
-    else if (Type == 'Update') {
-      this.UpdateData()
+    else if (type === 'Update') {
+      this.updateData()
     }
-
   }
 
-
-  // save and update
-
-  SaveProfileData() {
-    const formData=this.mgfRegistrationForm.getRawValue();
-    
-    this.authService.post('manufacturers',formData ).subscribe((res: any) => {
-      console.log(res)
-      if(res){
-        this.mgfRegistrationForm.disable()   
-        this.isEditFlag=true;     
+  saveProfileData() {
+    const formData = this.mgfRegistrationForm.getRawValue();
+    this.authService.post('(`wholesaler', formData).subscribe((res: any) => {
+      if (res) {
+        this.mgfRegistrationForm.disable();
+        this.isEditFlag = true;
       }
     },
       error => {
-
-      })
-
-
+      }
+    )
   }
 
-  UpdateData() {
-    const formData=this.mgfRegistrationForm.getRawValue();
-   this.authService.patchWithEmail(`manufacturers/${this.userProfile.email}`,formData)
-   .subscribe(res=>{
-     if(res){
-      this.mgfRegistrationForm.disable()
-      this.isUpdateBtn=false; 
-     }
-   },
-   error=>{
-
-   })
+  updateData() {
+    const formData = this.mgfRegistrationForm.getRawValue();
+    this.authService.patchWithEmail(`wholesaler/${this.userProfile.email}`, formData)
+      .subscribe(res => {
+        if (res) {
+          this.mgfRegistrationForm.disable();
+          this.isUpdateBtn = false;
+        }
+      },
+        error => {
+        }
+      )
   }
 
-  editUserData(){
-    this.mgfRegistrationForm.enable()
-    this.isUpdateBtn=true 
-    // this.isEditFlag=false
+  editUserData() {
+    this.mgfRegistrationForm.enable();
+    this.isUpdateBtn = true;
+  }
+
+  getAllState() {
+    this.direction.getStates('https://api.countrystatecity.in/v1/countries/IN/states').subscribe(res => {
+      this.allState = res;
+    });
+  }
+
+  stateWiseCity(event: any, stateName: any = '', cityName: any = '') {
+    const state = event === null ? stateName : event.target.value;
+    this.direction.getCities(`https://api.countrystatecity.in/v1/countries/IN/states/${state}/cities`).subscribe((res: any) => {
+      this.cityList = res;
+      this.mgfRegistrationForm.get('city')?.setValue(cityName);
+    });
   }
 }
-
