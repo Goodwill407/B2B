@@ -64,3 +64,16 @@
   color: #000;
   font-weight: bold;
 }
+.video-thumbnail {
+  position: relative;
+}
+
+.video-thumbnail i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  color: white;
+  opacity: 0.8;
+}

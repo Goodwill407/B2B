@@ -47,6 +47,7 @@
     "bootstrap-icons": "^1.11.3",
     "browser-sync": "^2.29.3",
     "chart.js": "^4.4.0",
+    "colorthief": "^2.4.0",
     "core-js": "^3.33.3",
     "echarts": "^5.4.3",
     "file-saver": "^2.0.5",

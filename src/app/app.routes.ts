@@ -31,6 +31,11 @@ export const APP_ROUTE: Route[] = [
         loadChildren: () =>
           import('./wholseller/wholseller.routes').then((m) => m.R_Auth),
       },
+      {
+        path: 'retailer',
+        loadChildren: () =>
+          import('./retailer/retailer.routes').then((m) => m.Retailer_Route),
+      },
     ],
   },
   {

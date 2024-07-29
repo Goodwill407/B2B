@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { MatTabsModule } from '@angular/material/tabs';
 import { Router } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import { PaginatorModule } from 'primeng/paginator';
@@ -15,129 +16,142 @@ import { TooltipModule } from 'primeng/tooltip';
     CommonModule,
     PaginatorModule,
     TooltipModule,
-    TableModule
+    TableModule,
+    MatTabsModule
   ],
   templateUrl: './category.component.html',
-  styleUrl: './category.component.scss'
+  styleUrls: ['./category.component.scss']
 })
 export class CategoryComponent {
-  categoryForm!: FormGroup;
-  imagePreview: string | ArrayBuffer | null = null;
+  categoryForm1!: FormGroup;
+  categoryForm2!: FormGroup;
   formType: string = 'Save';
-  imageError: string = '';
-  imageFormatError: string = '';
-  distributors: any;
-  totalResults: any;
+  wholesalerCategory: any;
+  retailerCategory: any;
+  totalResultsWholesaler: any;
+  totalResultsRetailer: any;
   limit = 10;
-  page: number = 1
-  first: number = 0;
+  pageWholesaler: number = 1;
+  pageRetailer: number = 1;
+  firstWholesaler: number = 0;
+  firstRetailer: number = 0;
   rows: number = 10;
-  cdnPath: string = '';
 
   constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private router: Router) { }
 
   ngOnInit() {
-    this.cdnPath = this.authService.cdnPath;
-    this.initializeForm();
-    this.getAllBrands();
+    this.initializeForms();
+    this.getAllWholesalerCategory();
+    this.getAllRetailerCategory();
   }
 
-  initializeForm() {
-    this.categoryForm = this.fb.group({
+  initializeForms() {
+    this.categoryForm1 = this.fb.group({
       category: ['', Validators.required],
-      categoryBy: ['', Validators.required],
+      discount: ['', Validators.required],
+      categoryBy: ['wholesaler', Validators.required],
+      id: ['']
+    });
+
+    this.categoryForm2 = this.fb.group({
+      category: ['', Validators.required],
+      discount: ['', Validators.required],
+      categoryBy: ['retailer', Validators.required],
       id: ['']
     });
   }
 
-  onImageChange(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const img = new Image();
-        img.src = reader.result as string;
-        img.onload = () => {
-          this.imageError = '';
-          this.imageFormatError = '';
-
-          const validFormat = file.type === 'image/jpeg' || file.type === 'image/png';
-
-          if (!validFormat) {
-            this.imageFormatError = 'Invalid image format. Please upload an image in jpeg/png format.';
-          }
-
-          if (validFormat) {
-            this.imagePreview = reader.result;
-            this.categoryForm.patchValue({ brandLogo: file });
-            this.categoryForm.get('brandLogo')?.updateValueAndValidity();
-          } else {
-            this.imagePreview = null;
-            this.categoryForm.patchValue({ brandLogo: null });
-          }
-        };
-      };
-      reader.readAsDataURL(file);
+  onSubmit(formType: string) {
+    if (formType === 'wholesaler' && this.categoryForm1.valid) {
+      this.submitWholesalerCategory();
+    } else if (formType === 'retailer' && this.categoryForm2.valid) {
+      this.submitRetailerCategory();
     }
   }
 
-  onSubmit() {
-    if (this.categoryForm.valid) {
-      const formData = new FormData();
-      formData.append('brandName', this.categoryForm.get('brandName')?.value);
-      formData.append('brandDescription', this.categoryForm.get('brandDescription')?.value);
-      formData.append('brandLogo', this.categoryForm.get('brandLogo')?.value);
-
-      if (this.formType === 'Save') {
-        this.authService.post('brand', formData).subscribe((res: any) => {
-          this.communicationService.showNotification('snackbar-success', 'Brand created successfully', 'bottom', 'center');
-          this.resetForm();
-        });
-      } else {
-        formData.append('id', this.categoryForm.get('id')?.value);
-        this.authService.patch(`brand`, formData).subscribe((res: any) => {
-          this.communicationService.showNotification('snackbar-success', 'Brand updated successfully', 'bottom', 'center');
-          this.resetForm();
-        });
-      }
+  submitWholesalerCategory() {
+    if (this.formType === 'Save') {
+      this.authService.post('wholesaler-category', this.categoryForm1.value).subscribe((res: any) => {
+        this.communicationService.showNotification('snackbar-success', 'Wholesaler category created successfully', 'bottom', 'center');
+        this.resetForm(this.categoryForm1);
+        this.getAllWholesalerCategory();
+      });
+    } else {
+      this.authService.patch('wholesaler-category', this.categoryForm1.value).subscribe((res: any) => {
+        this.communicationService.showNotification('snackbar-success', 'Wholesaler category updated successfully', 'bottom', 'center');
+        this.resetForm(this.categoryForm1);
+        this.getAllWholesalerCategory();
+      });
     }
   }
 
-  getAllBrands() {
-    this.authService.get(`brand?page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
-      this.distributors = res.results;
-      this.totalResults = res.totalResults;
+  submitRetailerCategory() {
+    if (this.formType === 'Save') {
+      this.authService.post('retailer-category', this.categoryForm2.value).subscribe((res: any) => {
+        this.communicationService.showNotification('snackbar-success', 'Retailer category created successfully', 'bottom', 'center');
+        this.resetForm(this.categoryForm2);
+        this.getAllRetailerCategory();
+      });
+    } else {
+      this.authService.patch('retailer-category', this.categoryForm2.value).subscribe((res: any) => {
+        this.communicationService.showNotification('snackbar-success', 'Retailer category updated successfully', 'bottom', 'center');
+        this.resetForm(this.categoryForm2);
+        this.getAllRetailerCategory();
+      });
+    }
+  }
+
+  getAllWholesalerCategory() {
+    this.authService.get(`wholesaler-category?page=${this.pageWholesaler}&limit=${this.limit}`).subscribe((res: any) => {
+      this.wholesalerCategory = res.results;
+      this.totalResultsWholesaler = res.totalResults;
     });
   }
 
-  onPageChange(event: any) {
-    this.page = event.page + 1;
+  getAllRetailerCategory() {
+    this.authService.get(`retailer-category?page=${this.pageRetailer}&limit=${this.limit}`).subscribe((res: any) => {
+      this.retailerCategory = res.results;
+      this.totalResultsRetailer = res.totalResults;
+    });
+  }
+
+  onPageChangeWholesaler(event: any) {
+    this.pageWholesaler = event.page + 1;
     this.limit = event.rows;
-    this.getAllBrands();
+    this.getAllWholesalerCategory();
   }
 
-  deleteData(user: any) {
-    this.authService.delete(`brand`, user.id).subscribe((res) => {
-      this.communicationService.showNotification('snackbar-success', 'Brand Deleted successfully', 'bottom', 'center');
-      this.getAllBrands();
+  onPageChangeRetailer(event: any) {
+    this.pageRetailer = event.page + 1;
+    this.limit = event.rows;
+    this.getAllRetailerCategory();
+  }
+
+  deleteWholesalerCategory(category: any) {
+    this.authService.delete('wholesaler-category', category.id).subscribe((res) => {
+      this.communicationService.showNotification('snackbar-success', 'Wholesaler category deleted successfully', 'bottom', 'center');
+      this.getAllWholesalerCategory();
     });
   }
 
-  editForm(data: any) {
-    this.categoryForm.patchValue(data);
-    this.formType = 'Update';
-    this.imagePreview = this.cdnPath + data.brandLogo;
-    this.categoryForm.get('brandLogo')?.setValidators(null); // Remove validators for editing
-    this.categoryForm.get('brandLogo')?.updateValueAndValidity();
+  deleteRetailerCategory(category: any) {
+    this.authService.delete('retailer-category', category.id).subscribe((res) => {
+      this.communicationService.showNotification('snackbar-success', 'Retailer category deleted successfully', 'bottom', 'center');
+      this.getAllRetailerCategory();
+    });
   }
 
-  resetForm() {
-    this.categoryForm.reset();
-    this.imagePreview = null;
+  editForm(category: any) {
+    if (category.categoryBy === 'wholesaler') {
+      this.categoryForm1.patchValue(category);
+    } else if (category.categoryBy === 'retailer') {
+      this.categoryForm2.patchValue(category);
+    }
+    this.formType = 'Update';
+  }
+
+  resetForm(form: FormGroup) {
+    form.reset();
     this.formType = 'Save';
-    this.categoryForm.get('brandLogo')?.setValidators([Validators.required]); // Re-add validators for new entries
-    this.categoryForm.get('brandLogo')?.updateValueAndValidity();
-    this.getAllBrands();
   }
 }
-
