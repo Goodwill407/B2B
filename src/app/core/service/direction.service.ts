@@ -20,6 +20,8 @@ export class DirectionService {
 
   private apiUrl = 'https://api.countrystatecity.in/v1/countries/IN/states/MH/cities';
   private apiKey = 'cjhjU3JQdjZlaThGSWtBOGxHYlUxVm9tSjk3ZFFQQ211MDlwWWNVbw=='; // Replace with your actual API key
+  private countryUrl='https://restcountries.com/v3.1/all';
+  private cityApiUrl = 'https://api.example.com/cities?country=';
 
 
   constructor(private http: HttpClient) { }
@@ -42,5 +44,12 @@ export class DirectionService {
 
   updateDirection(item: string) {
     this.data.next(item);
+  }
+
+  getAllCountry(){
+    return this.http.get<any>(this.countryUrl);
+  }
+  getCity(countryCode: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.cityApiUrl}${countryCode}`);
   }
 }
