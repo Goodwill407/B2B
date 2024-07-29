@@ -24,22 +24,23 @@ import { MultiSelectModule } from 'primeng/multiselect';
   styleUrls: ['./add-new-products.component.scss']
 })
 export class AddNewProductsComponent {
-  addProductForm:any= FormGroup;
+  addProductForm: any = FormGroup;
   submittedStep2: boolean = false;
-  submittedStep1=false;
+  submittedStep1 = false;
   displayProductImageDialog: boolean = false;
   selectedColorGroupIndex: number | null = null;
   @ViewChild('fileInput') fileInput!: ElementRef;
   ProductId: any
-  CloudPath: string = 'https://lmscontent-cdn.blr1.digitaloceanspaces.com'
+  CloudPath: string = ''
 
   videoSizeError: string = '';
+  userProfile: any
 
   // form step
-  currentStep =1;
+  currentStep = 2;
 
   selectedSizes: any = []
-  colourCollections: any;
+  colourCollections: any = []
 
   // dropdown data
   sizes: any = [
@@ -61,8 +62,8 @@ export class AddNewProductsComponent {
   allSpecialFeature: any;
   allCareInstruction: any;
   allSubCategory: any;
-  allLifeStyle:any 
-  allBrands:any
+  allLifeStyle: any
+  allBrands: any
 
   constructor(private fb: FormBuilder,
     private authService: AuthService,
@@ -105,18 +106,18 @@ export class AddNewProductsComponent {
         colour: [''],
         colourName: ['', Validators.required],
         colourImage: [null, Validators.required],
-        productVideo: [null, Validators.required],
+        productVideo: [null],
         productImages: this.fb.array([], Validators.required)
       })
     });
-   
-    
+
+    this.CloudPath = this.authService.cdnPath
+
   }
 
   ngOnInit() {
     // call master    
     this.getProductDataById()
-    this.getClothingType()
     this.getMaterial()
     this.getFabricPttern()
     this.getOccasion()
@@ -128,11 +129,10 @@ export class AddNewProductsComponent {
     this.getSleeveLength()
     this.getSpecialFeature()
     this.getallCareInstruction()
-    this.getAllSubCategory()
     this.getAllLifeStyle()
     this.getAllBrands()
-     this.updateValidators()
-    
+    this.updateValidators()
+
   }
 
   // stepOne vlidation
@@ -140,20 +140,18 @@ export class AddNewProductsComponent {
     return this.addProductForm.get('stepOne') as FormGroup;
   }
 
-  // all Masters Data
-  getClothingType() {
-    this.authService.get('clothing-mens').subscribe(res => {
-      if (res) {
-        this.allClothingType = res.results
-      }
 
-    },
-      errpr => {
-        console.log('error')
-      })
+  getClothingType() {
+    this.authService.get(`sub-category?productType=${this.stepOne.get('productType')?.value}&gender=${this.stepOne.get('gender')?.value}`).subscribe(res => {
+      if (res) {
+        this.allClothingType = res.results.map((item: any) => item.category);
+      }
+    }, (error) => {
+      console.log(error);
+    });
   }
 
-  getAllBrands(){
+  getAllBrands() {
     this.authService.get('brand').subscribe(res => {
       if (res) {
         this.allBrands = res.results.map((item: any) => item.brandName);
@@ -165,7 +163,7 @@ export class AddNewProductsComponent {
       })
   }
 
-  getAllLifeStyle(){
+  getAllLifeStyle() {
     this.authService.get('lifestyle').subscribe(res => {
       if (res) {
         this.allLifeStyle = res.results.map((item: any) => item.name);
@@ -292,14 +290,13 @@ export class AddNewProductsComponent {
   }
 
   getAllSubCategory() {
-    this.authService.get('sub-category').subscribe(res => {
+    this.authService.get(`sub-category?productType=${this.stepOne.get('productType')?.value}&clothing=${this.stepOne.get('clothing')?.value}&gender=${this.stepOne.get('gender')?.value}`).subscribe(res => {
       if (res) {
-        this.allSubCategory = res.results
+        this.allSubCategory = res.results;
       }
-    },
-      errpr => {
-        console.log('error')
-      })
+    }, (error) => {
+      console.log(error);
+    });
   }
 
   getallCareInstruction() {
@@ -344,10 +341,10 @@ export class AddNewProductsComponent {
     if (event.target.checked) {
       this.sizesArray.push(this.fb.group({
         size: size,
-        brandSize: ['',Validators.required],
-        chest: ['',Validators.required],
-        shoulder: ['',Validators.required],
-        frontLength: ['',Validators.required]
+        brandSize: ['', Validators.required],
+        chest: ['', Validators.required],
+        shoulder: ['', Validators.required],
+        frontLength: ['', Validators.required]
       }));
     } else {
       const index = this.sizesArray.controls.findIndex(x => x.get('size')?.value === size);
@@ -357,10 +354,18 @@ export class AddNewProductsComponent {
 
   // save Forms step One
   saveStepOneData() {
-    this.submittedStep1=true
+    this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
+    this.submittedStep1 = true
     if (this.stepOne.valid) {
+      const createdBy = this.userProfile.email
+      // Add the createdBy property to stepOne's value
+      const stepOneData = {
+        ...this.stepOne.value,
+        createdBy: createdBy
+      };
+
       this.spinner.show()
-      this.authService.post('products', this.stepOne.value).subscribe(res => {
+      this.authService.post('products', stepOneData).subscribe(res => {
         if (res) {
           this.spinner.hide();
           this.ProductId = res.id
@@ -406,7 +411,7 @@ export class AddNewProductsComponent {
   onProductImageChange(event: any) {
     const file = event.target.files[0];
     if (file) {
-      this.productImages.push(this.fb.control(file, Validators.required));
+      this.productImages.push(this.fb.control(file));
       this.cd.detectChanges();
     }
   }
@@ -421,82 +426,69 @@ export class AddNewProductsComponent {
     fileInput.click();
   }
 
-  // saveStepTwoData() {
-  //   this.stepTwo.markAllAsTouched();
-  //   if (this.stepTwo.valid && !this.videoSizeError) {
-  //     const formData = this.createFormData();
-  //     this.spinner.show();
-  //     this.authService.post(`products/upload/colour-collection/${this.ProductId}`, formData).subscribe(
-  //       response => {
-  //         if (response) {
-  //           this.spinner.hide();
-
-  //           this.resetForm()
-  //           this.colourCollections = response.colourCollections
-  //           this.communicationService.showNotification(
-  //             'snackbar-success',
-  //             `Saved Successfully...!!!`,
-  //             'bottom',
-  //             'center'
-  //           );
-  //         }
-  //       },
-  //       error => {
-  //         console.log('Error', error);
-  //         this.spinner.hide();
-  //       }
-  //     );
-  //   } else {
-  //     console.log('Form is invalid');
-  //     this.spinner.hide();
-  //   }
-  // }
-
-  saveStepTwoData() {
+  async saveStepTwoData() {
     this.submittedStep2 = true;
     this.stepTwo.markAllAsTouched();
     if (this.stepTwo.valid && !this.videoSizeError) {
-      const formData = this.createFormData();
-      this.spinner.show();
-      this.authService.post(`products/upload/colour-collection/${this.ProductId}`, formData).subscribe(
-        response => {
-          if (response) {
-            this.spinner.hide();
-            this.resetForm();
-            this.colourCollections = response.colourCollections;
-            this.communicationService.showNotification(
-              'snackbar-success',
-              `Saved Successfully...!!!`,
-              'bottom',
-              'center'
-            );
-            this.updateValidators();
-          }
-        },
-        error => {
-          console.log('Error', error);
+      try {
+        const formData = await this.createFormData(); // Wait for createFormData to complete
+        this.spinner.show();
+        const response = await this.authService.post(`products/upload/colour-collection/66a503091fd9c60845b73016`, formData).toPromise();
+        if (response) {
           this.spinner.hide();
+          this.resetForm();
+          this.colourCollections = response.colourCollections;
+          this.communicationService.showNotification(
+            'snackbar-success',
+            `Saved Successfully...!!!`,
+            'bottom',
+            'center'
+          );
+          this.updateValidators();
         }
-      );
+      } catch (error) {
+        console.log('Error', error);
+        this.spinner.hide();
+      }
     } else {
       console.log('Form is invalid');
       this.spinner.hide();
     }
   }
 
-  createFormData(): FormData {
-    const formData = new FormData();
-    formData.append('colour', this.stepTwo.get('colour')?.value);
-    formData.append('colourName', this.stepTwo.get('colourName')?.value);
-    formData.append('colourImage', this.stepTwo.get('colourImage')?.value);
-    formData.append('productVideo', this.stepTwo.get('productVideo')?.value);
-    // formData.append('productImages', this.stepTwo.get('productImages')?.value);
 
-    this.productImages.controls.forEach((control, index) => {
-      formData.append(`productImages`, control.value);
+  createFormData(): Promise<FormData> {
+    return new Promise((resolve, reject) => {
+      try {
+        const formData = new FormData();
+        formData.append('colour', this.stepTwo.get('colour')?.value);
+        formData.append('colourName', this.stepTwo.get('colourName')?.value);
+
+        const colourImage = this.stepTwo.get('colourImage')?.value;
+        if (colourImage !== null) {
+          formData.append('colourImage', colourImage);
+        }
+
+        const productVideo = this.stepTwo.get('productVideo')?.value;
+        if (productVideo !== null) {
+          formData.append('productVideo', productVideo);
+        }
+
+        const productImages = this.stepTwo.get('productImages') as FormArray;
+        if (productImages && productImages.length > 0) {
+          productImages.controls.forEach((control, index) => {
+            const file = control.value;
+            if (file) {
+              formData.append('productImages', file);
+            }
+          });
+        }
+
+        resolve(formData); // Resolve with formData
+      } catch (error) {
+        reject(error); // Reject in case of any error
+      }
     });
-
-    return formData;
   }
 
   // for reset all form
@@ -522,39 +514,51 @@ export class AddNewProductsComponent {
   }
 
   // for update validation
+  setValidators(controlNames: string[]) {
+    controlNames.forEach(controlName => {
+      const control = this.stepTwo.get(controlName);
+      if (control) {
+        control.setValidators(Validators.required);
+        control.updateValueAndValidity();
+      }
+    });
+  }
+
+  // Function to clear validators for specific controls
+  clearValidators(controlNames: string[]) {
+    controlNames.forEach(controlName => {
+      const control = this.stepTwo.get(controlName);
+      if (control) {
+        control.clearValidators();
+        control.updateValueAndValidity();
+      }
+    });
+  }
+
+
+  // Function to update validators based on the colourCollections length
   updateValidators() {
     if (this.colourCollections.length === 0) {
-      this.setValidators([
-        'colour',
-        'colourImage',
-        'productVideo',
-        'productImages'
-      ]);
+      this.setValidators(['colourName', 'colourImage', 'productImages']);
+      // this.setValidatorsForFormArray(this.productImages);
     } else {
-      this.clearValidators([
-        'colour',
-        'colourImage',
-        'productVideo',
-        'productImages'
-      ]);
-      this.setValidators(['colourName']);
+      this.clearValidators(['colourImage', 'productImages']);
+      // this.clearValidatorsForFormArray(this.productImages);
+      this.setValidators(['colourName', 'colour']);
     }
   }
 
-  setValidators(fields: string[]) {
-    fields.forEach(field => {
-      this.stepTwo.get(field)?.setValidators(Validators.required);
-      this.stepTwo.get(field)?.updateValueAndValidity();
-    });
+  // create path for video and image
+  getProductImagePath(Image: any) {
+    return this.CloudPath+Image;
   }
 
-  clearValidators(fields: string[]) {
-    fields.forEach(field => {
-      this.stepTwo.get(field)?.clearValidators();
-      this.stepTwo.get(field)?.updateValueAndValidity();
-    });
+  getColorIconPath(Image: any) {
+    return this.CloudPath+Image;
   }
-
+  getVideoPath(video: any) {
+    return this.CloudPath+video;
+  }
 
 }
 

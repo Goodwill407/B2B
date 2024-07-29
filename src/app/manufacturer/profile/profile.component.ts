@@ -30,6 +30,8 @@ export class ProfileComponent {
   isEditFlag = false
   allState: { name: string; cities: string[]; iso2: String }[] = [];
   cityList: any;
+  allCountry:any
+  Allcities:any
 
   constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private http: HttpClient, private direction: DirectionService) { }
 
@@ -40,9 +42,18 @@ export class ProfileComponent {
     'India',
   ]
 
+  legalStatusOptions:any[]=[
+  "individual - Proprietor",
+  "Partnership",
+  "LLP /LLC",
+  "Private Limited",
+  "Limited"
+  ]
+
   ngOnInit(): void {
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
     this.initializeValidation()
+    this.getAllCountry()
     this.getSavedProfileData()
     this.disabledFields();
     this.getAllState();
@@ -59,6 +70,7 @@ export class ProfileComponent {
       pinCode: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
       mobNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       mobNumber2: [''],
+      legalStatusOfFirm: ['',[Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       email2: ['', Validators.email],
       GSTIN: ['', [Validators.required, Validators.pattern(/^[0-9]{15}$/)]],
@@ -73,10 +85,15 @@ export class ProfileComponent {
         accountNumber: ['', Validators.required],
         accountType: ['', Validators.required],
         bankName: ['', Validators.required],
-        IFSCcode: ['', Validators.required]
+        IFSCcode: ['', Validators.required],
+        country: ['', Validators.required],
+        city: ['', Validators.required],
+        branch: ['', Validators.required],
       })
     });
   }
+
+  
 
   get f() {
     return this.mgfRegistrationForm.controls;
@@ -183,6 +200,19 @@ export class ProfileComponent {
     this.direction.getCities(`https://api.countrystatecity.in/v1/countries/IN/states/${state}/cities`).subscribe((res: any) => {
       this.cityList = res;
       this.mgfRegistrationForm.get('city')?.setValue(cityName);
+    });
+  }
+
+  getAllCountry(){
+    this.direction.getAllCountry().subscribe((res:any)=>{
+      this.allCountry=res
+    })
+  }
+  onCountryChange(event: any): void {
+    const target = event.target as HTMLSelectElement;
+    const countryCode = target.value;
+    this.direction.getCities(countryCode).subscribe(data => {
+      this.Allcities = data;
     });
   }
 }

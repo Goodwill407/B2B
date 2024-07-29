@@ -97,7 +97,18 @@
                             <input type="text" id="mobNumberAlt" formControlName="mobNumber2" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.mobNumber2.errors }">
                         </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 pe-4">
+                            <label class="label-input" for="legalStatusOfFirm">Legal Status of Firm:</label>
+                            <select id="legalStatusOfFirm" formControlName="legalStatusOfFirm" class="form-select"
+                              [ngClass]="{ 'is-invalid': submitted && f.legalStatusOfFirm.errors }">
+                              <option value="" disabled selected>Select Legal Status</option>
+                              <option *ngFor="let status of legalStatusOptions" [value]="status">{{ status}}</option>
+                            </select>
+                            <div *ngIf="submitted && f.legalStatusOfFirm.errors" class="invalid-feedback">
+                              <div *ngIf="f.legalStatusOfFirm.errors.required">Legal Status of Firm is required.</div>
+                            </div>
+                          </div>
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 pe-4">
                             <label class="label-input" for="email">Primary Email :</label>
                             <input type="text" id="email" formControlName="email" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.email.errors }">
@@ -106,7 +117,7 @@
                                 <div *ngIf="f.email.errors.email">Email must be valid.</div>
                             </div>
                         </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 pe-4">
                             <label class="label-input" for="emailAlt">Alternative Email :</label>
                             <input type="text" id="emailAlt" formControlName="email2" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.email2.errors }">
@@ -134,32 +145,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- <div class="card p-4 pt-2">
-                    <h5 class="text-center mb-0">Social Media</h5>
-                    <hr class="mt-2">
-                    <div class="row" formGroupName="socialMedia">
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="label-input" for="fb">Facebook :</label>
-                            <input type="text" id="fb" formControlName="facebook" class="form-control"
-                                [ngClass]="{ 'is-invalid': submitted && f.socialMedia.get('facebook').errors }">
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
-                            <label class="label-input" for="linkedin">Linkedin :</label>
-                            <input type="text" id="linkedin" formControlName="linkedIn" class="form-control"
-                                [ngClass]="{ 'is-invalid': submitted && f.socialMedia.get('linkedIn').errors }">
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="label-input" for="insta">Instagram :</label>
-                            <input type="text" id="insta" formControlName="instagram" class="form-control"
-                                [ngClass]="{ 'is-invalid': submitted && f.socialMedia.get('instagram').errors }">
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
-                            <label class="label-input" for="web">Company Website :</label>
-                            <input type="text" id="web" formControlName="webSite" class="form-control"
-                                [ngClass]="{ 'is-invalid': submitted && f.socialMedia.get('webSite').errors }">
-                        </div>
-                    </div>
-                </div> -->
+                
                 <div class="card p-4 pt-2">
                     <h5 class="text-center mb-0">Social Media</h5>
                     <hr class="mt-2">
@@ -247,31 +233,56 @@
                                 <div *ngIf="f.BankDetails.get('IFSCcode').errors.required">IFSC Code is required.</div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <!-- <div class="card p-4 pt-2 mb-2">
-                    <h5 class="text-center mb-0">Images</h5>
-                    <hr class="mt-2">
-                    <div class="row">
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                            <label class="label-input" for="merchantImg">Company Merchant Image :</label>
-                            <input type="file" id="merchantImg" formControlName="merchantImg" class="form-control"
-                                [ngClass]="{ 'is-invalid': submitted && f.merchantImg.errors }">
-                            <div *ngIf="submitted && f.merchantImg.errors" class="invalid-feedback">
-                                <div *ngIf="f.merchantImg.errors.required">Merchant Image is required.</div>
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                            <label class="label-input" for="acType">Country:</label>                           
+                                <select id="country" formControlName="country" class="form-select"  (change)="onCountryChange($event)"
+                                    [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('country').errors }">
+                                    <option disabled value="">Select Country </option>
+                                    <option [value]="country.cca2" *ngFor="let country of allCountry">{{country.name.common}}</option>
+                                   
+                                </select>
+                            <div *ngIf="submitted && f.BankDetails.get('country').errors" class="invalid-feedback">
+                                <div *ngIf="f.BankDetails.get('country').errors.required">Country is required.
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 ps-4">
+                            <label class="label-input" for="acType">City:</label>                           
+                                <select id="city" formControlName="city" class="form-select"
+                                    [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('city').errors }">
+                                    <option disabled value="">Select City </option>
+                                    <option [value]="city.name" *ngFor="let city of Allcities">{{city.name}}</option>                                    
+                                </select>
+                            <div *ngIf="submitted && f.BankDetails.get('city').errors" class="invalid-feedback">
+                                <div *ngIf="f.BankDetails.get('city').errors.required">city is required.
+                                </div>
+                            </div>
+                        </div> -->
+                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 ps-4">
+                            <label class="label-input" for="acType">City:</label>                           
+                            <input type="text" id="acNo" formControlName="city" class="form-control"
+                            [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('city').errors }">
+                        <div *ngIf="submitted && f.BankDetails.get('city').errors"
+                            class="invalid-feedback">
+                            <div *ngIf="f.BankDetails.get('city').errors.required">city is
+                                required.</div>
+                        </div>                            
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 ps-4">
+                            <label class="label-input" for="acNo">Branch Name:</label>
+                            <input type="text" id="acNo" formControlName="branch" class="form-control"
+                                [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('branch').errors }">
+                            <div *ngIf="submitted && f.BankDetails.get('branch').errors"
+                                class="invalid-feedback">
+                                <div *ngIf="f.BankDetails.get('branch').errors.required">Branch-Name is
+                                    required.</div>
                             </div>
                         </div>
 
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-                            <label class="label-input" for="comName">Company Logo :</label>
-                            <input type="file" id="comName" formControlName="companyLogo" class="form-control"
-                                [ngClass]="{ 'is-invalid': submitted && f.companyLogo.errors }">
-                            <div *ngIf="submitted && f.companyLogo.errors" class="invalid-feedback">
-                                <div *ngIf="f.companyLogo.errors.required">Company Logo required.</div>
-                            </div>
-                        </div>
                     </div>
-                </div> -->
+                </div>
+               
                 <div class="row">
                     <div class="col-12 d-flex justify-content-center mt-5">
                         <button *ngIf="!isDataSaved" type="submit" class="btn submit-btn me-3"
