@@ -29,7 +29,7 @@
         <div class="cards-container">
           <div *ngFor="let product of products" class="product-card">
             <div class="design-no">Design No : {{product.designNo}}</div>
-            <img class="main-img" [src]="authService.cdnPath + product.selectedImageUrl" alt="{{product.title}}" routerLink="/mnf/view-product">
+            <img class="main-img" [src]="authService.cdnPath + product.selectedImageUrl" alt="{{product.title}}" [routerLink]="['/mnf/view-product',{id: product.id}]">
             <div class="product-details">
               <div class="color-options mt-0">
                 <button *ngFor="let color of product.colors"
@@ -38,7 +38,7 @@
                         (click)="changeProductImage(product, color)">
                 </button>
               </div>
-              <h6 class="title"  routerLink="/mnf/view-product">{{product.title}}</h6>
+              <h6 class="title"  [routerLink]="['/mnf/view-product',{id: product.id}]">{{product.title}}</h6>
               <p>{{product.description}}</p>
               <div class="availability">
                 <span *ngIf="product.stock > 0" class="in-stock">In stock - Qty {{product.stock}}</span>

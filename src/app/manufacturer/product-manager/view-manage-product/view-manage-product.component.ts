@@ -72,7 +72,7 @@ export class ViewManageProductComponent implements OnInit {
 
   getSubCategory() {
     const f = this.filters;
-    this.authService.get(`sub-category?productType=${f.productType}&clothing=${f.clothing}&gender${f.gender}`).subscribe(res => {
+    this.authService.get(`sub-category?productType=${f.productType}&clothing=${f.clothing}&gender=${f.gender}`).subscribe(res => {
       if (res) {
         this.allSubCategory = res.results;
       }
@@ -92,7 +92,8 @@ export class ViewManageProductComponent implements OnInit {
           selectedColor: product.colourCollections[0]?.colour || '',
           colors: product.colourCollections.map((c: any) => c.colour),
           colourCollections: product.colourCollections,
-          stock: 2000 // Replace with actual stock value if available
+          stock: product.quantity||2000, // Replace with actual stock value if available
+          id:product.id
         }));
       }
     });
