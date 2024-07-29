@@ -8,7 +8,7 @@
             color: red;
         }
     }
-    input{
+    input,select{
         height: 44px;
     }
 }
@@ -90,9 +90,9 @@
 }
 
 ::ng-deep .mat-mdc-text-field-wrapper {
-    height: 44px !important;
+    height: 43px !important;
     flex: auto;
 }
-.form-control{
+.form-control,.form-select{
     border-color: #9e9e9e !important;
 }

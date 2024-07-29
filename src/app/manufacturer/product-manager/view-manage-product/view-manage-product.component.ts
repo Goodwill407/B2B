@@ -1,22 +1,25 @@
-import { NgFor, NgIf, NgStyle } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { CommonModule, NgStyle } from '@angular/common';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '@core';
+import ColorThief from 'colorthief';
+import { PaginatorModule } from 'primeng/paginator';
 
 @Component({
   selector: 'app-view-manage-product',
   standalone: true,
   imports: [
-    NgFor, NgIf,
+    CommonModule,
     FormsModule,
     NgStyle,
-    RouterModule
+    RouterModule,
+    PaginatorModule
   ],
   templateUrl: './view-manage-product.component.html',
-  styleUrl: './view-manage-product.component.scss'
+  styleUrls: ['./view-manage-product.component.scss']
 })
-export class ViewManageProductComponent implements OnInit {
+export class ViewManageProductComponent implements OnInit, OnDestroy {
   filters = {
     brand: '',
     productType: '',
@@ -27,10 +30,17 @@ export class ViewManageProductComponent implements OnInit {
 
   products: any[] = [];
   allBrand: any;
-  allProductType = ["Clothing", "Bags", "Jewellery", "Shoes", "accessories", "Footwear"];
-  allGender = ['Men', 'Women', 'Boys', 'Girl', 'Unisex'];
+  allProductType = ["Clothing", "Bags", "Jewellery", "Shoes", "Accessories", "Footwear"];
+  allGender = ['Men', 'Women', 'Boys', 'Girls', 'Unisex'];
   allClothing: any;
   allSubCategory: any;
+  limit = 10;
+  page: number = 1
+  first: number = 0;
+  rows: number = 10;
+
+  hoverIntervals: any = {}; // Track hover intervals for each product
+  totalResults: any;
 
   constructor(public authService: AuthService) { }
 
@@ -41,8 +51,11 @@ export class ViewManageProductComponent implements OnInit {
     this.getAllProducts();
   }
 
+  ngOnDestroy(): void {
+    this.clearHoverIntervals();
+  }
+
   applyFilters(): void {
-    // Apply filter logic here
     console.log('Filters applied:', this.filters);
   }
 
@@ -72,7 +85,7 @@ export class ViewManageProductComponent implements OnInit {
 
   getSubCategory() {
     const f = this.filters;
-    this.authService.get(`sub-category?productType=${f.productType}&clothing=${f.clothing}&gender${f.gender}`).subscribe(res => {
+    this.authService.get(`sub-category?productType=${f.productType}&clothing=${f.clothing}&gender=${f.gender}`).subscribe(res => {
       if (res) {
         this.allSubCategory = res.results;
       }
@@ -82,8 +95,9 @@ export class ViewManageProductComponent implements OnInit {
   }
 
   getAllProducts() {
-    this.authService.get('products').subscribe((res: any) => {
+    this.authService.get(`products?page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
       if (res) {
+        this.totalResults = res.totalResults;
         this.products = res.results.map((product: any) => ({
           designNo: product.designNumber,
           selectedImageUrl: product.colourCollections[0]?.productImages[0] || '',
@@ -92,137 +106,59 @@ export class ViewManageProductComponent implements OnInit {
           selectedColor: product.colourCollections[0]?.colour || '',
           colors: product.colourCollections.map((c: any) => c.colour),
           colourCollections: product.colourCollections,
-          stock: 2000 // Replace with actual stock value if available
+          stock: product.quantity || 2000, // Replace with actual stock value if available
+          id: product.id,
+          hoverIndex: 0
         }));
+
+        this.products.forEach(product => {
+          if (!product.selectedColor) {
+            this.extractColorFromImage(product);
+          }
+        });
       }
     });
   }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.limit = event.rows;
+    this.getAllProducts();
+  }
+
+  extractColorFromImage(product: any): void {
+    const image = new Image();
+    image.crossOrigin = 'Anonymous';
+    image.src = this.authService.cdnPath + product.selectedImageUrl;
+
+    image.onload = () => {
+      const colorThief = new ColorThief();
+      const color = colorThief.getColor(image);
+      product.selectedColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+      this.changeProductImage(product, product.selectedColor);
+    };
+  }
+
+  onMouseEnter(product: any): void {
+    this.hoverIntervals[product.id] = setInterval(() => {
+      this.slideNextImage(product);
+    }, 1000);
+  }
+
+  onMouseLeave(product: any): void {
+    clearInterval(this.hoverIntervals[product.id]);
+  }
+
+  slideNextImage(product: any): void {
+    const currentIndex = product.hoverIndex;
+    const nextIndex = (currentIndex + 1) % product.colourCollections.length;
+    product.hoverIndex = nextIndex;
+    product.selectedImageUrl = product.colourCollections[nextIndex].productImages[0];
+  }
+
+  clearHoverIntervals(): void {
+    for (const key in this.hoverIntervals) {
+      clearInterval(this.hoverIntervals[key]);
+    }
+  }
 }
-
-// import { NgFor, NgIf, NgStyle } from '@angular/common';
-// import { Component } from '@angular/core';
-// import { FormsModule } from '@angular/forms';
-// import { RouterModule } from '@angular/router';
-// import { AuthService } from '@core';
-
-// @Component({
-//   selector: 'app-view-manage-product',
-//   standalone: true,
-//   imports: [
-//     NgFor, NgIf,
-//     FormsModule,
-//     NgStyle,
-//     RouterModule
-//   ],
-//   templateUrl: './view-manage-product.component.html',
-//   styleUrl: './view-manage-product.component.scss'
-// })
-// export class ViewManageProductComponent {
-//   filters = {
-//     brand: '',
-//     productType: '',
-//     gender: '',
-//     clothing: '',
-//     subCategory: ''
-//   };
-
-//   products = [
-//     {
-//       designNo: '12345',
-//       imageUrl: 'https://m.media-amazon.com/images/I/71ac4lX5hOL._SX569_.jpg',
-//       selectedImageUrl: 'https://m.media-amazon.com/images/I/71ac4lX5hOL._SX569_.jpg',
-//       title: 'Amazon Brand - Symbol Men\'s Solid Cotton Formal Shirt',
-//       description: 'Plain | Full Sleeve | Regular Fit',
-//       selectedColor: '#000000',
-//       colors: ['#000000', '#FFFFFF', '#808080'],
-//       images: {
-//         '#000000': 'https://m.media-amazon.com/images/I/71ac4lX5hOL._SX569_.jpg',
-//         '#FFFFFF': 'https://m.media-amazon.com/images/I/71T6D0EFLxL._SX569_.jpg',
-//         '#808080': 'https://m.media-amazon.com/images/I/51jobfV6gwL._SY741_.jpg'
-//       },
-//       stock: 2000
-//     },
-//     {
-//       designNo: '12346',
-//       imageUrl: 'https://m.media-amazon.com/images/I/61NloRw77IL._SY879_.jpg',
-//       selectedImageUrl: 'https://m.media-amazon.com/images/I/61NloRw77IL._SY879_.jpg',
-//       title: 'Amazon Brand - Symbol Men\'s Solid Cotton Formal Shirt',
-//       description: 'Plain | Full Sleeve | Regular Fit',
-//       selectedColor: '#000000',
-//       colors: ['#000000', '#FFFFFF', '#808080'],
-//       images: {
-//         '#000000': 'https://m.media-amazon.com/images/I/91QQX4CQU2L._SX569_.jpg',
-//         '#FFFFFF': 'https://m.media-amazon.com/images/I/71C3mSY5DOL._SX569_.jpg',
-//         '#808080': 'https://m.media-amazon.com/images/I/61NloRw77IL._SY879_.jpg'
-//       },
-//       stock: 0
-//     },
-//     // Add more product objects as needed
-//   ];
-//   allBrand: any;
-//   allProductType = ["Clothing", "Bags", "Jewellery", "Shoes", "accessories", "Footwear"];
-//   allGender = ['Men', 'Women', 'Boys', 'Girl', 'Unisex'];
-//   allClothing: any;
-//   allSubCategory : any;
-
-//   constructor(private authService:AuthService) { }
-
-//   ngOnInit(): void {
-//     this.getAllBrands();
-//     this.getClothingType();
-//     this.getSubCategory();
-//     this.getAllProductsClothing();
-//     this.getAllProducts();
-//   }
-
-//   applyFilters(): void {
-//     // Apply filter logic here
-//     console.log('Filters applied:', this.filters);
-//   }
-
-//   changeProductImage(product: any, color: string): void {
-//     product.selectedImageUrl = product.images[color];
-//     product.selectedColor = color;
-//   }
-
-//   getAllProductsClothing(){
-//     this.authService.get('products').subscribe(res=>{
-//       if(res){
-//         this.allClothing=res.results;
-//       }
-//     });
-//   }
-//   getAllProducts(){
-//     this.authService.get('products').subscribe(res=>{
-//       if(res){
-//         this.products=res.results;
-//       }
-//     });
-//   }
-  
-//   getAllBrands() {
-//     this.authService.get(`brand?page=1`).subscribe((res: any) => {
-//       this.allBrand = res.results;
-//     });
-//   }
-
-//   getClothingType(){
-//     this.authService.get('clothing-mens').subscribe(res=>{
-//       if(res){
-//         this.allClothing=res.results;
-//       }
-//     },(error)=>{
-//     console.log(error);
-//   })
-// }
-//   getSubCategory(){
-//     const f=this.filters
-//     this.authService.get(`sub-category?productType=${f.productType}&clothing=${f.clothing}&gender${f.gender}`).subscribe(res=>{
-//       if(res){
-//         this.allSubCategory=res.results;
-//       }
-//     },(error)=>{
-//     console.log(error);
-//   })
-// }
-// }

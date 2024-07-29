@@ -11,5 +11,6 @@ export enum Role {
   counsellor = 'trainer',
   skillCounsellor = 'skillTrainer',
   Manufacture = 'manufacture',
-  Wholesaler='wholesaler'
+  Wholesaler='wholesaler',
+  Retailer='retailer',
 }

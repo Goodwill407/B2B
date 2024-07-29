@@ -56,6 +56,8 @@ export class SignupComponent implements OnInit {
     if(this.email){
       this.authService.get(`invitations/${this.email}`).subscribe((res:any) => {
         this.mgfRegistrationForm.patchValue(res);
+        // this.mgfRegistrationForm.get('role')?.disable();
+        // this.mgfRegistrationForm.get('email')?.disable();
         this.invitedBy = res.invitedBy;
       },(err:any) => {
         this.communicationService.showNotification('snackbar-danger', err.error.message,'bottom','center');
@@ -88,7 +90,7 @@ export class SignupComponent implements OnInit {
 
   onSubmit() {
     const data = this.mgfRegistrationForm.value;
-    data.refByEmail = this.invitedBy;
+    data.refByEmail = this.invitedBy[0];
     if (this.otpStep) {
       this.authService.post(`auth/verify-email?email=${data.email}&otp=${data.otp}`, {}).subscribe((res: any) => {
         console.log('Form submitted with OTP:', res);

@@ -2,92 +2,342 @@
     <div class="content-block">
         <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Category</h4>
         <div class="card px-4 py-2">
+
+            <!-- <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane"
+                        type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Wholesaler
+                        Category</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
+                        type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Retailer
+                        Category</button>
+                </li>
+            </ul> -->
+
+            <mat-tab-group>
+                <mat-tab label="Wholesaler Category">
+                    <h5 class="mt-4">Add Wholesaler Category</h5>
+                    <hr class="mt-0">
+                    <form [formGroup]="categoryForm1" (ngSubmit)="onSubmit('wholesaler')">
+                        <div class="w-75">
+                            <label for="category">Category Name :</label>
+                            <input type="text" id="category" formControlName="category" class="form-control" />
+                            <div *ngIf="categoryForm1.get('category')?.touched && categoryForm1.get('category')?.invalid"
+                                class="text-danger">
+                                Category is required.
+                            </div>
+                        </div>
+                        <div class="w-50 mt-2">
+                            <label for="discount">Discount :</label>
+                            <input type="text" id="discount" formControlName="discount" class="form-control" />
+                            <div *ngIf="categoryForm1.get('discount')?.touched && categoryForm1.get('discount')?.invalid"
+                                class="text-danger">
+                                Discount is required.
+                            </div>
+                        </div>
+                        <div class="form-group text-center mt-3">
+                            <button type="submit" class="btn submit-btn" [disabled]="categoryForm1.invalid">
+                                {{ formType }}
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="card p-2">
+                        <h5 class="mt-2">Wholesaler Category List:</h5>
+                        <hr class="mt-0">
+                        <div class="p-grid p-fluid">
+                            <div class="p-col-12 text-center">
+                                <p-table [value]="wholesalerCategory">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Discount</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-wholesalerCategory>
+                                        <tr>
+                                            <td class="text-center py-0">{{ wholesalerCategory.category }}</td>
+                                            <td class="text-center py-0">{{ wholesalerCategory.discount }}</td>
+
+                                            <td class="py-0">
+                                                <div class="button-container text-center">
+                                                    <button class="btn btn-icon p-2" pTooltip="Edit"
+                                                        (click)="editForm(wholesalerCategory)" tooltipPosition="top">
+                                                        <i class="bi bi-pencil-fill"></i>
+                                                    </button>
+                                                    <button class="btn btn-icon p-2"
+                                                        (click)="deleteWholesalerCategory(wholesalerCategory)"
+                                                        pTooltip="Delete" tooltipPosition="top">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                                @if(wholesalerCategory && wholesalerCategory.length > 0){
+                                <p-paginator (onPageChange)="onPageChangeWholesaler($event)" [first]="firstWholesaler"
+                                    [rows]="rows" [totalRecords]="totalResultsWholesaler"
+                                    [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
+                                }@else {
+                                <p class="text-center">No Wholesaler category found.</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Retailer Category">
+                    <h5 class="mt-4">Add Retailer Category</h5>
+                    <hr class="mt-0">
+                    <form [formGroup]="categoryForm2" (ngSubmit)="onSubmit('retailer')">
+                        <div class="w-75">
+                            <label for="category">Category Name :</label>
+                            <input type="text" id="category" formControlName="category" class="form-control" />
+                            <div *ngIf="categoryForm2.get('category')?.touched && categoryForm2.get('category')?.invalid"
+                                class="text-danger">
+                                Category is required.
+                            </div>
+                        </div>
+                        <div class="w-50 mt-2">
+                            <label for="discount">Discount :</label>
+                            <input type="text" id="discount" formControlName="discount" class="form-control" />
+                            <div *ngIf="categoryForm2.get('discount')?.touched && categoryForm2.get('discount')?.invalid"
+                                class="text-danger">
+                                Discount is required.
+                            </div>
+                        </div>
+                        <div class="form-group text-center mt-3">
+                            <button type="submit" class="btn submit-btn" [disabled]="categoryForm2.invalid">
+                                {{ formType }}
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="card p-2">
+                        <h5 class="mt-2">Retailer Category List:</h5>
+                        <hr class="mt-0">
+                        <div class="p-grid p-fluid">
+                            <div class="p-col-12 text-center">
+                                <p-table [value]="retailerCategory">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Discount</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-retailerCategory>
+                                        <tr>
+                                            <td class="text-center py-0">{{ retailerCategory.category }}</td>
+                                            <td class="text-center py-0">{{ retailerCategory.discount }}</td>
+
+                                            <td class="py-0">
+                                                <div class="button-container text-center">
+                                                    <button class="btn btn-icon p-2" pTooltip="Edit"
+                                                        (click)="editForm(retailerCategory)" tooltipPosition="top">
+                                                        <i class="bi bi-pencil-fill"></i>
+                                                    </button>
+                                                    <button class="btn btn-icon p-2"
+                                                        (click)="deleteRetailerCategory(retailerCategory)"
+                                                        pTooltip="Delete" tooltipPosition="top">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                                @if(retailerCategory && retailerCategory.length > 0){
+                                <p-paginator (onPageChange)="onPageChangeRetailer($event)" [first]="firstRetailer"
+                                    [rows]="rows" [totalRecords]="totalResultsRetailer"
+                                    [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
+                                }@else {
+                                <p>No retailer categories found.</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+            <!-- <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
+                    tabindex="0">
+
+                </div>
+                <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab"
+                    tabindex="0">
+                    
+                </div>
+            </div> -->
+        </div>
+
+    </div>
+</section>
+<!-- <section class="content">
+    <div class="content-block">
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Category</h4>
+        <div class="card px-4 py-2">
             <h5 class="">Add Category</h5>
             <hr class="mt-0">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                  <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Home</button>
+                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane"
+                        type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Wholesaler
+                        Category</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                  <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Profile</button>
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
+                        type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Retailer
+                        Category</button>
                 </li>
-                <li class="nav-item" role="presentation">
-                  <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">Contact</button>
-                </li>
-                <li class="nav-item" role="presentation">
-                  <button class="nav-link" id="disabled-tab" data-bs-toggle="tab" data-bs-target="#disabled-tab-pane" type="button" role="tab" aria-controls="disabled-tab-pane" aria-selected="false" disabled>Disabled</button>
-                </li>
-              </ul>
-              <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">...</div>
-                <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">...</div>
-                <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">...</div>
-                <div class="tab-pane fade" id="disabled-tab-pane" role="tabpanel" aria-labelledby="disabled-tab" tabindex="0">...</div>
-              </div>
-            <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
-                <div class="w-75">
-                    <label for="category">Brand Name:</label>
-                    <input type="text" id="category" formControlName="category" class="form-control" />
-                    <div *ngIf="categoryForm.get('category')?.touched && categoryForm.get('category')?.invalid"
-                        class="text-danger">
-                        Category is required.
+            </ul>
+
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
+                    tabindex="0">
+                    <form [formGroup]="categoryForm1" (ngSubmit)="onSubmit('wholesaler')">
+                        <div class="w-75">
+                            <label for="category">Category Name :</label>
+                            <input type="text" id="category" formControlName="category" class="form-control" />
+                            <div *ngIf="categoryForm1.get('category')?.touched && categoryForm1.get('category')?.invalid"
+                                class="text-danger">
+                                Category is required.
+                            </div>
+                        </div>
+                        <div class="w-50">
+                            <label for="discount">Discount :</label>
+                            <input type="text" id="discount" formControlName="discount" class="form-control" />
+                            <div *ngIf="categoryForm1.get('discount')?.touched && categoryForm1.get('discount')?.invalid"
+                                class="text-danger">
+                                Discount is required.
+                            </div>
+                        </div>
+                        <div class="form-group text-center mt-3">
+                            <button type="submit" class="btn submit-btn" [disabled]="categoryForm1.invalid">
+                                {{ formType }}
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="card p-2">
+                        <h5 class="mt-2">Wholesaler Category List:</h5>
+                        <hr>
+                        <div class="p-grid p-fluid">
+                            <div class="p-col-12 text-center">
+                                <p-table [value]="wholesalerCategory">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Discount</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-wholesalerCategory>
+                                        <tr>
+                                            <td class="text-center py-0">{{ wholesalerCategory.category }}</td>
+                                            <td class="text-center py-0">{{ wholesalerCategory.discount }}</td>
+                                            
+                                            <td class="py-0">
+                                                <div class="button-container text-center">
+                                                    <button class="btn btn-icon p-2" pTooltip="Edit"
+                                                        (click)="editForm(wholesalerCategory)" tooltipPosition="top">
+                                                        <i class="bi bi-pencil-fill"></i>
+                                                    </button>
+                                                    <button class="btn btn-icon p-2" (click)="deleteWholesalerCategory(wholesalerCategory)"
+                                                        pTooltip="Delete" tooltipPosition="top">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                                @if(wholesalerCategory && wholesalerCategory.length > 0){
+                                <p-paginator
+                                    (onPageChange)="onPageChangeWholesaler($event)" [first]="firstWholesaler" [rows]="rows"
+                                    [totalRecords]="totalResultsWholesaler" [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
+                                }@else {
+                                     <p class="text-center">No Wholesaler category found.</p>
+                                }
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <div class="form-group text-center mt-3">
-                    <button type="submit" class="btn submit-btn" [disabled]="categoryForm.invalid">
-                        {{formType}}
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <!-- table -->
-        <div class="card p-2">
-            <h5 class="mt-2">Category List:</h5>
-            <hr>
-            <div class="p-grid p-fluid ">
-                <div class="p-col-12 text-center">
-                    <p-table [value]="distributors">
-                        <ng-template pTemplate="header">
-                            <tr>
-                                <th>Brand Name</th>
-                                <th>Brand Description</th>
-                                <th>Brand Logo</th>
-                                <th>Action</th>
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="body" let-distributors>
-                            <tr>
-                                <td class="text-center py-0">{{distributors.brandName}}</td>
-                                <td class="text-center py-0">{{distributors.brandDescription}}</td>
-                                <td class="text-center py-0">
-                                    <img [src]="cdnPath+distributors.brandLogo" alt="Brand Logo" class="img-thumbnail"
-                                        style="width: 60px; height: 60px;" />
-                                </td>
-                                <td class="py-0">
-                                    <div class="button-container text-center">
-
-                                        <button class="btn btn-icon p-2" pTooltip="Edit"
-                                            (click)="editForm(distributors)" tooltipPosition="top">
-                                            <!-- <i class="fas fa-eye"></i> -->
-                                            <i class="bi bi-pencil-fill"></i>
-                                        </button>
-
-                                        <button class="btn btn-icon p-2" (click)="deleteData(distributors)" pTooltip="Delete" tooltipPosition="top">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </ng-template>
-                    </p-table>
-                    <p-paginator *ngIf="distributors && distributors.length > 0" (onPageChange)="onPageChange($event)"
-                        [first]="first" [rows]="rows" [totalRecords]="totalResults"
-                        [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
+                <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab"
+                    tabindex="0">
+                    <form [formGroup]="categoryForm2" (ngSubmit)="onSubmit('retailer')">
+                        <div class="w-75">
+                            <label for="category">Category Name :</label>
+                            <input type="text" id="category" formControlName="category" class="form-control" />
+                            <div *ngIf="categoryForm2.get('category')?.touched && categoryForm2.get('category')?.invalid"
+                                class="text-danger">
+                                Category is required.
+                            </div>
+                        </div>
+                        <div class="w-50">
+                            <label for="discount">Discount :</label>
+                            <input type="text" id="discount" formControlName="discount" class="form-control" />
+                            <div *ngIf="categoryForm2.get('discount')?.touched && categoryForm2.get('discount')?.invalid"
+                                class="text-danger">
+                                Discount is required.
+                            </div>
+                        </div>
+                        <div class="form-group text-center mt-3">
+                            <button type="submit" class="btn submit-btn" [disabled]="categoryForm2.invalid">
+                                {{ formType }}
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="card p-2">
+                        <h5 class="mt-2">Retailer Category List:</h5>
+                        <hr>
+                        <div class="p-grid p-fluid">
+                            <div class="p-col-12 text-center">
+                                <p-table [value]="retailerCategory">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Category</th>
+                                            <th>Discount</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-retailerCategory>
+                                        <tr>
+                                            <td class="text-center py-0">{{ retailerCategory.category }}</td>
+                                            <td class="text-center py-0">{{ retailerCategory.discount }}</td>
+                                            
+                                            <td class="py-0">
+                                                <div class="button-container text-center">
+                                                    <button class="btn btn-icon p-2" pTooltip="Edit"
+                                                        (click)="editForm(retailerCategory)" tooltipPosition="top">
+                                                        <i class="bi bi-pencil-fill"></i>
+                                                    </button>
+                                                    <button class="btn btn-icon p-2" (click)="deleteRetailerCategory(retailerCategory)"
+                                                        pTooltip="Delete" tooltipPosition="top">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                                @if(retailerCategory && retailerCategory.length > 0){
+                                <p-paginator
+                                    (onPageChange)="onPageChangeRetailer($event)" [first]="firstRetailer" [rows]="rows"
+                                    [totalRecords]="totalResultsRetailer" [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
+                                }@else {
+                                     <p>No retailer categories found.</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
         </div>
+
     </div>
-</section>
+</section> -->

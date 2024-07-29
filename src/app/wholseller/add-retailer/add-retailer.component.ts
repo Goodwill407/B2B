@@ -7,6 +7,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterModule, RouterLink } from '@angular/router';
+import { AuthService, CommunicationService } from '@core';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-add-retailer',
@@ -22,13 +24,13 @@ import { RouterModule, RouterLink } from '@angular/router';
     MatIconModule,
     RouterLink,
     MatButtonModule,
-    CommonModule
+    NgxSpinnerModule,
+    CommonModule,
   ],
   templateUrl: './add-retailer.component.html',
   styleUrl: './add-retailer.component.scss'
 })
 export class AddRetailerComponent {
-
   mgfRegistrationForm!: FormGroup;
 
   countryCode = [
@@ -38,7 +40,7 @@ export class AddRetailerComponent {
     { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
   ];
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private spinner: NgxSpinnerService) {}
 
   ngOnInit() {
     this.initializeForm();
@@ -48,14 +50,24 @@ export class AddRetailerComponent {
     this.mgfRegistrationForm = this.fb.group({
       fullName: ['', Validators.required],
       companyName: ['',],
+      role: ['retailer', Validators.required],
       code: ['+91', Validators.required],
       mobileNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
-      emailAddress: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email]],
     });
   }
 
   onSubmit() {
-    
+    this.spinner.show();
+    this.authService.post(`invitations`,this.mgfRegistrationForm.value).subscribe((res:any) =>{
+      this.communicationService.showNotification('snackbar-success', 'Distributor invitation sent successfully', 'bottom', 'center');
+      this.mgfRegistrationForm.reset();
+      this.initializeForm();
+      this.spinner.hide();
+    },(err:any) =>{
+      this.spinner.hide();
+      this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
+    })
   }
 
   
