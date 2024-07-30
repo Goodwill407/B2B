@@ -42,7 +42,7 @@
                     <div class="row mt-2">
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                             <label class="label-input" for="productType">Product Type</label>
-                            <select name="productType" id="productType" class="form-select" (change)="getClothingType()"
+                            <select name="productType" id="productType" class="form-select" (change)="getAllSubCategory()"
                                 formControlName="productType"
                                 [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('productType')?.invalid}">
                                 <option value="" disabled selected>Select</option>
@@ -58,7 +58,7 @@
 
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                             <label class="label-input" for="gender">Gender</label>
-                            <select name="gender" id="gender" class="form-select" formControlName="gender" (change)="getClothingType()"
+                            <select name="gender" id="gender" class="form-select" formControlName="gender" (change)="getAllSubCategory()"
                                 [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('gender')?.invalid}">
                                 <option value="" disabled selected>Select</option>
                                 <option [value]="gender" *ngFor="let gender of allGender">{{gender}}</option>
@@ -94,8 +94,8 @@
                                 formControlName="subCategory"
                                 [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('subCategory')?.invalid}">
                                 <option value="" disabled selected>Select</option>
-                                <option [value]="subCategory.subCategory" *ngFor="let subCategory of allSubCategory">
-                                    {{subCategory.subCategory}}
+                                <option [value]="subCategory" *ngFor="let subCategory of allSubCategory">
+                                    {{subCategory}}
                                 </option>
                             </select>
                             <!-- Validation feedback -->
