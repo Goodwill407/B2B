@@ -101,7 +101,8 @@ export class ManufacturesProductComponent {
   }
 
   getAllProducts(email: string) {
-    this.authService.get(`products?page=${this.page}&limit=${this.limit}&productBy=${email}`).subscribe((res: any) => {
+    const url = `products/filter-products?page=${this.page}&limit=${this.limit}&productBy=${email}`
+    this.authService.get(url).subscribe((res: any) => {
       if (res) {
         this.totalResults = res.totalResults;
         this.products = res.results.map((product: any) => ({
