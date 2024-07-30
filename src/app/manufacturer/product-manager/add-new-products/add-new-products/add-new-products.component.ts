@@ -44,13 +44,14 @@ export class AddNewProductsComponent {
 
   selectedSizes: any = []
   colourCollections: any = []
+ 
 
   // dropdown data
   sizes: any = [
     '5XS', '4XS', '3XS', '2XS', 'XS', 'S', 'M', 'L', 'XL', '2XL', '3XL',
     '4XL', '5XL', '6XL', '7XL', '8XL', 'Free'
   ];
-  allProductType = ["Clothing", "Bags", "Jewellery", "Shoes", "accessories", "Footwear"];
+  // allProductType = ["Clothing", "Bags", "Jewellery", "Shoes", "accessories", "Footwear"];
   allGender = ['Men', 'Women', 'Boys', 'Girl', 'Unisex'];
   allClothingType: any;
   allMaterialType: any;
@@ -67,6 +68,7 @@ export class AddNewProductsComponent {
   allSubCategory: any;
   allLifeStyle: any
   allBrands: any
+  allProductType:any
 
   constructor(private fb: FormBuilder,
     private authService: AuthService,
@@ -129,6 +131,7 @@ export class AddNewProductsComponent {
 
   ngOnInit() {   
     // call master    
+    this.getClothingType()
     this.getMaterial()
     this.getFabricPttern()
     this.getOccasion()
@@ -159,6 +162,7 @@ export class AddNewProductsComponent {
   getClothingType() {
     this.authService.get(`sub-category?productType=${this.stepOne.get('productType')?.value}&gender=${this.stepOne.get('gender')?.value}`).subscribe(res => {
       if (res) {
+        this.allProductType=res.results.map((item: any) => item.productType);
         this.allClothingType = res.results.map((item: any) => item.category);
       }
     }, (error) => {
@@ -619,9 +623,11 @@ export class AddNewProductsComponent {
     }
     else{
     this.spinner.show()
-    this.authService.patch(`products/${this.ProductId}`,this.stepOne.value).subscribe(res=>{
+    this.authService.patchWithEmail(`products/${this.ProductId}`,this.stepOne.value).subscribe(res=>{
       if(res){
+        this.colourCollections=res.colourCollections
         this.spinner.hide()
+        
         this.communicationService.showNotification(
           'snackbar-success',
           `Saved Successfully...!!!`,
@@ -640,6 +646,10 @@ export class AddNewProductsComponent {
   )
   }
 }
+
+// onEditColorCollection(CollectionData:any){
+
+// }
 
 }
 
