@@ -29,26 +29,32 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
   };
 
   products: any[] = [];
-  allBrand: any;
-  allProductType = ["Clothing", "Bags", "Jewellery", "Shoes", "Accessories", "Footwear"];
+  allBrand: any;  
   allGender = ['Men', 'Women', 'Boys', 'Girls', 'Unisex'];
-  allClothing: any;
-  allSubCategory: any;
+  allProductType = [];
+   allClothingType = [];
+   allSubCategory = [];
+ 
   limit = 10;
   page: number = 1
   first: number = 0;
   rows: number = 10;
+  userProfile:any
 
   hoverIntervals: any = {}; // Track hover intervals for each product
   totalResults: any;
 
-  constructor(public authService: AuthService) { }
+  constructor(public authService: AuthService) { 
+  this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
+  }
 
   ngOnInit(): void {
     this.getAllBrands();
-    this.getClothingType();
-    this.getSubCategory();
-    this.getAllProducts();
+    this.getAllSubCategory()
+    this.getAllProducts()
+    // this.getClothingType();
+    // this.getSubCategory();
+    // this.getAllProducts();
   }
 
   ngOnDestroy(): void {
@@ -72,30 +78,58 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
       this.allBrand = res.results;
     });
   }
+  // getAllProducts() {
+  //   this.authService.get(`products/filter-products?&productBy=${this.userProfile.email}`).subscribe((res: any) => {
+  //     if (res) {
+  //       this.totalResults = res.totalResults;
+  //       this.products = res.results.map((product: any) => ({
+  //         designNo: product.designNumber,
+  //         selectedImageUrl: product.colourCollections[0]?.productImages[0] || '',
+  //         title: product.productTitle,
+  //         description: product.productDescription,
+  //         selectedColor: product.colourCollections[0]?.colour || '',
+  //         colors: product.colourCollections.map((c: any) => c.colour),
+  //         colourCollections: product.colourCollections,
+  //         stock: product.quantity || 2000, // Replace with actual stock value if available
+  //         id: product.id,
+  //         hoverIndex: 0
+  //       }));
 
-  getClothingType() {
-    this.authService.get('clothing-mens').subscribe(res => {
-      if (res) {
-        this.allClothing = res.results;
-      }
-    }, (error) => {
-      console.log(error);
-    });
-  }
-
-  getSubCategory() {
-    const f = this.filters;
-    this.authService.get(`sub-category?productType=${f.productType}&clothing=${f.clothing}&gender=${f.gender}`).subscribe(res => {
-      if (res) {
-        this.allSubCategory = res.results;
-      }
-    }, (error) => {
-      console.log(error);
-    });
-  }
-
+  //       this.products.forEach(product => {
+  //         if (!product.selectedColor) {
+  //           this.extractColorFromImage(product);
+  //         }
+  //       });
+  //     }
+  //   });
+  // }
   getAllProducts() {
-    this.authService.get(`products?page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
+    let url = `products/filter-products?productBy=${this.userProfile.email}`;//&page=${this.page}&limit=${this.limit}
+  
+    const brand = this.filters.brand
+    const productType = this.filters.productType
+    const gender=this.filters.gender
+    const clothing=this.filters.clothing 
+    const subCategory=this.filters.subCategory
+  
+    if (brand) {
+      url += `&brand=${brand}`;
+    }
+  
+    if (productType) {
+      url += `&productType=${productType}`;
+    }
+    if(gender){
+      url += `&gender=${gender}`;
+    }
+    if(clothing){
+      url += `&clothing=${clothing}`;
+    }
+    if(subCategory){
+      url += `&subCategory=${subCategory}`;
+    }
+  
+    this.authService.get(url).subscribe((res: any) => {
       if (res) {
         this.totalResults = res.totalResults;
         this.products = res.results.map((product: any) => ({
@@ -110,13 +144,15 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
           id: product.id,
           hoverIndex: 0
         }));
-
+  
         this.products.forEach(product => {
           if (!product.selectedColor) {
             this.extractColorFromImage(product);
           }
         });
       }
+    }, (error) => {
+      console.log(error);
     });
   }
 
@@ -160,5 +196,38 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
     for (const key in this.hoverIntervals) {
       clearInterval(this.hoverIntervals[key]);
     }
+  }
+
+  getAllSubCategory() {
+    const productType = this.filters.productType
+    const gender = this.filters.gender
+    const clothing = this.filters.clothing
+  
+    let url = 'sub-category';
+  
+    if (productType) {
+      url += `?productType=${productType}`;
+    }
+    if (gender) {
+      url += (url.includes('?') ? '&' : '?') + `gender=${gender}`;
+    }
+    if (clothing) {
+      url += (url.includes('?') ? '&' : '?') + `clothing=${clothing}`;
+    }
+  
+    // Clear previous values
+    // this.allProductType = [];
+    // this.allClothingType = [];
+    // this.allSubCategory = [];
+  
+    this.authService.get(url).subscribe(res => {
+      if (res) {
+        this.allProductType = Array.from(new Set(res.results.map((item: any) => item.productType)));
+        this.allClothingType = Array.from(new Set(res.results.map((item: any) => item.category)));
+        this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
+      }
+    }, (error) => {
+      console.log(error);
+    });
   }
 }
