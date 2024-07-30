@@ -23,18 +23,31 @@
                     <form [formGroup]="categoryForm1" (ngSubmit)="onSubmit('wholesaler')">
                         <div class="w-75">
                             <label for="category">Category Name :</label>
-                            <input type="text" id="category" formControlName="category" class="form-control" />
+                            <input type="text" id="category" formControlName="category" class="form-control"
+                                placeholder="Category A" />
                             <div *ngIf="categoryForm1.get('category')?.touched && categoryForm1.get('category')?.invalid"
                                 class="text-danger">
                                 Category is required.
                             </div>
                         </div>
+
                         <div class="w-50 mt-2">
-                            <label for="discount">Discount :</label>
-                            <input type="text" id="discount" formControlName="discount" class="form-control" />
-                            <div *ngIf="categoryForm1.get('discount')?.touched && categoryForm1.get('discount')?.invalid"
+                            <label for="shippingDiscount">Shipping Discount : <small>(in %)</small> </label>
+                            <input type="text" id="shippingDiscount" formControlName="shippingDiscount"
+                                placeholder="12%" class="form-control" />
+                            <div *ngIf="categoryForm1.get('shippingDiscount')?.touched && categoryForm1.get('shippingDiscount')?.invalid"
                                 class="text-danger">
-                                Discount is required.
+                                Shipping Discount is required.
+                            </div>
+                        </div>
+
+                        <div class="w-50 mt-2">
+                            <label for="productDiscount">Product Discount : <small>(in %)</small> </label>
+                            <input type="text" id="productDiscount" formControlName="productDiscount"
+                                placeholder="10%" class="form-control" />
+                            <div *ngIf="categoryForm1.get('productDiscount')?.touched && categoryForm1.get('productDiscount')?.invalid"
+                                class="text-danger">
+                                Product Discount is required.
                             </div>
                         </div>
                         <div class="form-group text-center mt-3">
@@ -53,14 +66,16 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th>Category</th>
-                                            <th>Discount</th>
+                                            <th>Shipping Discount</th>
+                                            <th>Product Discount</th>
                                             <th>Action</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-wholesalerCategory>
                                         <tr>
                                             <td class="text-center py-0">{{ wholesalerCategory.category }}</td>
-                                            <td class="text-center py-0">{{ wholesalerCategory.discount }}</td>
+                                            <td class="text-center py-0">{{ wholesalerCategory.shippingDiscount }}</td>
+                                            <td class="text-center py-0">{{ wholesalerCategory.productDiscount }}</td>
 
                                             <td class="py-0">
                                                 <div class="button-container text-center">
@@ -95,18 +110,31 @@
                     <form [formGroup]="categoryForm2" (ngSubmit)="onSubmit('retailer')">
                         <div class="w-75">
                             <label for="category">Category Name :</label>
-                            <input type="text" id="category" formControlName="category" class="form-control" />
+                            <input type="text" id="category" formControlName="category" placeholder="Category A"
+                                class="form-control" />
                             <div *ngIf="categoryForm2.get('category')?.touched && categoryForm2.get('category')?.invalid"
                                 class="text-danger">
                                 Category is required.
                             </div>
                         </div>
+                        
                         <div class="w-50 mt-2">
-                            <label for="discount">Discount :</label>
-                            <input type="text" id="discount" formControlName="discount" class="form-control" />
-                            <div *ngIf="categoryForm2.get('discount')?.touched && categoryForm2.get('discount')?.invalid"
+                            <label for="shippingDiscount">Shipping Discount : <small>(in %)</small> </label>
+                            <input type="text" id="shippingDiscount" formControlName="shippingDiscount"
+                                placeholder="20%" class="form-control" />
+                            <div *ngIf="categoryForm2.get('shippingDiscount')?.touched && categoryForm2.get('shippingDiscount')?.invalid"
                                 class="text-danger">
-                                Discount is required.
+                                Shipping Discount is required.
+                            </div>
+                        </div>
+
+                        <div class="w-50 mt-2">
+                            <label for="productDiscount">Product Discount : <small>(in %)</small> </label>
+                            <input type="text" id="productDiscount" formControlName="productDiscount"
+                                placeholder="10%" class="form-control" />
+                            <div *ngIf="categoryForm2.get('productDiscount')?.touched && categoryForm2.get('productDiscount')?.invalid"
+                                class="text-danger">
+                                Product Discount is required.
                             </div>
                         </div>
                         <div class="form-group text-center mt-3">
@@ -125,14 +153,16 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th>Category</th>
-                                            <th>Discount</th>
+                                            <th>Shipping Discount</th>
+                                            <th>Product Discount</th>
                                             <th>Action</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-retailerCategory>
                                         <tr>
                                             <td class="text-center py-0">{{ retailerCategory.category }}</td>
-                                            <td class="text-center py-0">{{ retailerCategory.discount }}</td>
+                                            <td class="text-center py-0">{{ retailerCategory.shippingDiscount }}</td>
+                                            <td class="text-center py-0">{{ retailerCategory.productDiscount }}</td>
 
                                             <td class="py-0">
                                                 <div class="button-container text-center">

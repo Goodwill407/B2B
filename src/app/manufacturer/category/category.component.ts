@@ -48,14 +48,16 @@ export class CategoryComponent {
   initializeForms() {
     this.categoryForm1 = this.fb.group({
       category: ['', Validators.required],
-      discount: ['', Validators.required],
+      shippingDiscount: ['', Validators.required],
+      productDiscount: ['', Validators.required],
       categoryBy: ['wholesaler', Validators.required],
       id: ['']
     });
 
     this.categoryForm2 = this.fb.group({
       category: ['', Validators.required],
-      discount: ['', Validators.required],
+      productDiscount: ['', Validators.required],
+      shippingDiscount: ['', Validators.required],
       categoryBy: ['retailer', Validators.required],
       id: ['']
     });
