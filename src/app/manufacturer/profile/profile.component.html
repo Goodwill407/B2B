@@ -238,7 +238,7 @@
                                 <select id="country" formControlName="country" class="form-select"  (change)="onCountryChange($event)"
                                     [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('country').errors }">
                                     <option disabled value="">Select Country </option>
-                                    <option [value]="country.cca2" *ngFor="let country of allCountry">{{country.name.common}}</option>
+                                    <option [value]="country.name.common" *ngFor="let country of allCountry">{{country.name.common}}</option>
                                    
                                 </select>
                             <div *ngIf="submitted && f.BankDetails.get('country').errors" class="invalid-feedback">

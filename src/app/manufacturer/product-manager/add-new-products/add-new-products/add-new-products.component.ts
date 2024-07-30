@@ -1,6 +1,7 @@
 import { CommonModule, NgClass, NgFor, NgIf } from '@angular/common';
 import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { DialogModule } from 'primeng/dialog';
@@ -29,15 +30,17 @@ export class AddNewProductsComponent {
   submittedStep1 = false;
   displayProductImageDialog: boolean = false;
   selectedColorGroupIndex: number | null = null;
-  @ViewChild('fileInput') fileInput!: ElementRef;
-  ProductId: any
+  @ViewChild('fileInput') fileInput!: ElementRef; 
   CloudPath: string = ''
+  ProductId:any;
 
   videoSizeError: string = '';
   userProfile: any
 
+  productDetails:any
+
   // form step
-  currentStep = 2;
+  currentStep = 1;
 
   selectedSizes: any = []
   colourCollections: any = []
@@ -69,7 +72,8 @@ export class AddNewProductsComponent {
     private authService: AuthService,
     private cd: ChangeDetectorRef,
     private communicationService: CommunicationService,
-    private spinner: NgxSpinnerService) {
+    private spinner: NgxSpinnerService,
+    private route:ActivatedRoute) {
     this.addProductForm = this.fb.group({
       stepOne: this.fb.group({
         designNumber: ['', Validators.required],
@@ -78,7 +82,7 @@ export class AddNewProductsComponent {
         gender: ['', Validators.required],
         clothing: ['', Validators.required],
         subCategory: ['', Validators.required],
-        productTitle: ['', Validators.required],
+        productTitle: ['', Validators.required],        
         productDescription: ['', Validators.required],
         material: ['', Validators.required],
         materialvariety: [''],
@@ -101,6 +105,9 @@ export class AddNewProductsComponent {
         }),
         netWeight: ['', Validators.required],
         MRP: ['', Validators.required],
+        quantity: ['',[Validators.required]],
+        dateOfManufacture: ['',[Validators.required]],
+        dateOfListing: ['',[Validators.required]],
       }),
       stepTwo: this.fb.group({
         colour: [''],
@@ -113,11 +120,15 @@ export class AddNewProductsComponent {
 
     this.CloudPath = this.authService.cdnPath
 
+      // get product id from view
+      this.route.queryParamMap.subscribe(params => {
+        this.ProductId = params.get('id');
+       });  
+
   }
 
-  ngOnInit() {
+  ngOnInit() {   
     // call master    
-    this.getProductDataById()
     this.getMaterial()
     this.getFabricPttern()
     this.getOccasion()
@@ -132,6 +143,10 @@ export class AddNewProductsComponent {
     this.getAllLifeStyle()
     this.getAllBrands()
     this.updateValidators()
+
+    if(this.ProductId){
+      this.getProductDataById()
+    }
 
   }
 
@@ -313,17 +328,22 @@ export class AddNewProductsComponent {
   // Form step functions
   nextStep() {
     if (this.currentStep === 1) {
-      this.saveStepOneData();
+      if(this.ProductId){
+       this.UpdateStepOne()
+      }
+      else{
+        this.saveStepOneData();
+      }      
     } else if (this.currentStep === 2) {
       this.saveStepTwoData();
     }
   }
 
-  prevStep() {
-    if (this.currentStep > 1) {
-      this.currentStep--;
-    }
-  }
+  // prevStep() {
+  //   if (this.currentStep > 1) {
+  //     this.currentStep--;
+  //   }
+  // }
 
   get stepOne() {
     return this.addProductForm.get('stepOne') as FormGroup;
@@ -340,10 +360,10 @@ export class AddNewProductsComponent {
   onSizeChange(event: any, size: string) {
     if (event.target.checked) {
       this.sizesArray.push(this.fb.group({
-        size: size,
+        standardSize: size,
         brandSize: ['', Validators.required],
-        chest: ['', Validators.required],
-        shoulder: ['', Validators.required],
+        chestSize: ['', Validators.required],
+        shoulderSize: ['', Validators.required],
         frontLength: ['', Validators.required]
       }));
     } else {
@@ -433,7 +453,7 @@ export class AddNewProductsComponent {
       try {
         const formData = await this.createFormData(); // Wait for createFormData to complete
         this.spinner.show();
-        const response = await this.authService.post(`products/upload/colour-collection/66a503091fd9c60845b73016`, formData).toPromise();
+        const response = await this.authService.post(`products/upload/colour-collection/${this.ProductId}`, formData).toPromise();
         if (response) {
           this.spinner.hide();
           this.resetForm();
@@ -505,14 +525,7 @@ export class AddNewProductsComponent {
     return window.URL.createObjectURL(file);
   }
 
-  // get data from Backend
-  getProductDataById() {
-    this.authService.get('products').subscribe(res => {
-      console.log(res)
-    })
-
-  }
-
+ 
   // for update validation
   setValidators(controlNames: string[]) {
     controlNames.forEach(controlName => {
@@ -559,6 +572,74 @@ export class AddNewProductsComponent {
   getVideoPath(video: any) {
     return this.CloudPath+video;
   }
+
+
+  // Update Product Details
+
+  // Update Step first
+
+  // patch product data
+  getProductDataById(){
+  this.authService.getById('products',this.ProductId).subscribe(res=>{
+    this.productDetails=res;
+    if(this.productDetails){
+    this.stepOne.patchValue(this.productDetails)
+     // Patch the nested ProductDimension form group
+     this.stepOne.get('ProductDeimension')?.patchValue({
+      length: this.productDetails.ProductDeimension[0].length,
+      width: this.productDetails.ProductDeimension[0].width,
+      height: this.productDetails.ProductDeimension[0].height,
+    });
+    // Handle patching the sizes array
+    this.patchSizesArray(this.productDetails.sizes);
+    }
+  })
+  }
+
+  patchSizesArray(sizes: any[]) {
+    const sizesArray = this.addProductForm.get('stepOne.sizes') as FormArray;
+    sizesArray.clear(); // Clear existing values
+    this.selectedSizes = [];
+
+    sizes.forEach(size => {
+      sizesArray.push(this.fb.group({
+        standardSize: [size.standardSize],
+        brandSize: [size.brandSize, Validators.required],
+        chestSize: [size.chestSize, Validators.required],
+        shoulderSize: [size.shoulderSize, Validators.required],
+        frontLength: [size.frontLength, Validators.required]
+      }));
+      this.selectedSizes.push(size.standardSize); // Keep track of selected sizes
+    });
+  }
+
+  UpdateStepOne(){
+    if(this.stepOne.invalid){
+      return;
+    }
+    else{
+    this.spinner.show()
+    this.authService.patch(`products/${this.ProductId}`,this.stepOne.value).subscribe(res=>{
+      if(res){
+        this.spinner.hide()
+        this.communicationService.showNotification(
+          'snackbar-success',
+          `Saved Successfully...!!!`,
+          'bottom',
+          'center'
+        );
+        setTimeout(() => {
+          this.currentStep++;
+        }, 1500);
+      }
+
+    },
+    error=>{
+      console.log('error')
+    }
+  )
+  }
+}
 
 }
 

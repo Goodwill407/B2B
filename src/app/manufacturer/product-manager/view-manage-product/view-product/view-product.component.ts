@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Location } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '@core';
 
 @Component({
@@ -14,15 +14,17 @@ import { AuthService } from '@core';
   styleUrls: ['./view-product.component.scss']
 })
 export class ViewProductComponent {
-  constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService) { }
+  constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService, private router:Router) { }
 
   product: any;
   selectedMedia: any;
   selectedMediaType: string = 'image'; // 'image' or 'video'
+  ProductId:any=''
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       const id = params['id'];
+      this.ProductId=id
       if (id) {
         this.getProductDetails(id);
       }
@@ -76,5 +78,9 @@ export class ViewProductComponent {
   changeMainMedia(media: any) {
     this.selectedMedia = media.src;
     this.selectedMediaType = media.type;
+  }
+
+  editProduct(){    
+    this.router.navigate(['mnf/add-new-product'], { queryParams: { id: this.ProductId } });
   }
 }
