@@ -19,8 +19,8 @@
 }
 
 .main-image img {
- height: 495px;
- width: 380px;
+  height: 495px;
+  width: 380px;
 }
 
 .thumbnail-images {
@@ -64,6 +64,7 @@
   color: #000;
   font-weight: bold;
 }
+
 .video-thumbnail {
   position: relative;
 }
@@ -76,4 +77,24 @@
   font-size: 24px;
   color: white;
   opacity: 0.8;
+}
+
+.colour-info {
+  display: flex;
+  align-items: center;
+}
+
+.colour-hex {
+  width: 50px;
+  height: 50px;
+  display: inline-block;
+  margin-left: 10px;
+  border: 1px solid #000;
+}
+
+.colour-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  margin-left: 10px;
 }

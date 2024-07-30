@@ -4,26 +4,28 @@
       <div class="m-0 p-0 d-flex align-items-center">
         <button class="btn text-start" (click)="navigateFun()">
           <i class="bi bi-arrow-left-circle h4"></i>
-        </button> 
+        </button>
         <span class="text-center" style="margin-left: 474px;">Product Details</span>
-        <button  type="button" class="btn btn-success ms-auto"
-                (click)="editProduct()">Edit</button>
-              </div>
+        <button type="button" class="btn btn-success ms-auto" (click)="editProduct()">Edit</button>
+      </div>
     </h4>
     <div class="card p-4">
       <div class="product-details-content">
         <div class="product-images">
           <div class="main-image">
-            <img *ngIf="selectedMediaType === 'image'" [src]="authService.cdnPath + selectedMedia" alt="Main Product Image">
-            <video *ngIf="selectedMediaType === 'video'" style="width: 380px; height: 495px;" [src]="authService.cdnPath + selectedMedia" controls></video>
+            <img *ngIf="selectedMediaType === 'image'" [src]="authService.cdnPath + selectedMedia"
+              alt="Main Product Image">
+            <video *ngIf="selectedMediaType === 'video'" style="width: 380px; height: 495px;"
+              [src]="authService.cdnPath + selectedMedia" controls></video>
           </div>
           <div class="thumbnail-images">
-            <div class="thumbnail" *ngFor="let media of product.media" (click)="changeMainMedia(media)" [class.active]="media.src === selectedMedia">
+            <div class="thumbnail" *ngFor="let media of product.media" (click)="changeMainMedia(media)"
+              [class.active]="media.src === selectedMedia">
               <img *ngIf="media.type === 'image'" [src]="authService.cdnPath + media.src" alt="Product Thumbnail">
               <div *ngIf="media.type === 'video'" class="video-thumbnail">
                 <i class="bi bi-play-circle-fill"></i>
-                <!-- <img [src]="authService.cdnPath + media.src" alt="Product Thumbnail"> -->
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgcAFN3D0j48KEiZtXy9H8Z-brml1fSzLUAQ&s"  style="width: 55px; height: 75;" alt="Product Thumbnail">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgcAFN3D0j48KEiZtXy9H8Z-brml1fSzLUAQ&s"
+                  style="width: 55px; height: 75px;" alt="Product Thumbnail">
               </div>
             </div>
           </div>
@@ -31,7 +33,7 @@
 
         <div class="product-info">
           <div class="">
-            <h5 class="mb-0">Brand</h5>
+            <h5 class="mb-0">Brand : {{product.brand}}</h5>
             <div class="d-flex justify-content-between">
               <p><small>Design No. </small> <br> {{ product.designNumber }}</p>
               <p><small>Clothing</small> <br> {{ product.clothingType }}</p>
@@ -82,21 +84,32 @@
           <hr>
 
           <div class="">
-            <p><small>Colours / Designs</small> <br> {{ product.colours }}</p>
-          </div>
+            <p class="mb-0"><small>Colours / Designs :</small> {{selectedColourName}} </p>
+            <div class="d-flex">
+              <span *ngFor="let colour of product.colours" (click)="selectColourCollection(colour)"
+                style="cursor: pointer; display: flex;">
+                <div class="colour-info ">
+                  <span *ngIf="colour.image; else colourBox">
+                    <img [src]="authService.cdnPath + colour.image" alt="Colour Image" class="colour-image">
+                  </span>
+                  <ng-template #colourBox>
+                    <span [style.background]="colour.hex" class="colour-hex"></span>
+                  </ng-template>
+                </div>
+              </span>
+            </div>
 
-          <hr>
+            <!-- <p><small>Selected Colour: </small><br>{{ selectedColourName }}</p> -->
+          </div>
 
           <div class="row">
-            <p class="col-md-6 col-sm-12"><small>Item Weight</small><br> {{ product.itemWeight }}</p>
-            <p class="col-md-6 col-sm-12"><small>Item Dimensions (in CM)</small><br> {{ product.dimensions }}</p>
+            <p class="col-md-4 col-sm-6"><small>Item Weight</small> <br> {{ product.itemWeight }}</p>
+            <p class="col-md-4 col-sm-6"><small>Dimensions</small> <br> {{ product.dimensions }}</p>
           </div>
 
-          <hr>
-
-          <div class="">
-            <p><small class="col-md-3">Date First Available</small> <span>{{ product.dateAvailable }}</span></p>
-            <p><small class="col-md-3">Availability</small> <span>{{ product.availability }}</span></p>
+          <div class="row">
+            <p class="col-md-4 col-sm-6"><small>Date Available</small> <br> {{ product.dateAvailable }}</p>
+            <p class="col-md-4 col-sm-6"><small>Availability</small> <br> {{ product.availability }}</p>
           </div>
         </div>
       </div>

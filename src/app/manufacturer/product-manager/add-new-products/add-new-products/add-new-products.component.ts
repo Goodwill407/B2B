@@ -409,7 +409,7 @@ export class AddNewProductsComponent {
       // Add the createdBy property to stepOne's value
       const stepOneData = {
         ...this.stepOne.value,
-        createdBy: createdBy
+        productBy: createdBy
       };
 
       this.spinner.show()

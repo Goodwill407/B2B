@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,23 +8,26 @@ import { AuthService } from '@core';
   selector: 'app-view-product',
   standalone: true,
   imports: [
-    CommonModule
+    CommonModule,
+    NgIf,NgFor
   ],
   templateUrl: './view-product.component.html',
   styleUrls: ['./view-product.component.scss']
 })
 export class ViewProductComponent {
-  constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService, private router:Router) { }
+  constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService, private router: Router) { }
 
   product: any;
   selectedMedia: any;
   selectedMediaType: string = 'image'; // 'image' or 'video'
-  ProductId:any=''
+  ProductId: any = '';
+  selectedColourCollection: any = null;
+  selectedColourName: string = '';
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       const id = params['id'];
-      this.ProductId=id
+      this.ProductId = id;
       if (id) {
         this.getProductDetails(id);
       }
@@ -54,19 +57,20 @@ export class ViewProductComponent {
           neckCollarStyle: res.neckStyle,
           specialFeatures: res.specialFeature.join(', '),
           careInstructions: res.careInstructions,
-          sizes: res.sizes.map((size: any) => `Size: ${size.brandSize}, Front Length: ${size.frontLength}`).join(' | '),
-          colours: res.colourCollections.map((colour: any) => `Colour: ${colour.colourName || colour.colourImage}`).join(' | '),
+          sizes: res.sizes.map((size: any) => `${size.standardSize}`).join('&nbsp;&nbsp;'),
+          colours: res.colourCollections.map((colour: any) => ({
+            name: colour.colourName,
+            hex: colour.colour,
+            image: colour.colourImage,
+            images: colour.productImages,
+            video: colour.productVideo
+          })),
           itemWeight: res.netWeight,
           dimensions: res.ProductDeimension.map((dim: any) => `L: ${dim.length}, W: ${dim.width}, H: ${dim.height}`).join(' | '),
-          dateAvailable: 'N/A', // Assuming this field is not provided in the response
-          availability: 'N/A', // Assuming this field is not provided in the response
-          media: [
-            ...res.colourCollections[0]?.productImages.map((image: string) => ({ type: 'image', src: image })),
-            { type: 'video', src: res.colourCollections[0]?.productVideo }
-          ].filter(media => media.src) // Filter out any undefined media sources
+          dateAvailable: res.dateOfListing ? new Date(res.dateOfListing).toLocaleDateString() : 'N/A',
+          availability: res.quantity > 0 ? `${res.quantity} (In Stock)` : 'Out of Stock'
         };
-        this.selectedMedia = this.product.media[0].src;
-        this.selectedMediaType = this.product.media[0].type;
+        this.selectColourCollection(this.product.colours[0]);
       }
     });
   }
@@ -80,7 +84,19 @@ export class ViewProductComponent {
     this.selectedMediaType = media.type;
   }
 
-  editProduct(){    
+  editProduct() {
     this.router.navigate(['mnf/add-new-product'], { queryParams: { id: this.ProductId } });
+  }
+
+  selectColourCollection(colour: any) {
+    this.selectedColourCollection = colour;
+    this.selectedColourName = colour.name;
+    const media = [
+      ...colour.images.map((image: string) => ({ type: 'image', src: image })),
+      { type: 'video', src: colour.video }
+    ].filter(media => media.src); // Filter out any undefined media sources
+    this.product.media = media;
+    this.selectedMedia = media[0]?.src;
+    this.selectedMediaType = media[0]?.type;
   }
 }

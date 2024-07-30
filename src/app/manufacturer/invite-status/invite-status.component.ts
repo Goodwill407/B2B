@@ -40,7 +40,7 @@ export class InviteStatusComponent {
 
   reInvite(data: any) {
     this.authService.get(`invitations/re-invitation/${data.email}`).subscribe((res: any) =>{
-      this.communicationService.showNotification('snackbar-success','Reinvitation Sent Successfully','bottom','center');
+      this.communicationService.showNotification('snackbar-success','Re-invitation Sent Successfully','bottom','center');
     });
   }
 
