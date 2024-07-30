@@ -1,6 +1,6 @@
 import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
-import { AuthService } from '@core';
+import { AuthService, CommunicationService } from '@core';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table'; // Import TableModule from PrimeNG
 
@@ -24,7 +24,7 @@ export class InviteStatusComponent {
   first: number = 0;
   rows: number = 10;
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private communicationService:CommunicationService) { }
 
   ngOnInit() {
     this.user = this.authService.currentUserValue
@@ -36,6 +36,12 @@ export class InviteStatusComponent {
       this.distributors = res.results;
       this.totalResults = res.totalResults;
     })
+  }
+
+  reInvite(data: any) {
+    this.authService.get(`invitations/re-invitation/${data.email}`).subscribe((res: any) =>{
+      this.communicationService.showNotification('snackbar-success','Reinvitation Sent Successfully','bottom','center');
+    });
   }
 
   onPageChange(event: any) {

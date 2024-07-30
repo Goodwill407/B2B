@@ -96,8 +96,8 @@ export class SidebarComponent extends UnsubscribeOnDestroyAdapter implements OnI
         this.userType = "Admin";
       } else if(userRole === Role.Wholesaler){
         this.userType = 'Wholesaler'
-      } else if (userRole === Role.counsellor) {
-        this.userType = 'Career Counsellor';
+      } else if (userRole === Role.Retailer) {
+        this.userType = 'Retailer';
       }
        else if (userRole === Role.skillCounsellor) {
         this.userType = 'Life Skill Trainer';
