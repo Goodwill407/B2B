@@ -138,7 +138,7 @@
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                             <label class="label-input" for="productTitle">Date Of Manufacture</label>
-                            <input type="text" id="dateOfManufacture" formControlName="dateOfManufacture" class="form-control"
+                            <input type="date" id="dateOfManufacture" formControlName="dateOfManufacture" class="form-control"
                                 [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('dateOfManufacture')?.invalid}">
                             
                             <div *ngIf="submittedStep1 && stepOne.get('dateOfManufacture')?.invalid"
@@ -150,7 +150,7 @@
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                             <label class="label-input" for="dateOfListing">Date Of Listing</label>
-                            <input type="text" id="dateOfListing" formControlName="dateOfListing" class="form-control"
+                            <input type="date" id="dateOfListing" formControlName="dateOfListing" class="form-control"
                                 [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('dateOfListing')?.invalid}">
                             <!-- Validation feedback for the Product Title field -->
                             <div *ngIf="submittedStep1 && stepOne.get('dateOfListing')?.invalid"
@@ -227,13 +227,13 @@
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                             <label class="label-input" for="fitStyle">Occasion</label>
                             <p-multiSelect [options]="allOccasionType" placeholder="Select Occasion" optionLabel=""
-                                formControlName="selectedOccasion"></p-multiSelect>
-                        </div>
+                              formControlName="selectedOccasion" class="custom-multiSelect"></p-multiSelect>
+                          </div>
 
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                             <label class="label-input" for="lifeStyle">Life Style</label>
                             <p-multiSelect [options]="allLifeStyle" placeholder="Select Style" optionLabel=""
-                                formControlName="selectedlifeStyle"></p-multiSelect>
+                                formControlName="selectedlifeStyle" class="custom-multiSelect"></p-multiSelect>
                         </div>
 
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
@@ -347,7 +347,7 @@
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                             <label class="label-input" for="specialFeature">Special Feature</label>
                             <p-multiSelect [options]="allSpecialFeature" placeholder="Select" optionLabel=""
-                                formControlName="specialFeature"></p-multiSelect>
+                                formControlName="specialFeature" class="custom-multiSelect"></p-multiSelect>
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                             <label class="label-input" for="careInstructions">Care Instructions</label>
@@ -616,7 +616,7 @@
                                         <th>Colour Image</th>
                                         <th>Product Video</th>
                                         <th>Product Images</th>
-                                        <!-- <th>Actions</th> -->
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -632,12 +632,12 @@
                                                     [src]="getProductImagePath(image)" alt="Product Image">
                                             </div>
                                         </td>
-                                        <!-- <td>
+                                        <td>
                                             <button class="btn btn-icon p-2" pTooltip="Edit"
-                                            (click)="onEditColorCollection(collection)" tooltipPosition="top">
-                                            <i class="bi bi-pencil-fill"></i>
+                                            (click)="deleteColorCOllection(collection)" tooltipPosition="top">
+                                            <i class="bi bi-trash"></i>
                                         </button>
-                                        </td> -->
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>

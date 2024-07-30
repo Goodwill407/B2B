@@ -7,23 +7,23 @@
           <option value="">Select Brand</option>
           <option *ngFor="let brand of allBrand" [value]="brand.brandName">{{brand.brandName}}</option>
         </select>
-        <select name="" class="form-select" [(ngModel)]="filters.productType" (change)="getSubCategory()">
+        <select name="" class="form-select" [(ngModel)]="filters.productType"  (change)="getAllSubCategory()">
           <option value="">Select Product Type</option>
           <option *ngFor="let type of allProductType" [value]="type">{{type}}</option>
         </select>
-        <select name="" class="form-select" [(ngModel)]="filters.gender" (change)="getSubCategory()">
+        <select name="" class="form-select" [(ngModel)]="filters.gender" (change)="getAllSubCategory()">
           <option value="">Select Gender</option>
           <option *ngFor="let gender of allGender" [value]="gender">{{gender}}</option>
         </select>
-        <select name="" class="form-select" [(ngModel)]="filters.clothing" (change)="getSubCategory()">
+        <select name="" class="form-select" [(ngModel)]="filters.clothing" (change)="getAllSubCategory()">
           <option value="">Select Clothing</option>
-          <option *ngFor="let clothing of allClothing" [value]="clothing.name">{{clothing.name}}</option>
+          <option *ngFor="let clothing of allClothingType" [value]="clothing">{{clothing}}</option>
         </select>
         <select name="" class="form-select" [(ngModel)]="filters.subCategory">
           <option value="">Select Sub-Category</option>
-          <option *ngFor="let subCategory of allSubCategory" [value]="subCategory.subCategory">{{subCategory.subCategory}}</option>
+          <option *ngFor="let subCategory of allSubCategory" [value]="subCategory">{{subCategory}}</option>
         </select>
-        <button class="btn btn-info" (click)="applyFilters()">Display</button>
+        <button class="btn btn-info" (click)="getAllProducts()">Display</button>
       </div>
       <hr>
       <div class="cards-container">
