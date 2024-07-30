@@ -1,4 +1,4 @@
-import { CommonModule, NgClass, NgFor, NgIf } from '@angular/common';
+import { CommonModule, DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -22,7 +22,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
     NgxSpinnerModule
   ],
   templateUrl: './add-new-products.component.html',
-  styleUrls: ['./add-new-products.component.scss']
+  styleUrls: ['./add-new-products.component.scss'],
+  providers: [DatePipe]
 })
 export class AddNewProductsComponent {
   addProductForm: any = FormGroup;
@@ -75,7 +76,8 @@ export class AddNewProductsComponent {
     private cd: ChangeDetectorRef,
     private communicationService: CommunicationService,
     private spinner: NgxSpinnerService,
-    private route:ActivatedRoute) {
+    private route:ActivatedRoute,
+    private datePipe: DatePipe) {
     this.addProductForm = this.fb.group({
       stepOne: this.fb.group({
         designNumber: ['', Validators.required],
@@ -405,11 +407,11 @@ export class AddNewProductsComponent {
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
     this.submittedStep1 = true
     if (this.stepOne.valid) {
-      const createdBy = this.userProfile.email
+      const productBy = this.userProfile.email
       // Add the createdBy property to stepOne's value
       const stepOneData = {
         ...this.stepOne.value,
-        createdBy: createdBy
+        productBy: productBy
       };
 
       this.spinner.show()
@@ -608,10 +610,21 @@ export class AddNewProductsComponent {
 
   // patch product data
   getProductDataById(){
+    this.spinner.show()
   this.authService.getById('products',this.ProductId).subscribe(res=>{
     this.productDetails=res;
     if(this.productDetails){
+      if(this.currentStep == 2){
+        this.colourCollections=this.productDetails.colourCollections
+      }else{
     this.stepOne.patchValue(this.productDetails)
+    const formattedDate1 = this.datePipe.transform(this.productDetails.dateOfManufacture, 'yyyy-MM-dd');
+    const formattedDate2 = this.datePipe.transform(this.productDetails.dateOfListing, 'yyyy-MM-dd');
+    this.stepOne.patchValue({
+      dateOfManufacture: formattedDate1,
+      dateOfListing:formattedDate2
+      // other form controls
+    });
      // Patch the nested ProductDimension form group
      this.stepOne.get('ProductDeimension')?.patchValue({
       length: this.productDetails.ProductDeimension[0].length,
@@ -620,8 +633,21 @@ export class AddNewProductsComponent {
     });
     // Handle patching the sizes array
     this.patchSizesArray(this.productDetails.sizes);
-    }
+    }  
+  }
+  this.spinner.hide()
+  },error=>{
+    this.spinner.hide()
   })
+  }
+
+  onEditFormData(data: any) {
+    const formattedDate = this.datePipe.transform(data.dateOfManufacture, 'yyyy-MM-dd');
+    this.stepOne.patchValue({
+      quantity: data.quantity,
+      dateOfManufacture: formattedDate,
+      // other form controls
+    });
   }
 
   patchSizesArray(sizes: any[]) {
@@ -671,9 +697,23 @@ export class AddNewProductsComponent {
   }
 }
 
-// onEditColorCollection(CollectionData:any){
-
-// }
+deleteColorCOllection(CollectionData: any){
+ const id=`?&id=${this.ProductId}&collectionId=${CollectionData._id}`
+ this.spinner.show()
+  this.authService.delete(`products/delete/colour-collection`,id).subscribe(res=>{
+    this.getProductDataById()
+    this.spinner.hide()
+    this.communicationService.showNotification(
+      'snackbar-success',
+      `Deleted Successfully...!!!`,
+      'bottom',
+      'center'
+    );
+  },error=>{
+    this.spinner.hide()
+  }
+)
+}
 
 }
 

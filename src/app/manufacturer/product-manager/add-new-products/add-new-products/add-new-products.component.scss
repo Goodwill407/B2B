@@ -236,6 +236,19 @@ img, video {
   margin-top: -12px;
 }
 
+// for multiselect dropdown
+::ng-deep .custom-multiSelect .p-multiselect-panel .p-multiselect-filter-container {
+  display: none !important; /* Hide the search bar */
+}
+
+::ng-deep .custom-multiSelect .p-multiselect-header .p-multiselect-close {
+  display: none !important; /* Hide the cancel (close) button */
+}
+
+::ng-deep .custom-multiSelect .p-multiselect-header .p-checkbox {
+  display: none !important; /* Hide the 'select all' checkbox */
+}
+
   
   
   
