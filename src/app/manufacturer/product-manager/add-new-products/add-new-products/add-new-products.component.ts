@@ -131,7 +131,7 @@ export class AddNewProductsComponent {
 
   ngOnInit() {   
     // call master    
-    this.getClothingType()
+   this.getAllSubCategory()
     this.getMaterial()
     this.getFabricPttern()
     this.getOccasion()
@@ -159,16 +159,40 @@ export class AddNewProductsComponent {
   }
 
 
-  getClothingType() {
-    this.authService.get(`sub-category?productType=${this.stepOne.get('productType')?.value}&gender=${this.stepOne.get('gender')?.value}`).subscribe(res => {
+  
+  getAllSubCategory() {
+    const productType = this.stepOne.get('productType')?.value;
+    const gender = this.stepOne.get('gender')?.value;
+    const clothing = this.stepOne.get('clothing')?.value;
+  
+    let url = 'sub-category';
+  
+    if (productType) {
+      url += `?productType=${productType}`;
+    }
+    if (gender) {
+      url += (url.includes('?') ? '&' : '?') + `gender=${gender}`;
+    }
+    if (clothing) {
+      url += (url.includes('?') ? '&' : '?') + `clothing=${clothing}`;
+    }
+  
+    // Clear previous values
+    this.allProductType = [];
+    this.allClothingType = [];
+    this.allSubCategory = [];
+  
+    this.authService.get(url).subscribe(res => {
       if (res) {
-        this.allProductType=res.results.map((item: any) => item.productType);
-        this.allClothingType = res.results.map((item: any) => item.category);
+        this.allProductType = Array.from(new Set(res.results.map((item: any) => item.productType)));
+        this.allClothingType = Array.from(new Set(res.results.map((item: any) => item.category)));
+        this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
       }
     }, (error) => {
       console.log(error);
     });
   }
+  
 
   getAllBrands() {
     this.authService.get('brand').subscribe(res => {
@@ -308,15 +332,15 @@ export class AddNewProductsComponent {
       })
   }
 
-  getAllSubCategory() {
-    this.authService.get(`sub-category?productType=${this.stepOne.get('productType')?.value}&clothing=${this.stepOne.get('clothing')?.value}&gender=${this.stepOne.get('gender')?.value}`).subscribe(res => {
-      if (res) {
-        this.allSubCategory = res.results;
-      }
-    }, (error) => {
-      console.log(error);
-    });
-  }
+  // getAllSubCategory() {
+  //   this.authService.get(`sub-category`).subscribe(res => {
+  //     if (res) {
+  //       this.allSubCategory = res.results;
+  //     }
+  //   }, (error) => {
+  //     console.log(error);
+  //   });
+  // }
 
   getallCareInstruction() {
     this.authService.get('care-instruction').subscribe(res => {
