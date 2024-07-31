@@ -503,18 +503,46 @@
                             </div>
                         </div>
 
-                        <div class="col-3">
+                        <!-- <div class="col-3">
                             <label for="MRP">MRP</label>
                             <input type="text" id="MRP" formControlName="MRP" class="form-control"
                                 [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('MRP')?.invalid}">
-                            <!-- Validation feedback for MRP -->
+                           
                             <div *ngIf="submittedStep1 && stepOne.get('MRP')?.invalid" class="invalid-feedback">
                                 <div *ngIf="stepOne.get('MRP')?.hasError('required')">
                                     MRP is required
                                 </div>
                             </div>
                         </div>
+                    </div> -->
+                        <div class="col-1 pe-0">
+                        <label for="currency-select">Currency</label>
+                        <p-dropdown 
+                          (onChange)="changeCurrency($event)"
+                          [options]="currencies"
+                          [(ngModel)]="selectedCurrency"
+                          optionLabel="name.code"
+                          placeholder="INR"                         
+                        ></p-dropdown>
+                         </div>    
+                      <div class="col-2">
+                        <label for="MRP">MRP</label>
+                            <input type="text" id="MRP" formControlName="MRP" class="form-control"
+                                [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('MRP')?.invalid}">
+                           
+                            <div *ngIf="submittedStep1 && stepOne.get('MRP')?.invalid" class="invalid-feedback">
+                                <div *ngIf="stepOne.get('MRP')?.hasError('required')">
+                                    MRP is required
+                                </div>
+                                <div *ngIf="stepOne.get('MRP')?.hasError('invalidAmount')">
+                                    Amount is required after the currency symbol
+                                  </div>
+                            </div>
                     </div>
+                                     
+                      
+                      </div>
+                   
 
 
                     <div class="d-flex justify-content-center  mt-4">
