@@ -2,9 +2,12 @@ import { CommonModule, DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { AuthService, CommunicationService } from '@core';
+import { AuthService, CommunicationService, DirectionService } from '@core';
+import { amountAsyncValidator } from '@core/models/validators/amount-validation';
+
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { DialogModule } from 'primeng/dialog';
+import { DropdownModule } from 'primeng/dropdown';
 import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
@@ -19,7 +22,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
     DialogModule,
     NgClass,
     CommonModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    DropdownModule 
   ],
   templateUrl: './add-new-products.component.html',
   styleUrls: ['./add-new-products.component.scss'],
@@ -52,6 +56,11 @@ export class AddNewProductsComponent {
     '5XS', '4XS', '3XS', '2XS', 'XS', 'S', 'M', 'L', 'XL', '2XL', '3XL',
     '4XL', '5XL', '6XL', '7XL', '8XL', 'Free'
   ];
+  currencies:any={}
+  // currencyOptions = Object.values(this.currencies);
+  selectedCurrency='INR'
+  
+  amount: number | null = null;
   // allProductType = ["Clothing", "Bags", "Jewellery", "Shoes", "accessories", "Footwear"];
   allGender = ['Men', 'Women', 'Boys', 'Girl', 'Unisex'];
   allClothingType: any;
@@ -77,7 +86,8 @@ export class AddNewProductsComponent {
     private communicationService: CommunicationService,
     private spinner: NgxSpinnerService,
     private route:ActivatedRoute,
-    private datePipe: DatePipe) {
+    private datePipe: DatePipe,
+  private direction:DirectionService) {
     this.addProductForm = this.fb.group({
       stepOne: this.fb.group({
         designNumber: ['', Validators.required],
@@ -108,7 +118,7 @@ export class AddNewProductsComponent {
           height: ['', Validators.required],
         }),
         netWeight: ['', Validators.required],
-        MRP: ['', Validators.required],
+        MRP: ['Rs -',[Validators.required], [amountAsyncValidator()]],
         quantity: ['',[Validators.required]],
         dateOfManufacture: ['',[Validators.required]],
         dateOfListing: ['',[Validators.required]],
@@ -147,6 +157,8 @@ export class AddNewProductsComponent {
     this.getallCareInstruction()
     this.getAllLifeStyle()
     this.getAllBrands()
+    this.getAllCurrencyCode()
+
     this.updateValidators()
 
     if(this.ProductId){
@@ -332,6 +344,11 @@ export class AddNewProductsComponent {
       errpr => {
         console.log('error')
       })
+  }
+
+  getAllCurrencyCode(){
+  const data=this.direction.currencydata
+  this.currencies=Object.entries(data).map(([code, name]) => ({ code, name }));
   }
 
   // getAllSubCategory() {
@@ -714,6 +731,18 @@ deleteColorCOllection(CollectionData: any){
   }
 )
 }
+
+changeCurrency(event: any) {
+  const object=event.value
+  const symbol=event.value.name.symbol || '';
+  const valueWithDash = `${symbol} -`;
+
+  this.stepOne.get('MRP')?.setValue(valueWithDash, { emitEvent: false });
+
+  console.log('Selected currency:', this.selectedCurrency);
+}
+
+
 
 }
 

@@ -251,8 +251,18 @@ img, video {
 
   
   
+  // for currency
+  ::ng-deep .p-dropdown {
+    height: 35px !important;
+   align-items: center !important;
+   background-color: aliceblue;
+  }
   
-
+  ::ng-deep .p-dropdown .p-dropdown-label {  
+    overflow: visible; /* Removed !important and fixed typo */
+  }
+  
+  
   
 
     
