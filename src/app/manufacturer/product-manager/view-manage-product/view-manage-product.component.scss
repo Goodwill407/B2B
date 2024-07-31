@@ -2,11 +2,13 @@
   display: flex;
   justify-content: space-between;
 
-  input, select {
+  input,
+  select {
     padding: 10px;
     margin-right: 10px;
     flex: 1;
   }
+
   .form-select {
     color: #666565 !important;
   }
@@ -14,6 +16,7 @@
   button {
     padding: 10px 20px;
     color: #fff;
+
     &:hover {
       color: #007bff;
     }
@@ -117,6 +120,44 @@
     }
   }
 }
-.main-img, .title {
+
+.main-img,
+.title {
   cursor: pointer;
+}
+
+// style for share icon
+.share-options {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.share-icon {
+  text-decoration: none;
+  font-size: 24px;
+  color: #000;
+  /* Default icon color */
+  transition: color 0.3s ease, transform 0.3s ease;
+  /* Add transition for color and transform */
+}
+
+.facebook {
+  color: #316FF6;
+
+}
+
+.whatsapp {
+  color: #25D366;
+}
+
+.twitter {
+  color: #1DA1F2;
+}
+
+.share-icon:hover {
+
+  transform: scale(1.5);
+  /* Scale up the icon */
 }

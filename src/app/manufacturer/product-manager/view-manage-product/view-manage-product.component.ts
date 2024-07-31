@@ -205,4 +205,32 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
       console.log(error);
     });
   }
+
+  // Implement other methods like getAllProducts, getAllSubCategory, etc.
+
+  shareOnFacebook(product: any) {
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(this.getProductUrl(product))}`;
+    window.open(url, '_blank');
+  }
+
+  shareOnWhatsApp(product: any) {
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(this.getProductUrl(product))}`;
+    window.open(url, '_blank');
+  }
+
+  // shareOnInstagram(product: any) {
+  //   // Instagram does not have a direct sharing URL, you might need to use their API or a different approach
+  //   alert('Share on Instagram');
+  // }
+
+  shareOnTwitter(product: any) {
+    const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(this.getProductUrl(product))}`;
+    window.open(url, '_blank');
+  }
+
+  getProductUrl(product: any): string {
+    return `http://fashiontradershub.com`; // Change to your actual product URL
+  }
 }
+
+
