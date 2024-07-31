@@ -9,7 +9,7 @@ import { AuthService } from '@core';
   standalone: true,
   imports: [
     CommonModule,
-    NgIf,NgFor
+    NgIf,NgFor,
   ],
   templateUrl: './view-product.component.html',
   styleUrls: ['./view-product.component.scss']
@@ -57,7 +57,7 @@ export class ViewProductComponent {
           neckCollarStyle: res.neckStyle,
           specialFeatures: res.specialFeature.join(', '),
           careInstructions: res.careInstructions,
-          sizes: res.sizes.map((size: any) => `${size.standardSize}`).join('&nbsp;&nbsp;'),
+          sizes: res.sizes.map((size: any) => `${size.standardSize}`).join(' | '),
           colours: res.colourCollections.map((colour: any) => ({
             name: colour.colourName,
             hex: colour.colour,

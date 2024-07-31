@@ -98,3 +98,22 @@
   object-fit: cover;
   margin-left: 10px;
 }
+
+small{
+  color: #767474;
+  font-size: 13px;
+}
+.add-to-card{
+  display: flex !important;
+  align-items: center !important;
+  justify-content :space-around !important;
+}
+
+.btn-wishlist{
+  border: #767474 2px solid;
+  box-shadow: #504e4e 2px 1px;
+  font-size: 14px !important;
+  padding-left: 25px;
+  padding-right: 25px;
+  color: #767474;
+}

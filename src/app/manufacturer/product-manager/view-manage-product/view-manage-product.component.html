@@ -7,7 +7,7 @@
           <option value="">Select Brand</option>
           <option *ngFor="let brand of allBrand" [value]="brand.brandName">{{brand.brandName}}</option>
         </select>
-        <select name="" class="form-select" [(ngModel)]="filters.productType"  (change)="getAllSubCategory()">
+        <select name="" class="form-select" [(ngModel)]="filters.productType" (change)="getAllSubCategory()">
           <option value="">Select Product Type</option>
           <option *ngFor="let type of allProductType" [value]="type">{{type}}</option>
         </select>
@@ -27,9 +27,14 @@
       </div>
       <hr>
       <div class="cards-container">
-        <div *ngFor="let product of products" class="product-card" >
+        <div *ngFor="let product of products" class="product-card" (mouseenter)="onMouseEnter(product)" (mouseleave)="onMouseLeave(product)">
           <div class="design-no">Design No : {{product.designNo}}</div>
-          <img class="main-img" [src]="authService.cdnPath + product.selectedImageUrl" (mouseenter)="onMouseEnter(product)" (mouseleave)="onMouseLeave(product)" alt="{{product.title}}" [routerLink]="['/mnf/view-product',{id: product.id}]">
+          <div class="image-carousel">
+            <img class="main-img" [src]="authService.cdnPath + product.selectedImageUrl" alt="{{product.title}}" [routerLink]="['/mnf/view-product',{id: product.id}]">
+            <div class="carousel-dots">
+              <span *ngFor="let img of product.selectedImageUrls; let i = index" [class.active]="i === product.hoverIndex" (click)="navigateToImage(product, i)"></span>
+            </div>
+          </div>
           <div class="product-details">
             <div class="color-options mt-0">
               <button *ngFor="let color of product.colors"

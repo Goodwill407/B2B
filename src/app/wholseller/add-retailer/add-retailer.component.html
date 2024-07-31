@@ -4,12 +4,12 @@
             <p style="color: rgb(242, 94, 94)"> Sending Invitation By Mail ... </p>
           </ngx-spinner>
 
-        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Invite New Distributor</h4>
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Invite New Retailer</h4>
 
         <div class="registration-form px-4 mt-4">
             <form [formGroup]="mgfRegistrationForm" (ngSubmit)="onSubmit()">
                 <div class="d-flex">
-                    <h5>Invite Single Distributor</h5>
+                    <h5>Invite Single Retailer</h5>
                     <div class="ms-auto navigation-link-log">
                         <div type="button" class="" routerLink="/mnf/bulk-invite">Invite Bulk Distributors</div>
                     </div>
@@ -17,7 +17,7 @@
                 <div class="row ms-4">
 
                     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                        <label class="lable-input" for="fullName">Distributor's / Retailer Name<span>*</span>:</label>
+                        <label class="lable-input" for="fullName"> Retailer Name<span>*</span>:</label>
                         <input type="text" id="fullName" formControlName="fullName" class="form-control" placeholder="Full Name" />
                         <div *ngIf="mgfRegistrationForm.get('fullName')?.touched && mgfRegistrationForm.get('fullName')?.invalid"
                             class="text-danger">

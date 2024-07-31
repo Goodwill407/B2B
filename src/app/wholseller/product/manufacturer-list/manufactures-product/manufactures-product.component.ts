@@ -29,21 +29,25 @@ export class ManufacturesProductComponent {
   };
 
   products: any[] = [];
-  allBrand: any;
-  allProductType = ["Clothing", "Bags", "Jewellery", "Shoes", "Accessories", "Footwear"];
+  allBrand: any;  
   allGender = ['Men', 'Women', 'Boys', 'Girls', 'Unisex'];
-  allClothing: any;
-  allSubCategory: any;
+  allProductType = [];
+  allClothingType = [];
+  allSubCategory = [];
+ 
   limit = 10;
   page: number = 1
   first: number = 0;
   rows: number = 10;
+  userProfile: any;
 
   hoverIntervals: any = {}; // Track hover intervals for each product
   totalResults: any;
   mnfEmail: any;
 
-  constructor(public authService: AuthService, private route:ActivatedRoute) { }
+  constructor(public authService: AuthService, private route:ActivatedRoute) { 
+    this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
+  }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -53,8 +57,6 @@ export class ManufacturesProductComponent {
       }
     })
     this.getAllBrands();
-    this.getClothingType();
-    this.getSubCategory();
   }
 
   ngOnDestroy(): void {
@@ -65,50 +67,45 @@ export class ManufacturesProductComponent {
     console.log('Filters applied:', this.filters);
   }
 
-  changeProductImage(product: any, color: string): void {
-    const selectedColor = product.colourCollections.find((c: any) => c.colour === color);
-    if (selectedColor) {
-      product.selectedImageUrl = selectedColor.productImages[0];
-      product.selectedColor = color;
-    }
-  }
-
   getAllBrands() {
-    this.authService.get(`brand?page=1&brandOwner=${this.mnfEmail}`).subscribe((res: any) => {
+    this.authService.get(`brand?page=1`).subscribe((res: any) => {
       this.allBrand = res.results;
     });
   }
+  
+  getAllProducts(email:any) {
+    let url = `products/filter-products?productBy=${email}`;
 
-  getClothingType() {
-    this.authService.get('clothing-mens').subscribe(res => {
-      if (res) {
-        this.allClothing = res.results;
-      }
-    }, (error) => {
-      console.log(error);
-    });
-  }
+    const brand = this.filters.brand;
+    const productType = this.filters.productType;
+    const gender = this.filters.gender;
+    const clothing = this.filters.clothing;
+    const subCategory = this.filters.subCategory;
 
-  getSubCategory() {
-    const f = this.filters;
-    this.authService.get(`sub-category?productType=${f.productType}&clothing=${f.clothing}&gender=${f.gender}`).subscribe(res => {
-      if (res) {
-        this.allSubCategory = res.results;
-      }
-    }, (error) => {
-      console.log(error);
-    });
-  }
+    if (brand) {
+      url += `&brand=${brand}`;
+    }
 
-  getAllProducts(email: string) {
-    // const url = `products/filter-products?page=${this.page}&limit=${this.limit}&productBy=${email}`
-    const url = `products/filter-products?productBy=${email}&page=${this.page}&limit=${this.limit}`
+    if (productType) {
+      url += `&productType=${productType}`;
+    }
+    if (gender) {
+      url += `&gender=${gender}`;
+    }
+    if (clothing) {
+      url += `&clothing=${clothing}`;
+    }
+    if (subCategory) {
+      url += `&subCategory=${subCategory}`;
+    }
+
     this.authService.get(url).subscribe((res: any) => {
       if (res) {
         this.totalResults = res.totalResults;
         this.products = res.results.map((product: any) => ({
           designNo: product.designNumber,
           selectedImageUrl: product.colourCollections[0]?.productImages[0] || '',
+          selectedImageUrls: product.colourCollections[0]?.productImages || [], // Initialize with all images for the first color
           title: product.productTitle,
           description: product.productDescription,
           selectedColor: product.colourCollections[0]?.colour || '',
@@ -125,6 +122,8 @@ export class ManufacturesProductComponent {
           }
         });
       }
+    }, (error) => {
+      console.log(error);
     });
   }
 
@@ -146,27 +145,69 @@ export class ManufacturesProductComponent {
       this.changeProductImage(product, product.selectedColor);
     };
   }
-
+  
+  navigateToImage(product: any, index: number): void {
+    product.hoverIndex = index;
+    product.selectedImageUrl = product.selectedImageUrls[index];
+  }
+  
   onMouseEnter(product: any): void {
     this.hoverIntervals[product.id] = setInterval(() => {
       this.slideNextImage(product);
     }, 1000);
   }
-
+  
   onMouseLeave(product: any): void {
     clearInterval(this.hoverIntervals[product.id]);
   }
-
+  
   slideNextImage(product: any): void {
     const currentIndex = product.hoverIndex;
-    const nextIndex = (currentIndex + 1) % product.colourCollections.length;
+    const nextIndex = (currentIndex + 1) % product.selectedImageUrls.length; // Use selectedImageUrls array
     product.hoverIndex = nextIndex;
-    product.selectedImageUrl = product.colourCollections[nextIndex].productImages[0];
+    product.selectedImageUrl = product.selectedImageUrls[nextIndex];
+  }
+  
+  
+  changeProductImage(product: any, color: string): void {
+    const selectedColor = product.colourCollections.find((c: any) => c.colour === color);
+    if (selectedColor) {
+      product.selectedImageUrls = selectedColor.productImages; // Store all images for the selected color
+      product.selectedColor = color;
+    }
   }
 
   clearHoverIntervals(): void {
     for (const key in this.hoverIntervals) {
       clearInterval(this.hoverIntervals[key]);
     }
+  }
+
+  getAllSubCategory() {
+    const productType = this.filters.productType;
+    const gender = this.filters.gender;
+    const clothing = this.filters.clothing;
+  
+    let url = 'sub-category';
+  
+    if (productType) {
+      url += `?productType=${productType}`;
+    }
+    if (gender) {
+      url += (url.includes('?') ? '&' : '?') + `gender=${gender}`;
+    }
+    if (clothing) {
+      url += (url.includes('?') ? '&' : '?') + `clothing=${clothing}`;
+    }
+  
+    this.authService.get(url).subscribe(res => {
+      if (res) {
+        this.allProductType = Array.from(new Set(res.results.map((item: any) => item.productType)));
+        this.allClothingType = Array.from(new Set(res.results.map((item: any) => item.category)));
+        this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
+      }
+    }, (error) => {
+      console.log(error);
+    });
   }
 }
