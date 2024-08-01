@@ -616,8 +616,8 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
       },
       {
-        path: '/users/skill-trainer',
-        title: 'View And Manage Product',
+        path: '/wholesaler/wishlist-product',
+        title: 'View Wishlist Product',
         iconType: '',
         icon: '',
         class: 'ml-menu',
