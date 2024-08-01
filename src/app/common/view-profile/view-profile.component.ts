@@ -26,10 +26,12 @@ export class ViewProfileComponent {
   mgfRegistrationForm: any = FormGroup;
 
   ngOnInit(): void {
+    const user = JSON.parse(localStorage.getItem("currentUser")!);
     this.route.queryParams.subscribe(params => {
       this.email = params['email'];
+      const role = params['role'];
       if (this.email) {
-        this.authService.get(`wholesaler/${this.email}`).subscribe((res: any) => {
+        this.authService.get(`${role}/${this.email}`).subscribe((res: any) => {
           if (res) {
             this.mgfRegistrationForm.patchValue(res);
             this.mgfRegistrationForm.disable();

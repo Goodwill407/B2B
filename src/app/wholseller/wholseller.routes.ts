@@ -8,6 +8,7 @@ import { WholesalerProfileComponent } from "./wholesaler-profile/wholesaler-prof
 import { DashboardComponent } from "./dashboard/dashboard.component";
 import { ManufacturerListComponent } from "./product/manufacturer-list/manufacturer-list.component";
 import { ManufacturesProductComponent } from "./product/manufacturer-list/manufactures-product/manufactures-product.component";
+import { ViewProductComponent } from "app/manufacturer/product-manager/view-manage-product/view-product/view-product.component";
 
 export const R_Auth:Route[] = [
     {path: 'dashboard', component: DashboardComponent},
@@ -19,4 +20,5 @@ export const R_Auth:Route[] = [
     {path: 'manage-retailer', component: ManageRetailerComponent},
     {path: 'mnf-list', component: ManufacturerListComponent},
     {path: 'mnf-product', component: ManufacturesProductComponent},
+    {path: 'view-product', component: ViewProductComponent},
 ]

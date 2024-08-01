@@ -34,9 +34,9 @@ export class ManufacturerListComponent {
   }
 
   getAllMnf() {
-    this.authService.get(`wholesaler/manufactureList/${this.user.email}`).subscribe((res: any) => {
-      this.allMnf = res;
-      this.totalResults = res.totalResults;
+    this.authService.get(`wholesaler/manufactureList/${this.user.email}?page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
+      this.allMnf = res.docs;
+      this.totalResults = res.totalDocs;
     })
   }
 
@@ -44,7 +44,7 @@ export class ManufacturerListComponent {
   onPageChange(event: any) {
     this.page = event.page + 1;
     this.limit = event.rows;
-    // this.getAllMnf();
+    this.getAllMnf();
   }
 
   navigateToProduct(email: string) {
