@@ -534,7 +534,7 @@
 
 
                     <div class="d-flex justify-content-center  mt-4">
-                        <button type="button" class="btn btn-info me-2" (click)="nextStep()">Save and Next >></button>
+                        <button type="button" class="btn submit-btn me-2" (click)="nextStep()">Save and Next >></button>
                     </div>
 
                 </div>
@@ -545,7 +545,7 @@
                         <div class="row">
                             <!-- Color Code -->
                             <div class="col-2">
-                                <label for="colorCode">Color Code</label>
+                                <label for="colorCode">Color Code<span *ngIf="colourCollections.length > 0" class="required">*</span></label>
                                 <input type="color" id="colorCode" formControlName="colour"
                                     class="form-control color-input">
                                 <div *ngIf="submittedStep2 && stepTwo.get('colour')?.invalid" class="text-danger">
@@ -555,7 +555,7 @@
 
                             <!-- Color Name -->
                             <div class="col-2">
-                                <label for="colorName">Color Name</label>
+                                <label for="colorName">Color Name<span class="required">*</span></label>
                                 <input type="text" id="colorName" formControlName="colourName" class="form-control"
                                     placeholder="Color Name">
                                 <div *ngIf="submittedStep2 && stepTwo.get('colourName')?.invalid" class="text-danger">
@@ -565,7 +565,7 @@
 
                             <!-- Color Image -->
                             <div class="col-2">
-                                <label for="colourImage">Product Icon</label>
+                                <label for="colourImage">Product Icon<span *ngIf="colourCollections.length === 0" class="required">*</span></label>
                                 <input type="file" id="colourImage" (change)="onFileChange($event, 'colourImage')"
                                     class="form-control file-input">
                                 <div *ngIf="submittedStep2 && stepTwo.get('colourImage')?.invalid" class="text-danger">
@@ -590,7 +590,7 @@
                         <!-- For Product Images -->
                         <div class="row">
                             <div class="col-12">
-                                <label for="">Add Product Images &nbsp;<small style="color: brown;">(max 5 images
+                                <label for="">Add Product Images<span *ngIf="colourCollections.length === 0" class="required">*</span> &nbsp;<small style="color: brown;">(max 5 images
                                         add)</small></label>
                                 <div class="d-flex flex-wrap align-items-center product-box">
                                     <div *ngFor="let image of productImages.controls; let i = index"
@@ -614,7 +614,7 @@
                         </div>
 
                         <div class="d-flex justify-content-center mt-3">
-                            <button type="submit" class="btn btn-info d-flex" (click)="saveStepTwoData()">
+                            <button type="submit" class="btn submit-btn d-flex" (click)="saveStepTwoData()">
                                 <i class="bi bi-plus"></i> Add New Color
                             </button>
                         </div>

@@ -12,7 +12,7 @@ import { UnsubscribeOnDestroyAdapter } from '@shared';
 @Component({
   selector: 'app-main-layout',
   templateUrl: './main-layout.component.html',
-  styleUrls: [],
+  styleUrls: ['./main-layout.component.scss'],
   standalone: true,
   imports: [
     HeaderComponent,
@@ -26,6 +26,7 @@ import { UnsubscribeOnDestroyAdapter } from '@shared';
 export class MainLayoutComponent extends UnsubscribeOnDestroyAdapter implements AfterViewInit {
   direction!: Direction;
   public config!: InConfiguration;
+  userProfile: any;
   constructor(
     private directoryService: DirectionService,
     private configService: ConfigService,
@@ -58,6 +59,12 @@ export class MainLayoutComponent extends UnsubscribeOnDestroyAdapter implements 
       }
     });
   }
+
+  ngOnInit(){
+    this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
+
+  }
+
   ngAfterViewInit(): void {
     //------------ set varient start----------------
     if (localStorage.getItem('theme')) {

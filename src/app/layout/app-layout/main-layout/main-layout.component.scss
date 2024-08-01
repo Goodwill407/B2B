@@ -1,0 +1,70 @@
+/* Main container to hold everything */
+// .main-container {
+//     display: flex;
+//     flex-direction: column;
+//     position: relative;
+//     height: 100vh; /* Ensure the main container takes the full viewport height */
+//   }
+  
+//   /* Content area where the router-outlet will load components */
+//   .content {
+//     flex: 1;
+//     padding: 20px;
+//     overflow: auto;
+//   }
+  
+  /* Right side ads box */
+//   .ads-right {
+//     position: absolute;
+//     top: 61px;
+//     right: 0;
+//     width: 200px; /* Adjust width as needed */
+//     height: calc(100% - 100px - 61px); /* Full height minus height of .ads-bottom and top offset */
+//     background-color: #7ce4a6; /* Example background color */
+//     box-sizing: border-box;
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: space-between;
+//   }
+  
+//   .right-ads-content {
+//     display: flex;
+//     flex-direction: column;
+//     justify-content: space-between;
+//     height: 100%;
+//   }
+  
+  /* Bottom ads box */
+//   .ads-bottom {
+//     position: absolute;
+//     bottom: 0;
+//     left: 260px; /* Adjust left margin as needed */
+//     right: 0;
+//     height: 100px; /* Adjust height as needed */
+//     background-color: #7ce4a6; /* Example background color */    
+//     box-sizing: border-box;
+//     display: flex;
+//     align-items: center;
+//   }
+  
+//   .bottom-ads-content {
+//     width: 100%;
+//   }
+  
+  /* Adjust content area to make room for the right side ads box */
+//   .content {
+//     margin-right: 200px; /* Same width as .ads-right */
+//     margin-bottom: 100px; /* Same height as .ads-bottom */
+//   }
+  
+  /* Ad banner styling */
+//   .ad-banner {
+//     padding: 10px;
+//     margin: 10px 0;
+//     background-color: #e0e0e0; /* Example background color for ad banners */
+//     text-align: center;
+//   }
+  
+//   .text-dark {
+//     color: #333; /* Example text color */
+//   }

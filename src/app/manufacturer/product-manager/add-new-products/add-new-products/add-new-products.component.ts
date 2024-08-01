@@ -691,6 +691,7 @@ export class AddNewProductsComponent {
     this.authService.patchWithEmail(`products/${this.ProductId}`,this.stepOne.value).subscribe(res=>{
       if(res){
         this.colourCollections=res.colourCollections
+       this.updateValidators()
         this.spinner.hide()
         
         this.communicationService.showNotification(
