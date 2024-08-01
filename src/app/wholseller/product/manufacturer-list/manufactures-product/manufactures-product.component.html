@@ -30,7 +30,7 @@
         <div *ngFor="let product of products" class="product-card" (mouseenter)="onMouseEnter(product)" (mouseleave)="onMouseLeave(product)">
           <div class="design-no">Design No : {{product.designNo}}</div>
           <div class="image-carousel">
-            <img class="main-img" [src]="authService.cdnPath + product.selectedImageUrl" alt="{{product.title}}" [routerLink]="['/mnf/view-product',{id: product.id}]">
+            <img class="main-img" [src]="authService.cdnPath + product.selectedImageUrl" alt="{{product.title}}" [routerLink]="['/wholesaler/view-product',{id: product.id}]">
             <div class="carousel-dots">
               <span *ngFor="let img of product.selectedImageUrls; let i = index" [class.active]="i === product.hoverIndex" (click)="navigateToImage(product, i)"></span>
             </div>
@@ -43,7 +43,7 @@
                       (click)="changeProductImage(product, color)">
               </button>
             </div>
-            <h6 class="title" [routerLink]="['/mnf/view-product',{id: product.id}]">{{product.title}}</h6>
+            <h6 class="title" [routerLink]="['/wholesaler/view-product',{id: product.id}]">{{product.title}}</h6>
             <p>{{product.description}}</p>
             <div class="availability">
               <span *ngIf="product.stock > 0" class="in-stock">In stock - Qty {{product.stock}}</span>

@@ -175,4 +175,33 @@
       margin: 10px 0;
     }
   }
+  .ads-flex {
+    display: flex;
+    flex-wrap: nowrap;
+  }
   
+  .dashboard {
+    flex-grow: 1;
+  }
+  
+  .ads {
+    margin: 20px; /* Adjust the margin as needed */
+    margin-right: 0px; /* Adjust the margin as needed */
+    flex-shrink: 0;
+    width: 215px !important;
+  }
+  
+  @media (max-width: 768px) {
+    .ads-flex {
+      flex-direction: column;
+    }
+  
+    .ads {
+      margin-left: 0;
+      margin-top: 20px; /* Adjust the margin as needed */
+    }
+  }
+  
+  .ads-bottom{
+    height: 130px;
+  }

@@ -24,7 +24,7 @@
                         <div class="w-75">
                             <label for="category">Category Name :</label>
                             <input type="text" id="category" formControlName="category" class="form-control"
-                                placeholder="Category A" />
+                                placeholder="Enter Category Name" />
                             <div *ngIf="categoryForm1.get('category')?.touched && categoryForm1.get('category')?.invalid"
                                 class="text-danger">
                                 Category is required.
@@ -34,7 +34,7 @@
                         <div class="w-50 mt-2">
                             <label for="shippingDiscount">Shipping Discount : <small>(in %)</small> </label>
                             <input type="text" id="shippingDiscount" formControlName="shippingDiscount"
-                                placeholder="12%" class="form-control" />
+                                placeholder="Enter Shipping Discount in ( % )" class="form-control" />
                             <div *ngIf="categoryForm1.get('shippingDiscount')?.touched && categoryForm1.get('shippingDiscount')?.invalid"
                                 class="text-danger">
                                 Shipping Discount is required.
@@ -44,7 +44,7 @@
                         <div class="w-50 mt-2">
                             <label for="productDiscount">Product Discount : <small>(in %)</small> </label>
                             <input type="text" id="productDiscount" formControlName="productDiscount"
-                                placeholder="10%" class="form-control" />
+                                placeholder="Enter Product Discount in ( % )" class="form-control" />
                             <div *ngIf="categoryForm1.get('productDiscount')?.touched && categoryForm1.get('productDiscount')?.invalid"
                                 class="text-danger">
                                 Product Discount is required.
