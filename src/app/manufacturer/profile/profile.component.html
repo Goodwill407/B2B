@@ -11,7 +11,7 @@
                     <hr class="mt-2">
                     <div class="row">
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
-                            <label class="label-input" for="fullName">Full Name :</label>
+                            <label class="label-input" for="fullName">Full Name<span class="required">*</span></label>
                             <input type="text" id="fullName" formControlName="fullName" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.fullName.errors }">
                             <div *ngIf="submitted && f.fullName.errors" class="invalid-feedback">
@@ -20,7 +20,7 @@
                         </div>
 
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
-                            <label class="label-input" for="comName">Company/Firm Name :</label>
+                            <label class="label-input" for="comName">Company/Firm Name<span class="required">*</span></label>
                             <input type="text" id="comName" formControlName="companyName" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.companyName.errors }">
                             <div *ngIf="submitted && f.companyName.errors" class="invalid-feedback">
@@ -28,7 +28,7 @@
                             </div>
                         </div>
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                            <label class="label-input" for="address">Address :</label>
+                            <label class="label-input" for="address">Address<span class="required">*</span></label>
                             <input type="text" id="address" formControlName="address" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.address.errors }">
                             <div *ngIf="submitted && f.address.errors" class="invalid-feedback">
@@ -36,7 +36,7 @@
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                            <label class="label-input" for="country">Country :</label>
+                            <label class="label-input" for="country">Country<span class="required">*</span></label>
                             <!-- <input type="text" id="country" formControlName="country" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.country.errors }"> -->
                             <select id="country" formControlName="country" class="form-select"
@@ -49,7 +49,7 @@
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                            <label class="label-input" for="state">State :</label>
+                            <label class="label-input" for="state">State<span class="required">*</span></label>
                             <!-- <input type="text" id="state" formControlName="state" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.state.errors }"> -->
                                 <select id="state" formControlName="state" (change)="stateWiseCity($event)" class="form-select"
@@ -62,7 +62,7 @@
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                            <label class="label-input" for="city">City :</label>
+                            <label class="label-input" for="city">City<span class="required">*</span></label>
                             <!-- <input type="text" id="city" formControlName="city" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.city.errors }"> -->
                                 <select id="city" formControlName="city" class="form-select"
@@ -75,7 +75,7 @@
                             </div>
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                            <label class="label-input" for="pincode">Pin Code :</label>
+                            <label class="label-input" for="pincode">Pin Code<span class="required">*</span></label>
                             <input type="text" id="pincode" formControlName="pinCode" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.pinCode.errors }">
                             <div *ngIf="submitted && f.pinCode.errors" class="invalid-feedback">
@@ -84,7 +84,7 @@
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="label-input" for="mobNumber">Primary Mobile Number :</label>
+                            <label class="label-input" for="mobNumber">Primary Mobile Number<span class="required">*</span></label>
                             <input type="text" id="mobNumber" formControlName="mobNumber" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.mobNumber.errors }">
                             <div *ngIf="submitted && f.mobNumber.errors" class="invalid-feedback">
@@ -93,12 +93,12 @@
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
-                            <label class="label-input" for="mobNumberAlt">Alternative Mobile Number :</label>
+                            <label class="label-input" for="mobNumberAlt">Alternative Mobile Number</label>
                             <input type="text" id="mobNumberAlt" formControlName="mobNumber2" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.mobNumber2.errors }">
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 pe-4">
-                            <label class="label-input" for="legalStatusOfFirm">Legal Status of Firm:</label>
+                            <label class="label-input" for="legalStatusOfFirm">Legal Status of Firm<span class="required">*</span></label>
                             <select id="legalStatusOfFirm" formControlName="legalStatusOfFirm" class="form-select"
                               [ngClass]="{ 'is-invalid': submitted && f.legalStatusOfFirm.errors }">
                               <option value="" disabled selected>Select Legal Status</option>
@@ -109,7 +109,7 @@
                             </div>
                           </div>
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 pe-4">
-                            <label class="label-input" for="email">Primary Email :</label>
+                            <label class="label-input" for="email">Primary Email<span class="required">*</span></label>
                             <input type="text" id="email" formControlName="email" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.email.errors }">
                             <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
@@ -118,7 +118,7 @@
                             </div>
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 pe-4">
-                            <label class="label-input" for="emailAlt">Alternative Email :</label>
+                            <label class="label-input" for="emailAlt">Alternative Email</label>
                             <input type="text" id="emailAlt" formControlName="email2" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.email2.errors }">
                             <div *ngIf="submitted && f.email2.errors" class="invalid-feedback">
@@ -126,7 +126,7 @@
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="label-input" for="gstin">GSTIN :</label>
+                            <label class="label-input" for="gstin">GSTIN<span class="required">*</span></label>
                             <input type="text" id="gstin" formControlName="GSTIN" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.GSTIN.errors }">
                             <div *ngIf="submitted && f.GSTIN.errors" class="invalid-feedback">
@@ -135,7 +135,7 @@
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
-                            <label class="label-input" for="pan">PAN :</label>
+                            <label class="label-input" for="pan">PAN<span class="required">*</span></label>
                             <input type="text" id="pan" formControlName="pan" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.pan.errors }">
                             <div *ngIf="submitted && f.pan.errors" class="invalid-feedback">
@@ -151,7 +151,7 @@
                     <hr class="mt-2">
                     <div class="row" formGroupName="socialMedia">
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="label-input" for="fb">Facebook :</label>
+                            <label class="label-input" for="fb">Facebook<span class="required">*</span></label>
                             <input type="text" id="fb" formControlName="facebook" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.socialMedia.get('facebook').errors }">
                             <div *ngIf="submitted && f.socialMedia.get('facebook').errors" class="invalid-feedback">
@@ -160,7 +160,7 @@
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
-                            <label class="label-input" for="linkedin">Linkedin :</label>
+                            <label class="label-input" for="linkedin">Linkedin<span class="required">*</span></label>
                             <input type="text" id="linkedin" formControlName="linkedIn" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.socialMedia.get('linkedIn').errors }">
                             <div *ngIf="submitted && f.socialMedia.get('linkedIn').errors" class="invalid-feedback">
@@ -169,7 +169,7 @@
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="label-input" for="insta">Instagram :</label>
+                            <label class="label-input" for="insta">Instagram<span class="required">*</span></label>
                             <input type="text" id="insta" formControlName="instagram" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.socialMedia.get('instagram').errors }">
                             <div *ngIf="submitted && f.socialMedia.get('instagram').errors" class="invalid-feedback">
@@ -178,7 +178,7 @@
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
-                            <label class="label-input" for="web">Company Website :</label>
+                            <label class="label-input" for="web">Company Website<span class="required">*</span></label>
                             <input type="text" id="web" formControlName="webSite" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.socialMedia.get('webSite').errors }">
                             <div *ngIf="submitted && f.socialMedia.get('webSite').errors" class="invalid-feedback">
@@ -193,7 +193,7 @@
                     <hr class="mt-2">
                     <div class="row" formGroupName="BankDetails">
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="label-input" for="acNo">Account Number :</label>
+                            <label class="label-input" for="acNo">Account Number<span class="required">*</span></label>
                             <input type="text" id="acNo" formControlName="accountNumber" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('accountNumber').errors }">
                             <div *ngIf="submitted && f.BankDetails.get('accountNumber').errors"
@@ -203,7 +203,7 @@
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
-                            <label class="label-input" for="acType">Account Type :</label>
+                            <label class="label-input" for="acType">Account Type<span class="required">*</span></label>
                             <!-- <input type="text" id="acType" formControlName="accountType" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('accountType').errors }"> -->
                                 <select id="acType" formControlName="accountType" class="form-select"
@@ -218,7 +218,7 @@
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="label-input" for="bankName">Bank Name :</label>
+                            <label class="label-input" for="bankName">Bank Name<span class="required">*</span></label>
                             <input type="text" id="bankName" formControlName="bankName" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('bankName').errors }">
                             <div *ngIf="submitted && f.BankDetails.get('bankName').errors" class="invalid-feedback">
@@ -226,7 +226,7 @@
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
-                            <label class="label-input" for="ifsc">IFSC Code :</label>
+                            <label class="label-input" for="ifsc">IFSC Code<span class="required">*</span></label>
                             <input type="text" id="ifsc" formControlName="IFSCcode" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('IFSCcode').errors }">
                             <div *ngIf="submitted && f.BankDetails.get('IFSCcode').errors" class="invalid-feedback">
@@ -234,7 +234,7 @@
                             </div>
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
-                            <label class="label-input" for="acType">Country:</label>                           
+                            <label class="label-input" for="acType">Country<span class="required">*</span></label>                           
                                 <select id="country" formControlName="country" class="form-select"  (change)="onCountryChange($event)"
                                     [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('country').errors }">
                                     <option disabled value="">Select Country </option>
@@ -259,7 +259,7 @@
                             </div>
                         </div> -->
                          <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 ps-4">
-                            <label class="label-input" for="acType">City:</label>                           
+                            <label class="label-input" for="acType">City<span class="required">*</span></label>                           
                             <input type="text" id="acNo" formControlName="city" class="form-control"
                             [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('city').errors }">
                         <div *ngIf="submitted && f.BankDetails.get('city').errors"
@@ -270,7 +270,7 @@
                         </div>
 
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 ps-4">
-                            <label class="label-input" for="acNo">Branch Name:</label>
+                            <label class="label-input" for="acNo">Branch Name<span class="required">*</span></label>
                             <input type="text" id="acNo" formControlName="branch" class="form-control"
                                 [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('branch').errors }">
                             <div *ngIf="submitted && f.BankDetails.get('branch').errors"
