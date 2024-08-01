@@ -9,12 +9,14 @@ import { AuthService } from '@core';
   standalone: true,
   imports: [
     CommonModule,
-    NgIf,NgFor,
+    NgIf, NgFor,
   ],
   templateUrl: './view-product.component.html',
   styleUrls: ['./view-product.component.scss']
 })
 export class ViewProductComponent {
+  userProfile: any;
+  wishlist: boolean = false;
   constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService, private router: Router) { }
 
   product: any;
@@ -25,11 +27,13 @@ export class ViewProductComponent {
   selectedColourName: string = '';
 
   ngOnInit(): void {
+    this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
     this.route.params.subscribe(params => {
       const id = params['id'];
       this.ProductId = id;
       if (id) {
         this.getProductDetails(id);
+        this.checkWishlist()
       }
     });
   }
@@ -98,5 +102,23 @@ export class ViewProductComponent {
     this.product.media = media;
     this.selectedMedia = media[0]?.src;
     this.selectedMediaType = media[0]?.type;
+  }
+
+  WishlistAdd() {
+    this.authService.post('wishlist', { productId: this.ProductId, email: this.userProfile.email }).subscribe((res: any) => {
+      this.checkWishlist();
+    },(err:any)=>{
+      this.wishlist = false;
+    })
+  }
+
+  checkWishlist() {
+    this.authService.get('wishlist/checkout/wishlist?productId='+ this.ProductId +'&email='+this.userProfile.email).subscribe((res: any) => {
+      if (res) {
+        this.wishlist = true;
+      } else {
+        this.wishlist = false;
+      }
+    })
   }
 }
