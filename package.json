@@ -59,6 +59,7 @@
     "ng2-charts": "^5.0.3",
     "ngx-apexcharts": "^0.6.4",
     "ngx-dropzone-wrapper": "^15.0.0",
+    "ngx-image-zoom": "^3.0.0",
     "ngx-scrollbar": "^13.0.3",
     "ngx-spinner": "^16.0.2",
     "primeng": "^17.17.0",

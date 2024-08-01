@@ -1,51 +1,54 @@
 <section class="content">
-    <div class="content-block">
-        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> View And Manage Distributors</h4>
+  <div class="content-block">
+      <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> View And Manage Retailer</h4>
       <div class="card p-2">
-        <h5 class="mt-2">Distributor's List</h5>
-        <hr>
-        <div class="p-grid p-fluid " >
-            <div class="p-col-12 text-center">
-              <p-table  [value]="Distributors">
-                <ng-template  pTemplate="header">
-                  <tr>
-                    <th>Distributor's Name</th>
-                    <th>Company Name</th>
-                    <th>Mobile Number</th>
-                    <th>Email</th>
-                    <th>City</th>
-                    <th>Country</th>
-                    <th class="text-center">Status</th>
-                  </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-distributors>
-                  <tr >
-                    <td class="text-center">{{distributors.name}}</td>
-                    <td class="text-center">{{distributors.companyName}}</td>
-                    <td class="text-center">{{distributors.mobileNumber}}</td>
-                    <td class="text-center">{{distributors.email}}</td>
-                    <td class="text-center">{{distributors.city}}</td>
-                    <td class="text-center">{{distributors.country}}</td>  
-                    <td>
-                      <div class="button-container text-center">
-                      <!-- Button with Eye Icon -->
-                      <button class="btn btn-icon p-2" >
-                        <i class="fas fa-eye"></i>
-                      </button>                    
-                      <!-- Button with Pencil Icon -->
-                      <button class="btn btn-icon p-2" >
-                        <i class="fas fa-pencil-alt"></i>
-                      </button>
-                    </div>
-                  </td>  
-                  </tr>
-                </ng-template>
-              </p-table>
-            </div>
+          <h5 class="mt-2">Retailer's List</h5>
+          <hr>
+          <div class="p-grid p-fluid ">
+              <div class="p-col-12 text-center">
+                  <p-table [value]="distributors">
+                      <ng-template pTemplate="header">
+                          <tr>
+                              <th>Retailer's Name</th>
+                              <th>Company Name</th>
+                              <th>Mobile Number</th>
+                              <th>Email</th>
+                              <th>Status</th>
+                              <!-- <th>Action</th> -->
+                          </tr>
+                      </ng-template>
+                      <ng-template pTemplate="body" let-distributors>
+                          <tr>
+                              <td class="text-center">{{distributors.fullName}}</td>
+                              <td class="text-center">{{distributors.companyName}}</td>
+                              <td class="text-center">{{distributors.mobileNumber}}</td>
+                              <td class="text-center">{{distributors.email}}</td>
+                              <td>
+                                  <div class="button-container text-center">
+
+                                      <button class="btn btn-icon p-2" pTooltip="View Profile"
+                                          (click)="viewProfile(distributors)" tooltipPosition="top">
+                                          <i class="fas fa-eye"></i>
+                                      </button>
+
+                                      <button class="btn btn-icon p-2" pTooltip="Delete" tooltipPosition="top">
+                                          <i class="fas fa-trash-alt"></i>
+                                      </button>
+                                  </div>
+                              </td>
+                              <!-- <td class="text-center text-success fw-bold">Active</td> -->
+                              <!-- <td class="text-center"><button class="btn btn-outline-success"></button></td> -->
+                          </tr>
+                      </ng-template>
+                  </p-table>
+                  <p-paginator *ngIf="distributors && distributors.length > 0" (onPageChange)="onPageChange($event)"
+                      [first]="first" [rows]="rows" [totalRecords]="totalResults"
+                      [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
+              </div>
           </div>
-       
-    </div>
-        
-       
-    </div>
+
+      </div>
+
+
+  </div>
 </section>

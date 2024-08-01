@@ -64,7 +64,7 @@ export class ManageDistributorComponent {
   }
 
   viewProfile(distributors:any){
-    this.router.navigate(['/common/view-profile'],{queryParams:{email:distributors.email}});
+    this.router.navigate(['/common/view-profile'],{queryParams:{email:distributors.email,role:distributors.role}});
     // this.authService.get(`wholesaler/${distributors.email}`).subscribe((res: any) => {
     //   if (res) {
     //   } else {
