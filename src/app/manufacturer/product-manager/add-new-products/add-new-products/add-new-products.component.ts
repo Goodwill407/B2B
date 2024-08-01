@@ -622,10 +622,7 @@ export class AddNewProductsComponent {
 
 
   // Update Product Details
-
-  // Update Step first
-
-  // patch product data
+    // patch product data
   getProductDataById(){
     this.spinner.show()
   this.authService.getById('products',this.ProductId).subscribe(res=>{
@@ -684,6 +681,7 @@ export class AddNewProductsComponent {
     });
   }
 
+  // update step one data
   UpdateStepOne(){
     if(this.stepOne.invalid){
       return;
@@ -693,6 +691,7 @@ export class AddNewProductsComponent {
     this.authService.patchWithEmail(`products/${this.ProductId}`,this.stepOne.value).subscribe(res=>{
       if(res){
         this.colourCollections=res.colourCollections
+       this.updateValidators()
         this.spinner.hide()
         
         this.communicationService.showNotification(

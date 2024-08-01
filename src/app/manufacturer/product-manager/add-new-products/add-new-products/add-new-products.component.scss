@@ -1,10 +1,16 @@
 .form-control {
     margin-bottom: 1rem !important; /* Adjust the value as needed */
+    color:#6b7280
 }
 
 .form-select{
     margin-bottom: 1rem !important; /* Adjust the value as needed */
     color: #6b7280 !important;
+}
+.submit-btn {
+ 
+  background-color: #f0ad4e;
+  color: #fff;
 }
 
 
@@ -249,6 +255,9 @@ img, video {
   display: none !important; /* Hide the 'select all' checkbox */
 }
 
+::ng-deep.p-multiselect .p-multiselect-label {
+   color: #6b7280;
+} 
   
   
   // for currency
@@ -262,6 +271,9 @@ img, video {
     overflow: visible; /* Removed !important and fixed typo */
   }
   
+  .required{
+    color:red
+  }
   
   
 
