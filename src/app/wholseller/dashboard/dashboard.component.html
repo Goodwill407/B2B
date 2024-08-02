@@ -1,63 +1,61 @@
 <section class="content">
-    <div class="content-block ">
-      <div class="ads-flex">
-        <div class="dashboard card p-3 mt-4">
-          <div class="row m-0">
-            <div class="col-8 m-0">
-              <div class="row mb-4">
-                <div class="col box retailers">
-                  <h4>Retailers</h4>
-                  <p>Active:</p>
-                  <p>Inactive:</p>
-                  <p>Invitation Pending:</p>
-                </div>
-                <div class="col box orders">
-                  <h4>Today's Orders</h4>
-                  <p>Order Received:</p>
-                  <p>Order Processed:</p>
-                  <p>Order Return:</p>
-                </div>
+  <div class="content-block">
+    <div class="ads-flex">
+      <div class="dashboard card p-3 mt-4">
+        <div class="row m-0">
+          <div class="col-8 m-0">
+            <div class="row mb-4">
+              <div class="col box retailers">
+                <h4>Retailers</h4>
+                <p>Active:</p>
+                <p>Inactive:</p>
+                <p>Invitation Pending:</p>
               </div>
-              <div class="row m-0">
-                <div class="col chart-container">
-                  <div class="d-flex align-items-center mb-2">
-                    <h5 class="mb-0 text-dark">Day-wise Total orders:</h5>
-                    <div class="month-navigator ms-auto">
-                      <button (click)="previousMonth()"><i class="bi bi-arrow-left-circle-fill"></i></button>
-                      <span>{{ currentMonth | date: 'MMMM' }}</span>
-                      <button (click)="nextMonth()"><i class="bi bi-arrow-right-circle-fill"></i></button>
-                    </div>
-  
-                  </div>
-                  <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart"
-                    [dataLabels]="chartOptions.dataLabels" [stroke]="chartOptions.stroke" [grid]="chartOptions.grid"
-                    [xaxis]="chartOptions.xaxis" [yaxis]="chartOptions.yaxis" [colors]="chartOptions.colors"
-                    [markers]="chartOptions.markers" [legend]="chartOptions.legend">
-                  </apx-chart>
-                </div>
+              <div class="col box orders">
+                <h4>Today's Orders</h4>
+                <p>Order Received:</p>
+                <p>Order Processed:</p>
+                <p>Order Return:</p>
               </div>
             </div>
-            <div class="col box products">
-              <h4>Total Product Listed</h4>
-              <p>Product In-stock</p>
-              <p>Shirts:</p>
-              <p>Tshirts:</p>
-              <p>Jeans:</p>
-              <p>Polos:</p>
-              <p>Trousers:</p>
-              <p>Denim Jackets:</p>
+            <div class="row m-0">
+              <div class="col chart-container">
+                <div class="d-flex align-items-center mb-2">
+                  <h5 class="mb-0 text-dark">Day-wise Total orders:</h5>
+                  <div class="month-navigator ms-auto">
+                    <button (click)="previousMonth()"><i class="bi bi-arrow-left-circle-fill"></i></button>
+                    <span>{{ currentMonth | date: 'MMMM' }}</span>
+                    <button (click)="nextMonth()"><i class="bi bi-arrow-right-circle-fill"></i></button>
+                  </div>
+                </div>
+                <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart"
+                  [dataLabels]="chartOptions.dataLabels" [stroke]="chartOptions.stroke" [grid]="chartOptions.grid"
+                  [xaxis]="chartOptions.xaxis" [yaxis]="chartOptions.yaxis" [colors]="chartOptions.colors"
+                  [markers]="chartOptions.markers" [legend]="chartOptions.legend">
+                </apx-chart>
+              </div>
             </div>
           </div>
+          <div class="col box products">
+            <h4>Total Product Listed</h4>
+            <p>Product In-stock</p>
+            <p>Shirts:</p>
+            <p>Tshirts:</p>
+            <p>Jeans:</p>
+            <p>Polos:</p>
+            <p>Trousers:</p>
+            <p>Denim Jackets:</p>
+          </div>
         </div>
-  
-        <!-- <div class="bg-info ads">
-  
-        </div> -->
       </div>
-  
-      <!-- <div class="bg-info ads-bottom">
-  
-      </div> -->
-  
+
+      <div class="ads-right">
+        <app-right-side-advertise [imageUrls]="rightAdImages"></app-right-side-advertise>
+      </div>
     </div>
-  </section>
+
+    <div class="ads-bottom mb-3">
+      <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
+    </div>
+  </div>
+</section>

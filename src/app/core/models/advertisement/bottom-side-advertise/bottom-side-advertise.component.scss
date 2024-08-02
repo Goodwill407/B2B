@@ -1,0 +1,24 @@
+.bottom-ad {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+     }
+  
+  .bottom-ad-image {
+    height: 130px;
+    width: 100%;
+    object-fit: fill;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;  
+  }
+  
+  .bottom-ad-image:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+  }
+
+
+

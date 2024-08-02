@@ -3,6 +3,8 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '@core';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
+import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
 import ColorThief from 'colorthief';
 import { PaginatorModule } from 'primeng/paginator';
 
@@ -14,7 +16,9 @@ import { PaginatorModule } from 'primeng/paginator';
     FormsModule,
     NgStyle,
     RouterModule,
-    PaginatorModule
+    PaginatorModule,
+    RightSideAdvertiseComponent,
+    BottomSideAdvertiseComponent
   ],
   templateUrl: './wishlist-product.component.html',
   styleUrl: './wishlist-product.component.scss'
@@ -22,7 +26,6 @@ import { PaginatorModule } from 'primeng/paginator';
 export class WishlistProductComponent {
  
   products: any[] = [];
- 
  
   limit = 10;
   page: number = 1
@@ -32,6 +35,14 @@ export class WishlistProductComponent {
 
   hoverIntervals: any = {}; // Track hover intervals for each product
   totalResults: any;
+
+  // for ads
+  rightAdImages: string[] = [
+    'https://en.pimg.jp/081/115/951/1/81115951.jpg',
+    'https://en.pimg.jp/087/336/183/1/87336183.jpg'
+  ];
+
+  bottomAdImage: string = 'https://elmanawy.info/demo/gusto/cdn/ads/gusto-ads-banner.png';
 
   constructor(public authService: AuthService, private route:ActivatedRoute) { }
   
