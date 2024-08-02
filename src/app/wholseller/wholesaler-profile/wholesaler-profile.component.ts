@@ -2,13 +2,19 @@ import { NgClass, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService, CommunicationService, DirectionService } from '@core';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
+import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
 
 @Component({
   selector: 'app-wholesaler-profile',
   standalone: true,
   imports: [
-    ReactiveFormsModule, NgClass,
-    NgIf,NgFor
+    ReactiveFormsModule,
+    NgClass,
+    NgIf,
+    NgFor,
+    BottomSideAdvertiseComponent,
+    RightSideAdvertiseComponent
   ],
   templateUrl: './wholesaler-profile.component.html',
   styleUrl: './wholesaler-profile.component.scss'
@@ -27,6 +33,14 @@ export class WholesalerProfileComponent {
   isEditFlag = false
   allState: { name: string; cities: string[]; iso2: String }[] = [];
   cityList: any;
+
+  // for ads
+  rightAdImages: string[] = [
+    'https://en.pimg.jp/081/115/951/1/81115951.jpg',
+    'https://en.pimg.jp/087/336/183/1/87336183.jpg'
+  ];
+
+  bottomAdImage: string = 'https://5.imimg.com/data5/QE/UV/YB/SELLER-56975382/i-will-create-10-sizes-html5-creative-banner-ads.jpg';
 
   constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService,private direction:DirectionService) { }
 

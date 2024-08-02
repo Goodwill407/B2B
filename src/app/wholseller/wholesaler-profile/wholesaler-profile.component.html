@@ -275,13 +275,16 @@
                     </div>
                 </form>
             </div>
-            <div class="bg-info ads">
-
-            </div>
-
-        </div>
-        <div class="bg-info ads-bottom">
-
-        </div>
+            
+           <!-- Right-Side Ads Container -->
+      <div class="ads-right">
+        <app-right-side-advertise [imageUrls]="rightAdImages"></app-right-side-advertise>
+      </div>
     </div>
+
+    <!-- Bottom-Side Ad Container -->
+    <div class="ads-bottom mb-3">
+      <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
+    </div>
+  </div>
 </section>
