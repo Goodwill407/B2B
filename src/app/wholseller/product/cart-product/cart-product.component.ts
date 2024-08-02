@@ -7,7 +7,7 @@ import ColorThief from 'colorthief';
 import { PaginatorModule } from 'primeng/paginator';
 
 @Component({
-  selector: 'app-wishlist-product',
+  selector: 'app-cart-product',
   standalone: true,
   imports: [
     CommonModule,
@@ -16,10 +16,10 @@ import { PaginatorModule } from 'primeng/paginator';
     RouterModule,
     PaginatorModule
   ],
-  templateUrl: './wishlist-product.component.html',
-  styleUrl: './wishlist-product.component.scss'
+  templateUrl: './cart-product.component.html',
+  styleUrl: './cart-product.component.scss'
 })
-export class WishlistProductComponent {
+export class CartProductComponent {
 
   products: any[] = [];
 
@@ -33,49 +33,46 @@ export class WishlistProductComponent {
   hoverIntervals: any = {}; // Track hover intervals for each product
   totalResults: any;
 
-  constructor(public authService: AuthService, private route: ActivatedRoute,private communicationService:CommunicationService) { }
+  constructor(public authService: AuthService, private route: ActivatedRoute, private communicationService: CommunicationService) { }
 
   ngOnInit(): void {
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
     this.getAllProducts(this.userProfile.email);
   }
 
-
-
   getAllProducts(email: any) {
-    let url = `wishlist/get/wishlist/${email}`;
-
+    let url = `cart/cart-products/${email}`;
+  
     this.authService.get(url).subscribe((res: any) => {
       if (res) {
-        this.totalResults = res.totalResults;
-        this.products = res.map((product: any) => ({
-          designNo: product.designNumber,
-          selectedImageUrl: product.colourCollections[0]?.productImages[0] || '',
-          selectedImageUrls: product.colourCollections[0]?.productImages || [], // Initialize with all images for the first color
-          title: product.productTitle,
-          brand: product.brand,
-          createdAt: product.createdAt,
-          manufactureName: product.manufactureName,
-          description: product.productDescription,
-          selectedColor: product.colourCollections[0]?.colour || '',
-          colors: product.colourCollections.map((c: any) => c.colour),
-          colourCollections: product.colourCollections,
-          stock: product.quantity, // Replace with actual stock value if available
-          id: product.wishlistId,
-          productBy: product.productBy,
-          hoverIndex: 0
-        }));
-
-        this.products.forEach(product => {
-          if (!product.selectedColor) {
-            this.extractColorFromImage(product);
-          }
+        this.products = res.map((item: any) => {
+          const product = item.products[0].productId;
+          return {
+            designNo: product.designNumber,
+            selectedImageUrl: product.colourCollections[0]?.productImages[0] || '',
+            selectedImageUrls: product.colourCollections[0]?.productImages || [],
+            title: product.productTitle,
+            brand: product.brand,
+            createdAt: product.createdAt,
+            manufactureName: product.manufactureName,
+            description: product.productDescription,
+            selectedColor: product.colourCollections[0]?.colour || '',
+            colors: product.colourCollections.map((c: any) => c.colour),
+            colourCollections: product.colourCollections,
+            stock: item.quantity, // Use quantity from item.products
+            id: item._id,
+            productBy: product.productBy,
+            hoverIndex: 0,
+            price: product.MRP,
+            mrp: product.MRP // Adjust as necessary for pricing details
+          };
         });
       }
     }, (error) => {
       console.log(error);
     });
   }
+  
 
   onPageChange(event: any) {
     this.page = event.page + 1;
@@ -133,29 +130,30 @@ export class WishlistProductComponent {
     }
   }
 
-  deleteWishlistItem(item: any) {
+  deleteProduct(item: any) {
     this.authService.delete('wishlist', item).subscribe((res: any) => {
       this.getAllProducts(this.userProfile.email);
-      this.communicationService.showNotification('snackbar-success','Product Removed From Wishlist','bottom','center');
+      this.communicationService.showNotification('snackbar-success', 'Product Removed From Wishlist', 'bottom', 'center');
     })
   }
 
   addToCart(data: any) {
     const cartBody = {
-    "email": this.userProfile.email,
-    "productBy": data.productBy,
-    "productId": data.id,
-    "quantity": 1
+      "email": this.userProfile.email,
+      "productBy": data.productBy,
+      "productId": data.id,
+      "quantity": 1
     }
 
     this.authService.post('cart', cartBody).subscribe((res: any) => {
-      this.communicationService.showNotification('snackbar-success','Product Successfully Added in Cart','bottom','center');
+      this.communicationService.showNotification('snackbar-success', 'Product Successfully Added in Cart', 'bottom', 'center');
     },
-    (error) => {
-      this.communicationService.showNotification('snackbar-error', error.error.message, 'bottom', 'center');
-    }
-  )
+      (error) => {
+        this.communicationService.showNotification('snackbar-error', error.error.message, 'bottom', 'center');
+      }
+    )
   }
 
 }
+
 

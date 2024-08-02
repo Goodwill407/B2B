@@ -1,0 +1,32 @@
+<section class="content">
+    <div class="content-block">
+      <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Add To Cart Products</h4>
+      <div class="card p-4">
+        <div class="cards-container">
+          <div *ngFor="let product of products" class="product-card">
+            <div class="image-section">
+              <img [src]="authService.cdnPath + product.selectedImageUrl" height="" alt="{{product.title}}">
+            </div>
+            <div class="details-section">
+              <div class="product-info">
+                <h5>{{ product.title }}</h5>
+                <p>{{ product.brand }}</p>
+                <p>Size: {{ product.size }}</p>
+                <p>Colour: {{ product.selectedColor }}</p>
+                <p>Quantity: {{ product.stock }}</p>
+              </div>
+              <div class="pricing-info">
+                <p class="price">₹{{ product.price }}</p>
+                <p class="mrp">M.R.P.: ₹{{ product.mrp }}</p>
+              </div>
+              <div class="actions">
+                <button class="btn delete" (click)="deleteProduct(product.id)">Delete</button>
+                <button class="btn save-later">Save for later</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  

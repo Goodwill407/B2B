@@ -120,9 +120,9 @@
         <button type="button" class="btn" [disabled]="wishlist" [ngClass]="wishlist?'btn-wishlist-true':'btn-wishlist'" (click)="WishlistAdd()"><i class="bi bi-heart"></i>&nbsp; WISHLIST</button>
         <div class="d-flex align-items-center">
           <label for="">Quantity</label> &nbsp;
-          <input type="text" class="form-control w-50">
+          <input type="text" [(ngModel)]="quantity" class="form-control w-50">
         </div>
-        <button type="button" class="btn btn-wishlist">ADD TO CART</button>
+        <button type="button" class="btn btn-wishlist" (click)="addToCart(product)">ADD TO CART</button>
       </div>
     </div>
   </div>
