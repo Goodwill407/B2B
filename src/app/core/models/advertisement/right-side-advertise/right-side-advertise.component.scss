@@ -1,0 +1,20 @@
+.right-ad {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Space between ads */
+  width: 100%;
+  }
+
+.right-ad-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.right-ad-image:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+}
