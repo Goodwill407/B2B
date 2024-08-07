@@ -118,3 +118,7 @@
     cursor: pointer !important;
     z-index: 999 !important;
 }
+::ng-deep .mdc-text-field {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}

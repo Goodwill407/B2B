@@ -10,6 +10,7 @@ import { ManufacturerListComponent } from "./product/manufacturer-list/manufactu
 import { ManufacturesProductComponent } from "./product/manufacturer-list/manufactures-product/manufactures-product.component";
 import { ViewProductComponent } from "./product/manufacturer-list/manufactures-product/view-product/view-product.component";
 import { WishlistProductComponent } from "./product/wishlist-product/wishlist-product.component";
+import { CartProductComponent } from "./product/cart-product/cart-product.component";
 
 export const R_Auth:Route[] = [
     {path: 'dashboard', component: DashboardComponent},
@@ -23,4 +24,5 @@ export const R_Auth:Route[] = [
     {path: 'mnf-product', component: ManufacturesProductComponent},
     {path: 'view-product', component: ViewProductComponent},
     {path: 'wishlist-product', component: WishlistProductComponent},
+    {path: 'add-to-cart', component: CartProductComponent},
 ]

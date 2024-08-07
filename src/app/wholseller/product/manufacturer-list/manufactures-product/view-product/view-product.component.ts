@@ -2,7 +2,8 @@ import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '@core';
+import { AuthService, CommunicationService } from '@core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-view-product',
@@ -10,6 +11,7 @@ import { AuthService } from '@core';
   imports: [
     CommonModule,
     NgIf, NgFor,
+    FormsModule
   ],
   templateUrl: './view-product.component.html',
   styleUrls: ['./view-product.component.scss']
@@ -17,7 +19,8 @@ import { AuthService } from '@core';
 export class ViewProductComponent {
   userProfile: any;
   wishlist: boolean = false;
-  constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService, private router: Router) { }
+  quantity: any = 1;
+  constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService, private router: Router, private communicationService:CommunicationService) { }
 
   product: any;
   selectedMedia: any;
@@ -72,7 +75,9 @@ export class ViewProductComponent {
           itemWeight: res.netWeight,
           dimensions: res.ProductDeimension.map((dim: any) => `L: ${dim.length}, W: ${dim.width}, H: ${dim.height}`).join(' | '),
           dateAvailable: res.dateOfListing ? new Date(res.dateOfListing).toLocaleDateString() : 'N/A',
-          availability: res.quantity > 0 ? `${res.quantity} (In Stock)` : 'Out of Stock'
+          availability: res.quantity > 0 ? `${res.quantity} (In Stock)` : 'Out of Stock',
+          id: res.id,
+          productBy: res.productBy,
         };
         this.selectColourCollection(this.product.colours[0]);
       }
@@ -120,5 +125,22 @@ export class ViewProductComponent {
         this.wishlist = false;
       }
     })
+  }
+
+  addToCart(data: any) {
+    const cartBody = {
+    "email": this.userProfile.email,
+    "productBy": data.productBy,
+    "productId": data.id,
+    "quantity": this.quantity
+    }
+
+    this.authService.post('cart', cartBody).subscribe((res: any) => {
+      this.communicationService.showNotification('snackbar-success','Product Successfully Added in Cart','bottom','center');
+    },
+    (error) => {
+      this.communicationService.showNotification('snackbar-error', error.error.message, 'bottom', 'center');
+    }
+  )
   }
 }

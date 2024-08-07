@@ -73,7 +73,9 @@ export class AuthService {
   // patch when email send for patch
   patchWithEmail(url:any,data:any){
     return this.http.patch<any>(this.apiURL + url, data, { headers: this.headerToken });
-
+  }
+  deleteWithEmail(url:any){
+    return this.http.delete<any>(this.apiURL + url,  { headers: this.headerToken });
   }
 
   setTokens() {
