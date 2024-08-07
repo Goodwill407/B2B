@@ -627,6 +627,18 @@ export const ROUTES: RouteInfo[] = [
         role: [''],
         submenu: [],
       },      
+      {
+        path: '/wholesaler/add-to-cart',
+        title: 'Add To Cart Product',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },      
     ],
   },
   {
