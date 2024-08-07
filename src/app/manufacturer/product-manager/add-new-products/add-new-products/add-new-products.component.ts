@@ -53,8 +53,7 @@ export class AddNewProductsComponent {
 
   // dropdown data
   sizes: any = [
-    '5XS', '4XS', '3XS', '2XS', 'XS', 'S', 'M', 'L', 'XL', '2XL', '3XL',
-    '4XL', '5XL', '6XL', '7XL', '8XL', 'Free'
+    '5XS', '4XS', '3XS', '2XS', 'XS', 'S/36', 'M/38', 'L/40', 'XL/42', '2XL/44', '3XL/46','Free'
   ];
   currencies:any={}
   // currencyOptions = Object.values(this.currencies);
@@ -112,16 +111,13 @@ export class AddNewProductsComponent {
         sleeveLength: ['', Validators.required],
         careInstructions: [''],
         sizes: this.fb.array([]),
-        ProductDeimension: this.fb.group({
-          length: ['', Validators.required],
-          width: ['', Validators.required],
-          height: ['', Validators.required],
-        }),
-        netWeight: ['', Validators.required],
-        MRP: ['Rs -',[Validators.required], [amountAsyncValidator()]],
+        setOFnetWeight: ['', Validators.required],
+        setOfMRP: ['',[Validators.required]],// [amountAsyncValidator()]
+        setOfManPrice:['',[Validators.required]],
         quantity: ['',[Validators.required]],
         dateOfManufacture: ['',[Validators.required]],
         dateOfListing: ['',[Validators.required]],
+        currency:['',[Validators.required]]
       }),
       stepTwo: this.fb.group({
         colour: [''],
@@ -158,13 +154,19 @@ export class AddNewProductsComponent {
     this.getAllLifeStyle()
     this.getAllBrands()
     this.getAllCurrencyCode()
-
     this.updateValidators()
+    this.disbledFields()
 
     if(this.ProductId){
       this.getProductDataById()
     }
 
+  }
+
+  disbledFields(){
+    this.stepOne.get('setOfManPrice')?.disable();
+    this.stepOne.get('setOFnetWeight')?.disable();
+    this.stepOne.get('setOfMRP')?.disable();
   }
 
   // stepOne vlidation
@@ -411,12 +413,38 @@ export class AddNewProductsComponent {
         brandSize: ['', Validators.required],
         chestSize: ['', Validators.required],
         shoulderSize: ['', Validators.required],
-        frontLength: ['', Validators.required]
+        frontLength: ['', Validators.required],
+        length: [''],
+        width: [''],
+        height: [''],
+        weight: ['', Validators.required],
+        manufacturerPrice: ['', Validators.required],
+        singleMRP: ['', Validators.required]
       }));
+      this.updateTotals();
     } else {
       const index = this.sizesArray.controls.findIndex(x => x.get('size')?.value === size);
       this.sizesArray.removeAt(index);
     }
+  }
+
+  // get total value
+  updateTotals() {
+    const sizes = this.sizesArray.controls;
+
+    let totalManufacturerPrice = 0;
+    let totalMRP = 0;
+    let totalWeight = 0;
+
+    for (let sizeGroup of sizes) {
+      totalManufacturerPrice += +sizeGroup.get('manufacturerPrice')?.value || 0;
+      totalMRP += +sizeGroup.get('singleMRP')?.value || 0;
+      totalWeight += +sizeGroup.get('weight')?.value || 0;
+    }
+
+    this.stepOne.get('setOfManPrice')?.setValue(totalManufacturerPrice, { emitEvent: false });
+    this.stepOne.get('setOfMRP')?.setValue(totalMRP, { emitEvent: false });
+    this.stepOne.get('setOFnetWeight')?.setValue(totalWeight, { emitEvent: false });
   }
 
   // save Forms step One
@@ -675,7 +703,13 @@ export class AddNewProductsComponent {
         brandSize: [size.brandSize, Validators.required],
         chestSize: [size.chestSize, Validators.required],
         shoulderSize: [size.shoulderSize, Validators.required],
-        frontLength: [size.frontLength, Validators.required]
+        frontLength: [size.frontLength, Validators.required],
+        length: [size.length],
+        width: [size.width],
+        height: [size.height],
+        weight: [size.weight, Validators.required],
+        manufacturerPrice: [size.manufacturerPrice, Validators.required],
+        singleMRP: [size.singleMRP, Validators.required]
       }));
       this.selectedSizes.push(size.standardSize); // Keep track of selected sizes
     });
