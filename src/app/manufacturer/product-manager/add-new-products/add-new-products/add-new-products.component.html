@@ -358,6 +358,15 @@
                                 </option>
                             </select>
                         </div>
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="currency">Select Currency</label>
+                            <select name="currency" id="currency" class="form-select" [(ngModel)]="selectedCurrency"
+                                formControlName="currency">
+                                <option value="" disabled selected>Select</option>
+                                <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
+                                </option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="m-0 p-4 border mt-2 pt-2 rounded" style="background-color: aliceblue;">
@@ -376,11 +385,17 @@
                             <h5 class="mt-4">Size Chart :</h5>
                             <div class="col-12">
                                 <div class="row mb-2">
-                                    <div class="col-md-2">Standard Size<span class="required">*</span></div>
-                                    <div class="col-md-2">Brand Size<span class="required">*</span></div>
-                                    <div class="col-md-2">Chest Size<span class="required">*</span></div>
-                                    <div class="col-md-2">Shoulder Size<span class="required">*</span></div>
-                                    <div class="col-md-2">Front Length<span class="required">*</span></div>
+                                    <div class="col">Standard Size<span class="required">*</span></div>
+                                    <div class="col">Brand Size<span class="required">*</span></div>
+                                    <div class="col">Chest Size<span class="required">*</span></div>
+                                    <div class="col">Shoulder Size<span class="required">*</span></div>
+                                    <div class="col">Front Length<span class="required">*</span></div>
+                                    <div class="col">Length</div>
+                                    <div class="col">Width</div>
+                                    <div class="col">Height</div>
+                                    <div class="col">Weight<span class="required">*</span></div>
+                                    <div class="col">Manufacturer's Price<span class="required">*</span><span>({{selectedCurrency}})</span></div>
+                                    <div class="col">MRP<span class="required">*</span><span>({{selectedCurrency}})</span></div>
                                 </div>
                                 <hr>
                             </div>
@@ -388,13 +403,13 @@
                             <div class="col-12" *ngFor="let sizeGroup of sizesArray.controls; let i = index"
                                 [formGroupName]="i">
                                 <div class="row">
-                                    <div class="col-md-2 mt-2">
+                                    <div class="col mt-2">
                                         <label>{{ sizeGroup.get('standardSize')?.value }}</label>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col">
                                         <input type="text" formControlName="brandSize" class="form-control"
                                             [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get('brandSize')?.invalid}"
-                                            placeholder="Brand Size">
+                                            placeholder="">
                                         <!-- Validation feedback for Brand Size -->
                                         <div *ngIf="submittedStep1 && sizeGroup.get('brandSize')?.invalid"
                                             class="invalid-feedback">
@@ -403,10 +418,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col">
                                         <input type="text" formControlName="chestSize" class="form-control"
                                             [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get('chestSize')?.invalid}"
-                                            placeholder="Chest">
+                                            placeholder="">
                                         <!-- Validation feedback for Chest -->
                                         <div *ngIf="submittedStep1 && sizeGroup.get('chestSize')?.invalid"
                                             class="invalid-feedback">
@@ -415,10 +430,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col">
                                         <input type="text" formControlName="shoulderSize" class="form-control"
                                             [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get('shoulderSize')?.invalid}"
-                                            placeholder="Shoulder">
+                                            placeholder="">
                                         <!-- Validation feedback for Shoulder -->
                                         <div *ngIf="submittedStep1 && sizeGroup.get('shoulderSize')?.invalid"
                                             class="invalid-feedback">
@@ -427,10 +442,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col">
                                         <input type="text" formControlName="frontLength" class="form-control"
                                             [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get('frontLength')?.invalid}"
-                                            placeholder="Front Length">
+                                            placeholder="">
                                         <!-- Validation feedback for Front Length -->
                                         <div *ngIf="submittedStep1 && sizeGroup.get('frontLength')?.invalid"
                                             class="invalid-feedback">
@@ -439,94 +454,106 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col">
+                                        <input type="text" formControlName="length" class="form-control"
+                                            [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get('length')?.invalid}"
+                                            placeholder="">                                                                              
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" formControlName="width" class="form-control"
+                                            [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get('width')?.invalid}"
+                                            placeholder="">                                       
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" formControlName="height" class="form-control"
+                                            [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get('height')?.invalid}"
+                                            placeholder="">                                       
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" formControlName="weight" class="form-control" (input)="updateTotals()"
+                                            [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get('weight')?.invalid}"
+                                            placeholder="">
+                                        <!-- Validation feedback for Front Length -->
+                                        <div *ngIf="submittedStep1 && sizeGroup.get('weight')?.invalid"
+                                            class="invalid-feedback">
+                                            <div *ngIf="sizeGroup.get('weight')?.hasError('required')">
+                                                Weight is required
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" formControlName="manufacturerPrice" class="form-control" (input)="updateTotals()"
+                                            [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get('manufacturerPrice')?.invalid}"
+                                            placeholder="">
+                                        <!-- Validation feedback for Front Length -->
+                                        <div *ngIf="submittedStep1 && sizeGroup.get('manufacturerPrice')?.invalid"
+                                            class="invalid-feedback">
+                                            <div *ngIf="sizeGroup.get('manufacturerPrice')?.hasError('required')">
+                                                Manufacturer Price is required
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" formControlName="singleMRP" class="form-control" (input)="updateTotals()"
+                                            [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get('singleMRP')?.invalid}"
+                                            placeholder="">
+                                        <!-- Validation feedback for Front Length -->
+                                        <div *ngIf="submittedStep1 && sizeGroup.get('singleMRP')?.invalid"
+                                            class="invalid-feedback">
+                                            <div *ngIf="sizeGroup.get('singleMRP')?.hasError('required')">
+                                                MRP is required
+                                            </div>
+                                        </div>
+                                    </div>
+                                   
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-
-                    <div class="m-0 p-4 border mt-4 pt-2 rounded" style="background-color: aliceblue;">
-                        <div class="row" formGroupName="ProductDeimension">
-                            <h5>Product Dimension (in CM):</h5>
-
-                            <div class="col-3">
-                                <label for="length">Length<span class="required">*</span></label>
-                                <input type="text" id="length" formControlName="length" class="form-control"
-                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('ProductDeimension.length')?.invalid}">
-                                <!-- Validation feedback for Length -->
-                                <div *ngIf="submittedStep1 && stepOne.get('ProductDeimension.length')?.invalid"
-                                    class="invalid-feedback">
-                                    <div *ngIf="stepOne.get('ProductDeimension.length')?.hasError('required')">
-                                        Length is required
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-3">
-                                <label for="width">Width<span class="required">*</span></label>
-                                <input type="text" id="width" formControlName="width" class="form-control"
-                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('ProductDeimension.width')?.invalid}">
-                                <!-- Validation feedback for Width -->
-                                <div *ngIf="submittedStep1 && stepOne.get('ProductDeimension.width')?.invalid"
-                                    class="invalid-feedback">
-                                    <div *ngIf="stepOne.get('ProductDeimension.width')?.hasError('required')">
-                                        Width is required
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-3">
-                                <label for="height">Height<span class="required">*</span></label>
-                                <input type="text" id="height" formControlName="height" class="form-control"
-                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('ProductDeimension.height')?.invalid}">
-                                <!-- Validation feedback for Height -->
-                                <div *ngIf="submittedStep1 && stepOne.get('ProductDeimension.height')?.invalid"
-                                    class="invalid-feedback">
-                                    <div *ngIf="stepOne.get('ProductDeimension.height')?.hasError('required')">
-                                        Height is required
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </div>                   
 
                     <div class="row mt-2">
-                        <div class="col-3">
-                            <label for="netWeight">Net weight (in Grams)<span class="required">*</span></label>
-                            <input type="text" id="netWeight" formControlName="netWeight" class="form-control"
-                                [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('netWeight')?.invalid}">
+                        <div class="col-2">
+                            <label for="setOFnetWeight">Total Weight<span class="required">*</span></label>
+                            <input type="text" id="setOFnetWeight" formControlName="setOFnetWeight" class="form-control"
+                                [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('setOFnetWeight')?.invalid}">
                             <!-- Validation feedback for Net weight -->
-                            <div *ngIf="submittedStep1 && stepOne.get('netWeight')?.invalid" class="invalid-feedback">
-                                <div *ngIf="stepOne.get('netWeight')?.hasError('required')">
+                            <div *ngIf="submittedStep1 && stepOne.get('setOFnetWeight')?.invalid" class="invalid-feedback">
+                                <div *ngIf="stepOne.get('setOFnetWeight')?.hasError('required')">
                                     Net weight is required
                                 </div>
                             </div>
                         </div>
-                       
-                        <div class="col-1 pe-0">
-                        <label for="currency-select">Currency<span class="required">*</span></label>
-                        <p-dropdown 
-                          (onChange)="changeCurrency($event)"
-                          [options]="currencies"
-                          [(ngModel)]="selectedCurrency"
-                          optionLabel="name.code"
-                          placeholder="INR"                         
-                        ></p-dropdown>
-                         </div>    
-                      <div class="col-2">
-                        <label for="MRP">Amount<span class="required">*</span></label>
-                            <input type="text" id="MRP" formControlName="MRP" class="form-control"
-                                [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('MRP')?.invalid}">
-                           
-                            <div *ngIf="submittedStep1 && stepOne.get('MRP')?.invalid" class="invalid-feedback">
-                                <div *ngIf="stepOne.get('MRP')?.hasError('required')">
-                                    MRP is required
+
+                        <div class="col-2">
+                            <label for="MRP">Total Manufacturer's Price<span>({{selectedCurrency}})</span><span class="required">*</span></label>
+                                <input type="text" id="MRP" formControlName="setOfManPrice" class="form-control"
+                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('setOfManPrice')?.invalid}">
+                               
+                                <div *ngIf="submittedStep1 && stepOne.get('setOfManPrice')?.invalid" class="invalid-feedback">
+                                    <div *ngIf="stepOne.get('setOfManPrice')?.hasError('required')">
+                                        total Manufacturer Price is required
+                                    </div>
+                                    <!-- <div *ngIf="stepOne.get('MRP')?.hasError('invalidAmount')">
+                                        Amount is required after the currency symbol
+                                      </div> -->
                                 </div>
-                                <div *ngIf="stepOne.get('MRP')?.hasError('invalidAmount')">
+                        </div>
+                                               
+                      <div class="col-2">
+                        <label for="MRP">Total MRP <span>({{selectedCurrency}})</span><span class="required">*</span></label>
+                            <input type="text" id="setOfMRP" formControlName="setOfMRP"  class="form-control"
+                                [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('setOfMRP')?.invalid}">
+                           
+                            <div *ngIf="submittedStep1 && stepOne.get('setOfMRP')?.invalid" class="invalid-feedback">
+                                <div *ngIf="stepOne.get('setOfMRP')?.hasError('required')">
+                                    is required
+                                </div>
+                                <!-- <div *ngIf="stepOne.get('MRP')?.hasError('invalidAmount')">
                                     Amount is required after the currency symbol
-                                  </div>
+                                  </div> -->
                             </div>
-                    </div>
+                    </div>       
+                     
                                      
                       
                       </div>
