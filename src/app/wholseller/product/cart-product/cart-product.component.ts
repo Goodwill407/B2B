@@ -41,16 +41,16 @@ export class CartProductComponent implements OnInit {
     });
   }
 
-  deleteProduct(item: any) {
-    this.authService.delete('cart', item).subscribe((res: any) => {
+  deleteProduct(item: any,distributor:any) {
+    this.authService.deleteWithEmail(`cart/delete/cart?email=${this.userProfile.email}&productId=${item}`).subscribe((res: any) => {
       this.getAllProducts(this.userProfile.email);
-      this.communicationService.showNotification('snackbar-success', 'Product Removed From Wishlist', 'bottom', 'center');
+      this.communicationService.showNotification('snackbar-success', 'Product Removed From Cart', 'bottom', 'center');
     });
   }
 
   updateQuantity(event: any, distributor: any, product: any): void {
     const quantity = event.target.value;
-    this.authService.patchWithEmail(`cart/update/cart?email=${distributor.email}&productId=${product.productId.id}&quantity=${quantity}`, {})
+    this.authService.patchWithEmail(`cart/update/cart?email=${this.userProfile.email}&productId=${product.productId.id}&quantity=${quantity}`, {})
       .subscribe((res: any) => {
         product.quantity = quantity;
         this.updateTotals(distributor);
