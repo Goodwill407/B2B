@@ -730,7 +730,8 @@ export class AddNewProductsComponent {
     }
     else{
     this.spinner.show()
-    this.authService.patchWithEmail(`products/${this.ProductId}`,this.stepOne.value).subscribe(res=>{
+    const formData = this.stepOne.getRawValue();
+    this.authService.patchWithEmail(`products/${this.ProductId}`,formData).subscribe(res=>{
       if(res){
         this.colourCollections=res.colourCollections
        this.updateValidators()
