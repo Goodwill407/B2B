@@ -112,7 +112,7 @@ export class AddNewProductsComponent {
         careInstructions: [''],
         sizes: this.fb.array([]),
         setOFnetWeight: ['', Validators.required],
-        setOfMRP: ['',[Validators.required]],// [amountAsyncValidator()]
+        setOfMRP: ['',[Validators.required]],
         setOfManPrice:['',[Validators.required]],
         quantity: ['',[Validators.required]],
         dateOfManufacture: ['',[Validators.required]],
@@ -156,6 +156,7 @@ export class AddNewProductsComponent {
     this.getAllCurrencyCode()
     this.updateValidators()
     this.disbledFields()
+   
 
     if(this.ProductId){
       this.getProductDataById()
@@ -221,6 +222,8 @@ export class AddNewProductsComponent {
         console.log('error')
       })
   }
+
+  
 
   getAllLifeStyle() {
     this.authService.get('lifestyle').subscribe(res => {
@@ -349,8 +352,12 @@ export class AddNewProductsComponent {
   }
 
   getAllCurrencyCode(){
-  const data=this.direction.currencydata
-  this.currencies=Object.entries(data).map(([code, name]) => ({ code, name }));
+    this.authService.get('currency').subscribe(res=>{
+      if(res){
+        const data=res.results
+        this.currencies=Object.entries(data).map(([code, name]) => ({ code, name }));
+      }
+    }) 
   }
 
   // getAllSubCategory() {
@@ -454,11 +461,12 @@ export class AddNewProductsComponent {
     if (this.stepOne.valid) {
       const productBy = this.userProfile.email
       // Add the createdBy property to stepOne's value
+      const formData = this.stepOne.getRawValue();
       const stepOneData = {
-        ...this.stepOne.value,
+        ...formData,
         productBy: productBy
       };
-
+      
       this.spinner.show()
       this.authService.post('products', stepOneData).subscribe(res => {
         if (res) {
