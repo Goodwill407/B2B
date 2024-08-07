@@ -12,77 +12,24 @@
         flex-direction: column;
         gap: 20px;
       }
-      .product-card {
-        display: flex;
-        padding: 15px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        background-color: #fff;
-        .image-section {
-          flex: 1;
-          img {
-            // max-width: 100%;
-            // height: auto;
-            height: 235px;
-            width: 160px;
-            border-radius: 8px;
-          }
-        }
-        .details-section {
-          flex: 2;
-          padding-left: 15px;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          .product-info {
-            h5 {
-              margin: 0;
-              font-size: 18px;
-              font-weight: bold;
-            }
-            p {
-              margin: 5px 0;
-            }
-          }
-          .pricing-info {
-            .price {
-              font-size: 16px;
-              color: #b12704;
-              font-weight: bold;
-            }
-            .mrp {
-              font-size: 14px;
-              text-decoration: line-through;
-              color: #565959;
-            }
-          }
-          .actions {
-            display: flex;
-            gap: 10px;
-            .btn {
-              padding: 8px 12px;
-              font-size: 14px;
-              cursor: pointer;
-              border-radius: 4px;
-              &.delete {
-                background-color: #df4e44bd;
-                color: #fff;
-                &:hover {
-                  background-color: #c43e36;
-                }
-              }
-              &.save-later {
-                background-color: #fff;
-                border: 1px solid #000;
-                color: #000;
-                &:hover {
-                  background-color: #f7f7f7;
-                }
-              }
-            }
-          }
-        }
-      }
+      
     }
   }
+  ::ng-deep .p-datatable {
+    font-size: 12px; /* Set your desired font size */
+  }
   
+  ::ng-deep .p-datatable-header,
+  .p-datatable-thead > tr > th,
+  .p-datatable-tbody > tr > td {
+    text-align: center; /* Center align text in table headers and cells */
+  }
+  input,.totals{
+    font-size: 12px; /* Set your desired font size */
+    padding: 5px;
+    font-family: inherit;
+  }
+  input{
+    border: none !important;
+    width: 100px;
+  }

@@ -17,7 +17,7 @@
                         <div *ngIf="!otpStep" class="row d-flex justify-content-center">
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                                 <label class="lable-input" for="fullName">Full Name<span>*</span>:</label>
-                                <input type="text" id="fullName" formControlName="fullName" placeholder="Jay Amit Shah" class="form-control" />
+                                <input type="text" id="fullName" formControlName="fullName" placeholder="Enter Full Name" class="form-control" />
                                 <div *ngIf="mgfRegistrationForm.get('fullName')?.touched && mgfRegistrationForm.get('fullName')?.invalid"
                                     class="text-danger">
                                     Full Name is required.
@@ -26,7 +26,7 @@
 
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                                 <label class="lable-input" for="companyName">Company Name:</label>
-                                <input type="text" id="companyName" formControlName="companyName" placeholder="BCCI"
+                                <input type="text" id="companyName" formControlName="companyName" placeholder="Enter Company Name"
                                     class="form-control" />
                             </div>
 
@@ -56,7 +56,7 @@
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
-                                    <input type="number" id="mobileNumber" placeholder="7799886655" formControlName="mobileNumber"
+                                    <input type="number" id="mobileNumber" placeholder="Enter Mobile No" formControlName="mobileNumber"
                                         class="form-control w-75" />
                                 </div>
                                 <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.touched && mgfRegistrationForm.get('mobileNumber')?.invalid"
@@ -70,7 +70,7 @@
 
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                                 <label class="lable-input" for="email">Email Address<span>*</span>:</label>
-                                <input type="text" id="email" formControlName="email" placeholder="Jayshah@gmail.com"
+                                <input type="text" id="email" formControlName="email" placeholder="Enter your email address"
                                     class="form-control" />
                                 <div *ngIf="mgfRegistrationForm.get('email')?.touched && mgfRegistrationForm.get('email')?.invalid"
                                     class="text-danger">

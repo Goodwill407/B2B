@@ -1,32 +1,48 @@
 <section class="content">
-    <div class="content-block">
-      <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Add To Cart Products</h4>
-      <div class="card p-4">
-        <div class="cards-container">
-          <div *ngFor="let product of products" class="product-card">
-            <div class="image-section">
-              <img [src]="authService.cdnPath + product.selectedImageUrl" height="" alt="{{product.title}}">
-            </div>
-            <div class="details-section">
-              <div class="product-info">
-                <h5>{{ product.title }}</h5>
-                <p>{{ product.brand }}</p>
-                <p>Size: {{ product.size }}</p>
-                <p>Colour: {{ product.selectedColor }}</p>
-                <p>Quantity: {{ product.stock }}</p>
-              </div>
-              <div class="pricing-info">
-                <p class="price">₹{{ product.price }}</p>
-                <p class="mrp">M.R.P.: ₹{{ product.mrp }}</p>
-              </div>
-              <div class="actions">
-                <button class="btn delete" (click)="deleteProduct(product.id)">Delete</button>
-                <button class="btn save-later">Save for later</button>
-              </div>
-            </div>
+  <div class="content-block">
+    <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Add To Cart Products</h4>
+    <div class="card p-4">
+      <div class="cards-container">
+        <div *ngFor="let distributor of products; let distIndex = index">
+          <h5>Manufacture Name: {{ distributor.email }}</h5>
+          <p-table [value]="distributor.products">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Sr No.</th>
+                <th>Design No.</th>
+                <th>Title</th>
+                <th>Set Size</th>
+                <th>Qty</th>
+                <th>Rate</th>
+                <th>Amount</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-product let-index="rowIndex">
+              <tr>
+                <td>{{ index + 1 }}</td>
+                <td>{{ product.productId.designNumber }}</td>
+                <td>{{ product.productId.clothing }}</td>
+                <td>
+                  <ng-container *ngFor="let size of product.productId.sizes; let i = index">
+                    {{ size.standardSize }}<span *ngIf="i < product.productId.sizes.length - 1">, </span>
+                  </ng-container>
+                </td>
+                <td>
+                  <input type="number" [(ngModel)]="product.quantity" (change)="updateQuantity($event, distributor, product)">
+                </td>
+                <td>{{ product.productId.MRP }}</td>
+                <td>{{ product.quantity * product.productId.MRP }}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+          <hr class="m-1">
+          <div class="totals ms-auto">
+            <p class="mb-1 fw-bold">Sub Total : {{ distributor.subTotal }}</p>
+            <p class="mb-1 fw-bold">GST (18%) : {{ distributor.gst }}</p>
+            <p class="mb-1 fw-bold">Grand Total : {{ distributor.grandTotal }}</p>
           </div>
         </div>
       </div>
     </div>
-  </section>
-  
+  </div>
+</section>
