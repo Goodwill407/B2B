@@ -5,6 +5,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterModule } from '@angular/router';
 import { CommunicationService } from '@core';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
+import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
 
 @Component({
   selector: 'app-retailer-bulk-invite',
@@ -15,6 +17,8 @@ import { CommunicationService } from '@core';
     RouterModule,
     MatInputModule,
     MatSelectModule,
+    BottomSideAdvertiseComponent,
+    RightSideAdvertiseComponent
   ],
   templateUrl: './retailer-bulk-invite.component.html',
   styleUrl: './retailer-bulk-invite.component.scss'
@@ -22,6 +26,14 @@ import { CommunicationService } from '@core';
 export class RetailerBulkInviteComponent {
   inviteForm!: FormGroup;
   isSubmitted: boolean = false;
+
+   // for ads
+   rightAdImages: string[] = [
+    'https://en.pimg.jp/081/115/951/1/81115951.jpg',
+    'https://en.pimg.jp/087/336/183/1/87336183.jpg'
+  ];
+
+  bottomAdImage: string = 'https://5.imimg.com/data5/QE/UV/YB/SELLER-56975382/i-will-create-10-sizes-html5-creative-banner-ads.jpg';
 
   constructor(private fb: FormBuilder, private communicationService: CommunicationService) { }
 

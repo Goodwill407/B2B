@@ -8,6 +8,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterModule, RouterLink } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
+import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
@@ -26,6 +28,8 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
     MatButtonModule,
     NgxSpinnerModule,
     CommonModule,
+    RightSideAdvertiseComponent,
+    BottomSideAdvertiseComponent
   ],
   templateUrl: './add-retailer.component.html',
   styleUrl: './add-retailer.component.scss'
@@ -39,6 +43,14 @@ export class AddRetailerComponent {
     { countryName: 'United Kingdom', flag: 'assets/images/flags/uk.png', code: '+44' },
     { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
   ];
+
+  // for ads
+  rightAdImages: string[] = [
+    'https://en.pimg.jp/081/115/951/1/81115951.jpg',
+    'https://en.pimg.jp/087/336/183/1/87336183.jpg'
+  ];
+
+  bottomAdImage: string = 'https://elmanawy.info/demo/gusto/cdn/ads/gusto-ads-banner.png';
 
   constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private spinner: NgxSpinnerService) {}
 
