@@ -155,11 +155,10 @@
   }
 
   // for ads..
-  .card{
-    flex-grow: 1;
-  }
-
-  /* Right-side ads styling */
+    /* Right-side ads styling */
+ .card{
+  height: 80vh;
+ }   
 
 .ads-flex {
   display: flex;

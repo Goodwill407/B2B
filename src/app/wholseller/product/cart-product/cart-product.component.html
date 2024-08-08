@@ -1,7 +1,9 @@
 <section class="content">
   <div class="content-block">
+    <div class="ads-flex">
+    <div class="flex-grow-1">
     <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Add To Cart Products</h4>
-    <div class="card p-4">
+    <div class="card  p-4">
       <div class="cards-container">
         <div *ngFor="let distributor of products; let distIndex = index">
           <h5>Manufacture Name: {{ distributor.email }}</h5>
@@ -47,6 +49,18 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+      <!-- Right-Side Ads Container -->
+      <div class="ads-right">
+        <app-right-side-advertise [imageUrls]="rightAdImages"></app-right-side-advertise>
+      </div>
+    </div>
+
+    <!-- Bottom-Side Ad Container -->
+    <div class="ads-bottom mb-3">
+      <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
     </div>
   </div>
 </section>

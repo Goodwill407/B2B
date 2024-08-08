@@ -1,6 +1,8 @@
 <section class="content">
     <div class="content-block">
       <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Invite New Retailer</h4>
+      <div class="ads-flex">
+        <div class="flex-grow-1">
       <form [formGroup]="inviteForm" (ngSubmit)="onSubmit()" class="card">
         <div formArrayName="distributors">
           <div class="d-flex mt-2">
@@ -81,6 +83,19 @@
           <button type="submit" class="btn submit-btn">Invite</button>
         </div>
       </form>
+    </div>
+
+     <!-- Right-Side Ads Container -->
+     <div class="ads-right">
+      <app-right-side-advertise [imageUrls]="rightAdImages"></app-right-side-advertise>
+    </div>
+  </div>
+
+  <!-- Bottom-Side Ad Container -->
+  <div class="ads-bottom mb-3">
+    <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
+  </div>
+
     </div>
   </section>
   
