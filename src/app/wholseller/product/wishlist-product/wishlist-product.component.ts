@@ -73,6 +73,7 @@ export class WishlistProductComponent {
           colourCollections: product.colourCollections,
           stock: product.quantity, // Replace with actual stock value if available
           id: product.wishlistId,
+          productId: product.id,
           productBy: product.productBy,
           hoverIndex: 0
         }));

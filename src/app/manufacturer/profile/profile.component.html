@@ -38,8 +38,6 @@
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                             <label class="label-input" for="country">Country<span class="required">*</span></label>
-                            <!-- <input type="text" id="country" formControlName="country" class="form-control"
-                                [ngClass]="{ 'is-invalid': submitted && f.country.errors }"> -->
                             <select id="country" formControlName="country" class="form-select"
                                 [ngClass]="{ 'is-invalid': submitted && f.country.errors }">
                                 <option value="">Select Country</option>
@@ -51,8 +49,6 @@
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                             <label class="label-input" for="state">State<span class="required">*</span></label>
-                            <!-- <input type="text" id="state" formControlName="state" class="form-control"
-                                [ngClass]="{ 'is-invalid': submitted && f.state.errors }"> -->
                             <select id="state" formControlName="state" (change)="stateWiseCity($event)"
                                 class="form-select" [ngClass]="{ 'is-invalid': submitted && f.state.errors }">
                                 <option value="">Select State</option>
@@ -65,8 +61,6 @@
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                             <label class="label-input" for="city">City<span class="required">*</span></label>
-                            <!-- <input type="text" id="city" formControlName="city" class="form-control"
-                                [ngClass]="{ 'is-invalid': submitted && f.city.errors }"> -->
                             <select id="city" formControlName="city" class="form-select"
                                 [ngClass]="{ 'is-invalid': submitted && f.city.errors }">
                                 <option value="">Select City</option>
@@ -147,6 +141,22 @@
                                 <div *ngIf="f.pan.errors.pattern">PAN must be in valid format (AAAAA9999A).</div>
                             </div>
                         </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                            <label class="label-input" for="establishDate">Establishment Date<span class="required">*</span></label>
+                            <input type="text" id="establishDate" formControlName="establishDate" class="form-control"
+                                [ngClass]="{ 'is-invalid': submitted && f.establishDate.errors }">
+                            <div *ngIf="submitted && f.establishDate.errors" class="invalid-feedback">
+                                <div *ngIf="f.establishDate.errors.required">Establishment Date is required.</div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
+                            <label class="label-input" for="turnover">Turnover<span class="required">*</span></label>
+                            <input type="text" id="turnover" formControlName="turnover" class="form-control"
+                                [ngClass]="{ 'is-invalid': submitted && f.turnover.errors }">
+                            <div *ngIf="submitted && f.turnover.errors" class="invalid-feedback">
+                                <div *ngIf="f.turnover.errors.required">Turnover is required.</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -216,8 +226,6 @@
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
                             <label class="label-input" for="acType">Account Type<span class="required">*</span></label>
-                            <!-- <input type="text" id="acType" formControlName="accountType" class="form-control"
-                                [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('accountType').errors }"> -->
                             <select id="acType" formControlName="accountType" class="form-select"
                                 [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('accountType').errors }">
                                 <option value="">Select Account Type</option>
@@ -261,18 +269,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 ps-4">
-                            <label class="label-input" for="acType">City:</label>                           
-                                <select id="city" formControlName="city" class="form-select"
-                                    [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('city').errors }">
-                                    <option disabled value="">Select City </option>
-                                    <option [value]="city.name" *ngFor="let city of Allcities">{{city.name}}</option>                                    
-                                </select>
-                            <div *ngIf="submitted && f.BankDetails.get('city').errors" class="invalid-feedback">
-                                <div *ngIf="f.BankDetails.get('city').errors.required">city is required.
-                                </div>
-                            </div>
-                        </div> -->
+                        
                          <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 ps-4">
                             <label class="label-input" for="acType">City<span class="required">*</span></label>                           
                             <input type="text" id="acNo" formControlName="city" class="form-control"
