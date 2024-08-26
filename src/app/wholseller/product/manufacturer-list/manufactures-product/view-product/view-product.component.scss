@@ -99,17 +99,18 @@
   margin-left: 10px;
 }
 
-small{
+small {
   color: #767474;
   font-size: 13px;
 }
-.add-to-card{
+
+.add-to-card {
   display: flex !important;
   align-items: center !important;
-  justify-content :space-around !important;
+  justify-content: space-around !important;
 }
 
-.btn-wishlist{
+.btn-wishlist {
   border: #767474 2px solid;
   box-shadow: #504e4e 2px 1px;
   font-size: 14px !important;
@@ -117,7 +118,8 @@ small{
   padding-right: 25px;
   color: #767474;
 }
-.btn-wishlist-true{
+
+.btn-wishlist-true {
   border: #767474 2px solid;
   box-shadow: #504e4e 2px 1px;
   font-size: 14px !important;
@@ -125,4 +127,21 @@ small{
   padding-right: 25px;
   color: #767474;
   background-color: pink;
+}
+
+.col {
+  border: 1px solid lightgray;
+  padding: 4px; // Optional: adds some space inside the borders
+  text-align: center;
+}
+
+// Optional: Add border to the top row (headers) as well
+.row.mb-2 .col {
+  border-bottom: 1px solid lightgray;
+  font-weight: 500; // Make the header bold
+  color: #767474 !important;
+}
+.required{
+  font-size: small !important;
+  color: rgb(250, 98, 98) !important;
 }

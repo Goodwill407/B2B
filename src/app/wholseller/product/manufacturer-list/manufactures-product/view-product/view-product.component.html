@@ -6,7 +6,7 @@
           <i class="bi bi-arrow-left-circle h4"></i>
         </button>
         <!-- <span class="text-center" style="margin-left: 474px;">Product Details</span> -->
-        <button type="button" class="btn btn-success ms-auto" (click)="editProduct()">Edit</button>
+        <!-- <button type="button" class="btn btn-success ms-auto" (click)="editProduct()">Edit</button> -->
       </div>
     </h4>
     <div class="card p-4 pt-2">
@@ -77,11 +77,11 @@
             <p class="col-md-4 col-sm-6"><small>Care Instructions</small><br> {{ product.careInstructions }}</p>
           </div>
 
-          <hr>
+          <!-- <hr>
 
           <div class="">
             <p><small>Sizes in Each Set</small> <br> {{ product.sizes }}</p>
-          </div>
+          </div> -->
 
           <hr>
 
@@ -100,29 +100,83 @@
                 </div>
               </span>
             </div>
-
-            <!-- <p><small>Selected Colour: </small><br>{{ selectedColourName }}</p> -->
           </div>
 
-          <div class="row">
-            <p class="col-md-4 col-sm-6"><small>Item Weight</small> <br> {{ product.itemWeight }}</p>
-            <p class="col-md-4 col-sm-6"><small>Dimensions</small> <br> {{ product.dimensions }}</p>
+
+        </div>
+      </div>
+      <hr>
+      <div class="mx-2">
+        <div class="row mt-2 p-2" style="background-color:#f0f8ff ;">
+          <h5 class="mt-2">Standard Size Chart :</h5>
+          <div class="col-12">
+            <div class="row mb-2">
+              <div class="col head">Standard Size</div>
+              <div class="col head">Brand Size <br><span class="required">(in inches)</span></div>
+              <div class="col head">Chest Size <br><span class="required">(in inches)</span></div>
+              <div class="col head">Shoulder Size <br><span class="required">(in inches)</span></div>
+              <div class="col head">Front Length <br><span class="required">(in inches)</span></div>
+              <div class="col head">Length <br><span class="required">(in inches)</span></div>
+              <div class="col head">Width <br><span class="required">(in inches)</span></div>
+              <div class="col head">Height <br><span class="required">(in inches)</span></div>
+              <div class="col head">Weight <br><span class="required">(in grams)</span></div>
+              <!-- <div class="col head">Manufacturer's Price<span>({{selectedCurrency}})</span> -->
+              <div class="col head">Manufacturer's Price<span> (INR)</span>
+              </div>
+              <!-- <div class="col head">MRP<span>({{selectedCurrency}})</span></div> -->
+              <div class="col head">MRP<span> (INR)</span></div>
+            </div>
           </div>
 
-          <div class="row">
-            <p class="col-md-4 col-sm-6"><small>Date Available</small> <br> {{ product.dateAvailable }}</p>
-            <p class="col-md-4 col-sm-6"><small>Availability</small> <br> {{ product.availability }}</p>
+          <div class="col-12" *ngFor="let size of product.sizes; let i = index">
+            <div class="row">
+              <div class="col" style="border-right: none;">
+                <label><b>{{ size.standardSize }}</b></label>
+              </div>
+              <div class="col"> {{size.brandSize}} </div>
+              <div class="col"> {{size.chestSize}} </div>
+              <div class="col"> {{size.shoulderSize}} </div>
+              <div class="col"> {{size.frontLength}} </div>
+              <div class="col"> {{size.length}} </div>
+              <div class="col"> {{size.width}} </div>
+              <div class="col"> {{size.height}} </div>
+              <div class="col"> {{size.weight}} </div>
+              <div class="col"> {{size.manufacturerPrice}} </div>
+              <div class="col"> {{size.singleMRP}} </div>
+            </div>
           </div>
         </div>
       </div>
       <hr>
-      <div class="add-to-card">
-        <button type="button" class="btn" [disabled]="wishlist" [ngClass]="wishlist?'btn-wishlist-true':'btn-wishlist'" (click)="WishlistAdd()"><i class="bi bi-heart"></i>&nbsp; WISHLIST</button>
-        <div class="d-flex align-items-center">
-          <label for="">Quantity</label> &nbsp;
-          <input type="text" [(ngModel)]="quantity" class="form-control w-50">
+      <div class="row mt-2">
+        <div class="col-4">
+          <label for="setOFnetWeight"><small>Total Weight (In grams)</small></label>
+          {{product?.setOFnetWeight}}
         </div>
-        <button type="button" class="btn btn-wishlist" (click)="addToCart(product)">ADD TO CART</button>
+
+        <div class="col-4">
+          <label for="MRP"><small>Total Manufacturer's Price (INR)</small></label>
+          {{product?.setOfManPrice}}
+        </div>
+
+        <div class="col-4">
+          <label for="MRP"><small>Total MRP (INR)</small></label>
+          {{product?.setOfMRP}}
+        </div>
+      </div>
+      <hr>
+      <div class="add-to-card">
+        <p class="col-md-3 col-sm-4 mb-0"><small>Date Available</small> <br> {{ product.dateAvailable }}</p>
+        <p class="col-md-3 col-sm-4 mb-0"><small>Availability</small> <br> {{ product.availability }}</p>
+        <button type="button" class="btn" [disabled]="wishlist" [ngClass]="wishlist?'btn-wishlist-true':'btn-wishlist'"
+          (click)="WishlistAdd()"><i class="bi bi-heart"></i>&nbsp; WISHLIST</button>
+        <div class="d-flex ">
+          <div class="d-flex align-items-center justify-content-end me-2">
+            <label for="">Quantity</label> &nbsp;
+            <input type="text" [(ngModel)]="quantity" class="form-control w-25">
+          </div>
+          <button type="button" class="btn btn-wishlist" (click)="addToCart(product)">ADD TO CART</button>
+        </div>
       </div>
     </div>
   </div>

@@ -1,6 +1,6 @@
 <section class="content">
   <div class="content-block">
-    <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Add To Cart Products</h4>
+    <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3 mb-0"></i>&nbsp; Add To Cart Products</h4>
     <div class="card p-4">
       <div class="cards-container">
         <div *ngFor="let distributor of products; let distIndex = index">
@@ -29,21 +29,27 @@
                   </ng-container>
                 </td>
                 <td>
-                  <input type="number" [(ngModel)]="product.quantity" (change)="updateQuantity($event, distributor, product)">
+                  <input type="number" [(ngModel)]="product.quantity"
+                    (change)="updateQuantity($event, distributor, product)">
                 </td>
-                <td>{{ product.productId.MRP }}</td>
-                <td>{{ product.quantity * product.productId.MRP }}</td>
+                <td>{{ product.productId.setOfManPrice }}</td>
+                <td>{{ product.quantity * product.productId.setOfManPrice }}</td>
                 <td>
-                  <button class="btn delete" (click)="deleteProduct(product.productId.id,distributor)"><i class="bi bi-trash-fill"></i></button>
+                  <button class="btn delete" (click)="deleteProduct(product.productId.id, distributor)"><i
+                      class="bi bi-trash-fill"></i></button>
                 </td>
               </tr>
             </ng-template>
           </p-table>
           <hr class="m-1">
-          <div class="totals ms-auto">
-            <p class="mb-1 fw-bold">Sub Total : {{ distributor.subTotal }}</p>
-            <p class="mb-1 fw-bold">GST (18%) : {{ distributor.gst }}</p>
-            <p class="mb-1 fw-bold">Grand Total : {{ distributor.grandTotal }}</p>
+          <div class="d-flex align-items-center">
+            
+            <div class="totals">
+              <p class="mb-1 fw-bold">Sub Total : {{ distributor.subTotal }}</p>
+              <p class="mb-1 fw-bold">GST (18%) : {{ distributor.gst }}</p>
+              <p class="mb-1 fw-bold">Grand Total : {{ distributor.grandTotal }}</p>
+            </div>
+            <button class="btn btn-success mx-auto" (click)="placeOrder(distributor)"><i class="bi bi-cart-check"></i> Place Order</button>
           </div>
         </div>
       </div>

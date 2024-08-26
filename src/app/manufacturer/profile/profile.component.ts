@@ -43,7 +43,7 @@ export class ProfileComponent {
   ]
 
   legalStatusOptions:any[]=[
-  "individual - Proprietor",
+  "Individual - Proprietor",
   "Partnership",
   "LLP /LLC",
   "Private Limited",
@@ -73,6 +73,8 @@ export class ProfileComponent {
       legalStatusOfFirm: ['',[Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       email2: ['', Validators.email],
+      establishDate: ['', Validators.required],
+      turnover: ['', Validators.required],
       GSTIN: ['', [Validators.required, Validators.pattern(/^[0-9]{15}$/)]],
       pan: ['', [Validators.required, Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/)]],
       socialMedia: this.fb.group({

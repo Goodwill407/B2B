@@ -41,7 +41,7 @@ export class CartProductComponent implements OnInit {
     });
   }
 
-  deleteProduct(item: any,distributor:any) {
+  deleteProduct(item: any, distributor: any) {
     this.authService.deleteWithEmail(`cart/delete/cart?email=${this.userProfile.email}&productId=${item}`).subscribe((res: any) => {
       this.getAllProducts(this.userProfile.email);
       this.communicationService.showNotification('snackbar-success', 'Product Removed From Cart', 'bottom', 'center');
@@ -61,8 +61,12 @@ export class CartProductComponent implements OnInit {
   }
 
   updateTotals(distributor: any): void {
-    distributor.subTotal = distributor.products.reduce((sum: number, product: any) => sum + (product.quantity * product.productId.MRP), 0);
-    distributor.gst = distributor.subTotal * 0.18;
-    distributor.grandTotal = distributor.subTotal + distributor.gst;
+    distributor.subTotal = distributor.products.reduce((sum: number, product: any) => sum + (product.quantity * product.productId.setOfManPrice), 0);
+    distributor.gst = (distributor.subTotal * 0.18).toFixed(2);
+    distributor.grandTotal = (distributor.subTotal) + Number(distributor.gst);
+  }
+
+  placeOrder(distributor:any){
+    console.log(distributor);
   }
 }
