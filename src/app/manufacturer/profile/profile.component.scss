@@ -1,6 +1,6 @@
 .registration-form {
-    .lable-input {
-        margin-top: 15px;
+    .label-input {
+        margin-top: 15px !important;
 
         span {
             color: red;
@@ -14,10 +14,6 @@
     // margin: 2rem !important;
     background-color: #f0ad4e;
     color: #fff;
-}
-
-.form-control {
-    margin-bottom: 1rem !important; /* Adjust the value as needed */
 }
 
 // for disbled feilds

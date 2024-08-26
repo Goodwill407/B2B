@@ -286,7 +286,7 @@ export const ROUTES: RouteInfo[] = [
     submenu: []
   }, 
   {
-    path: '/retailer/profile',
+    path: '/retailer/retailer-profile',
     title: `Profile`,
     iconType: 'material-icons-outlined',
     icon: 'person',

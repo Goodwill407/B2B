@@ -1,8 +1,10 @@
-import { CommonModule, NgClass, JsonPipe } from '@angular/common';
+import { CommonModule, NgClass, JsonPipe, DatePipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService, CommunicationService, DirectionService } from '@core';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
+import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
 
 @Component({
   selector: 'app-profile',
@@ -11,10 +13,14 @@ import { AuthService, CommunicationService, DirectionService } from '@core';
     ReactiveFormsModule,
     CommonModule,
     NgClass,
-    JsonPipe
+    JsonPipe,
+    BottomSideAdvertiseComponent,
+    RightSideAdvertiseComponent,
+    DatePipe
   ],
   templateUrl: './profile.component.html',
-  styleUrl: './profile.component.scss'
+  styleUrl: './profile.component.scss',
+  providers: [DatePipe]
 })
 export class ProfileComponent {
 
@@ -30,10 +36,18 @@ export class ProfileComponent {
   isEditFlag = false
   allState: { name: string; cities: string[]; iso2: String }[] = [];
   cityList: any;
-  allCountry:any
-  Allcities:any
+  allCountry: any
+  Allcities: any
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private http: HttpClient, private direction: DirectionService) { }
+  // for ads
+  rightAdImages: string[] = [
+    'https://en.pimg.jp/081/115/951/1/81115951.jpg',
+    'https://en.pimg.jp/087/336/183/1/87336183.jpg'
+  ];
+
+  bottomAdImage: string = 'https://5.imimg.com/data5/QE/UV/YB/SELLER-56975382/i-will-create-10-sizes-html5-creative-banner-ads.jpg';
+
+  constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private datePipe: DatePipe, private direction: DirectionService) { }
 
   countries: any[] = [
     'United States',
@@ -42,12 +56,12 @@ export class ProfileComponent {
     'India',
   ]
 
-  legalStatusOptions:any[]=[
-  "individual - Proprietor",
-  "Partnership",
-  "LLP /LLC",
-  "Private Limited",
-  "Limited"
+  legalStatusOptions: any[] = [
+    "Individual - Proprietor",
+    "Partnership",
+    "LLP /LLC",
+    "Private Limited",
+    "Limited"
   ]
 
   ngOnInit(): void {
@@ -70,22 +84,25 @@ export class ProfileComponent {
       pinCode: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
       mobNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       mobNumber2: [''],
-      legalStatusOfFirm: ['',[Validators.required]],
+      leagalStatusOfFirm: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       email2: ['', Validators.email],
-      GSTIN: ['', [Validators.required, Validators.pattern(/^[0-9]{15}$/)]],
+      establishDate: ['', Validators.required],
+      registerOnFTH: ['',],
+      GSTIN: ['', [Validators.required, Validators.pattern(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z0-9]{1}[Z]{1}[A-Z0-9]{1}$/)]],
       pan: ['', [Validators.required, Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/)]],
       socialMedia: this.fb.group({
-        facebook: ['', [Validators.required, Validators.pattern(/^(https?:\/\/)?(www\.)?(facebook|fb)\.com\/.+$/)]],
-        linkedIn: ['', [Validators.required, Validators.pattern(/^(https?:\/\/)?(www\.)?linkedin\.com\/.+$/)]],
-        instagram: ['', [Validators.required, Validators.pattern(/^(https?:\/\/)?(www\.)?instagram\.com\/.+$/)]],
-        webSite: ['', [Validators.required, Validators.pattern(/^(https?:\/\/)?(www\.)?[^ "]+$/)]]
+        facebook: ['',],
+        linkedIn: ['',],
+        instagram: ['',],
+        webSite: ['',]
       }),
       BankDetails: this.fb.group({
-        accountNumber: ['', Validators.required],
+        accountNumber: ['', [Validators.required, Validators.pattern(/^\d{9,18}$/)
+        ]],
         accountType: ['', Validators.required],
         bankName: ['', Validators.required],
-        IFSCcode: ['', Validators.required],
+        IFSCcode: ['', [Validators.required, Validators.pattern(/^[A-Z]{4}0[A-Z0-9]{6}$/),]],
         country: ['', Validators.required],
         city: ['', Validators.required],
         branch: ['', Validators.required],
@@ -93,7 +110,6 @@ export class ProfileComponent {
     });
   }
 
-  
 
   get f() {
     return this.mgfRegistrationForm.controls;
@@ -111,9 +127,9 @@ export class ProfileComponent {
       });
 
     },
-      error => {
-
-      }
+    error => {
+      this.communicationService.showNotification('snackbar-danger',error.error.message,'bottom','center')
+    }
     )
   }
 
@@ -123,12 +139,15 @@ export class ProfileComponent {
     this.mgfRegistrationForm.get('email')?.disable();
     this.mgfRegistrationForm.get('mobNumber')?.disable();
     this.mgfRegistrationForm.get('companyName')?.disable();
+    this.mgfRegistrationForm.get('registerOnFTH')?.disable();
   }
 
 
   getSavedProfileData() {
     this.authService.get(`retailer/${this.userProfile.email}`).subscribe((res: any) => {
       if (res) {
+        res.establishDate = res.establishDate ? this.datePipe.transform(res.establishDate, 'yyyy-MM-dd') : null;
+        res.registerOnFTH = res.registerOnFTH ? this.datePipe.transform(res.registerOnFTH, 'yyyy-MM-dd') : null;
         const allData = res
         this.mgfRegistrationForm.patchValue(allData);
         this.stateWiseCity(null, allData.state, allData.city);
@@ -165,8 +184,9 @@ export class ProfileComponent {
         this.isEditFlag = true;
       }
     },
-      error => {
-      }
+    error => {
+      this.communicationService.showNotification('snackbar-danger',error.error.message,'bottom','center')
+    }
     )
   }
 
@@ -179,8 +199,9 @@ export class ProfileComponent {
           this.isUpdateBtn = false;
         }
       },
-        error => {
-        }
+      error => {
+        this.communicationService.showNotification('snackbar-danger',error.error.message,'bottom','center')
+      }
       )
   }
 
@@ -203,9 +224,9 @@ export class ProfileComponent {
     });
   }
 
-  getAllCountry(){
-    this.direction.getAllCountry().subscribe((res:any)=>{
-      this.allCountry=res
+  getAllCountry() {
+    this.direction.getAllCountry().subscribe((res: any) => {
+      this.allCountry = res
     })
   }
   onCountryChange(event: any): void {
