@@ -45,22 +45,22 @@ export class SignupComponent implements OnInit {
     { countryName: 'United Kingdom', flag: 'assets/images/flags/uk.png', code: '+44' },
     { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
   ];
-  invitedBy: any;
+  invitedBy: any[] = [];
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private http: HttpClient, private router: Router, private spinner: NgxSpinnerService, private route:ActivatedRoute) { }
+  constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private http: HttpClient, private router: Router, private spinner: NgxSpinnerService, private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.email = this.route.snapshot.paramMap.get('email')||'';
+    this.email = this.route.snapshot.paramMap.get('email') || '';
     this.initializeForm();
     this.initializePasswordForm();
-    if(this.email){
-      this.authService.get(`invitations/${this.email}`).subscribe((res:any) => {
+    if (this.email) {
+      this.authService.get(`invitations/${this.email}`).subscribe((res: any) => {
         this.mgfRegistrationForm.patchValue(res);
         // this.mgfRegistrationForm.get('role')?.disable();
         // this.mgfRegistrationForm.get('email')?.disable();
         this.invitedBy = res.invitedBy;
-      },(err:any) => {
-        this.communicationService.showNotification('snackbar-danger', err.error.message,'bottom','center');
+      }, (err: any) => {
+        this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
       });
 
     }
@@ -90,7 +90,7 @@ export class SignupComponent implements OnInit {
 
   onSubmit() {
     const data = this.mgfRegistrationForm.value;
-    data.refByEmail = this.invitedBy[0];
+    data.refByEmail = this.invitedBy ? this.invitedBy[0] : '';
     if (this.otpStep) {
       this.authService.post(`auth/verify-email?email=${data.email}&otp=${data.otp}`, {}).subscribe((res: any) => {
         console.log('Form submitted with OTP:', res);
@@ -161,9 +161,9 @@ export class SignupComponent implements OnInit {
     };
   }
 
-  changeUserStatus(user: any){
-    this.authService.patchWithEmail(`invitations/${user}`,{status:'accepted'}).subscribe((res)=>{
-      this.communicationService.showNotification('snackbar-success', 'User status updated successfully','bottom','center');
+  changeUserStatus(user: any) {
+    this.authService.patchWithEmail(`invitations/${user}`, { status: 'accepted' }).subscribe((res) => {
+      this.communicationService.showNotification('snackbar-success', 'User status updated successfully', 'bottom', 'center');
     });
   }
 }
