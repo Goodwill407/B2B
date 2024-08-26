@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
+import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
 import { TableModule } from 'primeng/table';
 
 @Component({
@@ -13,7 +15,9 @@ import { TableModule } from 'primeng/table';
     FormsModule,
     NgStyle,
     RouterModule,
-    TableModule
+    TableModule,
+    BottomSideAdvertiseComponent,
+    RightSideAdvertiseComponent
   ],
   templateUrl: './cart-product.component.html',
   styleUrls: ['./cart-product.component.scss']
@@ -21,6 +25,14 @@ import { TableModule } from 'primeng/table';
 export class CartProductComponent implements OnInit {
   products: any[] = [];
   userProfile: any;
+
+   // for ads
+   rightAdImages: string[] = [
+    'https://en.pimg.jp/081/115/951/1/81115951.jpg',
+    'https://en.pimg.jp/087/336/183/1/87336183.jpg'
+  ];
+
+  bottomAdImage: string = 'https://5.imimg.com/data5/QE/UV/YB/SELLER-56975382/i-will-create-10-sizes-html5-creative-banner-ads.jpg';
 
   constructor(public authService: AuthService, private route: ActivatedRoute, private communicationService: CommunicationService) {}
 

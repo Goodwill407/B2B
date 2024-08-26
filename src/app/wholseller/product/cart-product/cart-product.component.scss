@@ -20,6 +20,7 @@
 
 ::ng-deep .p-datatable {
   font-size: 12px;
+  height: 60vh;
   /* Set your desired font size */
 }
 
@@ -58,13 +59,59 @@ input {
   }
 }
 
-.btn-success {
-  padding: 5px 20px;
-  border-radius: 4px;
-  height: 40px;
-  // font-size: 16px !important;
-  i{
-    font-size: 20px;
-    margin-right: 6px;
+// for ads
+/* Right-side ads styling */
+
+.card{
+  height:80vh
+}
+
+.ads-flex {
+  display: flex;  
+  flex-wrap: nowrap;
+}
+
+.ads-right {
+  margin: 20px;
+  margin-top:67px ;
+  margin-right: 0;
+  flex-shrink: 0;
+  width: 175px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Space between ads */
+ 
+}
+
+
+/* Bottom ads styling */
+.ads-bottom {
+  height: 130px;
+  width: 100%;   
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+  .ads-flex {
+    flex-direction: column;
+  }
+
+  .ads-right {
+    margin-left: 0;
+    margin-top: 20px;
+    width: 100%;
+    flex-direction: row;
+    gap: 10px; /* Space between ads for row layout */
+  }
+  .ads-bottom {
+    position: static;
+    height: auto;
   }
 }
