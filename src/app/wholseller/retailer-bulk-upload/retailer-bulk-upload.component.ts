@@ -71,21 +71,14 @@ export class RetailerBulkUploadComponent {
     let templateData: any[] = [];
     templateData = [
       {
-        name: "",
-        district: "",
-        contact_number: "",
-        address: "",
-        udisecode: "",
-        locationType: "",
-        schoolType: "",
-        districtCode: "",
-        cluster: "",
-        clusterCode: "",
-        highestClass: "",
-        lowestClass: "",
-        contactPersonName: "",
+        Full_Name: "",
+        Company_Name: "",
+        Role: "",
+        Code: "",
+        Mobile_Number: "",
+        Email: "",
       },
     ];
-    this.communicationService.exportToCSV(templateData, 'samepleCSV');
+    this.communicationService.exportToCSV(templateData, 'Sample_CSV');
   }
 }

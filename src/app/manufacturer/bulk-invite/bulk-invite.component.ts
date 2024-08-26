@@ -59,14 +59,14 @@ export class BulkInviteComponent {
     let templateData: any[] = [];
     templateData = [
       {
-        fullName: "",
-        companyName: "",
-        role: "",
-        code: "",
-        mobileNumber: "",
-        email: "",
+        Full_Name: "",
+        Company_Name: "",
+        Role: "",
+        Code: "",
+        Mobile_Number: "",
+        Email: "",
       },
     ];
-    this.communicationService.exportToCSV(templateData, 'Template_CSV');
+    this.communicationService.exportToCSV(templateData, 'Sample_CSV');
   }
 }
