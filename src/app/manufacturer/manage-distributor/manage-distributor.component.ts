@@ -1,5 +1,5 @@
 import { query } from '@angular/animations';
-import { NgIf } from '@angular/common';
+import { NgClass, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -18,6 +18,7 @@ import { TooltipModule } from 'primeng/tooltip';
     PaginatorModule,
     NgIf,
     TooltipModule,
+    NgClass
   ],
   templateUrl: './manage-distributor.component.html',
   styleUrl: './manage-distributor.component.scss'
@@ -37,12 +38,15 @@ export class ManageDistributorComponent {
     this.getPendingInvites();
   }
 
-  getPendingInvites() {
-    this.authService.get(`users?page=${this.page}&limit=${this.limit}&refByEmail=${this.user.email}`).subscribe((res: any) => {
-      this.distributors = res.results;
-      this.totalResults = res.totalResults;
-    })
-  }
+  distributors: any = [];
+
+  getPendingInvites(searchKey: string = '') {
+    // Modify the API request to include the searchKey parameter
+    this.authService.get(`manufacturers/get-referred/manufactures?page=${this.page}&limit=${this.limit}&refByEmail=${this.user.email}&searchKeywords=${searchKey}`).subscribe((res: any) => {
+        this.distributors = res.results;
+        this.totalResults = res.totalResults;
+    });
+}
 
   onPageChange(event: any) {
     this.page = event.page + 1;
@@ -50,13 +54,7 @@ export class ManageDistributorComponent {
     this.getPendingInvites();
   }
   
-  distributors: any = [
-    { fullName: 'John Doe', companyName: 'ABC Ltd.', mobileNumber: '1234567890', email: 'john@example.com', city: 'New York', country: 'USA', status: 'Active' },
-    { fullName: 'Jane Smith', companyName: 'XYZ Inc.', mobileNumber: '0987654321', email: 'jane@example.com', city: 'Los Angeles', country: 'USA', status: 'Inactive' },
-    { fullName: 'Michael Brown', companyName: '123 Corp.', mobileNumber: '5678901234', email: 'michael@example.com', city: 'Chicago', country: 'USA', status: 'Active' },
-    { fullName: 'Lisa Johnson', companyName: '789 LLC', mobileNumber: '4321098765', email: 'lisa@example.com', city: 'Houston', country: 'USA', status: 'Inactive' }
-  ];
-
+  
   changeUserStatus(user: any){
     this.authService.patchWithEmail(`invitations/${user}`,{status:'accepted'}).subscribe((res)=>{
       this.communicationService.showNotification('snackbar-success', 'User status updated successfully','bottom','center');
@@ -75,5 +73,11 @@ export class ManageDistributorComponent {
     //   }
     // })
   }
+
+
+  onSearchChange(event: any) {
+    const searchKey = event.target.value;
+    this.getPendingInvites(searchKey);
+}
 
 }

@@ -114,3 +114,32 @@
   color: var(--white);
   background-color: var(--red-01);
 }
+
+// comman SearchBox
+.table-header {
+  display: flex;
+  align-items: center; /* Vertically center the items */
+  justify-content: space-between; /* Space items between the left and right */  
+}
+
+.search-container {
+  position: relative; /* Allows absolute positioning of the icon */
+  width: 250px; /* Set the width of the search box */
+}
+
+.search-box {
+  width: 100%; /* Full width of the container */
+  padding: 8px 36px 8px 12px; /* Space for the icon inside the input */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.search-icon {
+  position: absolute;
+  right: 12px; /* Space between the icon and the right edge of the input */
+  top: 50%;
+  transform: translateY(-50%); /* Center the icon vertically */
+  font-size: 16px; /* Adjust the size of the icon */
+  color: #999; /* Color of the icon */
+}

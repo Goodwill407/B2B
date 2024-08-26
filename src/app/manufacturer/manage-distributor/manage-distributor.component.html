@@ -2,7 +2,13 @@
     <div class="content-block">
         <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> View And Manage Distributors</h4>
         <div class="card p-2">
-            <h5 class="mt-2">Distributor's List</h5>
+            <div class="table-header">
+                <h5 class="mb-0">Distributor's List</h5>
+                <div class="search-container">
+                    <input type="text" class="form-control search-box" placeholder="Search Distributors..." (input)="onSearchChange($event)">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+            </div>
             <hr>
             <div class="p-grid p-fluid ">
                 <div class="p-col-12 text-center">
@@ -10,19 +16,24 @@
                         <ng-template pTemplate="header">
                             <tr>
                                 <th>Distributor's Name</th>
-                                <th>Company Name</th>
+                                <th>Company Name/ Firm Name</th>
                                 <th>Mobile Number</th>
                                 <th>Email</th>
+                                <th>Country</th>
+                                <th>City</th>
                                 <th>Status</th>
-                                <!-- <th>Action</th> -->
+                                <th>Action</th>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-distributors>
                             <tr>
                                 <td class="text-center">{{distributors.fullName}}</td>
                                 <td class="text-center">{{distributors.companyName}}</td>
-                                <td class="text-center">{{distributors.mobileNumber}}</td>
+                                <td class="text-center">{{distributors.mobNumber}}</td>
                                 <td class="text-center">{{distributors.email}}</td>
+                                <td class="text-center">{{distributors.country}}</td>
+                                <td class="text-center">{{distributors.city}}</td>                               
+                                <td class="text-center fw-bold" [ngClass]="distributors.isActive?'text-success':'text-danger'">{{distributors.isActive?'Active':'Inactive'}}</td>
                                 <td>
                                     <div class="button-container text-center">
 
@@ -36,7 +47,6 @@
                                         </button>
                                     </div>
                                 </td>
-                                <!-- <td class="text-center text-success fw-bold">Active</td> -->
                                 <!-- <td class="text-center"><button class="btn btn-outline-success"></button></td> -->
                             </tr>
                         </ng-template>

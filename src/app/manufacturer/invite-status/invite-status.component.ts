@@ -24,6 +24,9 @@ export class InviteStatusComponent {
   first: number = 0;
   rows: number = 10;
 
+  distributors:any=[]
+  selectedDistributors: any[] = [];
+
   constructor(private authService: AuthService, private communicationService:CommunicationService) { }
 
   ngOnInit() {
@@ -50,11 +53,32 @@ export class InviteStatusComponent {
     this.getPendingInvites();
   }
   
-  distributors: any = [
-    { fullName: 'John Doe', companyName: 'ABC Ltd.', mobileNumber: '1234567890', email: 'john@example.com', city: 'New York', country: 'USA', status: 'Active' },
-    { fullName: 'Jane Smith', companyName: 'XYZ Inc.', mobileNumber: '0987654321', email: 'jane@example.com', city: 'Los Angeles', country: 'USA', status: 'Inactive' },
-    { fullName: 'Michael Brown', companyName: '123 Corp.', mobileNumber: '5678901234', email: 'michael@example.com', city: 'Chicago', country: 'USA', status: 'Active' },
-    { fullName: 'Lisa Johnson', companyName: '789 LLC', mobileNumber: '4321098765', email: 'lisa@example.com', city: 'Houston', country: 'USA', status: 'Inactive' }
-  ];
+
+  reInviteToAll() {
+    // Extract emails of selected distributors into an array
+    const selectedEmails = this.distributors
+        .filter((d: any) => d.selected)
+        .map((d: any) => d.email);
+
+    // Send the array of selected emails to the API
+    this.authService.post('invitations/bulk/re-invitation/array', { emails: selectedEmails }).subscribe((res: any) => {
+        this.communicationService.showNotification(
+            'snackbar-success',
+            'Re-invitation Sent Successfully',
+            'bottom',
+            'center'
+        );
+    });
+}   
+    
+  
+
+toggleSelectAll(event: any) {
+    const isChecked = event.target.checked;
+    this.distributors.forEach((d:any) => d.selected = isChecked);
+}
+  
+
+ 
 
 }

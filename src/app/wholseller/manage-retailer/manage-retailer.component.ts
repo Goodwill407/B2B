@@ -1,3 +1,4 @@
+import { NgClass } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
@@ -13,7 +14,8 @@ import { TableModule } from 'primeng/table'; // Import TableModule from PrimeNG
     TableModule,
     PaginatorModule,
     RightSideAdvertiseComponent,
-    BottomSideAdvertiseComponent
+    BottomSideAdvertiseComponent,
+    NgClass
   ],
   templateUrl: './manage-retailer.component.html',
   styleUrl: './manage-retailer.component.scss'
@@ -42,7 +44,7 @@ export class ManageRetailerComponent {
   }
 
   getPendingInvites() {
-    this.authService.get(`users?page=${this.page}&limit=${this.limit}&refByEmail=${this.user.email}`).subscribe((res: any) => {
+    this.authService.get(`wholesaler//get-referred/retailer?page=${this.page}&limit=${this.limit}&refByEmail=${this.user.email}`).subscribe((res: any) => {
       this.distributors = res.results;
       this.totalResults = res.totalResults;
     })
