@@ -64,7 +64,7 @@ export class ViewProductComponent {
           neckCollarStyle: res.neckStyle,
           specialFeatures: res.specialFeature.join(', '),
           careInstructions: res.careInstructions,
-          sizes: res.sizes.map((size: any) => `${size.standardSize}`).join(' | '),
+          sizes: res.sizes,
           colours: res.colourCollections.map((colour: any) => ({
             name: colour.colourName,
             hex: colour.colour,
@@ -72,8 +72,9 @@ export class ViewProductComponent {
             images: colour.productImages,
             video: colour.productVideo
           })),
-          itemWeight: res.netWeight,
-          dimensions: res.ProductDeimension.map((dim: any) => `L: ${dim.length}, W: ${dim.width}, H: ${dim.height}`).join(' | '),
+          setOfManPrice: res.setOfManPrice,
+          setOfMRP: res.setOfMRP,
+          setOFnetWeight: res.setOFnetWeight,
           dateAvailable: res.dateOfListing ? new Date(res.dateOfListing).toLocaleDateString() : 'N/A',
           availability: res.quantity > 0 ? `${res.quantity} (In Stock)` : 'Out of Stock',
           id: res.id,
