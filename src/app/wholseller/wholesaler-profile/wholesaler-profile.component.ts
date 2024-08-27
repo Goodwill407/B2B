@@ -1,9 +1,13 @@
+// src/app/your-component-path/wholesaler-profile.component.ts
+
 import { DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService, CommunicationService, DirectionService } from '@core';
 import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
+import { panMatchValidator } from '../../common/pan-validation'; // Adjust the path as needed
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-wholesaler-profile',
@@ -12,30 +16,30 @@ import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-si
     ReactiveFormsModule,
     NgClass,
     NgIf,
-    NgFor,
+    NgFor,MatSelectModule,
     BottomSideAdvertiseComponent,
     RightSideAdvertiseComponent,
     DatePipe
   ],
   templateUrl: './wholesaler-profile.component.html',
-  styleUrl: './wholesaler-profile.component.scss',
+  styleUrls: ['./wholesaler-profile.component.scss'],
   providers: [DatePipe]
 })
 export class WholesalerProfileComponent {
 
-  mgfRegistrationForm: any = FormGroup;
+  mgfRegistrationForm:any =  FormGroup;
   submitted: boolean = false;
-  userProfile: any
-  getResisterData: any
+  userProfile: any;
+  getResisterData: any;
 
   // btn flag
   isDataSaved = false;  // Flag to track if data is saved
   submitFlag = false;
   isUpdateBtn = false;
   isEditFlag = false;
-  allState: { name: string; cities: string[]; iso2: String }[] = [];
-  allCountry:any;
-  Allcities:any;
+  allState: { name: string; cities: string[]; iso2: string }[] = [];
+  allCountry: any;
+  Allcities: any;
   cityList: any;
 
   // for ads
@@ -46,22 +50,29 @@ export class WholesalerProfileComponent {
 
   bottomAdImage: string = 'https://5.imimg.com/data5/QE/UV/YB/SELLER-56975382/i-will-create-10-sizes-html5-creative-banner-ads.jpg';
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService,private direction:DirectionService,private datePipe: DatePipe) { }
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private communicationService: CommunicationService,
+    private direction: DirectionService,
+    private datePipe: DatePipe
+  ) { }
 
   countries: any[] = [
-    'United States',
-    'United Kingdom',
-    'Australia',
     'India',
   ];
-  
-  legalStatusOptions:any[]=[
+
+  legalStatusOptions: any[] = [
     "Individual - Proprietor",
     "Partnership",
     "LLP /LLC",
     "Private Limited",
     "Limited"
-    ];
+  ];
+
+  countryCode = [
+    { countryName: 'India', flag: 'assets/images/flags/ind.png', code: '+91' },
+  ];
 
   ngOnInit(): void {
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
@@ -74,39 +85,40 @@ export class WholesalerProfileComponent {
 
   initializeValidation() {
     this.mgfRegistrationForm = this.fb.group({
-      fullName: ['', Validators.required],
-      companyName: ['', Validators.required],
+      fullName: [{ value: '', disabled: true }, Validators.required],
+      companyName: [{ value: '', disabled: true }, Validators.required],
       address: ['', Validators.required],
       country: ['India', Validators.required],
       state: ['', Validators.required],
       city: ['', Validators.required],
+      code: ['', Validators.required],
       pinCode: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
-      mobNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      mobNumber: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(/^\d{10}$/)]],
       mobNumber2: [''],
-      leagalStatusOfFirm: ['',[Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
+      leagalStatusOfFirm: ['', [Validators.required]],
+      email: [{ value: '', disabled: true }, [Validators.required, Validators.email]],
       email2: ['', Validators.email],
       establishDate: ['', Validators.required],
-      registerOnFTH: ['',],
-      GSTIN: ['', [Validators.required, Validators.pattern(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z0-9]{1}[Z]{1}[A-Z0-9]{1}$/)]],
+      registerOnFTH: [{ value: '', disabled: true }],
+      GSTIN: ['', [Validators.required, Validators.pattern(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z0-9]{1}[Z]{1}[A-Z0-9]{1}$/)],
+             ],
       pan: ['', [Validators.required, Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/)]],
       socialMedia: this.fb.group({
-        facebook: ['',],
-        linkedIn: ['',],
-        instagram: ['',],
-        webSite: ['',]
+        facebook: [''],
+        linkedIn: [''],
+        instagram: [''],
+        webSite: ['']
       }),
       BankDetails: this.fb.group({
-        accountNumber: ['', [ Validators.required, Validators.pattern(/^\d{9,18}$/) 
-        ]],
+        accountNumber: ['', [Validators.required, Validators.pattern(/^\d{9,18}$/)]],
         accountType: ['', Validators.required],
         bankName: ['', Validators.required],
-        IFSCcode: ['',[Validators.required,Validators.pattern(/^[A-Z]{4}0[A-Z0-9]{6}$/),]],
+        IFSCcode: ['', [Validators.required, Validators.pattern(/^[A-Z]{4}0[A-Z0-9]{6}$/)]],
         country: ['', Validators.required],
         city: ['', Validators.required],
         branch: ['', Validators.required],
       })
-    });
+    }, { validators: panMatchValidator('GSTIN', 'pan') }); // Apply the custom validator here
   }
 
   get f() {
@@ -125,13 +137,13 @@ export class WholesalerProfileComponent {
       });
 
     },
-    error => {
-      this.communicationService.showNotification('snackbar-danger',error.error.message,'bottom','center')
-    }
+      error => {
+        this.communicationService.showNotification('snackbar-danger', error.error.message, 'bottom', 'center')
+      }
     )
   }
 
-  // disbled some resistered feilds
+  // disabled some registered fields
   disabledFields() {
     this.mgfRegistrationForm.get('fullName')?.disable();
     this.mgfRegistrationForm.get('email')?.disable();
@@ -140,19 +152,20 @@ export class WholesalerProfileComponent {
     this.mgfRegistrationForm.get('registerOnFTH')?.disable();
   }
 
-
   getSavedProfileData() {
     this.authService.get(`wholesaler/${this.userProfile.email}`).subscribe((res: any) => {
       if (res) {
         res.establishDate = res.establishDate ? this.datePipe.transform(res.establishDate, 'yyyy-MM-dd') : null;
         res.registerOnFTH = res.registerOnFTH ? this.datePipe.transform(res.registerOnFTH, 'yyyy-MM-dd') : null;
-        const allData = res
+        const allData = res;
         this.mgfRegistrationForm.patchValue(allData);
-        this.stateWiseCity(null,allData.state,allData.city);
+        this.stateWiseCity(null, allData.state, allData.city);
         this.mgfRegistrationForm.disable();
+        this.mgfRegistrationForm.get('registerOnFTH')?.disable();  // Ensure this field is disabled
         this.isDataSaved = true;
-        this.isEditFlag = true
+        this.isEditFlag = true;
       } else {
+        // Handle the case where there's no data
       }
     }, error => {
       if (error.error.message === "Manufacturer not found") {
@@ -176,15 +189,15 @@ export class WholesalerProfileComponent {
 
   saveProfileData() {
     const formData = this.mgfRegistrationForm.getRawValue();
-    this.authService.post('(`wholesaler', formData).subscribe((res: any) => {
+    this.authService.post('wholesaler', formData).subscribe((res: any) => { // Fixed syntax
       if (res) {
         this.mgfRegistrationForm.disable();
         this.isEditFlag = true;
       }
     },
-    error => {
-      this.communicationService.showNotification('snackbar-danger',error.error.message,'bottom','center')
-    }
+      error => {
+        this.communicationService.showNotification('snackbar-danger', error.error.message, 'bottom', 'center')
+      }
     )
   }
 
@@ -197,14 +210,15 @@ export class WholesalerProfileComponent {
           this.isUpdateBtn = false;
         }
       },
-      error => {
-        this.communicationService.showNotification('snackbar-danger',error.error.message,'bottom','center')
-      }
+        error => {
+          this.communicationService.showNotification('snackbar-danger', error.error.message, 'bottom', 'center')
+        }
       )
   }
 
   editUserData() {
     this.mgfRegistrationForm.enable();
+    this.mgfRegistrationForm.get('registerOnFTH')?.disable();  // Keep this field disabled
     this.isUpdateBtn = true;
   }
 
@@ -222,11 +236,12 @@ export class WholesalerProfileComponent {
     });
   }
 
-  getAllCountry(){
-    this.direction.getAllCountry().subscribe((res:any)=>{
-      this.allCountry=res
+  getAllCountry() {
+    this.direction.getAllCountry().subscribe((res: any) => {
+      this.allCountry = res
     })
   }
+
   onCountryChange(event: any): void {
     const target = event.target as HTMLSelectElement;
     const countryCode = target.value;

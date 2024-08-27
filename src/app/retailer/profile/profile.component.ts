@@ -1,10 +1,11 @@
 import { CommonModule, NgClass, JsonPipe, DatePipe } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { panMatchValidator } from '../../common/pan-validation';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService, CommunicationService, DirectionService } from '@core';
 import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-profile',
@@ -13,7 +14,7 @@ import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-si
     ReactiveFormsModule,
     CommonModule,
     NgClass,
-    JsonPipe,
+    JsonPipe,MatSelectModule,
     BottomSideAdvertiseComponent,
     RightSideAdvertiseComponent,
     DatePipe
@@ -50,11 +51,12 @@ export class ProfileComponent {
   constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private datePipe: DatePipe, private direction: DirectionService) { }
 
   countries: any[] = [
-    'United States',
-    'United Kingdom',
-    'Australia',
     'India',
-  ]
+  ];
+
+  countryCode = [
+    { countryName: 'India', flag: 'assets/images/flags/ind.png', code: '+91' },
+  ];
 
   legalStatusOptions: any[] = [
     "Individual - Proprietor",
@@ -62,7 +64,7 @@ export class ProfileComponent {
     "LLP /LLC",
     "Private Limited",
     "Limited"
-  ]
+  ];
 
   ngOnInit(): void {
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
@@ -81,6 +83,7 @@ export class ProfileComponent {
       country: ['India', Validators.required],
       state: ['', Validators.required],
       city: ['', Validators.required],
+      code: ['', Validators.required],
       pinCode: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
       mobNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       mobNumber2: [''],
@@ -88,7 +91,7 @@ export class ProfileComponent {
       email: ['', [Validators.required, Validators.email]],
       email2: ['', Validators.email],
       establishDate: ['', Validators.required],
-      registerOnFTH: ['',],
+      registerOnFTH: [{ value: '', disabled: true }],
       GSTIN: ['', [Validators.required, Validators.pattern(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z0-9]{1}[Z]{1}[A-Z0-9]{1}$/)]],
       pan: ['', [Validators.required, Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/)]],
       socialMedia: this.fb.group({
@@ -107,7 +110,7 @@ export class ProfileComponent {
         city: ['', Validators.required],
         branch: ['', Validators.required],
       })
-    });
+    }, { validators: panMatchValidator('GSTIN', 'pan') });
   }
 
 
@@ -127,9 +130,9 @@ export class ProfileComponent {
       });
 
     },
-    error => {
-      this.communicationService.showNotification('snackbar-danger',error.error.message,'bottom','center')
-    }
+      error => {
+        this.communicationService.showNotification('snackbar-danger', error.error.message, 'bottom', 'center')
+      }
     )
   }
 
@@ -184,9 +187,9 @@ export class ProfileComponent {
         this.isEditFlag = true;
       }
     },
-    error => {
-      this.communicationService.showNotification('snackbar-danger',error.error.message,'bottom','center')
-    }
+      error => {
+        this.communicationService.showNotification('snackbar-danger', error.error.message, 'bottom', 'center')
+      }
     )
   }
 
@@ -199,14 +202,15 @@ export class ProfileComponent {
           this.isUpdateBtn = false;
         }
       },
-      error => {
-        this.communicationService.showNotification('snackbar-danger',error.error.message,'bottom','center')
-      }
+        error => {
+          this.communicationService.showNotification('snackbar-danger', error.error.message, 'bottom', 'center')
+        }
       )
   }
 
   editUserData() {
     this.mgfRegistrationForm.enable();
+    this.mgfRegistrationForm.get('registerOnFTH')?.disable();
     this.isUpdateBtn = true;
   }
 

@@ -1,8 +1,9 @@
 import { CommonModule, DatePipe, JsonPipe, NgClass } from '@angular/common';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { panMatchValidator } from '../../common/pan-validation';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService, CommunicationService, DirectionService } from '@core';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-profile',
@@ -12,7 +13,8 @@ import { AuthService, CommunicationService, DirectionService } from '@core';
     CommonModule,
     NgClass,
     JsonPipe,
-    DatePipe
+    DatePipe,
+    MatSelectModule
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
@@ -38,11 +40,12 @@ export class ProfileComponent {
   constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService,private datePipe: DatePipe, private direction: DirectionService) { }
 
   countries: any[] = [
-    'United States',
-    'United Kingdom',
-    'Australia',
     'India',
-  ]
+  ];
+
+  countryCode = [
+    { countryName: 'India', flag: 'assets/images/flags/ind.png', code: '+91' },
+  ];
 
   legalStatusOptions:any[]=[
   "Individual - Proprietor",
@@ -69,6 +72,7 @@ export class ProfileComponent {
       country: ['India', Validators.required],
       state: ['', Validators.required],
       city: ['', Validators.required],
+      code: ['+91', Validators.required],
       pinCode: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
       mobNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       mobNumber2: [''],
@@ -76,7 +80,7 @@ export class ProfileComponent {
       email: ['', [Validators.required, Validators.email]],
       email2: ['', Validators.email],
       establishDate: ['', Validators.required],
-      registerOnFTH: ['',],
+      registerOnFTH: [{ value: '', disabled: true }],
       GSTIN: ['', [Validators.required, Validators.pattern(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z0-9]{1}[Z]{1}[A-Z0-9]{1}$/)]],
       pan: ['', [Validators.required, Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/)]],
       socialMedia: this.fb.group({
@@ -95,7 +99,7 @@ export class ProfileComponent {
         city: ['', Validators.required],
         branch: ['', Validators.required],
       })
-    });
+    }, { validators: panMatchValidator('GSTIN', 'pan') });
   }
 
   
@@ -196,6 +200,7 @@ export class ProfileComponent {
 
   editUserData() {
     this.mgfRegistrationForm.enable();
+    this.mgfRegistrationForm.get('registerOnFTH')?.disable();
     this.isUpdateBtn = true;
   }
 

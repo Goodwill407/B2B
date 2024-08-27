@@ -1,7 +1,7 @@
 <section class="content">
     <div class="content-block">
         <div class="ads-flex">
-            <div class="registration-form mt-4">
+            <div class="registration-form mt-4 my-custom-form-styles">
                 <form [formGroup]="mgfRegistrationForm">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h4 class="mb-0"><i class="bi bi-person-vcard-fill h3"></i> Profile</h4>
@@ -80,16 +80,28 @@
                                     <div *ngIf="f.pinCode.errors.pattern">Pin Code must be 6 digits.</div>
                                 </div>
                             </div>
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                                <label class="label-input" for="mobNumber">Primary Mobile Number<span class="required">*</span></label>
-                                <input type="text" id="mobNumber" formControlName="mobNumber" class="form-control"
-                                    [ngClass]="{ 'is-invalid': submitted && f.mobNumber.errors }">
-                                <div *ngIf="submitted && f.mobNumber.errors" class="invalid-feedback">
+                            <div class="col-xl-7 col-lg-7 col-md-7 col-sm-12">
+                                <label class="label-input" for="mobileNumber">Mobile Number<span
+                                        class="required">*</span>:</label>
+                                <div class="d-flex mat-select">
+                                    <mat-form-field appearance="outline" class="w-25 me-2">
+                                        <mat-select formControlName="code">
+                                            <mat-option *ngFor="let country of countryCode" [value]="country.code">
+                                                <img [src]="country.flag" alt="{{ country.countryName }}"
+                                                    class="country-flag" /> {{ country.code }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <input type="text" id="mobNumber" formControlName="mobNumber" placeholder="Number"
+                                        class="form-control w-75"   [ngClass]="{ 'is-invalid': submitted && f.mobNumber.errors }"/>
+                                </div>
+                                <div *ngIf="submitted && f.mobNumber.errors" class="text-danger">
                                     <div *ngIf="f.mobNumber.errors.required">Primary Mobile Number is required.</div>
                                     <div *ngIf="f.mobNumber.errors.pattern">Mobile Number must be 10 digits.</div>
                                 </div>
                             </div>
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
+
+                            <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 ps-4">
                                 <label class="label-input" for="mobNumberAlt">Alternative Mobile Number</label>
                                 <input type="text" id="mobNumberAlt" formControlName="mobNumber2" class="form-control"
                                     [ngClass]="{ 'is-invalid': submitted && f.mobNumber2.errors }">
@@ -143,6 +155,9 @@
                                     <div *ngIf="f.pan.errors.pattern">PAN must be in valid format (AAAAA9999A).</div>
                                 </div>
                             </div>
+                            <div *ngIf="mgfRegistrationForm.errors?.panMismatch && submitted" class="text-danger">
+                                GSTIN and PAN numbers do not match.
+                            </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6  pe-4">
                                 <label class="label-input" for="establishDate">Company Establishment Date<span class="required">*</span></label>
                                 <input type="date" id="establishDate" formControlName="establishDate" class="form-control"
@@ -154,7 +169,7 @@
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
                                 <label class="label-input" for="registerOnFTH">Registered On FTH <span class="required">*</span></label>
                                 <input type="text" id="registerOnFTH" formControlName="registerOnFTH" class="form-control"
-                                    [ngClass]="{ 'is-invalid': submitted && f.registerOnFTH.errors }">
+                                    >
                             </div>
                         </div>
                     

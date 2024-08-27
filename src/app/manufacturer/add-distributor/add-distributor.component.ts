@@ -34,10 +34,10 @@ export class AddDistributorComponent {
   mgfRegistrationForm!: FormGroup;
 
   countryCode = [
-    { countryName: 'United States', flag: 'assets/images/flags/us.jpg', code: '+1' },
+    // { countryName: 'United States', flag: 'assets/images/flags/us.jpg', code: '+1' },
     { countryName: 'India', flag: 'assets/images/flags/ind.png', code: '+91' },
-    { countryName: 'United Kingdom', flag: 'assets/images/flags/uk.png', code: '+44' },
-    { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
+    // { countryName: 'United Kingdom', flag: 'assets/images/flags/uk.png', code: '+44' },
+    // { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
   ];
 
   constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private spinner: NgxSpinnerService) {}
