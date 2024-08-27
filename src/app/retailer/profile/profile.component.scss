@@ -1,5 +1,5 @@
 .registration-form {
-    .lable-input {
+    .label-input {
         margin-top: 15px;
 
         span {
@@ -16,70 +16,74 @@
     color: #fff;
 }
 
-.form-control {
-    margin-bottom: 1rem !important; /* Adjust the value as needed */
-}
-
-// for disbled feilds
-input:disabled,select:disabled {
-  background-color: #f0f0f0; /* Light gray background */
-  color: #666; /* Gray text color */
-  border-color: #ddd; /* Light gray border color */
+// for disabled fields
+input:disabled,
+select:disabled {
+    background-color: #f0f0f0;
+    color: #666;
+    border-color: #ddd;
 }
 
 .registration-form {
-  flex-grow: 1;
+    flex-grow: 1;
 }
 
 // for ads
 /* Right-side ads styling */
 
 .ads-flex {
-  display: flex;
-  flex-wrap: nowrap;
+    display: flex;
+    flex-wrap: nowrap;
 }
 
 .ads-right {
-  margin: 20px;
-  margin-top:67px ;
-  margin-right: 0;
-  flex-shrink: 0;
-  width: 175px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px; /* Space between ads */
- 
+    margin: 20px;
+    margin-top: 67px;
+    margin-right: 0;
+    flex-shrink: 0;
+    width: 175px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    /* Space between ads */
+
 }
 
 
 /* Bottom ads styling */
 .ads-bottom {
-  height: 130px;
-  width: 100%;   
-  bottom: 0;
-  left: 0;
-  z-index: 1000;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    height: 130px;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Responsive styling */
 @media (max-width: 768px) {
-  .ads-flex {
-    flex-direction: column;
-  }
+    .ads-flex {
+        flex-direction: column;
+    }
 
-  .ads-right {
-    margin-left: 0;
-    margin-top: 20px;
-    width: 100%;
-    flex-direction: row;
-    gap: 10px; /* Space between ads for row layout */
-  }
-  .ads-bottom {
-    position: static;
-    height: auto;
-  }
+    .ads-right {
+        margin-left: 0;
+        margin-top: 20px;
+        width: 100%;
+        flex-direction: row;
+        gap: 10px;
+        /* Space between ads for row layout */
+    }
+
+    .ads-bottom {
+        position: static;
+        height: auto;
+    }
+}
+.text-danger{
+    font-size: .875em !important;
+    color: var(--bs-form-invalid-color) !important;
 }

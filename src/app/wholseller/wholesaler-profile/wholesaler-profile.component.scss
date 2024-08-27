@@ -83,3 +83,7 @@ input:disabled,select:disabled {
     height: auto;
   }
 }
+.text-danger{
+  font-size: .875em !important;
+  color: var(--bs-form-invalid-color) !important;
+}

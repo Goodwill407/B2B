@@ -18,8 +18,13 @@
 
 // for disbled feilds
 input:disabled,select:disabled {
-  background-color: #f0f0f0; /* Light gray background */
-  color: #666; /* Gray text color */
-  border-color: #ddd; /* Light gray border color */
+  background-color: #f0f0f0 !important; 
+  color: #666; 
+  border-color: #ddd !important;
+  border-radius: 3px; 
 }
 
+.text-danger{
+    font-size: .875em !important;
+    color: var(--bs-form-invalid-color) !important;
+}

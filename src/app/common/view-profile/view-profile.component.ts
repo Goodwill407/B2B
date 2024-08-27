@@ -1,4 +1,4 @@
-import { CommonModule, NgClass } from '@angular/common';
+import { CommonModule, DatePipe, NgClass } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -10,16 +10,18 @@ import { Location } from '@angular/common';
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    CommonModule, NgClass
+    CommonModule, NgClass,
+    DatePipe
   ],
   templateUrl: './view-profile.component.html',
-  styleUrl: './view-profile.component.scss'
+  styleUrl: './view-profile.component.scss',
+  providers: [DatePipe]
 })
 export class ViewProfileComponent {
   email: any;
   showFlag: boolean = false;
 
-  constructor(private fb: FormBuilder, private route: ActivatedRoute, private authService: AuthService, private location: Location) {
+  constructor(private fb: FormBuilder, private route: ActivatedRoute, private authService: AuthService, private location: Location,private datePipe: DatePipe) {
     this.initializeValidation();
   }
 
@@ -33,6 +35,8 @@ export class ViewProfileComponent {
       if (this.email) {
         this.authService.get(`${role}/${this.email}`).subscribe((res: any) => {
           if (res) {
+            res.establishDate = res.establishDate ? this.datePipe.transform(res.establishDate, 'yyyy-MM-dd') : null;
+            res.registerOnFTH = res.registerOnFTH ? this.datePipe.transform(res.registerOnFTH, 'yyyy-MM-dd') : null;
             this.mgfRegistrationForm.patchValue(res);
             this.mgfRegistrationForm.disable();
           } else {
@@ -41,9 +45,9 @@ export class ViewProfileComponent {
           (error: any) => {
             if (error.error.message === "Wholesaler not found") {
               this.showFlag = true;
-              setTimeout(()=>{
+              setTimeout(() => {
                 this.location.back();
-              },3000);
+              }, 3000);
             }
           })
       }
@@ -61,21 +65,28 @@ export class ViewProfileComponent {
       pinCode: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
       mobNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       mobNumber2: [''],
+      leagalStatusOfFirm: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       email2: ['', Validators.email],
-      GSTIN: ['', [Validators.required, Validators.pattern(/^[0-9]{15}$/)]],
+      establishDate: ['', Validators.required],
+      registerOnFTH: ['',],
+      GSTIN: ['', [Validators.required, Validators.pattern(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z0-9]{1}[Z]{1}[A-Z0-9]{1}$/)]],
       pan: ['', [Validators.required, Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/)]],
       socialMedia: this.fb.group({
-        facebook: ['', [Validators.required, Validators.pattern(/^(https?:\/\/)?(www\.)?(facebook|fb)\.com\/.+$/)]],
-        linkedIn: ['', [Validators.required, Validators.pattern(/^(https?:\/\/)?(www\.)?linkedin\.com\/.+$/)]],
-        instagram: ['', [Validators.required, Validators.pattern(/^(https?:\/\/)?(www\.)?instagram\.com\/.+$/)]],
-        webSite: ['', [Validators.required, Validators.pattern(/^(https?:\/\/)?(www\.)?[^ "]+$/)]]
+        facebook: ['',],
+        linkedIn: ['',],
+        instagram: ['',],
+        webSite: ['',]
       }),
       BankDetails: this.fb.group({
-        accountNumber: ['', Validators.required],
+        accountNumber: ['', [Validators.required, Validators.pattern(/^\d{9,18}$/)
+        ]],
         accountType: ['', Validators.required],
         bankName: ['', Validators.required],
-        IFSCcode: ['', Validators.required]
+        IFSCcode: ['', [Validators.required, Validators.pattern(/^[A-Z]{4}0[A-Z0-9]{6}$/),]],
+        country: ['', Validators.required],
+        city: ['', Validators.required],
+        branch: ['', Validators.required],
       })
     });
   }
