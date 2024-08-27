@@ -90,9 +90,23 @@
 }
 
 ::ng-deep .mat-mdc-text-field-wrapper {
-    height: 43px !important;
+    height: 44px !important;
+    width: 90px!important;
     flex: auto;
 }
 .form-control,.form-select{
     border-color: #9e9e9e !important;
+}
+
+
+/* For Chrome, Safari, Edge, Opera */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* For Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
 }

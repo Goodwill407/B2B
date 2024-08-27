@@ -48,29 +48,42 @@
                     </div>
                     
                     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                        <label class="lable-input" for="mobileNumber">Mobile Number<span>*</span>:</label>
-                        <div class="d-flex mat-select">
-                            <mat-form-field appearance="outline" class="w-25 me-2">
-                                <mat-select formControlName="code">
-                                    <mat-option *ngFor="let country of countryCode" [value]="country.code">
-                                        <img [src]="country.flag" alt="{{ country.countryName }}"
-                                            class="country-flag" /> {{ country.code }}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                            <input type="number" id="mobileNumber" formControlName="mobileNumber"
-                              placeholder="Number"  class="form-control w-75" />
-                        </div>
-                        <div style="margin-top: 10px;" *ngIf="mgfRegistrationForm.get('mobileNumber')?.touched && mgfRegistrationForm.get('mobileNumber')?.invalid"
-                            class="text-danger">
-                            <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.errors?.['required']">Mobile
-                                number is required.</div>
-                            <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.errors?.['pattern']">Mobile
-                                number must be 10 digits.</div>
+                        <div class="row">
+                            <!-- Email Address Field -->
+                            <div class="col-md-6">
+                                <label class="lable-input" for="email">Email Address<span>*</span>:</label>
+                                <input type="text" id="email" formControlName="email" class="form-control" placeholder="Email Address"/>
+                                <div *ngIf="mgfRegistrationForm.get('email')?.touched && mgfRegistrationForm.get('email')?.invalid" class="text-danger">
+                                    <div *ngIf="mgfRegistrationForm.get('email')?.errors?.['required']">Email is required.</div>
+                                    <div *ngIf="mgfRegistrationForm.get('email')?.errors?.['email']">Invalid email format.</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Mobile Number Field -->
+                            <div class="col-md-6">
+                                <label class="lable-input" for="mobileNumber">Mobile Number<span>*</span>:</label>
+                                <div class="d-flex">
+                                    <mat-form-field appearance="outline" class="me-1">
+                                        <mat-select formControlName="code">
+                                            <mat-option *ngFor="let country of countryCode" [value]="country.code">
+                                                <img [src]="country.flag" alt="{{ country.countryName }}" class="country-flag" />{{ country.code }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <input type="number" id="mobileNumber" formControlName="mobileNumber"
+                                           placeholder="Number" class="form-control w-75" />
+                                </div>
+                                <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.touched && mgfRegistrationForm.get('mobileNumber')?.invalid" class="text-danger" style="margin-top: -22px;">
+                                    <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.errors?.['required']">Mobile number is required.</div>
+                                    <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.errors?.['pattern']">Mobile number must be 10 digits.</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    
+                    
 
-                    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+                    <!-- <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                         <label class="lable-input" for="email">Email Address<span>*</span>:</label>
                         <input type="text" id="email" formControlName="email" class="form-control" placeholder="Email Address"/>
                         <div *ngIf="mgfRegistrationForm.get('email')?.touched && mgfRegistrationForm.get('email')?.invalid"
@@ -80,7 +93,7 @@
                             <div *ngIf="mgfRegistrationForm.get('email')?.errors?.['email']">Invalid email
                                 format.</div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="col-8 text-center ">
                         <button type="submit" class="btn submit-btn"
