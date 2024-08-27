@@ -78,16 +78,9 @@ export class ManageRetailerComponent {
   }
 
   viewProfile(distributors:any){
+    debugger
     this.router.navigate(['/common/view-profile'],{queryParams:{email:distributors.email,role:distributors.role}});
-    // this.authService.get(`wholesaler/${distributors.email}`).subscribe((res: any) => {
-    //   if (res) {
-    //   } else {
-    //   }
-    // }, error => {
-    //   if (error.error.message === "Manufacturer not found") {
-
-    //   }
-    // })
+    
   }
 
   onSearchChange(event: any) {

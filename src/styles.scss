@@ -118,18 +118,24 @@
 // comman SearchBox
 .table-header {
   display: flex;
-  align-items: center; /* Vertically center the items */
-  justify-content: space-between; /* Space items between the left and right */  
+  align-items: center;
+  /* Vertically center the items */
+  justify-content: space-between;
+  /* Space items between the left and right */
 }
 
 .search-container {
-  position: relative; /* Allows absolute positioning of the icon */
-  width: 250px; /* Set the width of the search box */
+  position: relative;
+  /* Allows absolute positioning of the icon */
+  width: 250px;
+  /* Set the width of the search box */
 }
 
 .search-box {
-  width: 100%; /* Full width of the container */
-  padding: 8px 36px 8px 12px; /* Space for the icon inside the input */
+  width: 100%;
+  /* Full width of the container */
+  padding: 8px 36px 8px 12px;
+  /* Space for the icon inside the input */
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 14px;
@@ -137,9 +143,106 @@
 
 .search-icon {
   position: absolute;
-  right: 12px; /* Space between the icon and the right edge of the input */
+  right: 12px;
+  /* Space between the icon and the right edge of the input */
   top: 50%;
-  transform: translateY(-50%); /* Center the icon vertically */
-  font-size: 16px; /* Adjust the size of the icon */
-  color: #999; /* Color of the icon */
+  transform: translateY(-50%);
+  /* Center the icon vertically */
+  font-size: 16px;
+  /* Adjust the size of the icon */
+  color: #999;
+  /* Color of the icon */
+}
+
+.country-flag {
+  width: 20px !important;
+  height: 15px !important;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.my-custom-form-styles {
+
+  .mat-form-field {
+    height: 35px;
+  }
+
+  .mat-select-trigger {
+    height: 34px !important;
+    display: flex;
+    align-items: center;
+    border-color: #ddd;
+  }
+
+  .mat-select-value {
+    height: 34px;
+    line-height: 34px;
+    display: flex;
+    align-items: center;
+  }
+  .mat-mdc-select-value {
+    font-size: 14px;
+    color: inherit !important;
+  }
+
+  .mat-select {
+    height: 34px !important;
+
+    input {
+      height: inherit !important;
+    }
+  }
+
+  .mdc-text-field--outlined .mat-mdc-form-field-infix,
+  .mdc-text-field--no-label .mat-mdc-form-field-infix {
+    padding-top: 6px !important;
+    padding-bottom: 0 !important;
+  }
+
+  .mat-mdc-form-field-infix {
+    flex: auto;
+    min-width: 0;
+    width: 180px;
+    position: relative;
+    box-sizing: border-box;
+  }
+
+  .mat-mdc-form-field-infix {
+    min-height: var(--mat-form-field-container-height);
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .mat-mdc-text-field-wrapper {
+    height: 34px !important;
+    flex: auto;
+  }
+
+  .form-control,
+  .form-select {
+    border-color: #9e9e9e !important;
+  }
+
+  .mat-select:disabled,
+  .mat-input-element:disabled,
+  .mat-select-disabled,
+  .mat-mdc-text-field-wrapper:disabled,
+  .mat-mdc-select-value:disabled {
+    background-color: #f0f0f0 !important;
+    color: #666 !important;
+    border-color: #9e9e9e !important;
+  }
+
+  .mat-form-field-disabled {
+    background-color: #f0f0f0 !important;
+    color: #666 !important;
+    border-color: #9e9e9e !important;
+  }
+
+  input:disabled,select:disabled {
+    background-color: #f0f0f0 !important; 
+    color: #666; 
+    border-color: #ddd !important;
+    border-radius: 3px; 
+  }
 }
