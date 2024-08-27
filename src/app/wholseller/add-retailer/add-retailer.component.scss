@@ -67,7 +67,7 @@
 
 ::ng-deep .mat-select {
     height: 34px !important;
-}
+   }
 
 ::ng-deep .mdc-text-field--outlined .mat-mdc-form-field-infix,
 ::ng-deep .mdc-text-field--no-label .mat-mdc-form-field-infix {
@@ -90,7 +90,8 @@
 }
 
 ::ng-deep .mat-mdc-text-field-wrapper {
-    height: 43px !important;
+    height: 44px !important;
+    width: 90px!important;
     flex: auto;
 }
 .form-control,.form-select{
@@ -149,3 +150,16 @@
         }     
        
       }
+
+
+/* For Chrome, Safari, Edge, Opera */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* For Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+}

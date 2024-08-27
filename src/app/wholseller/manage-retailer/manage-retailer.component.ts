@@ -43,12 +43,20 @@ export class ManageRetailerComponent {
     this.getPendingInvites();
   }
 
-  getPendingInvites() {
-    this.authService.get(`wholesaler//get-referred/retailer?page=${this.page}&limit=${this.limit}&refByEmail=${this.user.email}`).subscribe((res: any) => {
-      this.distributors = res.results;
-      this.totalResults = res.totalResults;
-    })
-  }
+  // getPendingInvites() {
+  //   this.authService.get(`wholesaler//get-referred/retailer?page=${this.page}&limit=${this.limit}&refByEmail=${this.user.email}`).subscribe((res: any) => {
+  //     this.distributors = res.results;
+  //     this.totalResults = res.totalResults;
+  //   })
+  // }
+
+  getPendingInvites(searchKey: string = '') {
+    // Modify the API request to include the searchKey parameter
+    this.authService.get(`wholesaler//get-referred/retailer?page=${this.page}&limit=${this.limit}&refByEmail=${this.user.email}&searchKeywords=${searchKey}`).subscribe((res: any) => {
+        this.distributors = res.results;
+        this.totalResults = res.totalResults;
+    });
+}
 
   onPageChange(event: any) {
     this.page = event.page + 1;
@@ -74,4 +82,9 @@ export class ManageRetailerComponent {
     this.router.navigate(['/common/view-profile'],{queryParams:{email:distributors.email,role:distributors.role}});
     
   }
+
+  onSearchChange(event: any) {
+    const searchKey = event.target.value;
+    this.getPendingInvites(searchKey);
+}
 }

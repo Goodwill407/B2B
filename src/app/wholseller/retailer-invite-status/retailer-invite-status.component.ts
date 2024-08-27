@@ -23,9 +23,12 @@ export class RetailerInviteStatusComponent {
   user: any;
   totalResults: any;
   limit = 10;
-  page: number = 1
+  page: number = 1;
   first: number = 0;
   rows: number = 10;
+
+  distributors: any[] = [];
+  selectedDistributors: any[] = [];
 
   // for ads
   rightAdImages: string[] = [
@@ -35,23 +38,26 @@ export class RetailerInviteStatusComponent {
 
   bottomAdImage: string = 'https://elmanawy.info/demo/gusto/cdn/ads/gusto-ads-banner.png';
 
-  constructor(private authService: AuthService, private communicationService:CommunicationService) { }
+
+  constructor(private authService: AuthService, private communicationService: CommunicationService) { }
 
   ngOnInit() {
-    this.user = this.authService.currentUserValue
+    this.user = this.authService.currentUserValue;
     this.getPendingInvites();
   }
 
   getPendingInvites() {
-    // this.authService.get(`invitations?page=${this.page}&limit=${this.limit}&status=pending&invitedBy=${this.user.email}`).subscribe((res: any) => {
-    //   this.distributors = res.results;
-    //   this.totalResults = res.totalResults;
-    // })
+    this.authService.get(`invitations?page=${this.page}&limit=${this.limit}&status=pending&invitedBy=${this.user.email}`).subscribe((res: any) => {
+      this.distributors = res.results;
+      this.totalResults = res.totalResults;
+      // Initialize selected distributors list based on current data
+      this.updateSelectedDistributors();
+    });
   }
 
   reInvite(data: any) {
-    this.authService.get(`invitations/re-invitation/${data.email}`).subscribe((res: any) =>{
-      this.communicationService.showNotification('snackbar-success','Re-invitation Sent Successfully','bottom','center');
+    this.authService.get(`invitations/re-invitation/${data.email}`).subscribe((res: any) => {
+      this.communicationService.showNotification('snackbar-success', 'Re-invitation Sent Successfully', 'bottom', 'center');
     });
   }
 
@@ -60,13 +66,35 @@ export class RetailerInviteStatusComponent {
     this.limit = event.rows;
     this.getPendingInvites();
   }
-  
-  distributors: any = [
-    { fullName: 'John Doe', companyName: 'ABC Ltd.', mobileNumber: '1234567890', email: 'john@example.com', city: 'New York', country: 'USA', status: 'Active' },
-    { fullName: 'Jane Smith', companyName: 'XYZ Inc.', mobileNumber: '0987654321', email: 'jane@example.com', city: 'Los Angeles', country: 'USA', status: 'Inactive' },
-    { fullName: 'Michael Brown', companyName: '123 Corp.', mobileNumber: '5678901234', email: 'michael@example.com', city: 'Chicago', country: 'USA', status: 'Active' },
-    { fullName: 'Lisa Johnson', companyName: '789 LLC', mobileNumber: '4321098765', email: 'lisa@example.com', city: 'Houston', country: 'USA', status: 'Inactive' }
-  ];
+
+  reInviteToAll() {
+    // Extract emails of selected distributors into an array
+    const selectedEmails = this.distributors
+      .filter((d: any) => d.selected)
+      .map((d: any) => d.email);
+
+    if (selectedEmails.length > 0) {
+      // Send the array of selected emails to the API
+      this.authService.post('invitations/bulk/re-invitation/array', { emails: selectedEmails }).subscribe((res: any) => {
+        this.communicationService.showNotification('snackbar-success', 'Re-invitation Sent Successfully', 'bottom', 'center');
+        // Clear selection after sending
+        this.distributors.forEach((d: any) => d.selected = false);
+        this.updateSelectedDistributors(); // Update the list after clearing
+      });
+    } else {
+      this.communicationService.showNotification('snackbar-warning', 'No distributors selected', 'bottom', 'center');
+    }
+  }
+
+  toggleSelectAll(event: any) {
+    const isChecked = event.target.checked;
+    this.distributors.forEach((d: any) => d.selected = isChecked);
+    this.updateSelectedDistributors();
+  }
+
+  updateSelectedDistributors() {
+    this.selectedDistributors = this.distributors.filter(d => d.selected);
+  }
 
 }
 
