@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService, CommunicationService, DirectionService } from '@core';
 import { MatSelectModule } from '@angular/material/select';
+import { KycUploadComponent } from 'app/common/kyc-upload/kyc-upload.component';
 
 @Component({
   selector: 'app-profile',
@@ -14,7 +15,8 @@ import { MatSelectModule } from '@angular/material/select';
     NgClass,
     JsonPipe,
     DatePipe,
-    MatSelectModule
+    MatSelectModule,
+    KycUploadComponent
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
@@ -24,20 +26,22 @@ export class ProfileComponent {
 
   mgfRegistrationForm: any = FormGroup;
   submitted: boolean = false;
-  userProfile: any
-  getResisterData: any
+  userProfile: any;
+  getResisterData: any;
+  currentStep: any = 1;
 
-  // btn flag
+  // btn flag 
   isDataSaved = false;  // Flag to track if data is saved
   submitFlag = false;
   isUpdateBtn = false;
   isEditFlag = false
   allState: { name: string; cities: string[]; iso2: String }[] = [];
   cityList: any;
-  allCountry:any
-  Allcities:any
+  allCountry: any;
+  Allcities: any;
+  allData: any;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService,private datePipe: DatePipe, private direction: DirectionService) { }
+  constructor(private fb: FormBuilder, public authService: AuthService, private communicationService: CommunicationService, private datePipe: DatePipe, private direction: DirectionService) { }
 
   countries: any[] = [
     'India',
@@ -47,12 +51,12 @@ export class ProfileComponent {
     { countryName: 'India', flag: 'assets/images/flags/ind.png', code: '+91' },
   ];
 
-  legalStatusOptions:any[]=[
-  "Individual - Proprietor",
-  "Partnership",
-  "LLP /LLC",
-  "Private Limited",
-  "Limited"
+  legalStatusOptions: any[] = [
+    "Individual - Proprietor",
+    "Partnership",
+    "LLP /LLC",
+    "Private Limited",
+    "Limited"
   ]
 
   ngOnInit(): void {
@@ -76,7 +80,7 @@ export class ProfileComponent {
       pinCode: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
       mobNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       mobNumber2: [''],
-      leagalStatusOfFirm: ['',[Validators.required]],
+      leagalStatusOfFirm: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       email2: ['', Validators.email],
       establishDate: ['', Validators.required],
@@ -90,11 +94,11 @@ export class ProfileComponent {
         webSite: ['',]
       }),
       BankDetails: this.fb.group({
-        accountNumber: ['', [ Validators.required, Validators.pattern(/^\d{9,18}$/) 
+        accountNumber: ['', [Validators.required, Validators.pattern(/^\d{9,18}$/)
         ]],
         accountType: ['', Validators.required],
         bankName: ['', Validators.required],
-        IFSCcode: ['',[Validators.required,Validators.pattern(/^[A-Z]{4}0[A-Z0-9]{6}$/),]],
+        IFSCcode: ['', [Validators.required, Validators.pattern(/^[A-Z]{4}0[A-Z0-9]{6}$/),]],
         country: ['', Validators.required],
         city: ['', Validators.required],
         branch: ['', Validators.required],
@@ -102,7 +106,7 @@ export class ProfileComponent {
     }, { validators: panMatchValidator('GSTIN', 'pan') });
   }
 
-  
+
 
   get f() {
     return this.mgfRegistrationForm.controls;
@@ -120,20 +124,20 @@ export class ProfileComponent {
       });
 
     },
-    error => {
-      this.communicationService.showNotification('snackbar-danger',error.error.message,'bottom','center')
-    }
+      error => {
+        this.communicationService.showNotification('snackbar-danger', error.error.message, 'bottom', 'center')
+      }
     )
   }
 
-    // disbled some resistered feilds
-    disabledFields() {
-      this.mgfRegistrationForm.get('fullName')?.disable();
-      this.mgfRegistrationForm.get('email')?.disable();
-      this.mgfRegistrationForm.get('mobNumber')?.disable();
-      this.mgfRegistrationForm.get('companyName')?.disable();
-      this.mgfRegistrationForm.get('registerOnFTH')?.disable();
-    }
+  // disbled some resistered feilds
+  disabledFields() {
+    this.mgfRegistrationForm.get('fullName')?.disable();
+    this.mgfRegistrationForm.get('email')?.disable();
+    this.mgfRegistrationForm.get('mobNumber')?.disable();
+    this.mgfRegistrationForm.get('companyName')?.disable();
+    this.mgfRegistrationForm.get('registerOnFTH')?.disable();
+  }
 
 
   getSavedProfileData() {
@@ -141,10 +145,11 @@ export class ProfileComponent {
       if (res) {
         res.establishDate = res.establishDate ? this.datePipe.transform(res.establishDate, 'yyyy-MM-dd') : null;
         res.registerOnFTH = res.registerOnFTH ? this.datePipe.transform(res.registerOnFTH, 'yyyy-MM-dd') : null;
-        const allData = res;
-        this.mgfRegistrationForm.patchValue(allData);
-        this.stateWiseCity(null, allData.state, allData.city);
+        this.allData = res;
+        this.mgfRegistrationForm.patchValue(this.allData);
+        this.stateWiseCity(null, this.allData.state, this.allData.city);
         this.mgfRegistrationForm.disable();
+        this.currentStep = 1;
         this.isDataSaved = true;
         this.isEditFlag = true
       } else {
@@ -175,10 +180,11 @@ export class ProfileComponent {
       if (res) {
         this.mgfRegistrationForm.disable();
         this.isEditFlag = true;
+        this.currentStep = 2;
       }
     },
       error => {
-        this.communicationService.showNotification('snackbar-danger',error.error.message,'bottom','center')
+        this.communicationService.showNotification('snackbar-danger', error.error.message, 'bottom', 'center')
       }
     )
   }
@@ -190,11 +196,12 @@ export class ProfileComponent {
         if (res) {
           this.mgfRegistrationForm.disable();
           this.isUpdateBtn = false;
+          this.currentStep = 2;
         }
       },
-      error => {
-        this.communicationService.showNotification('snackbar-danger',error.error.message,'bottom','center')
-      }
+        error => {
+          this.communicationService.showNotification('snackbar-danger', error.error.message, 'bottom', 'center')
+        }
       )
   }
 
@@ -218,16 +225,21 @@ export class ProfileComponent {
     });
   }
 
-  getAllCountry(){
-    this.direction.getAllCountry().subscribe((res:any)=>{
-      this.allCountry=res
+  getAllCountry() {
+    this.direction.getAllCountry().subscribe((res: any) => {
+      this.allCountry = res
     })
   }
+
   onCountryChange(event: any): void {
     const target = event.target as HTMLSelectElement;
     const countryCode = target.value;
     this.direction.getCities(countryCode).subscribe(data => {
       this.Allcities = data;
     });
+  }
+
+  openImg(path:any){
+    this.communicationService.openImg(path);
   }
 }

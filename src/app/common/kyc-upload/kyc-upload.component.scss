@@ -1,0 +1,30 @@
+.registration-form {
+    .label-input {
+        margin-top: 15px !important;
+
+        span {
+            color: red;
+        }
+    }
+}
+
+.submit-btn {
+    padding-right: 3rem !important;
+    padding-left: 3rem !important;
+    // margin: 2rem !important;
+    background-color: #f0ad4e;
+    color: #fff;
+}
+
+// for disbled feilds
+input:disabled,select:disabled {
+  background-color: #f0f0f0 !important; 
+  color: #666; 
+  border-color: #ddd !important;
+  border-radius: 3px; 
+}
+
+.text-danger{
+    font-size: .875em !important;
+    color: var(--bs-form-invalid-color) !important;
+}

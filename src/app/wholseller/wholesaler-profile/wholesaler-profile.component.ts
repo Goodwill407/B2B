@@ -8,6 +8,7 @@ import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-
 import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
 import { panMatchValidator } from '../../common/pan-validation'; // Adjust the path as needed
 import { MatSelectModule } from '@angular/material/select';
+import { KycUploadComponent } from 'app/common/kyc-upload/kyc-upload.component';
 
 @Component({
   selector: 'app-wholesaler-profile',
@@ -19,7 +20,8 @@ import { MatSelectModule } from '@angular/material/select';
     NgFor,MatSelectModule,
     BottomSideAdvertiseComponent,
     RightSideAdvertiseComponent,
-    DatePipe
+    DatePipe,
+    KycUploadComponent
   ],
   templateUrl: './wholesaler-profile.component.html',
   styleUrls: ['./wholesaler-profile.component.scss'],
@@ -27,20 +29,22 @@ import { MatSelectModule } from '@angular/material/select';
 })
 export class WholesalerProfileComponent {
 
-  mgfRegistrationForm:any =  FormGroup;
+  mgfRegistrationForm: any = FormGroup;
   submitted: boolean = false;
   userProfile: any;
   getResisterData: any;
+  currentStep: any = 1;
 
-  // btn flag
+  // btn flag 
   isDataSaved = false;  // Flag to track if data is saved
   submitFlag = false;
   isUpdateBtn = false;
-  isEditFlag = false;
-  allState: { name: string; cities: string[]; iso2: string }[] = [];
+  isEditFlag = false
+  allState: { name: string; cities: string[]; iso2: String }[] = [];
+  cityList: any;
   allCountry: any;
   Allcities: any;
-  cityList: any;
+  allData: any;
 
   // for ads
   rightAdImages: string[] = [
@@ -52,7 +56,7 @@ export class WholesalerProfileComponent {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService,
+    public authService: AuthService,
     private communicationService: CommunicationService,
     private direction: DirectionService,
     private datePipe: DatePipe
@@ -157,13 +161,14 @@ export class WholesalerProfileComponent {
       if (res) {
         res.establishDate = res.establishDate ? this.datePipe.transform(res.establishDate, 'yyyy-MM-dd') : null;
         res.registerOnFTH = res.registerOnFTH ? this.datePipe.transform(res.registerOnFTH, 'yyyy-MM-dd') : null;
-        const allData = res;
-        this.mgfRegistrationForm.patchValue(allData);
-        this.stateWiseCity(null, allData.state, allData.city);
+        this.allData = res;
+        this.mgfRegistrationForm.patchValue(this.allData);
+        this.stateWiseCity(null, this.allData.state, this.allData.city);
         this.mgfRegistrationForm.disable();
         this.mgfRegistrationForm.get('registerOnFTH')?.disable();  // Ensure this field is disabled
         this.isDataSaved = true;
         this.isEditFlag = true;
+        this.currentStep = 1;
       } else {
         // Handle the case where there's no data
       }
@@ -193,6 +198,7 @@ export class WholesalerProfileComponent {
       if (res) {
         this.mgfRegistrationForm.disable();
         this.isEditFlag = true;
+        this.currentStep = 2;
       }
     },
       error => {
@@ -208,6 +214,7 @@ export class WholesalerProfileComponent {
         if (res) {
           this.mgfRegistrationForm.disable();
           this.isUpdateBtn = false;
+          this.currentStep = 2;
         }
       },
         error => {
@@ -248,5 +255,9 @@ export class WholesalerProfileComponent {
     this.direction.getCities(countryCode).subscribe(data => {
       this.Allcities = data;
     });
+  }
+
+  openImg(path:any){
+    this.communicationService.openImg(path);
   }
 }
