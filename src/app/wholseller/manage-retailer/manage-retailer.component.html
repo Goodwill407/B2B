@@ -5,9 +5,9 @@
         <div class="flex-grow-1">
       <div class="card-table p-3">
         <div class="table-header">
-            <h5 class="mb-0">Distributor's List</h5>
+            <h5 class="mb-0">Retailer's List</h5>
             <div class="search-container">
-                <input type="text" class="form-control search-box" placeholder="Search Distributors..." (input)="onSearchChange($event)">
+                <input type="text" class="form-control search-box" placeholder="Search Retailers..." (input)="onSearchChange($event)">
                 <i class="fas fa-search search-icon"></i>
             </div>
         </div>
@@ -17,7 +17,7 @@
                 <p-table [value]="distributors">
                     <ng-template pTemplate="header">
                         <tr>
-                            <th>Distributor's Name</th>
+                            <th>Retailer's Name</th>
                             <th>Company Name</th>
                             <th>Mobile Number</th>
                             <th>Email</th>

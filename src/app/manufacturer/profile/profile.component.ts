@@ -73,6 +73,7 @@ export class ProfileComponent {
       fullName: ['', Validators.required],
       companyName: ['', Validators.required],
       address: ['', Validators.required],
+      introduction: ['', Validators.required],
       country: ['India', Validators.required],
       state: ['', Validators.required],
       city: ['', Validators.required],

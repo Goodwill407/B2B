@@ -74,7 +74,7 @@ export class ManufacturesProductComponent {
   }
   
   getAllProducts(email:any) {
-    let url = `products/filter-products?productBy=${email}`;
+    let url = `products/filter-products?productBy=${email}&limit=${this.limit}&page=${this.page}`;
 
     const brand = this.filters.brand;
     const productType = this.filters.productType;

@@ -87,7 +87,7 @@ export const ROUTES: RouteInfo[] = [
       },
       {
         path: '/mnf/manage-distributor',
-        title: 'View And Manage Distributors',
+        title: 'View & Manage Distributors',
         iconType: '',
         icon: '',
         class: 'ml-menu',

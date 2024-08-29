@@ -129,18 +129,24 @@ small {
   background-color: pink;
 }
 
-.col {
-  border: 1px solid lightgray;
-  padding: 4px; // Optional: adds some space inside the borders
-  text-align: center;
+.table {
+  width: 100%;
+  border-collapse: collapse; // Ensures there are no gaps between table cells
+  margin-top: 1rem; // Adds some space above the table
+
+  th, td {
+    border: 1px solid lightgray; // Adds the border to the table cells
+    padding: 8px; // Adds some space inside the cells
+    text-align: center; // Centers the text in the cells
+  }
+
+  thead th {
+    border-bottom: 2px solid lightgray; // Adds a thicker border to the bottom of the header row
+    font-weight: 500; // Makes the header bold
+    color: #767474; // Sets the text color of the header
+  }
 }
 
-// Optional: Add border to the top row (headers) as well
-.row.mb-2 .col {
-  border-bottom: 1px solid lightgray;
-  font-weight: 500; // Make the header bold
-  color: #767474 !important;
-}
 .required{
   font-size: small !important;
   color: rgb(250, 98, 98) !important;

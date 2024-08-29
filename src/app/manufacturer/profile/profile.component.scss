@@ -17,7 +17,7 @@
 }
 
 // for disbled feilds
-input:disabled,select:disabled {
+input:disabled,select:disabled,textarea:disabled {
   background-color: #f0f0f0 !important; 
   color: #666; 
   border-color: #ddd !important;
