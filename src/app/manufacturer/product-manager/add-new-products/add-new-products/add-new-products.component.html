@@ -74,7 +74,7 @@
                         </div>
 
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                            <label class="label-input" for="clothing">Clothing<span class="required">*</span></label>
+                            <label class="label-input" for="clothing">Category<span class="required">*</span></label>
                             <select name="clothing" id="clothing" class="form-select" formControlName="clothing" (change)="getAllSubCategory()"
                                 [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('clothing')?.invalid}">
                                 <option value="" disabled selected>Select</option>
@@ -371,7 +371,7 @@
 
                     <div class="m-0 p-4 border mt-2 pt-2 rounded" style="background-color: aliceblue;">
                         <div class="row">
-                            <h5 class="mb-2">Standard Size Set<span class="required fs-6">*</span> :</h5>
+                            <h5 class="mb-2">Standard Size Set<span class="required">*</span> </h5>
                             <div class="size-checkboxes">
                                 <label class="me-4" *ngFor="let size of sizes">
                                     <input type="checkbox" [value]="size" (change)="onSizeChange($event, size)" [checked]="selectedSizes.includes(size)" />
@@ -511,6 +511,16 @@
                     </div>                   
 
                     <div class="row mt-2">
+                        <div class="col-2">
+                            <label for="minimumOrderQty">Minimum Order Quantity<span class="required">*</span></label>
+                            <input type="text" id="minimumOrderQty" formControlName="minimumOrderQty" class="form-control"
+                                [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('minimumOrderQty')?.invalid}">
+                            <div *ngIf="submittedStep1 && stepOne.get('minimumOrderQty')?.invalid" class="invalid-feedback">
+                                <div *ngIf="stepOne.get('minimumOrderQty')?.hasError('required')">
+                                    Minimum Order Quantity is required
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-2">
                             <label for="setOFnetWeight">Total Weight<span class="required">*</span></label>
                             <input type="text" id="setOFnetWeight" formControlName="setOFnetWeight" class="form-control"

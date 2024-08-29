@@ -52,7 +52,7 @@ export class ManageRetailerComponent {
 
   getPendingInvites(searchKey: string = '') {
     // Modify the API request to include the searchKey parameter
-    this.authService.get(`wholesaler//get-referred/retailer?page=${this.page}&limit=${this.limit}&refByEmail=${this.user.email}&searchKeywords=${searchKey}`).subscribe((res: any) => {
+    this.authService.get(`wholesaler/get-referred/retailer?page=${this.page}&limit=${this.limit}&refByEmail=${this.user.email}&searchKeywords=${searchKey}`).subscribe((res: any) => {
         this.distributors = res.results;
         this.totalResults = res.totalResults;
     });
@@ -79,7 +79,7 @@ export class ManageRetailerComponent {
 
   viewProfile(distributors:any){
     debugger
-    this.router.navigate(['/common/view-profile'],{queryParams:{email:distributors.email,role:distributors.role}});
+    this.router.navigate(['/common/view-profile'],{queryParams:{email:distributors.email,role:'retailer'}});
     
   }
 

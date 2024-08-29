@@ -8,10 +8,8 @@
         <div class="form-section">
           <div class="auth-wrapper">
             <p class="auth-signup-text text-muted  pb-0">Welcome to
-              <!-- <a routerLink="/authentication/signup"
-                class="sign-up-link">Click here</a> -->
             </p>
-            <h2 class="welcome-msg-log pb-5"> Garment Trade Hub</h2>
+            <h2 class="welcome-msg-log pb-5"> Fashion Traders Hub</h2>
             
             <!-- <h2 class="login-title">Sign in</h2> -->
             <form class="validate-form" [formGroup]="authForm" (ngSubmit)="onSubmit()">
@@ -21,12 +19,7 @@
                   <input type="text" id="id" formControlName="email" class="form-control">
                 </div>
               </div>
-              <!-- <div class="row">
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-4">
-                  <label class="lable-input" for="password">Password</label>
-                  <input type="password" id="password" formControlName="password" class="form-control">
-                </div>
-              </div> -->
+           
               <div class="row">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-4">
                   <label class="lable-input" for="password">Password</label>
@@ -39,20 +32,7 @@
                 </div>
                 </div>
               </div>
-              <!-- <div class="row">
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-4">
-                  <label class="lable-input" for="password">Password</label>
-                  <div class="input-group">
-                    <input [type]="hide ? 'password' : 'text'" id="password" formControlName="password" class="form-control">
-                    <div class="input-group-append">
-                      <button type="button" class="btn btn-outline-secondary" (click)="togglePasswordVisibility()">
-                        <mat-icon>{{ hide ? 'visibility' : 'visibility_off' }}</mat-icon>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div> -->
-              
+                           
               @if (error) {
               <div class="alert alert-danger mt-3 mb-0">{{error}}</div>
               }
@@ -68,8 +48,7 @@
             </form>
 
             <div class="navigation-link-log">
-              <div type="button" routerLink="/authentication/signup">Register as Manufacture</div>
-              <!-- <div type="button" routerLink="/authentication/">Register as Distributer/Retailer</div> -->
+              <div type="button" routerLink="/authentication/signup">Register</div>
             </div>
             
           </div>
