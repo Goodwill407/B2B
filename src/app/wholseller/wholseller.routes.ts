@@ -11,6 +11,8 @@ import { ManufacturesProductComponent } from "./product/manufacturer-list/manufa
 import { ViewProductComponent } from "./product/manufacturer-list/manufactures-product/view-product/view-product.component";
 import { WishlistProductComponent } from "./product/wishlist-product/wishlist-product.component";
 import { CartProductComponent } from "./product/cart-product/cart-product.component";
+import { RequestToManufacturerComponent } from "./request-to-manufacturer/request-to-manufacturer.component";
+import { ViewManufacturerDetailsComponent } from "./request-to-manufacturer/view-manufacturer-details/view-manufacturer-details.component";
 
 export const R_Auth:Route[] = [
     {path: 'dashboard', component: DashboardComponent},
@@ -25,4 +27,6 @@ export const R_Auth:Route[] = [
     {path: 'view-product', component: ViewProductComponent},
     {path: 'wishlist-product', component: WishlistProductComponent},
     {path: 'add-to-cart', component: CartProductComponent},
+    {path: 'request-to-mnf', component: RequestToManufacturerComponent},
+    {path:'mnf-details', component:ViewManufacturerDetailsComponent}
 ]

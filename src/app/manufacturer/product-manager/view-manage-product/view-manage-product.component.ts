@@ -24,15 +24,15 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
     brand: '',
     productType: '',
     gender: '',
-    clothing: '',
+    category: '',
     subCategory: ''
   };
 
   products: any[] = [];
   allBrand: any;  
-  allGender = ['Men', 'Women', 'Boys', 'Girls', 'Unisex'];
-  allProductType = [];
-  allClothingType = [];
+  allGender = ['Men', 'Women', 'Boys', 'Girls'];
+  allProductType = ["Clothing"];
+  allcategory = [];
   allSubCategory = [];
  
   limit = 10;
@@ -49,8 +49,7 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.getAllBrands();
-    this.getAllSubCategory();
+    this.getAllBrands();   
     this.getAllProducts();
   }
 
@@ -67,6 +66,37 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
       this.allBrand = res.results;
     });
   }
+
+  // new Code
+  getCategoryByProductTypeAndGender(){
+    const productType=this.filters.productType
+    const gender=this.filters.gender
+
+    this.authService.get(`sub-category/get-category/by-gender?productType=${productType}&gender=${gender}`).subscribe((res:any)=>{
+      if(res){
+        this.allSubCategory=[]
+      }
+      this.allcategory = Array.from(new Set(res.results.map((item: any) => item.category)));      
+    },error=>{
+
+    })
+  }
+
+  getSubCategoryBYProductType_Gender_and_Category(){
+    const productType = this.filters.productType;
+    const gender = this.filters.gender;
+    const category = this.filters.category;
+
+    this.authService.get(`sub-category?productType=${productType}&gender=${gender}&category=${category}`).subscribe((res:any)=>{
+      if(res){
+        this.allSubCategory=[]
+      }
+      this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));      
+    },error=>{
+
+    })
+
+  }
   
   getAllProducts() {
     let url = `products/filter-products?productBy=${this.userProfile.email}`;
@@ -74,7 +104,7 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
     const brand = this.filters.brand;
     const productType = this.filters.productType;
     const gender = this.filters.gender;
-    const clothing = this.filters.clothing;
+    const category = this.filters.category;
     const subCategory = this.filters.subCategory;
 
     if (brand) {
@@ -87,8 +117,8 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
     if (gender) {
       url += `&gender=${gender}`;
     }
-    if (clothing) {
-      url += `&clothing=${clothing}`;
+    if (category) {
+      url += `&category=${category}`;
     }
     if (subCategory) {
       url += `&subCategory=${subCategory}`;
@@ -178,33 +208,9 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
     }
   }
 
-  getAllSubCategory() {
-    const productType = this.filters.productType;
-    const gender = this.filters.gender;
-    const clothing = this.filters.clothing;
   
-    let url = 'sub-category';
+
   
-    if (productType) {
-      url += `?productType=${productType}`;
-    }
-    if (gender) {
-      url += (url.includes('?') ? '&' : '?') + `gender=${gender}`;
-    }
-    if (clothing) {
-      url += (url.includes('?') ? '&' : '?') + `clothing=${clothing}`;
-    }
-  
-    this.authService.get(url).subscribe(res => {
-      if (res) {
-        this.allProductType = Array.from(new Set(res.results.map((item: any) => item.productType)));
-        this.allClothingType = Array.from(new Set(res.results.map((item: any) => item.category)));
-        this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
-      }
-    }, (error) => {
-      console.log(error);
-    });
-  }
 
   // Implement other methods like getAllProducts, getAllSubCategory, etc.
 
@@ -230,7 +236,9 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
 
   getProductUrl(product: any): string {
     return `http://fashiontradershub.com`; // Change to your actual product URL
-  }
+  }  
+
+
 }
 
 
