@@ -3,22 +3,28 @@
     <h4 class="mt-4">View Products</h4>
     <div class="card p-4">
       <div class="search-bar">
+        <!-- brand -->
         <select name="" class="form-select" [(ngModel)]="filters.brand">
           <option value="">Select Brand</option>
           <option *ngFor="let brand of allBrand" [value]="brand.brandName">{{brand.brandName}}</option>
         </select>
-        <select name="" class="form-select" [(ngModel)]="filters.productType" (change)="getAllSubCategory()">
+
+        <!-- Product Type -->
+        <select name="" class="form-select" [(ngModel)]="filters.productType">
           <option value="">Select Product Type</option>
           <option *ngFor="let type of allProductType" [value]="type">{{type}}</option>
         </select>
-        <select name="" class="form-select" [(ngModel)]="filters.gender" (change)="getAllSubCategory()">
+        <!-- Gender -->
+        <select name="" class="form-select" [(ngModel)]="filters.gender" (change)="getCategoryByProductTypeAndGender()">
           <option value="">Select Gender</option>
           <option *ngFor="let gender of allGender" [value]="gender">{{gender}}</option>
         </select>
-        <select name="" class="form-select" [(ngModel)]="filters.clothing" (change)="getAllSubCategory()">
-          <option value="">Select Clothing</option>
-          <option *ngFor="let clothing of allClothingType" [value]="clothing">{{clothing}}</option>
+        <!-- category -->
+        <select name="" class="form-select" [(ngModel)]="filters.category" (change)="getSubCategoryBYProductType_Gender_and_Category()">
+          <option value="">Select Category</option>
+          <option *ngFor="let category of allcategory" [value]="category">{{category}}</option>
         </select>
+        <!-- sub Category -->
         <select name="" class="form-select" [(ngModel)]="filters.subCategory">
           <option value="">Select Sub-Category</option>
           <option *ngFor="let subCategory of allSubCategory" [value]="subCategory">{{subCategory}}</option>

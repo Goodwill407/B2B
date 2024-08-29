@@ -1,0 +1,115 @@
+<section class="content">
+  <div class="content-block">
+    <h4 class="mt-4">
+      <i class="bi bi-person-vcard-fill h3"></i> View Brand And Send Request
+    </h4>  
+
+    <div class="ads-flex">
+      <div class="flex-grow-1">
+        <!-- Card Table Wrapper -->
+        <div class="card-table p-0">
+          <!-- Search Section -->
+          <div class="search-section p-3">
+            <!-- Left Side: Brand Search -->
+            <div class="brand-search-container d-flex align-items-center">
+              <label class="search-label">Search By Brand</label>
+              <div class="vertical-line"></div>
+              <div class="brand-search d-flex align-items-center">
+                <input
+                  type="text"
+                  class="form-control me-2"
+                  [(ngModel)]="SearchBrand"
+                  placeholder="Search Brand"
+                />
+                <button class="btn btn-primary" (click)="onBrandSearchChange()">Search</button>
+              </div>
+            </div>
+            <hr />
+
+            <!-- Right Side: Advanced Product Search -->
+            <div class="product-search-container d-flex align-items-center">
+              <label class="search-label">Search By Product</label>
+              <div class="vertical-line"></div>
+              <div class="product-search d-flex align-items-center">
+                <select
+                  class="form-select me-2"
+                  [(ngModel)]="filters.productType"
+                  placeholder="Product Type"
+                >
+                  <option value="">Select Product Type</option>
+                  <option *ngFor="let type of allProductType" [value]="type.name">{{ type.name }}</option>
+                </select>
+                <select
+                  class="form-select me-2"
+                  [(ngModel)]="filters.gender"
+                  (change)="getCategoryByProductTypeAndGender()"
+                  placeholder="Gender"
+                >
+                  <option value="">Select Gender</option>
+                  <option *ngFor="let gender of allGender" [value]="gender">{{ gender }}</option>
+                </select>
+                <select
+                  class="form-select me-2"
+                  [(ngModel)]="filters.category"
+                  (change)="getSubCategoryBYProductType_Gender_and_Category()"
+                  placeholder="Product"
+                >
+                  <option value="">Select Category</option>
+                  <option *ngFor="let category of allcategory" [value]="category">{{ category }}</option>
+                </select>
+                <select
+                  class="form-select me-0"
+                  [(ngModel)]="filters.subCategory"
+                  placeholder="Sub-Category"
+                >
+                  <option value="">Select Sub-Category</option>
+                  <option *ngFor="let type of allSubCategory" [value]="type">{{ type }}</option>
+                </select>
+                <button class="btn btn-primary" (click)="GetProductTypeWiseManufacturar()">Search</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Display Brand and Product Data -->
+          <div class="brand-list">
+            <!-- Section for Brand Data -->
+            <div *ngFor="let brand of brandData" class="brand-box">
+              <!-- Brand Logo -->
+              <div class="brand-logo-container">
+                <img [src]="cdnPath + brand.brandLogo" alt="{{ brand.brandName }}" class="brand-logo" />
+              </div>
+              <!-- Brand Details -->
+              <h5 class="brand-name">{{ brand.brandName }}</h5>
+              <p class="brand-location">{{ brand.ownerDetails.city }}, {{ brand.ownerDetails.state }}</p>
+              <button class="btn btn-link" (click)="navigateToProfile(brand.ownerDetails.email)">View Profile</button>
+              <button class="btn btn-outline-primary request-btn">Request to Add</button>
+            </div>
+
+            <!-- Section for Product Data -->
+            <div *ngFor="let product of productTypeWise" class="brand-box">
+              <!-- Product Brand Logo -->
+              <div class="brand-logo-container">
+                <img [src]="cdnPath + product.brand.brandLogo" alt="{{ product.brand.brandName }}" class="brand-logo" />
+              </div>
+              <!-- Product Details -->
+              <h5 class="brand-name">{{ product.brand.brandName }}</h5>
+              <p class="brand-location">{{ product.city }}, {{ product.state }}</p>
+              <button class="btn btn-link" (click)="navigateToProfile(product.ownerDetails.email)">View Profile</button>
+              <button class="btn btn-outline-primary request-btn">Request to Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right-Side Ads Container -->
+      <div class="ads-right mt-0">
+        <app-right-side-advertise [imageUrls]="rightAdImages"></app-right-side-advertise>
+      </div>
+    </div>
+
+    <!-- Bottom-Side Ad Container -->
+    <div class="ads-bottom mb-3">
+      <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
+    </div>
+  </div>
+</section>

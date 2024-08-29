@@ -95,6 +95,7 @@ export class BrandComponent {
       formData.append('brandName', this.brandForm.get('brandName')?.value);
       formData.append('brandDescription', this.brandForm.get('brandDescription')?.value);
       formData.append('brandLogo', this.brandForm.get('brandLogo')?.value);
+      formData.append('brandOwner', this.brandForm.get('brandOwner')?.value);
 
       if (this.formType === 'Save') {
         this.authService.post('brand', formData).subscribe((res: any) => {
