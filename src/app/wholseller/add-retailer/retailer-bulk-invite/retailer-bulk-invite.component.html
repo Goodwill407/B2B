@@ -31,7 +31,7 @@
             </div>
           </div>
           <hr>
-          <div *ngFor="let distributor of distributors.controls; let i = index" class="d-flex justify-content-between" [formGroupName]="i">
+          <div *ngFor="let distributor of distributors.controls; let i = index" class="d-flex justify-content-between mb-3" [formGroupName]="i">
             <div>
               <!-- <label>Distributor’s Name*</label> -->
               <input class="form-control" formControlName="distributorName" placeholder="Distributor's Name" type="text">
@@ -59,7 +59,7 @@
               </mat-form-field>
                 <input class="form-control w-75" formControlName="mobileNumber" type="number" placeholder="Number">
               </span>
-              <div *ngIf="distributor.get('mobileNumber')?.invalid && (distributor.get('mobileNumber')?.touched || isSubmitted)" class="text-danger">
+              <div *ngIf="distributor.get('mobileNumber')?.invalid && (distributor.get('mobileNumber')?.touched || isSubmitted)" style="margin-top: 13px;" class="text-danger">
                 {{ getErrorMessage('mobileNumber', i) }}
               </div>
             </div>
