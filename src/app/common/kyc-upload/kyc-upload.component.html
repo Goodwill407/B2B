@@ -1,0 +1,51 @@
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h4 class="mb-0"><i class="bi bi-person-vcard-fill h3"></i> KYC Details</h4>
+</div>
+<form [formGroup]="kycForm" (ngSubmit)="onSubmit()">
+    <div class="card p-4 pt-2">
+        <div class="m-0 p-0 d-flex align-items-center">
+            <button class="btn text-start" (click)="navigateFun()">
+                <i class="bi bi-arrow-left-circle h4"></i>
+            </button>
+            <h5 class="text-center mb-0 flex-grow-1">{{formData?.profile}} KYC</h5>
+
+        </div>
+        <hr class="my-2">
+        <div class="row">
+            <div class="col-6">
+                <label class="label-input mt-4">Select Document Type:</label>
+                <select formControlName="fileName" class="form-select">
+                    <option value="">Select Document</option>
+                    <option value="GSTIN">GSTIN</option>
+                    <option value="ShopLicence">Shop & Establishment Licence</option>
+                    <option value="PanCard">PAN Card</option>
+                </select>
+                <div *ngIf="submitted && kycForm.controls['fileName'].errors" class="text-danger">
+                    <small *ngIf="kycForm.controls['fileName'].errors?.['required']">Document type is required.</small>
+                </div>
+
+                <label class="label-input mt-4" for="file">Upload Document:</label>
+                <input type="file" class="form-control" id="file" (change)="onFileSelect($event)" #fileInput />
+                <div *ngIf="selectedFileName" class="mt-2">
+                    <small>Selected File: {{ selectedFileName }}</small>
+                </div>
+                <div *ngIf="submitted && kycForm.controls['file'].errors" class="text-danger">
+                    <small *ngIf="kycForm.controls['file'].errors?.['required']">File upload is required.</small>
+                </div>
+
+            </div>
+
+            <div class="col-6">
+                <div *ngIf="imagePreviewUrl" class="mt-4">
+                    <img [src]="imagePreviewUrl" alt="Image Preview" class="img-thumbnail" style="max-width: 300px;" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-6 text-center">
+                <button type="submit" class="btn submit-btn me-3">Submit</button>
+            </div>
+        </div>
+    </div>
+</form>

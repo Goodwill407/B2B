@@ -107,46 +107,52 @@
       </div>
       <hr>
       <div class="mx-2">
-        <div class="row mt-2 p-2" style="background-color:#f0f8ff ;">
-          <h5 class="mt-2">Standard Size Chart :</h5>
-          <div class="col-12">
-            <div class="row mb-2">
-              <div class="col head">Standard Size</div>
-              <div class="col head">Brand Size <br><span class="required">(in inches)</span></div>
-              <div class="col head">Chest Size <br><span class="required">(in inches)</span></div>
-              <div class="col head">Shoulder Size <br><span class="required">(in inches)</span></div>
-              <div class="col head">Front Length <br><span class="required">(in inches)</span></div>
-              <div class="col head">Length <br><span class="required">(in inches)</span></div>
-              <div class="col head">Width <br><span class="required">(in inches)</span></div>
-              <div class="col head">Height <br><span class="required">(in inches)</span></div>
-              <div class="col head">Weight <br><span class="required">(in grams)</span></div>
-              <!-- <div class="col head">Manufacturer's Price<span>({{selectedCurrency}})</span> -->
-              <div class="col head">Manufacturer's Price<span> (INR)</span>
-              </div>
-              <!-- <div class="col head">MRP<span>({{selectedCurrency}})</span></div> -->
-              <div class="col head">MRP<span> (INR)</span></div>
-            </div>
-          </div>
-
-          <div class="col-12" *ngFor="let size of product.sizes; let i = index">
-            <div class="row">
-              <div class="col" style="border-right: none;">
-                <label><b>{{ size.standardSize }}</b></label>
-              </div>
-              <div class="col"> {{size.brandSize}} </div>
-              <div class="col"> {{size.chestSize}} </div>
-              <div class="col"> {{size.shoulderSize}} </div>
-              <div class="col"> {{size.frontLength}} </div>
-              <div class="col"> {{size.length}} </div>
-              <div class="col"> {{size.width}} </div>
-              <div class="col"> {{size.height}} </div>
-              <div class="col"> {{size.weight}} </div>
-              <div class="col"> {{size.manufacturerPrice}} </div>
-              <div class="col"> {{size.singleMRP}} </div>
-            </div>
-          </div>
+        <div class="row mt-2 p-2" style="background-color:#f0f8ff;">
+          <h5 class="mt-2 ps-0 mb-0">Standard Size Chart : </h5>
+          <!-- 1 Set = 4 Pieces (1 each of Size: XS, M, L, XL, XXL) -->
+          <h5 class="mb-0"><small><b>Note :</b> Minimum Order : {{product?.minimumOrderQty ||1}} Set</small></h5>
+          <small>
+            <span>1 Set = {{ product?.sizes?.length }} Pieces</span> ( 1 each of Size:
+            <span *ngFor="let size of product?.sizes; let i = index">
+               {{ size.standardSize }}<span *ngIf="i < product.sizes.length - 1">,</span>
+            </span> )
+          </small>
+        
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Standard Size</th>
+                <th>Brand Size <br><span class="required">(in inches)</span></th>
+                <th>Chest Size <br><span class="required">(in inches)</span></th>
+                <th>Shoulder Size <br><span class="required">(in inches)</span></th>
+                <th>Front Length <br><span class="required">(in inches)</span></th>
+                <th>Length <br><span class="required">(in inches)</span></th>
+                <th>Width <br><span class="required">(in inches)</span></th>
+                <th>Height <br><span class="required">(in inches)</span></th>
+                <th>Weight <br><span class="required">(in grams)</span></th>
+                <th>Manufacturer's <br>Price <span>(INR)</span></th>
+                <th>MRP <span>(INR)</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let size of product.sizes; let i = index">
+                <td><b>{{ size.standardSize }}</b></td>
+                <td>{{ size.brandSize }}</td>
+                <td>{{ size.chestSize }}</td>
+                <td>{{ size.shoulderSize }}</td>
+                <td>{{ size.frontLength }}</td>
+                <td>{{ size.length }}</td>
+                <td>{{ size.width }}</td>
+                <td>{{ size.height }}</td>
+                <td>{{ size.weight }}</td>
+                <td>{{ size.manufacturerPrice }}</td>
+                <td>{{ size.singleMRP }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
+      
       <hr>
       <div class="row mt-2">
         <div class="col-4">

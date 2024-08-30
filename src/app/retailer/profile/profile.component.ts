@@ -6,6 +6,7 @@ import { AuthService, CommunicationService, DirectionService } from '@core';
 import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { KycUploadComponent } from 'app/common/kyc-upload/kyc-upload.component';
 
 @Component({
   selector: 'app-profile',
@@ -17,7 +18,8 @@ import { MatSelect, MatSelectModule } from '@angular/material/select';
     JsonPipe,MatSelectModule,
     BottomSideAdvertiseComponent,
     RightSideAdvertiseComponent,
-    DatePipe
+    DatePipe,
+    KycUploadComponent
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
@@ -27,18 +29,20 @@ export class ProfileComponent {
 
   mgfRegistrationForm: any = FormGroup;
   submitted: boolean = false;
-  userProfile: any
-  getResisterData: any
+  userProfile: any;
+  getResisterData: any;
+  currentStep: any = 1;
 
-  // btn flag
+  // btn flag 
   isDataSaved = false;  // Flag to track if data is saved
   submitFlag = false;
   isUpdateBtn = false;
   isEditFlag = false
   allState: { name: string; cities: string[]; iso2: String }[] = [];
   cityList: any;
-  allCountry: any
-  Allcities: any
+  allCountry: any;
+  Allcities: any;
+  allData: any;
 
   // for ads
   rightAdImages: string[] = [
@@ -48,7 +52,7 @@ export class ProfileComponent {
 
   bottomAdImage: string = 'https://5.imimg.com/data5/QE/UV/YB/SELLER-56975382/i-will-create-10-sizes-html5-creative-banner-ads.jpg';
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private datePipe: DatePipe, private direction: DirectionService) { }
+  constructor(private fb: FormBuilder, public authService: AuthService, private communicationService: CommunicationService, private datePipe: DatePipe, private direction: DirectionService) { }
 
   countries: any[] = [
     'India',
@@ -151,11 +155,12 @@ export class ProfileComponent {
       if (res) {
         res.establishDate = res.establishDate ? this.datePipe.transform(res.establishDate, 'yyyy-MM-dd') : null;
         res.registerOnFTH = res.registerOnFTH ? this.datePipe.transform(res.registerOnFTH, 'yyyy-MM-dd') : null;
-        const allData = res
-        this.mgfRegistrationForm.patchValue(allData);
-        this.stateWiseCity(null, allData.state, allData.city);
+        this.allData = res;
+        this.mgfRegistrationForm.patchValue(this.allData);
+        this.stateWiseCity(null, this.allData.state, this.allData.city);
         this.mgfRegistrationForm.disable();
         this.isDataSaved = true;
+        this.currentStep = 1;
         this.isEditFlag = true
       } else {
       }
@@ -185,6 +190,7 @@ export class ProfileComponent {
       if (res) {
         this.mgfRegistrationForm.disable();
         this.isEditFlag = true;
+        this.currentStep = 2;
       }
     },
       error => {
@@ -200,6 +206,7 @@ export class ProfileComponent {
         if (res) {
           this.mgfRegistrationForm.disable();
           this.isUpdateBtn = false;
+          this.currentStep = 2;
         }
       },
         error => {
@@ -239,6 +246,10 @@ export class ProfileComponent {
     this.direction.getCities(countryCode).subscribe(data => {
       this.Allcities = data;
     });
+  }
+
+  openImg(path:any){
+    this.communicationService.openImg(path);
   }
 }
 

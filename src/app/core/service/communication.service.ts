@@ -5,12 +5,13 @@ import { saveAs } from 'file-saver';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { state } from "@angular/animations";
+import { AuthService } from "./auth.service";
 @Injectable({
     providedIn: 'root'
 })
 export class CommunicationService {
 
-    constructor(private snackBar: MatSnackBar) { }
+    constructor(private snackBar: MatSnackBar, private authService:AuthService) { }
     exportToExcel(data: any[], fileName: string, sheetName: string): void {
         const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
         const wb: XLSX.WorkBook = XLSX.utils.book_new();
@@ -60,6 +61,9 @@ export class CommunicationService {
                 pdf.save('report.pdf'); // Generated PDF
             });
         }
+    }
+    openImg(path: string) {
+      window.open(this.authService.cdnPath + path, '_blank');
     }
 
     allState(){

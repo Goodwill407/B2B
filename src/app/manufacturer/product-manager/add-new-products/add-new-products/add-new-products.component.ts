@@ -23,7 +23,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
     NgClass,
     CommonModule,
     NgxSpinnerModule,
-    DropdownModule 
+    DropdownModule
   ],
   templateUrl: './add-new-products.component.html',
   styleUrls: ['./add-new-products.component.scss'],
@@ -35,30 +35,30 @@ export class AddNewProductsComponent {
   submittedStep1 = false;
   displayProductImageDialog: boolean = false;
   selectedColorGroupIndex: number | null = null;
-  @ViewChild('fileInput') fileInput!: ElementRef; 
+  @ViewChild('fileInput') fileInput!: ElementRef;
   CloudPath: string = ''
-  ProductId:any;
+  ProductId: any;
 
   videoSizeError: string = '';
   userProfile: any
 
-  productDetails:any
+  productDetails: any
 
   // form step
   currentStep = 1;
 
   selectedSizes: any = []
   colourCollections: any = []
- 
+
 
   // dropdown data
   sizes: any = [
-    '5XS', '4XS', '3XS', '2XS', 'XS', 'S/36', 'M/38', 'L/40', 'XL/42', '2XL/44', '3XL/46','Free'
+    '5XS', '4XS', '3XS', '2XS', 'XS', 'S/36', 'M/38', 'L/40', 'XL/42', '2XL/44', '3XL/46', 'Free'
   ];
-  currencies:any={}
+  currencies: any = {}
   // currencyOptions = Object.values(this.currencies);
-  selectedCurrency='INR'
-  
+  selectedCurrency = 'INR'
+
   amount: number | null = null;
   // allProductType = ["Clothing", "Bags", "Jewellery", "Shoes", "accessories", "Footwear"];
   allGender = ['Men', 'Women', 'Boys', 'Girl', 'Unisex'];
@@ -77,16 +77,17 @@ export class AddNewProductsComponent {
   allSubCategory: any;
   allLifeStyle: any
   allBrands: any
-  allProductType:any
+  allProductType: any
+  locationData: any;
 
   constructor(private fb: FormBuilder,
     private authService: AuthService,
     private cd: ChangeDetectorRef,
     private communicationService: CommunicationService,
     private spinner: NgxSpinnerService,
-    private route:ActivatedRoute,
+    private route: ActivatedRoute,
     private datePipe: DatePipe,
-  private direction:DirectionService) {
+    private direction: DirectionService) {
     this.addProductForm = this.fb.group({
       stepOne: this.fb.group({
         designNumber: ['', Validators.required],
@@ -95,7 +96,7 @@ export class AddNewProductsComponent {
         gender: ['', Validators.required],
         clothing: ['', Validators.required],
         subCategory: ['', Validators.required],
-        productTitle: ['', Validators.required],        
+        productTitle: ['', Validators.required],
         productDescription: ['', Validators.required],
         material: ['', Validators.required],
         materialvariety: [''],
@@ -110,14 +111,18 @@ export class AddNewProductsComponent {
         sleeveCuffStyle: ['', Validators.required],
         sleeveLength: ['', Validators.required],
         careInstructions: [''],
+        state: [''],
+        city: [''],
+        country: [''],
         sizes: this.fb.array([]),
+        minimumOrderQty: ['', Validators.required],
         setOFnetWeight: ['', Validators.required],
-        setOfMRP: ['',[Validators.required]],
-        setOfManPrice:['',[Validators.required]],
-        quantity: ['',[Validators.required]],
-        dateOfManufacture: ['',[Validators.required]],
-        dateOfListing: ['',[Validators.required]],
-        currency:['',[Validators.required]]
+        setOfMRP: ['', [Validators.required]],
+        setOfManPrice: ['', [Validators.required]],
+        quantity: ['', [Validators.required]],
+        dateOfManufacture: ['', [Validators.required]],
+        dateOfListing: ['', [Validators.required]],
+        currency: ['', [Validators.required]]
       }),
       stepTwo: this.fb.group({
         colour: [''],
@@ -130,16 +135,17 @@ export class AddNewProductsComponent {
 
     this.CloudPath = this.authService.cdnPath
 
-      // get product id from view
-      this.route.queryParamMap.subscribe(params => {
-        this.ProductId = params.get('id');
-       });  
+    // get product id from view
+    this.route.queryParamMap.subscribe(params => {
+      this.ProductId = params.get('id');
+    });
 
   }
 
-  ngOnInit() {   
+  ngOnInit() {
     // call master    
-   this.getAllSubCategory()
+    this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
+    this.getAllSubCategory()
     this.getMaterial()
     this.getFabricPttern()
     this.getOccasion()
@@ -156,15 +162,15 @@ export class AddNewProductsComponent {
     this.getAllCurrencyCode()
     this.updateValidators()
     this.disbledFields()
-   
+    this.getProfileData();
 
-    if(this.ProductId){
+    if (this.ProductId) {
       this.getProductDataById()
     }
 
   }
 
-  disbledFields(){
+  disbledFields() {
     this.stepOne.get('setOfManPrice')?.disable();
     this.stepOne.get('setOFnetWeight')?.disable();
     this.stepOne.get('setOfMRP')?.disable();
@@ -175,15 +181,19 @@ export class AddNewProductsComponent {
     return this.addProductForm.get('stepOne') as FormGroup;
   }
 
+  getProfileData() {
+    this.authService.get(`manufacturers/${this.userProfile.email}`).subscribe((res: any) => {
+      this.locationData = res;
+    });
+  }
 
-  
   getAllSubCategory() {
     const productType = this.stepOne.get('productType')?.value;
     const gender = this.stepOne.get('gender')?.value;
     const clothing = this.stepOne.get('clothing')?.value;
-  
+
     let url = 'sub-category';
-  
+
     if (productType) {
       url += `?productType=${productType}`;
     }
@@ -193,12 +203,12 @@ export class AddNewProductsComponent {
     if (clothing) {
       url += (url.includes('?') ? '&' : '?') + `clothing=${clothing}`;
     }
-  
+
     // Clear previous values
     this.allProductType = [];
     this.allClothingType = [];
     this.allSubCategory = [];
-  
+
     this.authService.get(url).subscribe(res => {
       if (res) {
         this.allProductType = Array.from(new Set(res.results.map((item: any) => item.productType)));
@@ -209,7 +219,7 @@ export class AddNewProductsComponent {
       console.log(error);
     });
   }
-  
+
 
   getAllBrands() {
     this.authService.get('brand').subscribe(res => {
@@ -223,7 +233,7 @@ export class AddNewProductsComponent {
       })
   }
 
-  
+
 
   getAllLifeStyle() {
     this.authService.get('lifestyle').subscribe(res => {
@@ -351,13 +361,13 @@ export class AddNewProductsComponent {
       })
   }
 
-  getAllCurrencyCode(){
-    this.authService.get('currency').subscribe(res=>{
-      if(res){
-        const data=res.results
-        this.currencies=Object.entries(data).map(([code, name]) => ({ code, name }));
+  getAllCurrencyCode() {
+    this.authService.get('currency').subscribe(res => {
+      if (res) {
+        const data = res.results
+        this.currencies = Object.entries(data).map(([code, name]) => ({ code, name }));
       }
-    }) 
+    })
   }
 
   // getAllSubCategory() {
@@ -384,12 +394,12 @@ export class AddNewProductsComponent {
   // Form step functions
   nextStep() {
     if (this.currentStep === 1) {
-      if(this.ProductId){
-       this.UpdateStepOne()
+      if (this.ProductId) {
+        this.UpdateStepOne()
       }
-      else{
+      else {
         this.saveStepOneData();
-      }      
+      }
     } else if (this.currentStep === 2) {
       this.saveStepTwoData();
     }
@@ -464,9 +474,12 @@ export class AddNewProductsComponent {
       const formData = this.stepOne.getRawValue();
       const stepOneData = {
         ...formData,
-        productBy: productBy
+        productBy: productBy,
+        city: this.locationData.city,
+        state: this.locationData.state,
+        country: this.locationData.country,
       };
-      
+
       this.spinner.show()
       this.authService.post('products', stepOneData).subscribe(res => {
         if (res) {
@@ -608,7 +621,7 @@ export class AddNewProductsComponent {
     return window.URL.createObjectURL(file);
   }
 
- 
+
   // for update validation
   setValidators(controlNames: string[]) {
     controlNames.forEach(controlName => {
@@ -646,49 +659,49 @@ export class AddNewProductsComponent {
 
   // create path for video and image
   getProductImagePath(Image: any) {
-    return this.CloudPath+Image;
+    return this.CloudPath + Image;
   }
 
   getColorIconPath(Image: any) {
-    return this.CloudPath+Image;
+    return this.CloudPath + Image;
   }
   getVideoPath(video: any) {
-    return this.CloudPath+video;
+    return this.CloudPath + video;
   }
 
 
   // Update Product Details
-    // patch product data
-  getProductDataById(){
+  // patch product data
+  getProductDataById() {
     this.spinner.show()
-  this.authService.getById('products',this.ProductId).subscribe(res=>{
-    this.productDetails=res;
-    if(this.productDetails){
-      if(this.currentStep == 2){
-        this.colourCollections=this.productDetails.colourCollections
-      }else{
-    this.stepOne.patchValue(this.productDetails)
-    const formattedDate1 = this.datePipe.transform(this.productDetails.dateOfManufacture, 'yyyy-MM-dd');
-    const formattedDate2 = this.datePipe.transform(this.productDetails.dateOfListing, 'yyyy-MM-dd');
-    this.stepOne.patchValue({
-      dateOfManufacture: formattedDate1,
-      dateOfListing:formattedDate2
-      // other form controls
-    });
-     // Patch the nested ProductDimension form group
-     this.stepOne.get('ProductDeimension')?.patchValue({
-      length: this.productDetails.ProductDeimension[0].length,
-      width: this.productDetails.ProductDeimension[0].width,
-      height: this.productDetails.ProductDeimension[0].height,
-    });
-    // Handle patching the sizes array
-    this.patchSizesArray(this.productDetails.sizes);
-    }  
-  }
-  this.spinner.hide()
-  },error=>{
-    this.spinner.hide()
-  })
+    this.authService.getById('products', this.ProductId).subscribe(res => {
+      this.productDetails = res;
+      if (this.productDetails) {
+        if (this.currentStep == 2) {
+          this.colourCollections = this.productDetails.colourCollections
+        } else {
+          this.stepOne.patchValue(this.productDetails)
+          const formattedDate1 = this.datePipe.transform(this.productDetails.dateOfManufacture, 'yyyy-MM-dd');
+          const formattedDate2 = this.datePipe.transform(this.productDetails.dateOfListing, 'yyyy-MM-dd');
+          this.stepOne.patchValue({
+            dateOfManufacture: formattedDate1,
+            dateOfListing: formattedDate2
+            // other form controls
+          });
+          // Patch the nested ProductDimension form group
+          this.stepOne.get('ProductDeimension')?.patchValue({
+            length: this.productDetails.ProductDeimension[0].length,
+            width: this.productDetails.ProductDeimension[0].width,
+            height: this.productDetails.ProductDeimension[0].height,
+          });
+          // Handle patching the sizes array
+          this.patchSizesArray(this.productDetails.sizes);
+        }
+      }
+      this.spinner.hide()
+    }, error => {
+      this.spinner.hide()
+    })
   }
 
   onEditFormData(data: any) {
@@ -724,65 +737,65 @@ export class AddNewProductsComponent {
   }
 
   // update step one data
-  UpdateStepOne(){
-    if(this.stepOne.invalid){
+  UpdateStepOne() {
+    if (this.stepOne.invalid) {
       return;
     }
-    else{
-    this.spinner.show()
-    const formData = this.stepOne.getRawValue();
-    this.authService.patchWithEmail(`products/${this.ProductId}`,formData).subscribe(res=>{
-      if(res){
-        this.colourCollections=res.colourCollections
-       this.updateValidators()
-        this.spinner.hide()
-        
-        this.communicationService.showNotification(
-          'snackbar-success',
-          `Saved Successfully...!!!`,
-          'bottom',
-          'center'
-        );
-        setTimeout(() => {
-          this.currentStep++;
-        }, 1500);
-      }
+    else {
+      this.spinner.show()
+      const formData = this.stepOne.getRawValue();
+      this.authService.patchWithEmail(`products/${this.ProductId}`, formData).subscribe(res => {
+        if (res) {
+          this.colourCollections = res.colourCollections
+          this.updateValidators()
+          this.spinner.hide()
 
-    },
-    error=>{
-      console.log('error')
+          this.communicationService.showNotification(
+            'snackbar-success',
+            `Saved Successfully...!!!`,
+            'bottom',
+            'center'
+          );
+          setTimeout(() => {
+            this.currentStep++;
+          }, 1500);
+        }
+
+      },
+        error => {
+          console.log('error')
+        }
+      )
     }
-  )
   }
-}
 
-deleteColorCOllection(CollectionData: any){
- const id=`?&id=${this.ProductId}&collectionId=${CollectionData._id}`
- this.spinner.show()
-  this.authService.delete(`products/delete/colour-collection`,id).subscribe(res=>{
-    this.getProductDataById()
-    this.spinner.hide()
-    this.communicationService.showNotification(
-      'snackbar-success',
-      `Deleted Successfully...!!!`,
-      'bottom',
-      'center'
-    );
-  },error=>{
-    this.spinner.hide()
+  deleteColorCOllection(CollectionData: any) {
+    const id = `?&id=${this.ProductId}&collectionId=${CollectionData._id}`
+    this.spinner.show()
+    this.authService.delete(`products/delete/colour-collection`, id).subscribe(res => {
+      this.getProductDataById()
+      this.spinner.hide()
+      this.communicationService.showNotification(
+        'snackbar-success',
+        `Deleted Successfully...!!!`,
+        'bottom',
+        'center'
+      );
+    }, error => {
+      this.spinner.hide()
+    }
+    )
   }
-)
-}
 
-changeCurrency(event: any) {
-  const object=event.value
-  const symbol=event.value.name.symbol || '';
-  const valueWithDash = `${symbol} -`;
+  changeCurrency(event: any) {
+    const object = event.value
+    const symbol = event.value.name.symbol || '';
+    const valueWithDash = `${symbol} -`;
 
-  this.stepOne.get('MRP')?.setValue(valueWithDash, { emitEvent: false });
+    this.stepOne.get('MRP')?.setValue(valueWithDash, { emitEvent: false });
 
-  console.log('Selected currency:', this.selectedCurrency);
-}
+    console.log('Selected currency:', this.selectedCurrency);
+  }
 
 
 
