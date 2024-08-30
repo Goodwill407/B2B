@@ -21,13 +21,33 @@
         color: #19b8f7;
     }
 }
+
 .validate-form input {
     height: 44px;
 }
+
 .eye-icon {
     position: absolute !important;
     right: 10px !important;
     top: 16px !important;
     cursor: pointer !important;
     z-index: 999 !important;
+}
+
+.auth-wrapper .float-end {
+    position: fixed;
+    right: 14px;
+    top: 2px;
+}
+
+.bottom-btn {
+    button {
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        font-weight: bold;
+    }
+}
+
+.lable-input {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-weight: bold;
 }

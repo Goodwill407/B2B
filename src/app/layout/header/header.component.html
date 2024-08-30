@@ -4,9 +4,10 @@
       <a href="#" onClick="return false;" class="navbar-toggle collapsed"
         (click)="isNavbarCollapsed = !isNavbarCollapsed" aria-expanded="false"></a>
       <a href="#" onClick="return false;" class="bars" (click)="mobileMenuSidebarOpen($event,'overlay-open')"></a>
-      <a class="navbar-brand">
+      <a class="navbar-brand py-0">
         <!-- <img src="https://cdn5.vectorstock.com/i/1000x1000/47/94/b2b-word-concepts-banner-vector-29124794.jpg" width="40px" alt="" /> -->
-        <span class="logo-name">B2B</span>
+        <!-- <span class="logo-name">B2B</span> -->
+         <img src="assets/images/auth-image/slogo.jpg" width="50px" alt="">
       </a>
     </div>
     <div class="collapse navbar-collapse" [ngClass]="isNavbarCollapsed ? '' : 'show'">
