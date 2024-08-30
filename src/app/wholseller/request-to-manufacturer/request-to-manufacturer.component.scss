@@ -1,78 +1,77 @@
 
 /* Search Section Styling */
+/* General Styles */
 .search-section {
-  margin-bottom: 10px; 
-  background-color: #F9FAFB;
-  border-radius: 8px 8px 0px 0px;
+  background-color: #ffff;
+  // border: 1px solid #dcdcdc;
+  border-radius: 6px 6px 0px 0px;
+  padding: 20px;
+ }
+
+.nav-tabs {
+  border-bottom: 2px solid #dcdcdc;
+}
+
+.nav-link {
+  font-size: 1rem;
+  color: #2c3e50;
+  padding: 10px 15px;
+  border: 1px solid transparent;
+}
+
+.nav-link.active {
+  color: #ffffff;
+  // background-color: #3498db;
+  border-color: #3498db;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+  background-color: #3498db;
+  // border-color: #3498db;
+}
+
+.tab-content {
+  // padding: 15px;
+}
+
+.brand-search, .product-search {
+  width:100% ;
+}
+.brand-search input{
+  width:400px;
 }
 
 .search-label {
-  width:110px;  
-  font-weight: 500;
-}
-
-.brand-search-container, .product-search-container {
-  display: flex;
-  align-items: center;
+  font-size: 1rem;
+  width: 100px;
+  color: #2c3e50;
 }
 
 .vertical-line {
+  height: 24px;
   width: 1px;
-  height: 34px; /* Match the height of the search elements */
-  background-color: #6c757d;
+  background-color: #dcdcdc;
   margin: 0 10px;
 }
 
-.brand-search {
-  display: flex;
-  align-items: center;
-  
+.form-control, .form-select {
+  border-radius: 6px;
+  border: 1px solid #dcdcdc;
 }
 
-.brand-search input {
-  width: 200px;
-  height: 34px;
-  margin-right: 8px;
+.btn-primary {
+  background-color: #3498db;
+  border-color: #3498db;
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
-.product-search {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.btn-primary:hover {
+  background-color: #2980b9;
+  border-color: #2980b9;
 }
 
-.product-search select,
-.product-search button {
-  height: 34px;
-}
-
-.product-search button {
-  background-color: #6c757d;
-  color: white;
-  border: none;
-}
-
-.product-search button:hover {
-  background-color: #5a6268;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .search-section {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .brand-search-container,
-  .product-search-container {
-     margin-bottom: 10px;
-  }
-
-  .product-search {
-    flex-wrap: wrap;
-    gap: 5px;
-  }
-}
 
 
 

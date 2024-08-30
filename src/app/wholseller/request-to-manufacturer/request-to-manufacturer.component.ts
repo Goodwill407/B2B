@@ -2,7 +2,7 @@ import { NgFor } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '@core';
+import { AuthService, CommunicationService } from '@core';
 import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
 import { AuthServiceService } from 'auth-service.service';
@@ -37,6 +37,8 @@ export class RequestToManufacturerComponent {
   allSubCategory:any[]=[];
   allcategory:any[]=[];
   allGender = ['Men', 'Women', 'Boys', 'Girls'];
+  userProfile:any;
+  WholsellerData:any
 
 
   brandData:any[]=[];
@@ -53,8 +55,8 @@ export class RequestToManufacturerComponent {
 
   bottomAdImage: string = 'https://elmanawy.info/demo/gusto/cdn/ads/gusto-ads-banner.png';
 
-  constructor(private authService:AuthService, private route:Router){
-
+  constructor(private authService:AuthService, private route:Router, private communicationService:CommunicationService){
+    this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
   }
 
   ngOnInit(){
@@ -62,6 +64,7 @@ export class RequestToManufacturerComponent {
     this.getAllBrands()
     this.getProductType()
     this.getProductType()
+    this.getUserProfileData()
   }
 
   onBrandSearchChange(): void {
@@ -192,6 +195,54 @@ export class RequestToManufacturerComponent {
     // Navigate to the target route with email as query parameter
     this.route.navigate(['/wholesaler/mnf-details'], { queryParams: { email: email } });
   }
+
+  sendRequestToManufacturer(ownerDetails:any){  
+    const requestBody={
+      fullName : ownerDetails.fullName ,
+      companyName: ownerDetails.companyName,
+      email:  ownerDetails.email,
+      code:  ownerDetails.code,
+      mobileNumber:  ownerDetails.mobNumber,
+      requestByFullName: this.WholsellerData.fullName,
+      requestByCompanyName: this.WholsellerData.companyName,
+      requestByEmail: this.WholsellerData.email,
+      requestByCountry: this.WholsellerData.country,
+      requestByCity: this.WholsellerData.city,
+      requestByState: this.WholsellerData.state,
+      requestByCountryCode:this.WholsellerData.code,
+      requestByMobileNumber:this.WholsellerData.mobNumber,
+      requestByRole: this.userProfile.role,
+      role: "Manufacturer" ,
+      state:  ownerDetails.state,
+      city:  ownerDetails.city,
+      country:  ownerDetails.country
+    }
+  this.authService.post('request',requestBody).subscribe(
+    response => {        
+      this.brandData=response       
+      this.communicationService.showNotification('snackbar-success', 'Request added successfully','bottom','center');
+    },
+    error => {
+      console.error('Error searching brand:', error);
+      // Handle error accordingly
+    }
+  );
+}
+
+getUserProfileData() {
+  this.authService.get(`wholesaler/${this.userProfile.email}`).subscribe((res: any) => {
+    if (res) {
+     this.WholsellerData=res
+      
+    } else {
+      // Handle the case where there's no datap
+    }
+  }, error => {
+    if (error.error.message === "Manufacturer not found") {
+
+    }
+  })
+}
 
   }
 

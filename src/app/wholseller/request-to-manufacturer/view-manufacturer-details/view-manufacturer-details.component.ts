@@ -1,7 +1,7 @@
 import { NgFor } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AuthService } from '@core';
+import { AuthService, CommunicationService } from '@core';
 
 export interface Company {
   name: string;
@@ -42,9 +42,12 @@ export class ViewManufacturerDetailsComponent  {
   CompanyData:any
   brandsDetails:any
   cdnPath:any
+  userProfile:any;
+  WholsellerData:any;
 
-  constructor(private route: ActivatedRoute, private authService:AuthService) {
+  constructor(private route: ActivatedRoute, private authService:AuthService,private communicationService:CommunicationService) {
     this.cdnPath=authService.cdnPath
+    this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
   }
 
   // Initialize the company data in ngOnInit
@@ -55,6 +58,7 @@ export class ViewManufacturerDetailsComponent  {
       console.log(this.email)   
       this.getManufacturerData()
       this.getBrandsOfManufacturer()
+      this.getUserProfileData() 
     });
 
     this.company = {
@@ -106,6 +110,54 @@ export class ViewManufacturerDetailsComponent  {
         }
       })
     }
+
+    sendRequestToManufacturer(){  
+      const requestBody={
+        fullName : this.CompanyData.fullName ,
+        companyName: this.CompanyData.companyName,
+        email:  this.CompanyData.email,
+        code:  this.CompanyData.code,
+        mobileNumber:  this.CompanyData.mobNumber,
+        requestByFullName: this.WholsellerData.fullName,
+        requestByCompanyName: this.WholsellerData.companyName,
+        requestByEmail: this.WholsellerData.email,
+        requestByCountry: this.WholsellerData.country,
+        requestByCity: this.WholsellerData.city,
+        requestByState: this.WholsellerData.state,
+        requestByCountryCode:this.WholsellerData.code,
+        requestByMobileNumber:this.WholsellerData.mobNumber,
+        requestByRole: this.userProfile.role,
+        role: "Manufacturer" ,
+        state:  this.CompanyData.state,
+        city:  this.CompanyData.city,
+        country:  this.CompanyData.country
+      }
+    this.authService.post('request',requestBody).subscribe(
+      response => {        
+           
+        this.communicationService.showNotification('snackbar-success', 'Request added successfully','bottom','center');
+      },
+      error => {
+        console.error('Error searching brand:', error);
+        // Handle error accordingly
+      }
+    );
+  }
+
+  getUserProfileData() {
+    this.authService.get(`wholesaler/${this.userProfile.email}`).subscribe((res: any) => {
+      if (res) {
+       this.WholsellerData=res
+        
+      } else {
+        // Handle the case where there's no datap
+      }
+    }, error => {
+      if (error.error.message === "Manufacturer not found") {
+  
+      }
+    })
+  }
     
 
   }

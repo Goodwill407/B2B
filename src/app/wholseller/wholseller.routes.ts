@@ -13,6 +13,7 @@ import { WishlistProductComponent } from "./product/wishlist-product/wishlist-pr
 import { CartProductComponent } from "./product/cart-product/cart-product.component";
 import { RequestToManufacturerComponent } from "./request-to-manufacturer/request-to-manufacturer.component";
 import { ViewManufacturerDetailsComponent } from "./request-to-manufacturer/view-manufacturer-details/view-manufacturer-details.component";
+import { MnfRequestListComponent } from "./request-to-manufacturer/mnf-request-list/mnf-request-list.component";
 
 export const R_Auth:Route[] = [
     {path: 'dashboard', component: DashboardComponent},
@@ -28,5 +29,6 @@ export const R_Auth:Route[] = [
     {path: 'wishlist-product', component: WishlistProductComponent},
     {path: 'add-to-cart', component: CartProductComponent},
     {path: 'request-to-mnf', component: RequestToManufacturerComponent},
-    {path:'mnf-details', component:ViewManufacturerDetailsComponent}
+    {path:'mnf-details', component:ViewManufacturerDetailsComponent},
+    {path:'requested-mnf_list', component:MnfRequestListComponent}
 ]
