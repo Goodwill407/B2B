@@ -45,37 +45,18 @@
   margin-bottom: 25px;
 }
 
-.fact-sheet h4 {
-  font-size: 1.4rem;
-  color: #2c3e50;
-  border-bottom: 2px solid #dcdcdc;
-  padding-bottom: 6px;
-  margin-bottom: 15px;
-  display: inline-block;
-}
-
-.fact-sheet ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-
-.fact-sheet li {
-  padding: 8px 0;
-  display: flex;
-  justify-content: space-between;
+.fact-sheet p {
+  margin-bottom: 12px;
   font-size: 0.95rem;
   color: #2c3e50;
-  border-bottom: 1px solid #dcdcdc;
+  display: flex;
+  align-items: center;
 }
 
-.fact-sheet li:last-child {
-  border-bottom: none;
-}
-
-.fact-sheet strong {
+.fact-sheet p strong {
+  min-width: 180px;
   color: #34495e;
-  min-width: 150px;
+  font-weight: 600;
 }
 
 
@@ -163,8 +144,8 @@
 }
 
 .brand-item {
-  width: 120px; /* Reduced width */
-  height: 140px; /* Reduced height */
+  width: 140px; /* Reduced width */
+  height: 160px; /* Reduced height */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -179,8 +160,8 @@
 }
 
 .brand-item img {
-  max-width: 80px; /* Reduced logo size */
-  max-height: 80px; /* Reduced logo size */
+  max-width: 100px; /* Reduced logo size */
+  max-height: 100px; /* Reduced logo size */
   margin-bottom: 8px;
   object-fit: contain;
 }
@@ -188,5 +169,31 @@
 .brand-name {
   font-size: 0.8rem; /* Slightly smaller font size */
   color: #2c3e50;
+}
+
+/* Button Container Styling */
+.button-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Add Request Button Styling */
+.add-request-button {
+  background-color: #3498db; /* Primary button color */
+  color: #ffffff; /* Text color */
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-request-button:hover {
+  background-color: #2980b9; /* Darker shade on hover */
+}
+
+.add-request-button:focus {
+  outline: none;
 }
 

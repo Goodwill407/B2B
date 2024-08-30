@@ -11,6 +11,7 @@ import { ViewManageProductComponent } from "./product-manager/view-manage-produc
 import { BrandComponent } from "./brand/brand.component";
 import { ViewProductComponent } from "./product-manager/view-manage-product/view-product/view-product.component";
 import { CategoryComponent } from "./category/category.component";
+import { WholselersRequestsComponent } from "./wholselers-requests/wholselers-requests.component";
 
 
 export const M_Auth:Route[] = [
@@ -26,4 +27,5 @@ export const M_Auth:Route[] = [
     {path: 'manage-product', component: ViewManageProductComponent},
     {path: 'view-product', component: ViewProductComponent},
     {path: 'category', component: CategoryComponent},
+    {path: 'wholselers-Requests', component: WholselersRequestsComponent},
 ]
