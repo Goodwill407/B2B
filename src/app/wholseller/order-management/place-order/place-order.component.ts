@@ -1,5 +1,7 @@
 import { CommonModule, NgFor } from '@angular/common';
 import { Component } from '@angular/core';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-place-order',
@@ -46,32 +48,34 @@ export class PlaceOrderComponent {
   ngOnInit(): void { }
 
   printChallan(): void {
-    let popupWinindow: Window | null;
-    const innerContents = document.getElementById('challan')?.innerHTML;
+    const data = document.getElementById('challan'); // Replace with your element ID
+    if (data) {
+      html2canvas(data, {
+        scale: 3, // Increase the scale to improve image quality
+        useCORS: true, // Enable cross-origin images to be loaded properly
+      }).then((canvas) => {
+        const imgWidth = 208;
+        const pageHeight = 295;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
 
-    if (!innerContents) {
-        console.error("Challan content not found.");
-        return;
+        const contentDataURL = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        let position = 0;
+
+        pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        // Add additional pages if the content is too long
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+
+        pdf.save('download.pdf');
+      });
     }
-
-    popupWinindow = window.open('', '_blank', 'width=600,height=700,scrollbars=no,menubar=no,toolbar=no,location=no,status=no,titlebar=no');
-
-    if (popupWinindow) {
-        popupWinindow.document.open();
-        popupWinindow.document.write(`
-            <html>
-            <head>
-                <link rel="stylesheet" type="text/css" href="style.css" />
-            </head>
-            <body onload="window.print()">
-                ${innerContents}
-            </body>
-            </html>
-        `);
-        popupWinindow.document.close();
-    } else {
-        console.error("Failed to open print window. It might be blocked by a popup blocker.");
-    }
-}
-
+  }
 }

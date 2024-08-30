@@ -166,4 +166,7 @@ export class SignupComponent implements OnInit {
       this.communicationService.showNotification('snackbar-success', 'User status updated successfully', 'bottom', 'center');
     });
   }
+  gotoHome(){
+    window.open('https://fashiontradershub.com/','_self');
+  }
 }

@@ -114,6 +114,10 @@ export class SigninComponent
         })
       }
     }
+
+    gotoHome(){
+      window.open('https://fashiontradershub.com/','_self');
+    }
   }
   
   

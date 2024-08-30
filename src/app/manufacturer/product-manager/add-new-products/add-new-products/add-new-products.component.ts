@@ -79,6 +79,7 @@ export class AddNewProductsComponent {
   allBrands: any
   allProductType: any
   locationData: any;
+  showFlag: boolean = false;
 
   constructor(private fb: FormBuilder,
     private authService: AuthService,
@@ -191,9 +192,9 @@ export class AddNewProductsComponent {
     const productType = this.stepOne.get('productType')?.value;
     const gender = this.stepOne.get('gender')?.value;
     const clothing = this.stepOne.get('clothing')?.value;
-
+  
     let url = 'sub-category';
-
+  
     if (productType) {
       url += `?productType=${productType}`;
     }
@@ -203,23 +204,36 @@ export class AddNewProductsComponent {
     if (clothing) {
       url += (url.includes('?') ? '&' : '?') + `clothing=${clothing}`;
     }
-
+  
     // Clear previous values
     this.allProductType = [];
     this.allClothingType = [];
     this.allSubCategory = [];
-
+  
     this.authService.get(url).subscribe(res => {
       if (res) {
         this.allProductType = Array.from(new Set(res.results.map((item: any) => item.productType)));
         this.allClothingType = Array.from(new Set(res.results.map((item: any) => item.category)));
         this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
+  
+        // Check if all fields are selected and update showFlag
+        this.checkAllFieldsSelected();
       }
     }, (error) => {
       console.log(error);
     });
   }
-
+  
+  checkAllFieldsSelected() {
+    const productType = this.stepOne.get('productType')?.value;
+    const gender = this.stepOne.get('gender')?.value;
+    const clothing = this.stepOne.get('clothing')?.value;
+    const subCategory = this.stepOne.get('subCategory')?.value;
+  
+    // Set showFlag to true if all fields are selected, otherwise set it to false
+    this.showFlag = !!(productType && gender && clothing && subCategory);
+  }
+  
 
   getAllBrands() {
     this.authService.get('brand').subscribe(res => {

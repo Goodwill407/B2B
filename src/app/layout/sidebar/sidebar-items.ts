@@ -3,18 +3,6 @@ export const ROUTES: RouteInfo[] = [
   // Admin Modules
 
   {
-    path: '',
-    title: 'MAIN MENU',
-    iconType: '',
-    icon: '',
-    class: '',
-    groupTitle: true,
-    badge: '',
-    badgeClass: '',
-    role: ['All'],
-    submenu: [],
-  },
-  {
     path: '/mnf/dashboard',
     title: `Dashboard`,
     iconType: 'material-icons-outlined',

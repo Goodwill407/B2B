@@ -1,58 +1,62 @@
 <div class="auth-container">
-    <div class="row auth-main">
-      <div class="col-sm-8 px-0 d-none d-sm-block">
-        <div class="left-img" style="background-image: url(assets/images/auth-image/img1.jpg);">
-        </div>
+  <div class="row auth-main">
+    <div class="col-sm-7 px-0 d-none d-sm-block">
+      <div class="left-img" style="background-image: url(assets/images/auth-image/sign_in_img.jpg);">
       </div>
-      <div class="col-sm-4 auth-form-section">
-        <div class="form-section">
-          <div class="auth-wrapper">
-            <p class="auth-signup-text text-muted  pb-0">Welcome to
+    </div>
+    <div class="col-sm-5 auth-form-section">
+      <div class="form-section">
+        <div class="auth-wrapper">
+          <!-- <p class="auth-signup-text text-muted  pb-0">Welcome to
             </p>
-            <h2 class="welcome-msg-log pb-5"> Fashion Traders Hub</h2>
-            
-            <!-- <h2 class="login-title">Sign in</h2> -->
-            <form class="validate-form" [formGroup]="authForm" (ngSubmit)="onSubmit()">
-              <div class="row">
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-4">
-                  <label class="lable-input" for="id">User Id</label>
-                  <input type="text" id="id" formControlName="email" class="form-control">
-                </div>
-              </div>
-           
-              <div class="row">
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-4">
-                  <label class="lable-input" for="password">Password</label>
-                  <div class="d-flex form-control">
-                    <input [type]="hide ? 'password' : 'text'" class="form-control shadow-none border-0 p-0"
-                        style="height: 30px !important;" formControlName="password">
-                    <mat-icon class="material-icons-outlined pwd-toggle form-control border-0 ps-1 pb-3"
-                        style="height: 30px !important;" matSuffix (click)="hide = !hide">
-                        {{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                </div>
-                </div>
-              </div>
-                           
-              @if (error) {
-              <div class="alert alert-danger mt-3 mb-0">{{error}}</div>
-              }
-
-              <div class="row">
-                <div class="col-12 text-center">
-                  <button type="submit" class="btn login-btn">Log In</button>
-                </div>
-
-                <button type="button" class="btn col-12 mt-2">Forgot your password?</button>
-              </div>
-
-            </form>
-
-            <div class="navigation-link-log">
-              <div type="button" routerLink="/authentication/signup">Register</div>
-            </div>
-            
+            <h2 class="welcome-msg-log pb-5"> Fashion Traders Hub</h2> -->
+          <button class="btn float-end" (click)="gotoHome()"><b>Home</b></button>
+          <div class="text-center mb-4">
+            <img src="assets/images/auth-image/fth-logo.png" height="190px" alt="Main_logo of FTH">
           </div>
+
+          <!-- <h2 class="login-title">Sign in</h2> -->
+          <form class="validate-form" [formGroup]="authForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-4">
+                <label class="lable-input" for="id">User Id</label>
+                <input type="text" id="id" formControlName="email" class="form-control">
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mb-4">
+                <label class="lable-input" for="password">Password</label>
+                <div class="d-flex form-control">
+                  <input [type]="hide ? 'password' : 'text'" class="form-control shadow-none border-0 p-0"
+                    style="height: 30px !important;" formControlName="password">
+                  <mat-icon class="material-icons-outlined pwd-toggle form-control border-0 ps-1 pb-3"
+                    style="height: 30px !important;" matSuffix (click)="hide = !hide">
+                    {{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </div>
+              </div>
+            </div>
+
+            @if (error) {
+            <div class="alert alert-danger mt-3 mb-0">{{error}}</div>
+            }
+
+            <div class="row">
+              <div class="col-12 text-center">
+                <button type="submit" class="btn login-btn">Sign In</button>
+              </div>
+
+            </div>
+
+            <div class="d-flex justify-content-around mt-5 bottom-btn">
+              <button type="button" class="btn" routerLink="/authentication/signup">Click Here To Register!</button>
+              <button type="button" class="btn">Forgot Password</button>
+            </div>
+          </form>
+
+
         </div>
       </div>
     </div>
   </div>
+</div>
