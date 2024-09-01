@@ -20,6 +20,7 @@ import { Location } from '@angular/common';
 export class ViewProfileComponent {
   email: any;
   showFlag: boolean = false;
+  user:any;
 
   constructor(private fb: FormBuilder, private route: ActivatedRoute, private authService: AuthService, private location: Location,private datePipe: DatePipe) {
     this.initializeValidation();
@@ -32,6 +33,7 @@ export class ViewProfileComponent {
     this.route.queryParams.subscribe(params => {
       this.email = params['email'];
       const role = params['role'];
+      this.user= params['role'];
       if (this.email) {
         this.authService.get(`${role}/${this.email}`).subscribe((res: any) => {
           if (res) {

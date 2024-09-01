@@ -51,7 +51,7 @@
               <p class="mb-1 fw-bold">GST (18%) : {{ distributor.gst }}</p>
               <p class="mb-1 fw-bold">Grand Total : {{ distributor.grandTotal }}</p>
             </div>
-            <button class="btn btn-success mx-auto" (click)="placeOrder(distributor)"><i class="bi bi-cart-check"></i> Place Order</button>
+            <button class="btn btn-success mx-auto" routerLink="/wholesaler/place-order" (click)="placeOrder(distributor)"><i class="bi bi-cart-check"></i> Place Order</button>
           </div>
         </div>
       </div>

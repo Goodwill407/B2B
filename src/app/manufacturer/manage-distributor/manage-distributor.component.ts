@@ -1,7 +1,8 @@
 import { query } from '@angular/animations';
-import { NgClass, NgIf } from '@angular/common';
+import { CommonModule, NgClass, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTabsModule } from '@angular/material/tabs';
 import { Router } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.component';
@@ -14,11 +15,13 @@ import { TooltipModule } from 'primeng/tooltip';
   selector: 'app-manage-distributor',
   standalone: true,
   imports: [
-    TableModule,
-    PaginatorModule,
     NgIf,
+    NgClass,
+    CommonModule,
+    PaginatorModule,
     TooltipModule,
-    NgClass
+    TableModule,
+    MatTabsModule
   ],
   templateUrl: './manage-distributor.component.html',
   styleUrl: './manage-distributor.component.scss'
