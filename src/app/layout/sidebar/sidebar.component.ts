@@ -84,14 +84,17 @@ export class SidebarComponent extends UnsubscribeOnDestroyAdapter implements OnI
     if (this.authService.currentUserValue) {
       const userRole = this.authService.currentUserValue.role;
       // const userRole = 'Admin'
-      
+      this.authService.get('users/'+this.authService.currentUserValue.id).subscribe((res:any) =>{
+        this.userImg = res.profile?this.authService.cdnPath+ res.profile: 'assets/images/user/person.png';
+        this.userFullName = res.fullName;
+      });
         
-      this.userImg = 'assets/images/user/person.png';
+      // this.userImg = 'assets/images/user/person.png';
 
       this.sidebarItems = ROUTES.filter(
         (x) => x.role.indexOf(userRole) !== -1 || x.role.indexOf('All') !== -1
       );
-      this.userFullName = this.authService.currentUserValue.username;
+      // this.userFullName = this.authService.currentUserValue.username;
       if (userRole === Role.Superadmin) {
         this.userType = "Admin";
       } else if(userRole === Role.Wholesaler){

@@ -320,12 +320,22 @@
                                     </div>
                                 </div>
 
-                                <div class="row mt-2" *ngIf="allData">
+                                <div class="row mt-3" *ngIf="allData">
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                                        @if(allData.profileImg){
+                                        <label class="label-input"> <b>Company Logo : </b> </label>
+                                        <img (click)="openImg(allData.profileImg)" class="ms-2" [src]="authService.cdnPath + allData.profileImg" height="180px" width="180px"
+                                            alt="Document Img">
+                                        }
+                                        @else {
+                                        <label class="label-input"><b>Company Logo : </b> Not Uploaded .</label>
+                                        }
+                                    </div>
                                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                                         @if(allData.fileName){
                                         <label class="label-input"> <b>KYC Documents : {{allData?.fileName}}</b> <span
                                                 class="required"><small>&nbsp; ( Approval Pending )</small></span></label>
-                                        <img (click)="openImg(allData.file)" [src]="authService.cdnPath + allData.file" height="200px" width="180px"
+                                        <img (click)="openImg(allData.file)" [src]="authService.cdnPath + allData.file" height="180px" width="200px"
                                             alt="Document Img">
                                         }
                                         @else {
@@ -349,7 +359,7 @@
                 </div>
                 <div *ngIf="currentStep == 2">
                     <app-kyc-upload (newItemEvent)="getSavedProfileData()" [objPath]="'wholesaler/upload/doc/'+allData.id"
-                        [formData]="{file:allData?.file,fileName:allData?.fileName,profile:'Distributor'}"></app-kyc-upload>
+                    [formData]="{file:allData?.file,fileName:allData?.fileName,profileImg:allData?.profileImg,profile:'Distributor'}"></app-kyc-upload>
                 </div>
             </div>
 

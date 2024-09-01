@@ -7,7 +7,7 @@
       <a class="navbar-brand py-0">
         <!-- <img src="https://cdn5.vectorstock.com/i/1000x1000/47/94/b2b-word-concepts-banner-vector-29124794.jpg" width="40px" alt="" /> -->
         <!-- <span class="logo-name">B2B</span> -->
-         <img src="assets/images/auth-image/slogo.jpg" width="50px" alt="">
+         <img src="assets/images/auth-image/top_logo.png" width="135px" alt="logo">
       </a>
     </div>
     <div class="collapse navbar-collapse" [ngClass]="isNavbarCollapsed ? '' : 'show'">
@@ -74,27 +74,7 @@
             </div> -->
           </mat-menu>
         </li>
-        <!-- #END# Notifications-->
-        <!-- <li class="nav-item">
-          <button mat-button [matMenuTriggerFor]="languagemenu" class="lang-dropdown nav-notification-icons"> @if
-            (flagvalue !== undefined) {
-            <img src="{{flagvalue}}" height="16">
-            }
-            @if (flagvalue === undefined) {
-            <img src="{{defaultFlag}}" height="16">
-            }</button>
-          <mat-menu #languagemenu="matMenu">
-            @for (item of listLang; track item) {
-            <div class="lang-item">
-              <button mat-menu-item class="dropdown-item lang-item-list"
-                (click)="setLanguage(item.text, item.lang, item.flag)"
-                [ngClass]="{'active': langStoreValue === item.lang}">
-                <img src="{{item.flag}}" class="flag-img" height="12"> <span class="align-middle">{{item.text}}</span>
-              </button>
-            </div>
-            }
-          </mat-menu>
-        </li> -->
+      
         <li class="nav-item user_profile">
           <button mat-button [matMenuTriggerFor]="profilemenu">
             <div class="chip dropdown-toggle" ngbDropdownToggle class="pt-0">
