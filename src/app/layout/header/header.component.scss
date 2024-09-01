@@ -9,3 +9,17 @@
     cursor: pointer !important;
     z-index: 999 !important;
 }
+
+.navbar-header {
+    background-image: url('../../../assets/images/auth-image/texture_left.png');
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat; 
+}
+
+.navbar{
+    background-image: url('../../../assets/images/auth-image/top_bg.jpg');
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat; 
+}
