@@ -97,6 +97,7 @@ export class AddNewProductsComponent {
         gender: ['', Validators.required],
         clothing: ['', Validators.required],
         subCategory: ['', Validators.required],
+        // ============= depend on product Maching
         productTitle: ['', Validators.required],
         productDescription: ['', Validators.required],
         material: ['', Validators.required],
@@ -112,9 +113,6 @@ export class AddNewProductsComponent {
         sleeveCuffStyle: ['', Validators.required],
         sleeveLength: ['', Validators.required],
         careInstructions: [''],
-        state: [''],
-        city: [''],
-        country: [''],
         sizes: this.fb.array([]),
         minimumOrderQty: ['', Validators.required],
         setOFnetWeight: ['', Validators.required],
@@ -146,7 +144,7 @@ export class AddNewProductsComponent {
   ngOnInit() {
     // call master    
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
-    this.getAllSubCategory()
+    // this.getAllSubCategory()
     this.getMaterial()
     this.getFabricPttern()
     this.getOccasion()
@@ -164,7 +162,7 @@ export class AddNewProductsComponent {
     this.updateValidators()
     this.disbledFields()
     this.getProfileData();
-
+    this.getProductType();
     if (this.ProductId) {
       this.getProductDataById()
     }
@@ -188,52 +186,61 @@ export class AddNewProductsComponent {
     });
   }
 
-  getAllSubCategory() {
+
+  getProductType() {
+    this.authService.get(`producttype`).subscribe((res: any) => {
+      this.allProductType = res.results;
+    });
+  }
+
+  getCategoryByProductTypeAndGender() {
+    const productType = this.stepOne.get('productType')?.value;
+    const gender = this.stepOne.get('gender')?.value;
+
+    this.authService.get(`sub-category/get-category/by-gender?productType=${productType}&gender=${gender}`).subscribe((res: any) => {
+      if (res) {
+        this.allSubCategory = []
+      }
+      this.allClothingType = Array.from(new Set(res.results.map((item: any) => item.category)));
+    }, error => {
+
+    });
+    this.checkAllFieldsSelected();
+  }
+
+  getSubCategoryBYProductType_Gender_and_Category() {
     const productType = this.stepOne.get('productType')?.value;
     const gender = this.stepOne.get('gender')?.value;
     const clothing = this.stepOne.get('clothing')?.value;
-  
-    let url = 'sub-category';
-  
-    if (productType) {
-      url += `?productType=${productType}`;
-    }
-    if (gender) {
-      url += (url.includes('?') ? '&' : '?') + `gender=${gender}`;
-    }
-    if (clothing) {
-      url += (url.includes('?') ? '&' : '?') + `clothing=${clothing}`;
-    }
-  
-    // Clear previous values
-    this.allProductType = [];
-    this.allClothingType = [];
-    this.allSubCategory = [];
-  
-    this.authService.get(url).subscribe(res => {
+
+    this.authService.get(`sub-category?productType=${productType}&gender=${gender}&category=${clothing}`).subscribe((res: any) => {
       if (res) {
-        this.allProductType = Array.from(new Set(res.results.map((item: any) => item.productType)));
-        this.allClothingType = Array.from(new Set(res.results.map((item: any) => item.category)));
-        this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
-  
-        // Check if all fields are selected and update showFlag
-        this.checkAllFieldsSelected();
+        this.allSubCategory = []
       }
-    }, (error) => {
-      console.log(error);
+      this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
+    }, error => {
+
     });
+    this.checkAllFieldsSelected();
   }
-  
+
   checkAllFieldsSelected() {
     const productType = this.stepOne.get('productType')?.value;
     const gender = this.stepOne.get('gender')?.value;
     const clothing = this.stepOne.get('clothing')?.value;
     const subCategory = this.stepOne.get('subCategory')?.value;
-  
-    // Set showFlag to true if all fields are selected, otherwise set it to false
+    if (productType && gender && clothing && subCategory) {
+      this.mappingData(productType, gender, clothing, subCategory);
+    }
     this.showFlag = !!(productType && gender && clothing && subCategory);
   }
-  
+
+  mappingData(pType: any, gen: any, cat: any, sCat: any) {
+    this.authService.get(`mapping?productType=${pType}&gender=${gen}&category=${cat}&subCategory=${sCat}`).subscribe((res: any) => {
+      console.log(res);
+    })
+  }
+
 
   getAllBrands() {
     this.authService.get('brand').subscribe(res => {
@@ -510,9 +517,8 @@ export class AddNewProductsComponent {
           }, 1500);
 
         }
-
       },
-        errpr => {
+        (error) => {
           this.spinner.hide();
           console.log('error')
         })
@@ -593,17 +599,14 @@ export class AddNewProductsComponent {
         const formData = new FormData();
         formData.append('colour', this.stepTwo.get('colour')?.value);
         formData.append('colourName', this.stepTwo.get('colourName')?.value);
-
         const colourImage = this.stepTwo.get('colourImage')?.value;
         if (colourImage !== null) {
           formData.append('colourImage', colourImage);
         }
-
         const productVideo = this.stepTwo.get('productVideo')?.value;
         if (productVideo !== null) {
           formData.append('productVideo', productVideo);
         }
-
         const productImages = this.stepTwo.get('productImages') as FormArray;
         if (productImages && productImages.length > 0) {
           productImages.controls.forEach((control, index) => {
@@ -613,7 +616,6 @@ export class AddNewProductsComponent {
             }
           });
         }
-
         resolve(formData); // Resolve with formData
       } catch (error) {
         reject(error); // Reject in case of any error
@@ -625,7 +627,6 @@ export class AddNewProductsComponent {
   resetForm() {
     this.stepTwo.reset();
     this.productImages.clear();
-    // Manually reset the file inputs
     (document.getElementById('colourImage') as HTMLInputElement).value = '';
     (document.getElementById('videoUpload') as HTMLInputElement).value = '';
     this.submittedStep2 = false;
@@ -635,8 +636,6 @@ export class AddNewProductsComponent {
     return window.URL.createObjectURL(file);
   }
 
-
-  // for update validation
   setValidators(controlNames: string[]) {
     controlNames.forEach(controlName => {
       const control = this.stepTwo.get(controlName);
@@ -647,7 +646,6 @@ export class AddNewProductsComponent {
     });
   }
 
-  // Function to clear validators for specific controls
   clearValidators(controlNames: string[]) {
     controlNames.forEach(controlName => {
       const control = this.stepTwo.get(controlName);
@@ -658,20 +656,15 @@ export class AddNewProductsComponent {
     });
   }
 
-
-  // Function to update validators based on the colourCollections length
   updateValidators() {
     if (this.colourCollections.length === 0) {
       this.setValidators(['colourName', 'colourImage', 'productImages']);
-      // this.setValidatorsForFormArray(this.productImages);
     } else {
       this.clearValidators(['colourImage', 'productImages']);
-      // this.clearValidatorsForFormArray(this.productImages);
       this.setValidators(['colourName', 'colour']);
     }
   }
 
-  // create path for video and image
   getProductImagePath(Image: any) {
     return this.CloudPath + Image;
   }
@@ -683,9 +676,6 @@ export class AddNewProductsComponent {
     return this.CloudPath + video;
   }
 
-
-  // Update Product Details
-  // patch product data
   getProductDataById() {
     this.spinner.show()
     this.authService.getById('products', this.ProductId).subscribe(res => {
@@ -700,15 +690,12 @@ export class AddNewProductsComponent {
           this.stepOne.patchValue({
             dateOfManufacture: formattedDate1,
             dateOfListing: formattedDate2
-            // other form controls
           });
-          // Patch the nested ProductDimension form group
           this.stepOne.get('ProductDeimension')?.patchValue({
             length: this.productDetails.ProductDeimension[0].length,
             width: this.productDetails.ProductDeimension[0].width,
             height: this.productDetails.ProductDeimension[0].height,
           });
-          // Handle patching the sizes array
           this.patchSizesArray(this.productDetails.sizes);
         }
       }
@@ -722,8 +709,7 @@ export class AddNewProductsComponent {
     const formattedDate = this.datePipe.transform(data.dateOfManufacture, 'yyyy-MM-dd');
     this.stepOne.patchValue({
       quantity: data.quantity,
-      dateOfManufacture: formattedDate,
-      // other form controls
+      dateOfManufacture: formattedDate,      
     });
   }
 
@@ -778,8 +764,7 @@ export class AddNewProductsComponent {
       },
         error => {
           console.log('error')
-        }
-      )
+        });
     }
   }
 
@@ -789,30 +774,17 @@ export class AddNewProductsComponent {
     this.authService.delete(`products/delete/colour-collection`, id).subscribe(res => {
       this.getProductDataById()
       this.spinner.hide()
-      this.communicationService.showNotification(
-        'snackbar-success',
-        `Deleted Successfully...!!!`,
-        'bottom',
-        'center'
-      );
+      this.communicationService.showNotification('snackbar-success', `Deleted Successfully...!!!`, 'bottom', 'center');
     }, error => {
       this.spinner.hide()
-    }
-    )
+    });
   }
 
   changeCurrency(event: any) {
     const object = event.value
     const symbol = event.value.name.symbol || '';
     const valueWithDash = `${symbol} -`;
-
     this.stepOne.get('MRP')?.setValue(valueWithDash, { emitEvent: false });
-
     console.log('Selected currency:', this.selectedCurrency);
   }
-
-
-
 }
-
-

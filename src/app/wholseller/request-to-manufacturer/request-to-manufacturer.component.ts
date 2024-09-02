@@ -104,7 +104,6 @@ export class RequestToManufacturerComponent {
     const productType=this.filters.productType
     const gender=this.filters.gender
 
-    debugger
     this.authService.get(`sub-category/get-category/by-gender?productType=${productType}&gender=${gender}`).subscribe((res:any)=>{
       if(res){
         this.allSubCategory=[]
