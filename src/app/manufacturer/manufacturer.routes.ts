@@ -12,6 +12,7 @@ import { BrandComponent } from "./brand/brand.component";
 import { ViewProductComponent } from "./product-manager/view-manage-product/view-product/view-product.component";
 import { CategoryComponent } from "./category/category.component";
 import { WholselersRequestsComponent } from "./wholselers-requests/wholselers-requests.component";
+import { WlsListPoComponent } from "./order-management/wls-list-po/wls-list-po.component";
 
 
 export const M_Auth:Route[] = [
@@ -28,4 +29,5 @@ export const M_Auth:Route[] = [
     {path: 'view-product', component: ViewProductComponent},
     {path: 'category', component: CategoryComponent},
     {path: 'wholselers-Requests', component: WholselersRequestsComponent},
+    {path: 'wls-list', component: WlsListPoComponent},
 ]

@@ -125,7 +125,7 @@ export class SignupComponent implements OnInit {
       console.log('Password Form Submitted:', this.setPasswordFrom.value);
       const data = this.setPasswordFrom.value;
       delete data.confirmPassword
-      this.http.patch(`http://165.22.211.140:3000/v1/users/update-pass?email=${this.mgfRegistrationForm.value.email}`, data).subscribe((res: any) => {
+      this.http.patch(`https://backend.fashiontradershub.com/v1/users/update-pass?email=${this.mgfRegistrationForm.value.email}`, data).subscribe((res: any) => {
         this.router.navigate([`/authentication/signin`]);
         this.changeUserStatus(this.email);
       }, (err: any) => {

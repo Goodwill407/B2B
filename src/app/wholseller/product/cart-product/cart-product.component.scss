@@ -20,7 +20,7 @@
 
 ::ng-deep .p-datatable {
   font-size: 12px;
-  height: 60vh;
+  // height: 60vh;
   /* Set your desired font size */
 }
 
@@ -29,6 +29,11 @@
 .p-datatable-tbody>tr>td {
   text-align: center;
   /* Center align text in table headers and cells */
+}
+
+::ng-deep .p-accordion .p-accordion-content {
+  padding: 1.25rem 0.5rem;
+  border: 1px solid #e5e7eb;
 }
 
 input,
@@ -63,7 +68,7 @@ input {
 /* Right-side ads styling */
 
 .card{
-  height:80vh
+  height:70vh
 }
 
 .ads-flex {

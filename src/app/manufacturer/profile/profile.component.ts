@@ -77,7 +77,7 @@ export class ProfileComponent {
       country: ['India', Validators.required],
       state: ['', Validators.required],
       city: ['', Validators.required],
-      code: ['+91', Validators.required],
+      code: ['', Validators.required],
       pinCode: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
       mobNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       mobNumber2: [''],
