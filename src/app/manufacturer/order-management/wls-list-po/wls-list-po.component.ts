@@ -1,15 +1,14 @@
 import { CommonModule, NgStyle } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { AuthService, CommunicationService } from '@core';
-import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
-import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
+import { Component } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { TableModule } from 'primeng/table';
 import { AccordionModule } from 'primeng/accordion';
+import { FormsModule } from '@angular/forms';
+import { AuthService, CommunicationService } from '@core';
+
 
 @Component({
-  selector: 'app-cart-product',
+  selector: 'app-wls-list-po',
   standalone: true,
   imports: [
     CommonModule,
@@ -17,24 +16,15 @@ import { AccordionModule } from 'primeng/accordion';
     NgStyle,
     RouterModule,
     TableModule,
-    BottomSideAdvertiseComponent,
-    RightSideAdvertiseComponent,
     AccordionModule
   ],
-  templateUrl: './cart-product.component.html',
-  styleUrls: ['./cart-product.component.scss']
+  templateUrl: './wls-list-po.component.html',
+  styleUrl: './wls-list-po.component.scss'
 })
-export class CartProductComponent implements OnInit {
+export class WlsListPoComponent {
+
   products: any[] = [];
   userProfile: any;
-
-   // for ads
-   rightAdImages: string[] = [
-    'https://en.pimg.jp/081/115/951/1/81115951.jpg',
-    'https://en.pimg.jp/087/336/183/1/87336183.jpg'
-  ];
-
-  bottomAdImage: string = 'https://5.imimg.com/data5/QE/UV/YB/SELLER-56975382/i-will-create-10-sizes-html5-creative-banner-ads.jpg';
 
   constructor(public authService: AuthService,private router: Router, private communicationService: CommunicationService) {}
 
@@ -44,7 +34,7 @@ export class CartProductComponent implements OnInit {
   }
 
   getAllProducts(email: string) {
-    const url = `cart/cart-products/${email}`;
+    const url = `/product-order/get-product-order/by-supplyer?supplierEmail=${email}`;
     this.authService.get(url).subscribe((res: any) => {
       if (res) {
         this.products = res;

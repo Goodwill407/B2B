@@ -1,44 +1,41 @@
 <section class="content">
     <div class="content-block">
         <div class="text-end mt-4">
-            <button class="btn btn-success" (click)="printChallan()">Download</button>
+            <button class="btn btn-success" (click)="printPurchaseOrder()">Download Purchase Order</button>
         </div>
-        <div id="challan" class="challan-container card my-2">
+        <div id="purchase-order" class="challan-container card my-2">
             <div class="header">
-                <div class="company-info">
-                    <h1>{{ challan.companyName }}</h1>
-                    <p>{{ challan.companyDetails }}</p>
-                    <p>{{ challan.companyAddress }}</p>
-                    <p>{{ challan.companyContact }}</p>
-                </div>
                 <div class="logo">
-                    <img [src]="challan.logoUrl" alt="Company Logo">
+                    <img [src]="purchaseOrder.logoUrl" alt="Company Logo">
+                </div>
+                <div class="company-info ms-4">
+                    <h1>{{ purchaseOrder.buyerName }}</h1>
+                    <p>{{ purchaseOrder.buyerDetails }}</p>
+                    <p>{{ purchaseOrder.buyerAddress }}</p>
+                    <p>{{ purchaseOrder.buyerPhone }}</p>
+                    <p class="mb-2"><b>GSTIN : {{ purchaseOrder.buyerGSTIN }}</b></p>
                 </div>
             </div>
 
             <section class="gstin my-0">
-                <p class="mb-2">GSTIN : {{ challan.companyGSTIN }}</p>
-                <h2>DELIVERY CHALLAN</h2>
+                <h2>PURCHASE ORDER</h2>
             </section>
             <hr class="my-1">
             <div class="text-center">
-                <h5 class="mb-0"><u>CUSTOMER DETAILS</u></h5>
+                <h5 class="mb-0"><u>SUPPLIER DETAILS</u></h5>
             </div>
 
             <section class="customer-details">
                 <div class="customer-info">
-                    <p><strong>M/S:</strong> <span>{{ challan.customerName }}</span></p>
-                    <p><strong>Address:</strong> <span>{{ challan.customerAddress }}</span></p>
-                    <p><strong>Phone:</strong> <span>{{ challan.customerPhone }}</span></p>
-                    <p><strong>GSTIN:</strong> <span>{{ challan.customerGSTIN }}</span></p>
+                    <p><strong>Supplier :</strong> <span>{{ purchaseOrder.supplierName }}</span></p>
+                    <p><strong>Address :</strong> <span>{{ purchaseOrder.supplierAddress }}</span></p>
+                    <p><strong>Phone :</strong> <span>{{ purchaseOrder.supplierContact }}</span></p>
+                    <p><strong>Email :</strong> <span>{{ purchaseOrder.supplierEmail }}</span></p>
+                    <p><strong>GSTIN :</strong> <span>{{ purchaseOrder.supplierGSTIN }}</span></p>
                 </div>
                 <div class="challan-info">
-                    <p><strong>Challan No:</strong> <span>{{ challan.challanNo }}</span></p>
-                    <p><strong>Date:</strong> <span>{{ challan.challanDate }}</span></p>
-                    <p><strong>Lorry Receipt No:</strong> <span>{{ challan.lrNo }}</span></p>
-                    <p><strong>E-Way Bill No:</strong> <span>{{ challan.eWayNo }}</span></p>
-                    <p><strong>Transport:</strong> <span>{{ challan.transport }}</span></p>
-                    <p><strong>Vehicle Number:</strong> <span>{{ challan.vehicleNumber }}</span></p>
+                    <p><strong>PO Number :</strong> <span><b>{{purchaseOrder.poNumber}}</b></span></p>
+                    <p><strong>PO Date :</strong> <span>{{purchaseOrder.poDate}}</span></p>
                 </div>
             </section>
 
@@ -52,21 +49,23 @@
                     <thead>
                         <tr>
                             <th>Sr. No.</th>
-                            <th>Description of Goods</th>
-                            <th>HSN Code</th>
+                            <th>Design No.</th>
+                            <th>Design Title</th>
                             <th>Quantity</th>
+                            <th>MRP</th>
                             <th>Rate</th>
                             <th>Taxable Value</th>
-                            <th>GST (18%)</th>
+                            <th>GST</th>
                             <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let product of challan.products">
+                        <tr *ngFor="let product of purchaseOrder.products">
                             <td>{{ product.srNo }}</td>
+                            <td>{{ product.designNo }}</td>
                             <td>{{ product.name }}</td>
-                            <td>{{ product.hsn }}</td>
                             <td>{{ product.qty }}</td>
+                            <td>{{ product.mrp }}</td>
                             <td>{{ product.rate }}</td>
                             <td>{{ product.taxableValue }}</td>
                             <td>{{ product.gst }}</td>
@@ -75,10 +74,10 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th colspan="5"></th>
-                            <th>Total Taxable Amount</th>
-                            <th>{{ challan.totalGST }}</th>
-                            <th>{{ challan.totalAmount }}</th>
+                            <th colspan="6" class="text-end">Total Amount</th>
+                            <th>{{ purchaseOrder.totalRate }}</th>
+                            <th>{{ purchaseOrder.totalGST }}</th>
+                            <th>{{ purchaseOrder.totalAmount }}</th>
                         </tr>
                     </tfoot>
                 </table>
@@ -86,11 +85,20 @@
 
             <section class="totals">
                 <div class="total-amount">
-                    <p><strong>Total Amount After Tax:</strong> <span>{{ challan.totalAmount }}</span></p>
-                    <p><strong>Total Amount in Words:</strong> <span>{{ challan.totalInWords }}</span></p>
+                    <p><strong>Total Amount After Tax : </strong> <span>{{ purchaseOrder.totalAmount }}</span></p>
+                    <p><strong>Roundoff Total Amount : </strong> <span>{{ purchaseOrder.roundedOffTotal }}</span></p>
+                    <p><strong>Total Amount in Words : </strong> <span>{{ purchaseOrder.totalInWords }}</span></p>
                 </div>
             </section>
 
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center my-3">
+                    <button class="btn btn-success" (click)="generatePO(purchaseOrder)">Generate Purchase Order</button>
+                </div>
+
+            </div>
         </div>
     </div>
 </section>

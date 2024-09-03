@@ -212,7 +212,7 @@ export const ROUTES: RouteInfo[] = [
     role: ['manufacture'],
     submenu: [
       {
-        path: '/users/trainer',
+        path: '/mnf/wls-list',
         title: 'New Orders',
         iconType: '',
         icon: '',

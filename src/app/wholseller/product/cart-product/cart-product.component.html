@@ -1,62 +1,73 @@
 <section class="content">
   <div class="content-block">
     <div class="ads-flex">
-    <div class="flex-grow-1">    
-    <h4 class="mt-4 "><i class="bi bi-person-vcard-fill h3"></i>&nbsp; Add To Cart Products</h4>  
-    <div class="card  p-3">
-      <div class="cards-container">
-        <div *ngFor="let distributor of products; let distIndex = index">
-          <h5>Manufacture Name: {{ distributor.fullName }}</h5>
-          <p-table [value]="distributor.products">
-            <ng-template pTemplate="header">
-              <tr>
-                <th>Sr No.</th>
-                <th>Design No.</th>
-                <th>Title</th>
-                <th>Set Size</th>
-                <th>Qty</th>
-                <th>Rate</th>
-                <th>Amount</th>
-                <th>Action</th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-product let-index="rowIndex">
-              <tr>
-                <td>{{ index + 1 }}</td>
-                <td>{{ product.productId.designNumber }}</td>
-                <td>{{ product.productId.clothing }}</td>
-                <td>
-                  <ng-container *ngFor="let size of product.productId.sizes; let i = index">
-                    {{ size.standardSize }}<span *ngIf="i < product.productId.sizes.length - 1">, </span>
-                  </ng-container>
-                </td>
-                <td>
-                  <input type="number" [(ngModel)]="product.quantity"
-                    (change)="updateQuantity($event, distributor, product)">
-                </td>
-                <td>{{ product.productId.setOfManPrice }}</td>
-                <td>{{ product.quantity * product.productId.setOfManPrice }}</td>
-                <td>
-                  <button class="btn delete" (click)="deleteProduct(product.productId.id, distributor)"><i
-                      class="bi bi-trash-fill"></i></button>
-                </td>
-              </tr>
-            </ng-template>
-          </p-table>
-          <hr class="m-1">
-          <div class="d-flex align-items-center">
-            
-            <div class="totals">
-              <p class="mb-1 fw-bold">Sub Total : {{ distributor.subTotal }}</p>
-              <p class="mb-1 fw-bold">GST (18%) : {{ distributor.gst }}</p>
-              <p class="mb-1 fw-bold">Grand Total : {{ distributor.grandTotal }}</p>
-            </div>
-            <button class="btn btn-success mx-auto" routerLink="/wholesaler/place-order" (click)="placeOrder(distributor)"><i class="bi bi-cart-check"></i> Place Order</button>
-          </div>
+      <div class="flex-grow-1">
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i>&nbsp; Add To Cart Products</h4>
+
+        <!-- Start of Accordion for Each Distributor -->
+        @if(products && products.length >0){
+        <p-accordion [activeIndex]="0" class="card">
+          <ng-container *ngFor="let distributor of products; let distIndex = index">
+            <p-accordionTab class="px-0" [header]="'Manufacturer: ' + distributor.fullName">
+              <!-- Table for Products of Each Manufacturer -->
+              <p-table [value]="distributor.products">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>Sr No.</th>
+                    <th>Design No.</th>
+                    <th>Title</th>
+                    <th>Brand</th>
+                    <th>Quantity</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-product let-index="rowIndex">
+                  <tr>
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ product.productId.designNumber }}</td>
+                    <td>{{ product.productId.clothing }}</td>
+                    <td>
+                      {{ product.productId.brand}}
+                    </td>
+                    <td style="width: 100px;">
+                      <input type="number" class="w-75" [(ngModel)]="product.quantity"
+                        (change)="updateQuantity($event, distributor, product)">
+                    </td>
+                    <td>{{ product.productId.setOfManPrice }}</td>
+                    <td>{{ product.quantity * product.productId.setOfManPrice }}</td>
+                    <td>
+                      <button class="btn delete" (click)="deleteProduct(product.productId.id, distributor)">
+                        <i class="bi bi-trash-fill"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+              <hr>
+              <div class="d-flex align-items-center">
+                <div class="totals">
+                  <p class="mb-1 fw-bold">Sub Total : {{ distributor.subTotal }}</p>
+                  <p class="mb-1 fw-bold">GST (18%) : {{ distributor.gst }}</p>
+                  <p class="mb-1 fw-bold">Grand Total : {{ distributor.grandTotal }}</p>
+                </div>
+                <button class="btn btn-success mx-auto" (click)="placeOrder(distributor)">
+                  <i class="bi bi-cart-check"></i> Purchase Order
+                </button>
+              </div>
+            </p-accordionTab>
+          </ng-container>
+        </p-accordion>
+        }@else {
+        <div class="text-danger m-5 fw-6">
+          No products found for this Wholesaler.
         </div>
+        }
+
+
+        <!-- End of Accordion for Each Distributor -->
       </div>
-    </div>
-  </div>
 
       <!-- Right-Side Ads Container -->
       <div class="ads-right">
