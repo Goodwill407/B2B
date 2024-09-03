@@ -7,18 +7,18 @@ import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
-  selector: 'app-wholselers-requests',
+  selector: 'app-rejected-requests-list',
   standalone: true,
   imports: [
     TableModule,
     PaginatorModule,
     NgIf,
-    NgClass, RouterModule,TooltipModule
+    NgClass, RouterModule,  TooltipModule 
   ],
-  templateUrl: './wholselers-requests.component.html',
-  styleUrl: './wholselers-requests.component.scss'
+  templateUrl: './rejected-requests-list.component.html',
+  styleUrl: './rejected-requests-list.component.scss'
 })
-export class WholselersRequestsComponent {
+export class RejectedRequestsListComponent {
   allRequestedList: any;
   totalResults: any;
   limit = 10;
@@ -36,14 +36,15 @@ export class WholselersRequestsComponent {
   }
 
   getAllMnf(): void {
+    const status='rejected'
     // Construct the API endpoint URL dynamically
-    const endpoint = `request?email=${this.user.email}&page=${this.page}&limit=${this.limit}`;
+    const endpoint = `request/filterdata/status?status=${status}&email=${this.user.email}&page=${this.page}&limit=${this.limit}`;
     
     // Call the API using the authService
     this.authService.get(endpoint).subscribe({
       next: (res: any) => {
         // Filter the results where status is "pending"
-        this.allRequestedList = res.results.filter((item: any) => item.status === "pending"); 
+        this.allRequestedList = res.results.filter((item: any) => item.status === "rejected"); 
         
         // Store the total count of documents
         this.totalResults = res.totalResults;
@@ -87,11 +88,5 @@ export class WholselersRequestsComponent {
         this.communicationService.showNotification('snackbar-error', 'An error occurred while processing the request', 'bottom', 'center');
       }
     });
-  }
-
-  navigateToViewPage(data:any){
-    const queryParams = { data: JSON.stringify(data) };
-    this.router.navigate(['/mnf/Wholseler-Details'], { queryParams });
-    // this.router.navigate(['/mnf/Wholseler-Details'], { queryParams: { data: data } });
   }
 }

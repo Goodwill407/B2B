@@ -59,8 +59,8 @@
                         <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                             <label class="label-input" for="productDescription">Product Description<span
                                     class="required">*</span></label>
-                            <textarea name="productDescription" id="productDescription" 
-                                class="form-control" formControlName="productDescription"
+                            <textarea name="productDescription" id="productDescription" class="form-control"
+                                formControlName="productDescription"
                                 [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('productDescription')?.invalid}"></textarea>
                             <div *ngIf="submittedStep1 && stepOne.get('productDescription')?.invalid"
                                 class="invalid-feedback">
@@ -80,7 +80,8 @@
                                     formControlName="productType"
                                     [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('productType')?.invalid}">
                                     <option value="" disabled selected>Select</option>
-                                    <option *ngFor="let type of allProductType" [value]="type.name">{{ type.name }}</option>
+                                    <option *ngFor="let type of allProductType" [value]="type.name">{{ type.name }}
+                                    </option>
                                 </select>
                                 <!-- Validation feedback -->
                                 <div *ngIf="submittedStep1 && stepOne.get('productType')?.invalid"
@@ -131,7 +132,7 @@
                                 <label class="label-input" for="subCategory">Sub Category<span
                                         class="required">*</span></label>
                                 <select name="subCategory" id="subCategory" class="form-select"
-                                    formControlName="subCategory"  (change)="checkAllFieldsSelected()"
+                                    formControlName="subCategory" (change)="checkAllFieldsSelected()"
                                     [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('subCategory')?.invalid}">
                                     <option value="" disabled selected>Select</option>
                                     <option [value]="subCategory" *ngFor="let subCategory of allSubCategory">
@@ -149,7 +150,7 @@
                         </div>
                         <!-- @if(showFlag){ -->
                         <div class="row mt-2">
-                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <div *ngIf="visibleFields.includes('material')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="material">Material<span
                                         class="required">*</span></label>
                                 <select name="material" id="material" class="form-select" formControlName="material"
@@ -168,15 +169,16 @@
                                 </div>
                             </div>
 
-                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                            <div *ngIf="visibleFields.includes('materialvariety')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="materialvariety">Material Variety of any</label>
                                 <input type="text" id="materialvariety" formControlName="materialvariety"
                                     class="form-control">
                             </div>
-                        </div>
 
-                        <div class="row mt-2">
-                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+
+                            <div *ngIf="visibleFields.includes('fabricPattern')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="fabricPattern">Fabric Pattern<span
                                         class="required">*</span></label>
                                 <select name="fabricPattern" id="fabricPattern" class="form-select"
@@ -196,19 +198,21 @@
                                 </div>
                             </div>
 
-                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <div *ngIf="visibleFields.includes('selectedOccasion')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="fitStyle">Occasion</label>
                                 <p-multiSelect [options]="allOccasionType" placeholder="Select Occasion" optionLabel=""
                                     formControlName="selectedOccasion" class="custom-multiSelect"></p-multiSelect>
                             </div>
 
-                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <div *ngIf="visibleFields.includes('selectedlifeStyle')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="lifeStyle">Life Style</label>
                                 <p-multiSelect [options]="allLifeStyle" placeholder="Select Style" optionLabel=""
                                     formControlName="selectedlifeStyle" class="custom-multiSelect"></p-multiSelect>
                             </div>
 
-                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <div *ngIf="visibleFields.includes('fitStyle')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="fitStyle">Fit Style<span
                                         class="required">*</span></label>
                                 <select name="fitStyle" id="fitStyle" class="form-select" formControlName="fitStyle"
@@ -227,10 +231,9 @@
                                 </div>
                             </div>
 
-                        </div>
 
-                        <div class="row mt-2">
-                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <div *ngIf="visibleFields.includes('neckStyle')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="neckStyle">Neck Style<span
                                         class="required">*</span></label>
                                 <select name="neckStyle" id="neckStyle" class="form-select" formControlName="neckStyle"
@@ -248,7 +251,8 @@
                                 </div>
                             </div>
 
-                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <div *ngIf="visibleFields.includes('closureType')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="closureType">Closure Type<span
                                         class="required">*</span></label>
                                 <select name="closureType" id="closureType" class="form-select"
@@ -267,7 +271,8 @@
                                 </div>
                             </div>
 
-                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <div *ngIf="visibleFields.includes('pocketDescription')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="pocketDescription">Pocket Description<span
                                         class="required">*</span></label>
                                 <select name="pocketDescription" id="pocketDescription" class="form-select"
@@ -286,7 +291,8 @@
                                 </div>
                             </div>
 
-                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <div *ngIf="visibleFields.includes('sleeveCuffStyle')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="sleeveCuffStyle">Sleeve Cuff Style<span
                                         class="required">*</span></label>
                                 <select name="sleeveCuffStyle" id="sleeveCuffStyle" class="form-select"
@@ -304,10 +310,9 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="row mt-2">
-                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <div *ngIf="visibleFields.includes('sleeveLength')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="sleeveLength">Sleeve Length<span
                                         class="required">*</span></label>
                                 <select name="sleeveLength" id="sleeveLength" class="form-select"
@@ -325,12 +330,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <div *ngIf="visibleFields.includes('specialFeature')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="specialFeature">Special Feature</label>
                                 <p-multiSelect [options]="allSpecialFeature" placeholder="Select" optionLabel=""
                                     formControlName="specialFeature" class="custom-multiSelect"></p-multiSelect>
                             </div>
-                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <div *ngIf="visibleFields.includes('careInstructions')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="careInstructions">Care Instructions</label>
                                 <select name="careInstructions" id="careInstructions" class="form-select"
                                     formControlName="careInstructions">
@@ -339,16 +346,152 @@
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                                <label class="label-input" for="currency">Select Currency</label>
-                                <select name="currency" id="currency" class="form-select" [(ngModel)]="selectedCurrency"
-                                    formControlName="currency">
+                            <!-- new fields -->
+                            <div *ngIf="visibleFields.includes('seasons')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="seasons">Seasons</label>
+                                <select name="seasons" id="seasons" class="form-select"
+                                    formControlName="seasons">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of allCareInstruction">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div *ngIf="visibleFields.includes('noOfPockets')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="noOfPockets">No Of Pockets</label>
+                                <select name="noOfPockets" id="noOfPockets" class="form-select"
+                                    formControlName="noOfPockets">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of allCareInstruction">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div *ngIf="visibleFields.includes('noOfPockets')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="noOfPockets">No Of Pockets</label>
+                                <select name="noOfPockets" id="noOfPockets" class="form-select"
+                                    formControlName="noOfPockets">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of allCareInstruction">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div *ngIf="visibleFields.includes('scoksStyle')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="scoksStyle">Select scoksStyle</label>
+                                <select name="scoksStyle" id="scoksStyle" class="form-select" 
+                                    formControlName="scoksStyle">
                                     <option value="" disabled selected>Select</option>
                                     <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
                                     </option>
                                 </select>
                             </div>
+
+                            <div *ngIf="visibleFields.includes('troursePocketDescription')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="troursePocketDescription">Select </label>
+                                <select name="troursePocketDescription" id="troursePocketDescription" class="form-select" 
+                                    formControlName="troursePocketDescription">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div *ngIf="visibleFields.includes('layerCompression')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="acb">Select </label>
+                                <select name="layerCompression" id="layerCompression" class="form-select" 
+                                    formControlName="layerCompression">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div *ngIf="visibleFields.includes('Waistband')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="acb">Select </label>
+                                <select name="Waistband" id="Waistband" class="form-select" 
+                                    formControlName="Waistband">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div *ngIf="visibleFields.includes('includedComponents')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="acb">Select </label>
+                                <select name="includedComponents" id="includedComponents" class="form-select" 
+                                    formControlName="includedComponents">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div *ngIf="visibleFields.includes('riseStyle')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="acb">Select </label>
+                                <select name="riseStyle" id="riseStyle" class="form-select" 
+                                    formControlName="riseStyle">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div *ngIf="visibleFields.includes('trouserFitStyle')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="acb">Select </label>
+                                <select name="trouserFitStyle" id="trouserFitStyle" class="form-select" 
+                                    formControlName="trouserFitStyle">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div *ngIf="visibleFields.includes('troursePocket')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="acb">Select </label>
+                                <select name="troursePocket" id="troursePocket" class="form-select" 
+                                    formControlName="troursePocket">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div *ngIf="visibleFields.includes('trourseRiseStyle')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="acb">Select </label>
+                                <select name="trourseRiseStyle" id="trourseRiseStyle" class="form-select" 
+                                    formControlName="trourseRiseStyle">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div *ngIf="visibleFields.includes('trourseStyle')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="acb">Select </label>
+                                <select name="trourseStyle" id="trourseStyle" class="form-select" 
+                                    formControlName="trourseStyle">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div *ngIf="visibleFields.includes('trourseLength')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="acb">Select </label>
+                                <select name="trourseLength" id="trourseLength" class="form-select" 
+                                    formControlName="trourseLength">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div *ngIf="visibleFields.includes('coinPocket')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="acb">Select </label>
+                                <select name="coinPocket" id="coinPocket" class="form-select" 
+                                    formControlName="coinPocket">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
+                                    </option>
+                                </select>
+                            </div>
+                            
                         </div>
+                        <!-- ===================== -->
 
                         <div class="m-0 p-4 border mt-2 pt-2 rounded" style="background-color: aliceblue;">
                             <div class="row">

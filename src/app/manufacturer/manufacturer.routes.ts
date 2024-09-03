@@ -12,6 +12,8 @@ import { BrandComponent } from "./brand/brand.component";
 import { ViewProductComponent } from "./product-manager/view-manage-product/view-product/view-product.component";
 import { CategoryComponent } from "./category/category.component";
 import { WholselersRequestsComponent } from "./wholselers-requests/wholselers-requests.component";
+import { RejectedRequestsListComponent } from "./wholselers-requests/rejected-requests-list/rejected-requests-list.component";
+import { WholselerDetailsViewComponent } from "./wholselers-requests/wholseler-details-view/wholseler-details-view.component";
 import { WlsListPoComponent } from "./order-management/wls-list-po/wls-list-po.component";
 
 
@@ -29,5 +31,7 @@ export const M_Auth:Route[] = [
     {path: 'view-product', component: ViewProductComponent},
     {path: 'category', component: CategoryComponent},
     {path: 'wholselers-Requests', component: WholselersRequestsComponent},
+    {path: 'Rejected-Requests', component: RejectedRequestsListComponent},
+    {path: 'Wholseler-Details', component: WholselerDetailsViewComponent},
     {path: 'wls-list', component: WlsListPoComponent},
 ]

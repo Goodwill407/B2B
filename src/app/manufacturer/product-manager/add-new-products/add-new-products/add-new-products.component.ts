@@ -80,6 +80,20 @@ export class AddNewProductsComponent {
   allProductType: any
   locationData: any;
   showFlag: boolean = false;
+  visibleFields:any=[]
+
+  allWomensleevetype:any=[]
+  allTopstyle:any=[]
+  allEmbellishmentfeature:any=[]
+  allNoofpockets:any=[]
+  allCoinpocket:any=[]
+  allWaistsizeset:any=[]
+  allTrouserfittype:any=[]
+  allRisestyle:any=[]
+  allTrouserstyle:any=[]
+  allTrouserpocket:any=[]
+
+  // visibleFields: any=['material','materialvariety','fabricPattern','selectedOccasion']
 
   constructor(private fb: FormBuilder,
     private authService: AuthService,
@@ -93,26 +107,28 @@ export class AddNewProductsComponent {
       stepOne: this.fb.group({
         designNumber: ['', Validators.required],
         brand: ['', Validators.required],
+        productTitle: ['', Validators.required],
+        productDescription: ['', Validators.required],
         productType: ['', Validators.required],
         gender: ['', Validators.required],
         clothing: ['', Validators.required],
         subCategory: ['', Validators.required],
-        // ============= depend on product Maching
-        productTitle: ['', Validators.required],
-        productDescription: ['', Validators.required],
-        material: ['', Validators.required],
-        materialvariety: [''],
-        fabricPattern: ['', Validators.required],
-        selectedOccasion: [[]],
-        selectedlifeStyle: [[]],
-        specialFeature: [[]],
-        fitStyle: ['', Validators.required],
-        neckStyle: ['', Validators.required],
-        closureType: ['', Validators.required],
-        pocketDescription: ['', Validators.required],
-        sleeveCuffStyle: ['', Validators.required],
-        sleeveLength: ['', Validators.required],
-        careInstructions: [''],
+
+        // ============= depend on product Maching fields...           
+        // material: ['', Validators.required],
+        // materialvariety: [''],
+        // fabricPattern: ['', Validators.required],
+        // selectedOccasion: [[]],
+        // selectedlifeStyle: [[]],
+        // specialFeature: [[]],
+        // fitStyle: ['', Validators.required],
+        // neckStyle: ['', Validators.required],
+        // closureType: ['', Validators.required],
+        // pocketDescription: ['', Validators.required],
+        // sleeveCuffStyle: ['', Validators.required],
+        // sleeveLength: ['', Validators.required],
+        // careInstructions: [''],       
+        // ========== fix comman fields..
         sizes: this.fb.array([]),
         minimumOrderQty: ['', Validators.required],
         setOFnetWeight: ['', Validators.required],
@@ -122,7 +138,7 @@ export class AddNewProductsComponent {
         dateOfManufacture: ['', [Validators.required]],
         dateOfListing: ['', [Validators.required]],
         currency: ['', [Validators.required]]
-      }),
+      }),            
       stepTwo: this.fb.group({
         colour: [''],
         colourName: ['', Validators.required],
@@ -131,6 +147,9 @@ export class AddNewProductsComponent {
         productImages: this.fb.array([], Validators.required)
       })
     });
+
+        // Create form controls based on the visibleFields array
+    this.createFormControls(this.visibleFields);
 
     this.CloudPath = this.authService.cdnPath
 
@@ -162,11 +181,23 @@ export class AddNewProductsComponent {
     this.updateValidators()
     this.disbledFields()
     this.getProfileData();
-    this.getProductType();
+    this.getProductType();    
+    this.getTrouserstyle();
+    this.getTrouserpocket();
+    this.getWomensleevetype()
+    this.getTopstyle()
+    this.getNoofpockets()
+    this.getEmbellishmentfeature()
+    this.getCoinpocket()
+    this.getTrouserfittype()
+    this.getCoinpocket()
+    this.getTrouserpocket()
+    this.getTrouserstyle()
+    this.getRisestyle()
     if (this.ProductId) {
       this.getProductDataById()
     }
-
+    
   }
 
   disbledFields() {
@@ -180,6 +211,25 @@ export class AddNewProductsComponent {
     return this.addProductForm.get('stepOne') as FormGroup;
   }
 
+  // new form COntrols
+
+  createFormControls(fields: string[]): void {
+    fields.forEach(field => {
+      // Define initial value and validators for each field if needed
+      const initialValue = '';
+      const validators = [];
+
+      // Example: Adding required validator for some fields
+      if (['material', 'fabricPattern'].includes(field)) {
+        validators.push(Validators.required);
+      }
+
+      // Add the control to the form group
+      this.stepOne.addControl(field, this.fb.control(initialValue, validators));
+    });
+  }
+
+  
   getProfileData() {
     this.authService.get(`manufacturers/${this.userProfile.email}`).subscribe((res: any) => {
       this.locationData = res;
@@ -237,7 +287,9 @@ export class AddNewProductsComponent {
 
   mappingData(pType: any, gen: any, cat: any, sCat: any) {
     this.authService.get(`mapping?productType=${pType}&gender=${gen}&category=${cat}&subCategory=${sCat}`).subscribe((res: any) => {
-      console.log(res);
+     this.visibleFields=[]
+     this.visibleFields=res.results[0].inputs
+     this.createFormControls(this.visibleFields)
     })
   }
 
@@ -326,7 +378,117 @@ export class AddNewProductsComponent {
       })
   }
 
+// new master
+  getTopstyle() {
+    this.authService.get('topstyle').subscribe(res => {
+      if (res) {
+        this.allTopstyle = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
 
+  getWomensleevetype() {
+    this.authService.get('womensleevetype').subscribe(res => {
+      if (res) {
+        this.allWomensleevetype = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getEmbellishmentfeature() {
+    this.authService.get('embellishmentfeature').subscribe(res => {
+      if (res) {
+        this.allEmbellishmentfeature = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getNoofpockets() {
+    this.authService.get('noofpockets').subscribe(res => {
+      if (res) {
+        this.allNoofpockets = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getCoinpocket() {
+    this.authService.get('coinpocket').subscribe(res => {
+      if (res) {
+        this.allCoinpocket = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getWaistsizeset() {
+    this.authService.get('waistsizeset').subscribe(res => {
+      if (res) {
+        this.allWaistsizeset = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getTrouserfittype() {
+    this.authService.get('trouserfittype').subscribe(res => {
+      if (res) {
+        this.allTrouserfittype = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getRisestyle() {
+    this.authService.get('risestyle').subscribe(res => {
+      if (res) {
+        this.allRisestyle = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getTrouserstyle() {
+    this.authService.get('trouserstyle').subscribe(res => {
+      if (res) {
+        this.allTrouserstyle = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getTrouserpocket() {
+    this.authService.get('trouserpocket').subscribe(res => {
+      if (res) {
+        this.allTrouserpocket = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  } 
+// ==================================
   getAllClosureType() {
     this.authService.get('closure-type').subscribe(res => {
       if (res) {
