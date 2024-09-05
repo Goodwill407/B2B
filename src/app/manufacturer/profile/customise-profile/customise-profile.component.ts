@@ -38,6 +38,8 @@ export class CustomiseProfileComponent {
   Allcities: any;
   allData: any;
   documents:any=['PAN Card']
+  allVisabilityData:any
+  selectedCountryCode:any='India'
 
   constructor(private fb: FormBuilder, public authService: AuthService, private communicationService: CommunicationService, private datePipe: DatePipe, private direction: DirectionService) { }
 
@@ -64,6 +66,7 @@ export class CustomiseProfileComponent {
     this.getSavedProfileData()
     // this.disabledFields();
     this.getAllState();
+    
   }
 
   initializeValidation() {
@@ -102,10 +105,10 @@ export class CustomiseProfileComponent {
         accountNumber: [false],
         accountType: [false],
         bankName: [false],
+        branch: [false],
         IFSCcode:[false],
         country: [false],
-        city: [false],
-        branch: [false]
+        city: [false],       
       }),
       
     });
@@ -116,42 +119,14 @@ export class CustomiseProfileComponent {
 
   get f() {
     return this.mgfRegistrationForm.controls;
-  }
-
-  // get resisterd data
-  // getRegisteredUserData() {
-  //   this.authService.get(`users/registered-user/${this.userProfile.email}`).subscribe(res => {
-  //     this.getResisterData = res;
-  //     this.mgfRegistrationForm.patchValue({
-  //       companyName: this.getResisterData.companyName,
-  //       mobNumber: this.getResisterData.mobileNumber,
-  //       email: this.getResisterData.email,
-  //       fullName: this.getResisterData.fullName
-  //     });
-
-  //   },
-  //     error => {
-  //       this.communicationService.showNotification('snackbar-danger', error.error.message, 'bottom', 'center')
-  //     }
-  //   )
-  // }
-
-  // disbled some resistered feilds
-  // disabledFields() {
-  //   this.mgfRegistrationForm.get('fullName')?.disable();
-  //   this.mgfRegistrationForm.get('email')?.disable();
-  //   this.mgfRegistrationForm.get('mobNumber')?.disable();
-  //   this.mgfRegistrationForm.get('companyName')?.disable();
-  //   this.mgfRegistrationForm.get('registerOnFTH')?.disable();
-  // }
+  } 
 
 
   getSavedProfileData() {
     this.authService.get(`manufacturers/${this.userProfile.email}`).subscribe((res: any) => {
-      if (res) {
-        // res.establishDate = res.establishDate ? this.datePipe.transform(res.establishDate, 'yyyy-MM-dd') : null;
-        // res.registerOnFTH = res.registerOnFTH ? this.datePipe.transform(res.registerOnFTH, 'yyyy-MM-dd') : null;
-        this.allData = res;      
+      if (res) {      
+        this.allData = res; 
+        this.GetProfileVisabilityData()     
       } else {
       }
     }, error => {
@@ -170,7 +145,7 @@ export class CustomiseProfileComponent {
       this.saveProfileData()
     }
     else if (type === 'Update') {
-      this.updateData()
+      // this.updateData()
     }
   }
 
@@ -179,17 +154,16 @@ export class CustomiseProfileComponent {
     const formData = this.mgfRegistrationForm.getRawValue();
     formData.id=this.allData.id  
     // Call the API endpoint to patch the visibility settings for the manufacturer
-    this.authService.patch(`manufacturers/visible-profile`,formData).subscribe(
+    this.authService.patch(`manufacturers/visibility`,formData).subscribe(
       (res: any) => {
-        if (res) {
-          // Disable the form to prevent further edits
-          this.mgfRegistrationForm.disable();
-          
-          // Set the flag to indicate editing mode is off
-          this.isEditFlag = true;
-          
-          // Move to the next step in the process
-          this.currentStep = 2;
+        if (res) {       
+          this.communicationService.showNotification(
+            'snackbar-success',
+            'Customised Profile Data saved successfully!',
+            'bottom',
+            'center'
+          );
+          this.GetProfileVisabilityData()
         }
       },
       (error) => {
@@ -203,22 +177,22 @@ export class CustomiseProfileComponent {
       }
     );
   }
-  
-  updateData() {
-    const formData = this.mgfRegistrationForm.getRawValue();
-    this.authService.patchWithEmail(`manufacturers/${this.userProfile.email}`, formData)
-      .subscribe(res => {
-        if (res) {
-          this.mgfRegistrationForm.disable();
-          this.isUpdateBtn = false;
-          this.currentStep = 2;
-        }
-      },
-        error => {
-          this.communicationService.showNotification('snackbar-danger', error.error.message, 'bottom', 'center')
-        }
-      )
+
+  GetProfileVisabilityData(){
+    this.authService.get(`manufacturers/visible-profile/${this.allData.id}`).subscribe((res: any) => {
+      if (res) {
+       this.allVisabilityData=res.visibilitySettings
+       this.mgfRegistrationForm.patchValue(this.allVisabilityData)
+      } else {
+      }
+    }, error => {
+      if (error.error.message === "Manufacturer not found") {
+        // this.getRegisteredUserData();
+      }
+    })
   }
+  
+ 
 
   editUserData() {
     this.mgfRegistrationForm.enable();

@@ -44,6 +44,8 @@ export class ViewManufacturerDetailsComponent  {
   cdnPath:any
   userProfile:any;
   WholsellerData:any;
+  allVisabilityData:any;
+  id:any
 
   constructor(private route: ActivatedRoute, private authService:AuthService,private communicationService:CommunicationService) {
     this.cdnPath=authService.cdnPath
@@ -54,11 +56,12 @@ export class ViewManufacturerDetailsComponent  {
   ngOnInit(): void {
      // Access the query parameter
      this.route.queryParams.subscribe(params => {
-      this.email = params['email'];   
-      console.log(this.email)   
+      this.id = params['id']; 
+      this.email=params['email']      
       this.getManufacturerData()
       this.getBrandsOfManufacturer()
       this.getUserProfileData() 
+      this.GetProfileVisabilityData()
     });
 
     this.company = {
@@ -158,6 +161,19 @@ export class ViewManufacturerDetailsComponent  {
       }
     })
   }
+  GetProfileVisabilityData(){
+    this.authService.get(`manufacturers/visible-profile/${this.id}`).subscribe((res: any) => {
+      if (res) {
+       this.allVisabilityData=res;
+      } else {
+      }
+    }, error => {
+      if (error.error.message === "Manufacturer not found") {
+        // this.getRegisteredUserData();
+      }
+    })
+  }
+
     
 
   }
