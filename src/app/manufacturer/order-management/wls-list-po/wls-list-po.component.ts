@@ -5,7 +5,7 @@ import { TableModule } from 'primeng/table';
 import { AccordionModule } from 'primeng/accordion';
 import { FormsModule } from '@angular/forms';
 import { AuthService, CommunicationService } from '@core';
-
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-wls-list-po',
@@ -25,12 +25,16 @@ export class WlsListPoComponent {
 
   products: any[] = [];
   userProfile: any;
+  transportTypes: any = ['By Air', 'By Ship', 'By Road', 'By Courier'];
+  courierCompanies: any = ['FedEx','Delhivery','BlueDart','DHL','Shadowfax','Aramex Logistics Services','India Post','DTDC Courier'];
 
-  constructor(public authService: AuthService,private router: Router, private communicationService: CommunicationService) {}
+  constructor(public authService: AuthService, private router: Router, private communicationService: CommunicationService, private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.userProfile = JSON.parse(localStorage.getItem('currentUser')!);
     this.getAllProducts(this.userProfile.email);
+    this.getCouriersCompany();
+    // this.postCourierCompany({name:'FedEx'})
   }
 
   getAllProducts(email: string) {
@@ -38,41 +42,105 @@ export class WlsListPoComponent {
     this.authService.get(url).subscribe((res: any) => {
       if (res) {
         this.products = res;
-        this.products.forEach(distributor => this.updateTotals(distributor));
+        this.products.forEach(distributor => {
+          distributor.products.forEach((product: any) => {
+            product.deliveryQty = product.qty;
+            product.transportType = '';
+            product.transportCompany = '';
+            product.lorryReceiptNo = '';
+            product.vehicleNo = '';
+            product.receiptNo = '';
+            product.courierCompany = '';
+            product.otherCompanyName = '';
+            product.trackingNo = '';
+          });
+          this.updateTotals(distributor);
+        });
       }
     }, error => {
       console.log(error);
     });
   }
 
-  deleteProduct(item: any, distributor: any) {
-    this.authService.deleteWithEmail(`cart/delete/cart?email=${this.userProfile.email}&productId=${item}`).subscribe((res: any) => {
-      this.getAllProducts(this.userProfile.email);
-      this.communicationService.showNotification('snackbar-success', 'Product Removed From Cart', 'bottom', 'center');
-    });
+  getCouriersCompany(){
+    this.authService.get('courier').subscribe((data)=>{
+      this.courierCompanies = data.results;
+    })
   }
 
-  updateQuantity(event: any, distributor: any, product: any): void {
-    const quantity = event.target.value;
-    this.authService.patchWithEmail(`cart/update/cart?email=${this.userProfile.email}&productId=${product.productId.id}&quantity=${quantity}`, {})
-      .subscribe((res: any) => {
-        product.quantity = quantity;
-        this.updateTotals(distributor);
-        this.communicationService.showNotification('snackbar-success', 'Product Quantity Updated', 'bottom', 'center');
-      }, error => {
-        console.log(error);
-      });
+  postCourierCompany(data:any){
+    this.authService.post('courier', data).subscribe((data)=>{
+      console.log(data);
+    })
+  }
+
+  updateDeliveryQuantity(event: any, distributor: any, product: any): void {
+    const deliveryQuantity = event.target.value;
+    product.deliveryQty = deliveryQuantity;
+    this.updateTotals(distributor);
+    this.cd.detectChanges();
   }
 
   updateTotals(distributor: any): void {
-    distributor.subTotal = distributor.products.reduce((sum: number, product: any) => sum + (product.quantity * product.productId.setOfManPrice), 0);
-    distributor.gst = (distributor.subTotal * 0.18).toFixed(2);
+    distributor.subTotal = distributor.products.reduce((sum: number, product: any) => sum + (product.deliveryQty * product.rate), 0);
+    distributor.gst = Number((distributor.subTotal * 0.18).toFixed(2));
     distributor.grandTotal = (distributor.subTotal) + Number(distributor.gst);
   }
 
-  placeOrder(distributor:any){
-    this.router.navigate(['/wholesaler/place-order'], {
-      queryParams: { productBy: distributor.products[0].productId.productBy, email:this.userProfile.email}
-    });
+  onTransportTypeChange(distributor: any): void {
+    // Reset dependent fields when transport type changes
+    distributor.transportCompany = '';
+    distributor.lorryReceiptNo = '';
+    distributor.vehicleNo = '';
+    distributor.receiptNo = '';
+    distributor.courierCompany = '';
+    distributor.otherCompanyName = '';
+  }
+
+  validateShippingDetails(distributor: any): boolean {
+    let isValid = true;
+
+    if (!distributor.transportType) {
+      isValid = false;
+      this.communicationService.showNotification('snackbar-dark','Please select a transport type.','bottom','center')      
+    } else if (distributor.transportType === 'By Road') {
+      if (!distributor.transportCompany || !distributor.lorryReceiptNo || !distributor.vehicleNo) {
+        isValid = false;
+      this.communicationService.showNotification('snackbar-dark','Please fill in all the fields for "By Road".','bottom','center')        
+      }
+    } else if (distributor.transportType === 'By Air' || distributor.transportType === 'By Ship') {
+      if (!distributor.transportCompany || !distributor.receiptNo) {
+        isValid = false;
+      this.communicationService.showNotification('snackbar-dark','Please fill in all the fields for "Company " or "Receipt No".','bottom','center')        
+      }
+    } else if (distributor.transportType === 'By Courier') {
+      if (!distributor.courierCompany || (!distributor.otherCompanyName && distributor.courierCompany === 'Other') || !distributor.trackingNo) {
+        isValid = false;
+      this.communicationService.showNotification('snackbar-dark','Please fill in all the fields for "By Courier".','bottom','center')        
+      }
+    }
+
+    return isValid;
+  }
+
+  deliveryChallan(obj: any) {
+    if (this.validateShippingDetails(obj)) {
+      const serializedProduct = JSON.stringify(obj);
+      this.router.navigate(['/mnf/delivery-challan'], {
+        queryParams: { product: serializedProduct, email: this.userProfile.email }
+      });
+    }
+  }
+
+  onCourierCompanyChange(distributor: any): void {
+    if (distributor.courierCompany !== 'Other') {
+      distributor.otherCompanyName = '';
+    }
+  }
+  
+  addOtherCompany(companyName: string): void {
+    if (companyName && !this.courierCompanies.includes(companyName)) {
+      this.postCourierCompany({name: companyName});
+    }
   }
 }

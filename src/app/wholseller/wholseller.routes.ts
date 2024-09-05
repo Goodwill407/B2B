@@ -15,6 +15,8 @@ import { PlaceOrderComponent } from "./order-management/place-order/place-order.
 import { RequestToManufacturerComponent } from "./request-to-manufacturer/request-to-manufacturer.component";
 import { ViewManufacturerDetailsComponent } from "./request-to-manufacturer/view-manufacturer-details/view-manufacturer-details.component";
 import { MnfRequestListComponent } from "./request-to-manufacturer/mnf-request-list/mnf-request-list.component";
+import { ViewChallanComponent } from "./order-management/view-challan/view-challan.component";
+import { MnfListChallanComponent } from "./order-management/mnf-list-challan/mnf-list-challan.component";
 
 export const R_Auth:Route[] = [
     {path: 'dashboard', component: DashboardComponent},
@@ -32,5 +34,7 @@ export const R_Auth:Route[] = [
     {path: 'place-order', component: PlaceOrderComponent},
     {path: 'request-to-mnf', component: RequestToManufacturerComponent},
     {path:'mnf-details', component:ViewManufacturerDetailsComponent},
-    {path:'requested-mnf_list', component:MnfRequestListComponent}
+    {path:'requested-mnf_list', component:MnfRequestListComponent},
+    {path:'view-challan', component:ViewChallanComponent},
+    {path:'mnf-list-challan', component:MnfListChallanComponent},
 ]

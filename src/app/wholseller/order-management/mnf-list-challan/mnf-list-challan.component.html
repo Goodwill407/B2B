@@ -1,0 +1,46 @@
+<section class="content">
+    <div class="content-block">
+      <div class="flex-grow-1">
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i>&nbsp; Wholesaler Order List</h4>
+  
+        <!-- @if(challan && challan.length >0){ -->
+            <p-accordion [activeIndex]="0" class="card">
+                <ng-container *ngFor="let distributor of challan | keyvalue; let distIndex = index">
+                  <p-accordionTab class="px-0" [header]="'Manufacturer : ' + distributor.key">
+                    <!-- Table for challan of Each Manufacturer -->
+                    <p-table [value]="distributor.value">
+                      <ng-template pTemplate="header">
+                        <tr>
+                          <th>Transport</th>
+                          <th>Transport Type</th>
+                          <th>Company Name</th>
+                          <th>Challan Date</th>
+                          <th>Challan No</th>
+                          <th>Action</th>
+                        </tr>
+                      </ng-template>
+                      <ng-template pTemplate="body" let-data let-index="rowIndex">
+                        <tr>
+                          <td>{{ data.transport }}</td>
+                          <td>{{ data.transportType }}</td>
+                          <td>{{ data.companyName }}</td>
+                          <td>{{ data.challanDate }}</td>
+                          <td>{{ data.challanNo }}</td>
+                          <td>
+                           <button class="btn btn-outline-success" (click)="viewDetails(data)"><i class="bi bi-eye"></i>&nbsp; View</button>
+                          </td>
+                        </tr>
+                      </ng-template>
+                    </p-table>
+                  </p-accordionTab>
+                </ng-container>
+              </p-accordion>
+              
+        <!-- }@else {
+        <div class="text-danger m-5 h-2">
+          No Delivery Challan found for this Wholesaler.
+        </div>
+        } -->
+      </div>
+    </div>
+  </section>

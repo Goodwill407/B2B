@@ -6,6 +6,7 @@ import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { state } from "@angular/animations";
 import { AuthService } from "./auth.service";
+import Swal from 'sweetalert2';
 @Injectable({
     providedIn: 'root'
 })
@@ -184,4 +185,98 @@ export class CommunicationService {
     ]
         return states;
     }   
+    success() {
+      Swal.fire({
+        html:
+          '<span style="float: left; padding-top: 8px; font-weight: 500">Added Succesfully</span> <img style="float: right;padding-top: 10px" src="../assets/icons/cross.png">', position: 'bottom', timer: 4000, showCancelButton: false, width: 400, showConfirmButton: false, background: "#E8FFF3", color: "#47BE7D", backdrop: false
+      })
+    }
+  
+    delete() {
+      Swal.fire({
+        html:
+          '<span style="float: left; padding-top: 8px; font-weight: 500">Delete Succesfully</span> <img style="float: right;padding-top: 10px" src="../assets/icons/cross.png">', position: 'bottom', timer: 4000, showCancelButton: false, width: 400, showConfirmButton: false, background: "#E8FFF3", color: "#47BE7D", backdrop: false
+      })
+    }
+  
+    error() {
+      Swal.fire({
+        html:
+          '<span style="float: left; padding-top: 10px; font-weight: 500">Something went wrong</span> <i class="bi bi-exclamation" style="font-size: 32px"></i>', position: 'bottom', timer: 4000, showCancelButton: false, width: 400, showConfirmButton: false, background: "#FF4433", color: "#fff", backdrop: false
+      })
+    }
+  
+    login() {
+      Swal.fire({
+        html:
+          '<span style="float: left; padding-top: 8px; font-weight: 500">Login Succesfully</span> <img style="float: right;padding-top: 10px" src="../assets/icons/cross.png">', position: 'bottom', timer: 4000, showCancelButton: false, width: 400, showConfirmButton: false, background: "#E8FFF3", color: "#47BE7D", backdrop: false
+      })
+    }
+  
+    loginError() {
+      Swal.fire({
+        html:
+          '<span style="float: left; padding-top: 10px; font-weight: 500">Incorrect username or password</span> <i class="bi bi-exclamation" style="font-size: 32px"></i>', position: 'bottom', timer: 4000, showCancelButton: false, width: 400, showConfirmButton: false, background: "#FF4433", color: "#fff", backdrop: false
+      })
+    }
+  
+    setPassword() {
+      Swal.fire({
+        html:
+          '<span style="float: left; padding-top: 8px; font-weight: 500">Password has been set Succesfully</span> <img style="float: right;padding-top: 10px" src="../assets/icons/cross.png">', position: 'bottom', timer: 4000, showCancelButton: false, width: 400, showConfirmButton: false, background: "#E8FFF3", color: "#47BE7D", backdrop: false
+      })
+    }
+    customError(message: any) {
+      Swal.fire({
+        html:
+          '<span style="float: left; padding-top: 5px; font-weight: 500; font-size: 14px;">' +
+          message +
+          '</span> <i class="bi bi-exclamation" style="font-size: 18px; padding-top: 5px; float: right;"></i>',
+        position: 'bottom',
+        timer: 4000,
+        showCancelButton: false,
+        width: '300px',
+        showConfirmButton: false,
+        background: '#FF6F61', // Slightly muted red
+        color: '#fff',
+        backdrop: false,
+        customClass: {
+          popup: 'custom-swal-width',
+        },
+      });
+    }
+    
+    customSuccess(message: any) {
+      Swal.fire({
+        html:
+          '<span style="float: left; padding-top: 5px; font-weight: 500; font-size: 14px;">' +
+          message +
+          '</span> <img style="float: right; padding-top: 5px; width: 24px; height: 24px;" ',
+        position: 'bottom',
+        timer: 4000,
+        showCancelButton: false,
+        width: '300px',
+        showConfirmButton: false,
+        background: '#DFF2E2', // Softer green
+        color: '#47BE7D',
+        backdrop: false,
+        customClass: {
+          popup: 'custom-swal-width',
+        },
+      });
+    }
+     
+    customError1(message: any) {
+      Swal.fire({
+        html:
+          '<span style="float: left; padding-top: 10px; font-weight: 500">' + message + '</span> <i class="bi bi-exclamation" style="font-size: 32px"></i>', position: 'bottom', timer: 4000, showCancelButton: false, width: 400, showConfirmButton: false, background: "#FF4433", color: "#fff", backdrop: false
+      })
+    }
+  
+    customSuccess1(message: any) {
+      Swal.fire({
+        html:
+          '<span style="float: left; padding-top: 8px; font-weight: 500">' + message + '</span> <img style="float: right;padding-top: 10px" src="../assets/icons/cross.png">', position: 'bottom', timer: 4000, showCancelButton: false, width: 400, showConfirmButton: false, background: "#E8FFF3", color: "#47BE7D", backdrop: false
+      })
+    }
 }

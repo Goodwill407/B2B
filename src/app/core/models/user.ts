@@ -2,6 +2,7 @@ import { Role } from './role';
 
 export class User {
   id!: string;
+  email!: string;
   img!: string;
   username!: string;
   password!: string;

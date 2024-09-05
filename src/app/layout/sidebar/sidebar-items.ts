@@ -743,7 +743,7 @@ export const ROUTES: RouteInfo[] = [
     role: ['wholesaler'],
     submenu: [
       {
-        path: '/users/trainer',
+        path: '/wholesaler/mnf-list-challan',
         title: 'New Orders',
         iconType: '',
         icon: '',
@@ -755,7 +755,7 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
       },
       {
-        path: '/users/skill-trainer',
+        path: '/wholesaler/mnf-list-challan',
         title: 'View Order Status',
         iconType: '',
         icon: '',

@@ -15,6 +15,7 @@ import { WholselersRequestsComponent } from "./wholselers-requests/wholselers-re
 import { RejectedRequestsListComponent } from "./wholselers-requests/rejected-requests-list/rejected-requests-list.component";
 import { WholselerDetailsViewComponent } from "./wholselers-requests/wholseler-details-view/wholseler-details-view.component";
 import { WlsListPoComponent } from "./order-management/wls-list-po/wls-list-po.component";
+import { DeliveryChallanComponent } from "./order-management/delivery-challan/delivery-challan.component";
 
 
 export const M_Auth:Route[] = [
@@ -34,4 +35,5 @@ export const M_Auth:Route[] = [
     {path: 'Rejected-Requests', component: RejectedRequestsListComponent},
     {path: 'Wholseler-Details', component: WholselerDetailsViewComponent},
     {path: 'wls-list', component: WlsListPoComponent},
+    {path: 'delivery-challan', component: DeliveryChallanComponent},
 ]
