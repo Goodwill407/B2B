@@ -1,5 +1,5 @@
-import { NgFor } from '@angular/common';
-import { Component } from '@angular/core';
+import { NgClass, NgFor, NgIf } from '@angular/common';
+import { Component, ElementRef, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
@@ -14,7 +14,9 @@ import { AuthServiceService } from 'auth-service.service';
     RightSideAdvertiseComponent,
     BottomSideAdvertiseComponent,
     NgFor,
-    FormsModule
+    FormsModule,
+    NgIf,
+    NgClass
   ],
   templateUrl: './request-to-manufacturer.component.html',
   styleUrl: './request-to-manufacturer.component.scss'
@@ -39,6 +41,7 @@ export class RequestToManufacturerComponent {
   allGender = ['Men', 'Women', 'Boys', 'Girls'];
   userProfile:any;
   WholsellerData:any
+  filteredSuggestions: string[] = [];
 
 
   brandData:any[]=[];
@@ -55,7 +58,7 @@ export class RequestToManufacturerComponent {
 
   bottomAdImage: string = 'https://elmanawy.info/demo/gusto/cdn/ads/gusto-ads-banner.png';
 
-  constructor(private authService:AuthService, private route:Router, private communicationService:CommunicationService){
+  constructor(private authService:AuthService, private route:Router, private communicationService:CommunicationService, private elementRef: ElementRef ){
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
   }
 
@@ -65,6 +68,15 @@ export class RequestToManufacturerComponent {
     this.getProductType()
     this.getProductType()
     this.getUserProfileData()
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event): void {
+    // Clear suggestions if click is outside the input box or suggestions list
+    const clickedInside = this.elementRef.nativeElement.contains(event.target);
+    if (clickedInside) {
+      this.filteredSuggestions = [];
+    }
   }
 
   onBrandSearchChange(): void {
@@ -242,6 +254,31 @@ getUserProfileData() {
     }
   })
 }
+
+onSearchBrandChange() {
+  if (this.SearchBrand) {
+    const object = {
+      brandName: this.SearchBrand
+    };
+
+    this.authService.post('brand/searchmanufacturelist', object).subscribe(
+      (response: any[]) => { 
+       this.filteredSuggestions = response.map((item: any) => item.brandName); // Extract 'brandName' from each item
+        // Handle the response as needed, e.g., update the UI
+      },
+      (error) => {
+        console.error('Error searching brand:', error);
+        // Handle error accordingly
+      }
+    );
+  }   
+}
+
+selectSuggestion(suggestion: string) {
+  this.SearchBrand = suggestion; // Set the input value to the selected suggestion
+  this.filteredSuggestions = []; // Clear suggestions
+}
+
 
   }
 

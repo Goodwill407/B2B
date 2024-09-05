@@ -9,8 +9,8 @@
         <!-- Card Table Wrapper -->
         <div class="card-table p-0">
           <!-- Search Section -->
-          <div class="search-section p-3">           
-          
+          <div class="search-section p-3">
+
             <!-- Tabs -->
             <ul class="nav nav-tabs" id="searchTab" role="tablist">
               <li class="nav-item" role="presentation">
@@ -26,49 +26,56 @@
             <!-- Search Label -->
             <div class="d-flex align-items-center p-2">
               <label class="search-label ps-1">Search :</label>
-              <div class="vertical-line"></div>            
-          
-            <div class="tab-content p-0" id="searchTabContent">
-              <!-- Search By Brand Tab -->
-              <div class="tab-pane fade show active" id="brand" role="tabpanel" aria-labelledby="brand-tab">
-                <div class="d-flex align-items-center">
-                  <div class="brand-search d-flex align-items-center ms-2">
-                    <input type="text" class="form-control me-2" [(ngModel)]="SearchBrand" placeholder="Search Brand" />
-                    <button class="btn btn-primary" (click)="onBrandSearchChange()">Search</button>
+              <div class="vertical-line"></div>
+
+              <div class="tab-content p-0" id="searchTabContent">
+                <!-- Search By Brand Tab -->
+                <div class="tab-pane fade show active" id="brand" role="tabpanel" aria-labelledby="brand-tab">
+                  <div class="d-flex align-items-center">
+                    <div class="brand-search d-flex align-items-center ms-2 position-relative">
+                      <input type="text" class="form-control me-2" [(ngModel)]="SearchBrand"
+                        (input)="onSearchBrandChange()"  placeholder="Search Brand" />
+                      <button class="btn btn-primary" (click)="onBrandSearchChange()">Search</button>                     
+                      <!-- Suggestions dropdown -->
+                      <ul *ngIf="filteredSuggestions.length > 0" class="suggestions-list position-absolute">
+                        <li *ngFor="let suggestion of filteredSuggestions" (click)="selectSuggestion(suggestion)">
+                          {{ suggestion }}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <!-- Search By Product Type Tab -->
+                <div class="tab-pane fade" id="product" role="tabpanel" aria-labelledby="product-tab">
+                  <div class="d-flex align-items-center ">
+                    <div class="product-search d-flex align-items-center ms-2">
+                      <select class="form-select me-2" [(ngModel)]="filters.productType" placeholder="Product Type">
+                        <option value="">Select Product Type</option>
+                        <option *ngFor="let type of allProductType" [value]="type.name">{{ type.name }}</option>
+                      </select>
+                      <select class="form-select me-2" [(ngModel)]="filters.gender"
+                        (change)="getCategoryByProductTypeAndGender()" placeholder="Gender">
+                        <option value="">Select Gender</option>
+                        <option *ngFor="let gender of allGender" [value]="gender">{{ gender }}</option>
+                      </select>
+                      <select class="form-select me-2" [(ngModel)]="filters.category"
+                        (change)="getSubCategoryBYProductType_Gender_and_Category()" placeholder="Product">
+                        <option value="">Select Category</option>
+                        <option *ngFor="let category of allcategory" [value]="category">{{ category }}</option>
+                      </select>
+                      <select class="form-select me-0" [(ngModel)]="filters.subCategory" placeholder="Sub-Category">
+                        <option value="">Select Sub-Category</option>
+                        <option *ngFor="let type of allSubCategory" [value]="type">{{ type }}</option>
+                      </select>
+                      <button class="btn btn-primary ms-2" (click)="GetProductTypeWiseManufacturar()">Search</button>
+                    </div>
                   </div>
                 </div>
               </div>
-              <!-- Search By Product Type Tab -->
-              <div class="tab-pane fade" id="product" role="tabpanel" aria-labelledby="product-tab">
-                <div class="d-flex align-items-center ">
-                  <div class="product-search d-flex align-items-center ms-2">
-                    <select class="form-select me-2" [(ngModel)]="filters.productType" placeholder="Product Type">
-                      <option value="">Select Product Type</option>
-                      <option *ngFor="let type of allProductType" [value]="type.name">{{ type.name }}</option>
-                    </select>
-                    <select class="form-select me-2" [(ngModel)]="filters.gender"
-                      (change)="getCategoryByProductTypeAndGender()" placeholder="Gender">
-                      <option value="">Select Gender</option>
-                      <option *ngFor="let gender of allGender" [value]="gender">{{ gender }}</option>
-                    </select>
-                    <select class="form-select me-2" [(ngModel)]="filters.category"
-                      (change)="getSubCategoryBYProductType_Gender_and_Category()" placeholder="Product">
-                      <option value="">Select Category</option>
-                      <option *ngFor="let category of allcategory" [value]="category">{{ category }}</option>
-                    </select>
-                    <select class="form-select me-0" [(ngModel)]="filters.subCategory" placeholder="Sub-Category">
-                      <option value="">Select Sub-Category</option>
-                      <option *ngFor="let type of allSubCategory" [value]="type">{{ type }}</option>
-                    </select>
-                    <button class="btn btn-primary ms-2" (click)="GetProductTypeWiseManufacturar()">Search</button>
-                  </div>
-                </div>
-              </div>              
             </div>
-          </div>
             <hr class="mb-0 mt-0">
           </div>
-          
+
 
 
 
@@ -84,7 +91,8 @@
               <h5 class="brand-name">{{ brand.brandName }}</h5>
               <p class="brand-location">{{ brand.ownerDetails.city }}, {{ brand.ownerDetails.state }}</p>
               <button class="btn btn-link" (click)="navigateToProfile(brand.ownerDetails.email)">View Profile</button>
-              <button class="btn btn-outline-primary request-btn" (click)="sendRequestToManufacturer(brand.ownerDetails)">Request to Add</button>
+              <button class="btn btn-outline-primary request-btn"
+                (click)="sendRequestToManufacturer(brand.ownerDetails)">Request to Add</button>
             </div>
 
             <!-- Section for Product Data -->
@@ -97,7 +105,8 @@
               <h5 class="brand-name">{{ product.brand.brandName }}</h5>
               <p class="brand-location">{{ product.city }}, {{ product.state }}</p>
               <button class="btn btn-link" (click)="navigateToProfile(product.ownerDetails.email)">View Profile</button>
-              <button class="btn btn-outline-primary request-btn" (click)="sendRequestToManufacturer(product.ownerDetails)">Request to Add</button>
+              <button class="btn btn-outline-primary request-btn"
+                (click)="sendRequestToManufacturer(product.ownerDetails)">Request to Add</button>
             </div>
           </div>
         </div>

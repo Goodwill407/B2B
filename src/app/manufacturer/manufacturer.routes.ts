@@ -15,11 +15,12 @@ import { WholselersRequestsComponent } from "./wholselers-requests/wholselers-re
 import { RejectedRequestsListComponent } from "./wholselers-requests/rejected-requests-list/rejected-requests-list.component";
 import { WholselerDetailsViewComponent } from "./wholselers-requests/wholseler-details-view/wholseler-details-view.component";
 import { WlsListPoComponent } from "./order-management/wls-list-po/wls-list-po.component";
+import { CustomiseProfileComponent } from "./profile/customise-profile/customise-profile.component";
 
 
 export const M_Auth:Route[] = [
     {path: 'dashboard', component: DashboardComponent},
-    {path: 'profile', component: ProfileComponent}, 
+    {path: 'profile', component: ProfileComponent},     
     {path: 'brand', component: BrandComponent}, 
     {path: 'add-new-product', component: AddNewProductsComponent},   
     {path: 'new-distributor', component: AddDistributorComponent},
@@ -34,4 +35,5 @@ export const M_Auth:Route[] = [
     {path: 'Rejected-Requests', component: RejectedRequestsListComponent},
     {path: 'Wholseler-Details', component: WholselerDetailsViewComponent},
     {path: 'wls-list', component: WlsListPoComponent},
+    {path: 'customise_profile', component: CustomiseProfileComponent},
 ]

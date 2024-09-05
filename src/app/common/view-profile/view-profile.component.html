@@ -136,6 +136,38 @@
                 </div>
                 
             </form>
+            <!-- for descount Part -->
+            <!-- Discount Section -->
+<!-- Discount Section -->
+<div *ngIf="showFlagForDiscount" class="discount-section">
+    <div class="d-flex text-center">
+      <h5 class="text-center mb-0 mt-2">Add Discount</h5>
+      <!-- Optional Edit Button -->
+      <button *ngIf="!addDiscountBtnHide" class="btn btn-primary discount-button ms-auto" (click)="editDiscountCategory()">Edit</button>
+    </div>
+    <hr class="my-2">
+  
+    <!-- Discount Category Selection and Button -->
+    <div class="discount-controls">
+      <!-- Discount Category Dropdown -->
+      <div class="form-group">
+        <label for="discountCategory" class="discount-label">Select Category</label>
+        <select class="form-control discount-dropdown" [(ngModel)]="SelectedCategory" [disabled]="isDropdownDisabled">
+          <option [ngValue]="null">Select Category</option>
+          <option *ngFor="let category of wholesalerCategory" [ngValue]="category">
+            {{ category.category }}
+          </option>
+        </select>
+      </div>
+  
+      <!-- Add Discount Button -->
+      <button *ngIf="addDiscountBtnHide" class="btn btn-primary discount-button" (click)="addDiscountForWholesaler()">Add Discount</button>
+    </div>
+  </div>
+  
+  
+            <!-- for descount Part -->
+
             <div class="card" *ngIf="showFlag">
                 <div class="text-danger text-center fw-bold fs-2">User Didn't Fill His Profile</div>
             </div>
