@@ -43,13 +43,44 @@ export class ManageDistributorComponent {
 
   distributors: any = [];
 
-  getPendingInvites(searchKey: string = '') {
-    // Modify the API request to include the searchKey parameter
-    this.authService.get(`manufacturers/get-referred/manufactures?page=${this.page}&limit=${this.limit}&refByEmail=${this.user.email}&searchKeywords=${searchKey}`).subscribe((res: any) => {
-        this.distributors = res.results;
-        this.totalResults = res.totalResults;
+//   getPendingInvites(searchKey: string = '') {
+//     // Modify the API request to include the searchKey parameter
+//     this.authService.get(`manufacturers/get-referred/manufactures?page=${this.page}&limit=${this.limit}&refByEmail=${this.user.email}&searchKeywords=${searchKey}`).subscribe((res: any) => {
+//         this.distributors = res.results;
+//         const dicounts = this.distributors.discountGiven   
+//         const discount = dicounts.filter(data => distributors.email === data.discountGivenBy  )  
+//         this.totalResults = res.totalResults;
+//     });
+// }
+getPendingInvites(searchKey: string = '') {
+  this.authService
+    .get(
+      `manufacturers/get-referred/manufactures?page=${this.page}&limit=${this.limit}&refByEmail=${this.user.email}&searchKeywords=${searchKey}`
+    )
+    .subscribe((res: any) => {
+      this.distributors = res.results;
+      this.totalResults = res.totalResults;
+
+      // Process discounts for each distributor
+      this.distributors.forEach((distributor: any) => {
+        if (distributor.discountGiven?.length) {
+          // Filter discounts for the distributor by email
+          const filteredDiscounts = distributor.discountGiven.filter(
+            (discount: any) => discount.discountGivenBy === this.user.email
+          );
+
+          // Create a comma-separated list of discount categories
+          distributor.discountCategories = filteredDiscounts.length
+            ? filteredDiscounts.map((discount: any) => discount.discountCategory).join(', ')
+            : 'No Discounts';
+        } else {
+          distributor.discountCategories = 'No Discounts';
+        }
+      });
     });
 }
+
+
 
   onPageChange(event: any) {
     this.page = event.page + 1;
@@ -65,7 +96,7 @@ export class ManageDistributorComponent {
   }
 
   viewProfile(distributors:any){
-    this.router.navigate(['/common/view-profile'],{queryParams:{email:distributors.email,role:'wholesaler'}});
+    this.router.navigate(['/common/view-profile'],{queryParams:{email:distributors.email,role:'wholesaler',showFlag:'true'}});
   }
 
 

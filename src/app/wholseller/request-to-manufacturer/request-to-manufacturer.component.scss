@@ -37,6 +37,7 @@
 
 .brand-search, .product-search {
   width:100% ;
+  position: relative;
 }
 .brand-search input{
   width:400px;
@@ -195,13 +196,34 @@
           position: static;
           height: auto;
         }
-            
-        
-      
+                
        
       }
+
+     
         
-      
+         // suggestions for Brand
+         .suggestions-list {
+          list-style-type: none;
+          padding: 0;
+          margin-top: 120px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          background-color: white;
+          max-height: 150px;
+          overflow-y: auto;
+          min-width:200px;
+          z-index: 1000; /* Ensure the suggestions appear above other elements */
+        }
+        
+        .suggestions-list li {
+          padding: 8px;
+          cursor: pointer;
+        }
+        
+        .suggestions-list li:hover {
+          background-color: #f0f0f0;
+        }
       
       
       
