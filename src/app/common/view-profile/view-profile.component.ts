@@ -1,8 +1,8 @@
 import { CommonModule, DatePipe, NgClass } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { AuthService } from '@core';
+import { AuthService, CommunicationService } from '@core';
 import { Location } from '@angular/common';
 
 @Component({
@@ -11,7 +11,8 @@ import { Location } from '@angular/common';
   imports: [
     ReactiveFormsModule,
     CommonModule, NgClass,
-    DatePipe
+    DatePipe,
+    FormsModule
   ],
   templateUrl: './view-profile.component.html',
   styleUrl: './view-profile.component.scss',
@@ -21,9 +22,21 @@ export class ViewProfileComponent {
   email: any;
   showFlag: boolean = false;
   user:any;
+  wholesalerCategory:any;
+  userEmail:any
+  SelectedCategory: any=null
+  allWholselerData:any
+  showFlagForDiscount:boolean=false;
+  filteredDiscounts:any
+  addDiscountBtnHide=true;
+  isDropdownDisabled:boolean=false;
 
-  constructor(private fb: FormBuilder, private route: ActivatedRoute, private authService: AuthService, private location: Location,private datePipe: DatePipe) {
+
+  constructor(private fb: FormBuilder, private route: ActivatedRoute, private authService: AuthService, private location: Location,private datePipe: DatePipe
+   , private communicationService:CommunicationService
+  ) {
     this.initializeValidation();
+    this.userEmail = this.authService.currentUserValue;
   }
 
   mgfRegistrationForm: any = FormGroup;
@@ -34,13 +47,17 @@ export class ViewProfileComponent {
       this.email = params['email'];
       const role = params['role'];
       this.user= params['role'];
+      this.showFlagForDiscount=params['showFlag'];
       if (this.email) {
         this.authService.get(`${role}/${this.email}`).subscribe((res: any) => {
           if (res) {
+            this.allWholselerData=res
             res.establishDate = res.establishDate ? this.datePipe.transform(res.establishDate, 'yyyy-MM-dd') : null;
             res.registerOnFTH = res.registerOnFTH ? this.datePipe.transform(res.registerOnFTH, 'yyyy-MM-dd') : null;
             this.mgfRegistrationForm.patchValue(res);
             this.mgfRegistrationForm.disable();
+            this.getAllWholesalerCategory()
+            this.getDiscountData()
           } else {
           }
         },
@@ -54,7 +71,8 @@ export class ViewProfileComponent {
           })
       }
     });
-  }
+  } 
+  
 
   initializeValidation() {
     this.mgfRegistrationForm = this.fb.group({
@@ -95,5 +113,72 @@ export class ViewProfileComponent {
 
   navigateFun() {
     this.location.back();
+  }
+
+  getAllWholesalerCategory() {
+    const email=this.userEmail.email
+    this.authService.get(`wholesaler-category?email=${email}`).subscribe((res: any) => {
+      this.wholesalerCategory = res.results;            
+    });
+  }
+  // selectCategory(event: any) {
+  //   // Use JSON.parse to convert the selected object string back to an object
+   
+  //   console.log(this.SelectedCategory); // Log the entire object for debugging
+  // }
+
+  addDiscountForWholesaler() {
+    // const wholesalerId = this.allWholselerData.id; // Replace with actual wholesaler ID
+    const objBody = {
+      email: this.allWholselerData.email,
+      discountGivenBy: this.userEmail.email, // Use the correct property of the selected object
+      category: this.SelectedCategory.category, // Use the correct property name
+      productDiscount: this.SelectedCategory.productDiscount, // Example; replace with actual property names
+      shippingDiscount: this.SelectedCategory.shippingDiscount, // Example; replace with actual property names
+    };
+  
+    this.authService.post(`wholesaler/assigndiscount`, objBody).subscribe(
+      (res: any) => {
+        if(res){
+          this.isDropdownDisabled = true; // Disable the dropdown if category is found
+          this.addDiscountBtnHide = false; // Show the button
+        }
+        this.communicationService.showNotification('snackbar-success', 'Added Discount successfully','bottom','center');
+      },
+      (error) => {
+        console.error('Error:', error); // Handle error response
+      }
+    );
+  }
+
+  getDiscountData() {
+    this.authService.get(`wholesaler/getdiscount/${this.allWholselerData.id}/${this.userEmail.email}`).subscribe(
+      (res: any) => {
+        if (res) {
+          this.filteredDiscounts = res;
+
+          // Find the matching category from the wholesalerCategory array
+          this.SelectedCategory = this.wholesalerCategory.find(
+            (category: any) => category.category === res.category
+          );
+
+          // Set the dropdown's disabled state based on your condition
+          if (this.SelectedCategory) {
+            if (this.SelectedCategory.category) {
+              this.isDropdownDisabled = true; // Disable the dropdown if category is found
+              this.addDiscountBtnHide = false; // Show the button
+            }
+          }
+        }
+      },
+      (error) => {
+        console.error("Error fetching discount data", error);
+      }
+    );
+  }
+  
+  editDiscountCategory(){
+    this.addDiscountBtnHide=true;   
+    this.isDropdownDisabled = false;     
   }
 }
