@@ -14,13 +14,21 @@
       
       <!-- Fact Sheet -->
       <div class="fact-sheet">
-        <h4>Fact Sheet</h4>
-        <p><strong>Established :</strong> {{ allVisabilityData?.establishDate }}</p>
-        <p><strong>Founder :</strong> {{ allVisabilityData?.fullName }}</p>
-        <p><strong>Legal Status of Firm :</strong> {{ allVisabilityData?.leagalStatusOfFirm }}</p>
-        <p><strong>Registered On FTH :</strong> {{ allVisabilityData?.registerOnFTH }}</p>
-        <p><strong>GST No :</strong> {{ allVisabilityData?.GSTIN }}</p>
-        <p><strong>CIN No :</strong> 12345</p>
+        <h4>Fact Sheet</h4>      
+        <!-- Conditionally display fields based on the object's values -->
+        <p *ngIf="allVisabilityData?.establishDate"><strong>Established :</strong> {{ allVisabilityData?.establishDate }}</p>
+        <p *ngIf="allVisabilityData?.fullName"><strong>Founder :</strong> {{ allVisabilityData?.fullName }}</p>
+        <p *ngIf="allVisabilityData?.leagalStatusOfFirm"><strong>Legal Status of Firm :</strong> {{ allVisabilityData?.leagalStatusOfFirm }}</p>
+        <p *ngIf="allVisabilityData?.registerOnFTH"><strong>Registered On FTH :</strong> {{ allVisabilityData?.registerOnFTH | customDate:'MMM d, y' }}</p>
+        <p *ngIf="allVisabilityData?.GSTIN"><strong>GST No :</strong> {{ allVisabilityData?.GSTIN }}</p>
+        <p *ngIf="allVisabilityData?.code"><strong>Code :</strong> {{ allVisabilityData?.code }}</p>
+        <p *ngIf="allVisabilityData?.companyName"><strong>Company Name :</strong> {{ allVisabilityData?.companyName }}</p>
+        <p *ngIf="allVisabilityData?.address"><strong>Address :</strong> {{ allVisabilityData?.address }}</p>
+        <p *ngIf="allVisabilityData?.state"><strong>State :</strong> {{ allVisabilityData?.state }}</p>
+        <p *ngIf="allVisabilityData?.city"><strong>City :</strong> {{ allVisabilityData?.city }}</p>
+        <p *ngIf="allVisabilityData?.country"><strong>Country :</strong> {{ allVisabilityData?.country }}</p>
+        <p *ngIf="allVisabilityData?.pinCode"><strong>PIN Code :</strong> {{ allVisabilityData?.pinCode }}</p>
+        <p *ngIf="allVisabilityData?.turnover"><strong>Turnover :</strong> {{ allVisabilityData?.turnover }}</p>
       </div>
 
       <!-- Contact Details -->
