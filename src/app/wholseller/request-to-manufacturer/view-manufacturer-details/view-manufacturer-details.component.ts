@@ -1,7 +1,8 @@
-import { NgFor } from '@angular/common';
+import { CommonModule, DatePipe, NgFor } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
+import { CustomDatePipe } from 'app/common/custom-pipe.pipe';
 
 export interface Company {
   name: string;
@@ -31,10 +32,12 @@ export interface Company {
 @Component({
   selector: 'app-view-manufacturer-details',
   standalone: true,
-  imports:[NgFor],
+  imports:[NgFor, CommonModule, CustomDatePipe],
   templateUrl: './view-manufacturer-details.component.html',
-  styleUrls: ['./view-manufacturer-details.component.scss']
+  styleUrls: ['./view-manufacturer-details.component.scss'],
+  providers: [DatePipe]
 })
+
 export class ViewManufacturerDetailsComponent  {
   // Define a company variable of type Company
   company!: Company;
@@ -44,6 +47,8 @@ export class ViewManufacturerDetailsComponent  {
   cdnPath:any
   userProfile:any;
   WholsellerData:any;
+  allVisabilityData:any;
+  id:any
 
   constructor(private route: ActivatedRoute, private authService:AuthService,private communicationService:CommunicationService) {
     this.cdnPath=authService.cdnPath
@@ -54,11 +59,12 @@ export class ViewManufacturerDetailsComponent  {
   ngOnInit(): void {
      // Access the query parameter
      this.route.queryParams.subscribe(params => {
-      this.email = params['email'];   
-      console.log(this.email)   
+      this.id = params['id']; 
+      this.email=params['email']      
       this.getManufacturerData()
       this.getBrandsOfManufacturer()
       this.getUserProfileData() 
+      this.GetProfileVisabilityData()
     });
 
     this.company = {
@@ -158,6 +164,20 @@ export class ViewManufacturerDetailsComponent  {
       }
     })
   }
+  GetProfileVisabilityData(){
+    this.authService.get(`manufacturers/visible-profile/${this.id}`).subscribe((res: any) => {
+      if (res) {        
+        // res.registerOnFTH =res.registerOnFTH ? this.datePipe.transform(res.registerOnFTH, 'yyyy-MM-dd') : null;
+       this.allVisabilityData=res;       
+      } else {
+      }
+    }, error => {
+      if (error.error.message === "Manufacturer not found") {
+        // this.getRegisteredUserData();
+      }
+    })
+  }
+
     
 
   }

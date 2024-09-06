@@ -202,9 +202,9 @@ export class RequestToManufacturerComponent {
     );
   }
 
-  navigateToProfile(email: string) {
+  navigateToProfile(id: string,email:any) {
     // Navigate to the target route with email as query parameter
-    this.route.navigate(['/wholesaler/mnf-details'], { queryParams: { email: email } });
+    this.route.navigate(['/wholesaler/mnf-details'], { queryParams: { id: id ,email:email } });
   }
 
   sendRequestToManufacturer(ownerDetails:any){  

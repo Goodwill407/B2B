@@ -33,12 +33,14 @@ export class ManageDistributorComponent {
   page: number = 1
   first: number = 0;
   rows: number = 10;
+  retailers:any
 
   constructor(private authService: AuthService, private communicationService:CommunicationService,private router: Router) { }
 
   ngOnInit() {
     this.user = this.authService.currentUserValue
-    this.getPendingInvites();
+    this.getPendingInvitesWholseler();
+    this.getPendingInvitesRetailers()
   }
 
   distributors: any = [];
@@ -52,7 +54,7 @@ export class ManageDistributorComponent {
 //         this.totalResults = res.totalResults;
 //     });
 // }
-getPendingInvites(searchKey: string = '') {
+getPendingInvitesWholseler(searchKey: string = '') {
   this.authService
     .get(
       `manufacturers/get-referred/manufactures?page=${this.page}&limit=${this.limit}&refByEmail=${this.user.email}&searchKeywords=${searchKey}`
@@ -80,12 +82,41 @@ getPendingInvites(searchKey: string = '') {
     });
 }
 
+getPendingInvitesRetailers(searchKey: string = '') {
+  this.authService
+    .get(
+      `manufacturers/get-referred/retailers?page=${this.page}&limit=${this.limit}&refByEmail=${this.user.email}&searchKeywords=${searchKey}`
+    )
+    .subscribe((res: any) => {
+      this.retailers = res.results;
+      this.totalResults = res.totalResults;
+
+      // Process discounts for each distributor
+      this.retailers.forEach((retailers: any) => {
+        if (retailers.discountGiven?.length) {
+          // Filter discounts for the distributor by email
+          const filteredDiscounts = retailers.discountGiven.filter(
+            (discount: any) => discount.discountGivenBy === this.user.email
+          );
+
+          // Create a comma-separated list of discount categories
+          retailers.discountCategories = filteredDiscounts.length
+            ? filteredDiscounts.map((discount: any) => discount.discountCategory).join(', ')
+            : 'No Discounts';
+        } else {
+          retailers.discountCategories = 'No Discounts';
+        }
+      });
+    });
+}
+
 
 
   onPageChange(event: any) {
     this.page = event.page + 1;
     this.limit = event.rows;
-    this.getPendingInvites();
+    this.getPendingInvitesWholseler();
+    this.getPendingInvitesRetailers()
   }
   
   
@@ -102,7 +133,8 @@ getPendingInvites(searchKey: string = '') {
 
   onSearchChange(event: any) {
     const searchKey = event.target.value;
-    this.getPendingInvites(searchKey);
+    this.getPendingInvitesWholseler(searchKey);
+    this.getPendingInvitesRetailers(searchKey);
 }
 
 }
