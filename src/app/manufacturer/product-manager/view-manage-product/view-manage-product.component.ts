@@ -99,7 +99,7 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
   }
   
   getAllProducts() {
-    let url = `products/filter-products?productBy=${this.userProfile.email}`;
+    let url = `products/filter-products?productBy=${this.userProfile.email}&limit=${this.limit}&page=${this.page}`;
 
     const brand = this.filters.brand;
     const productType = this.filters.productType;
