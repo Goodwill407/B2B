@@ -82,10 +82,21 @@ export class WlsListPoComponent {
   }
 
   updateTotals(distributor: any): void {
+    debugger;
     distributor.subTotal = distributor.products.reduce((sum: number, product: any) => sum + (product.deliveryQty * product.rate), 0);
+
+    // Check if discount is defined and is an array
+    if (Array.isArray(distributor.discounts) && distributor.discounts.length > 0) {
+        const discountPercentage = Number(distributor.discounts[0].productDiscount.replace('%', '')) / 100;
+        distributor.discount = distributor.subTotal * discountPercentage;
+    } else {
+        distributor.discount = 0;
+    }
+
     distributor.gst = Number((distributor.subTotal * 0.18).toFixed(2));
-    distributor.grandTotal = (distributor.subTotal) + Number(distributor.gst);
-  }
+    distributor.grandTotal = (distributor.subTotal - distributor.discount) + Number(distributor.gst);
+}
+
 
   onTransportTypeChange(distributor: any): void {
     // Reset dependent fields when transport type changes
