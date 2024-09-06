@@ -50,7 +50,7 @@ export class CategoryComponent {
       category: ['', Validators.required],
       shippingDiscount: ['', Validators.required],
       productDiscount: ['', Validators.required],
-      categoryBy: ['wholesaler', Validators.required],
+      categoryBy: [this.authService.currentUserValue.email, Validators.required],
       id: ['']
     });
 
@@ -58,7 +58,7 @@ export class CategoryComponent {
       category: ['', Validators.required],
       productDiscount: ['', Validators.required],
       shippingDiscount: ['', Validators.required],
-      categoryBy: ['retailer', Validators.required],
+      categoryBy: [this.authService.currentUserValue.email, Validators.required],
       id: ['']
     });
   }
@@ -104,14 +104,14 @@ export class CategoryComponent {
   }
 
   getAllWholesalerCategory() {
-    this.authService.get(`wholesaler-category?page=${this.pageWholesaler}&limit=${this.limit}`).subscribe((res: any) => {
+    this.authService.get(`wholesaler-category?page=${this.pageWholesaler}&limit=${this.limit}&categoryBy=${this.authService.currentUserValue.email}`).subscribe((res: any) => {
       this.wholesalerCategory = res.results;
       this.totalResultsWholesaler = res.totalResults;
     });
   }
 
   getAllRetailerCategory() {
-    this.authService.get(`retailer-category?page=${this.pageRetailer}&limit=${this.limit}`).subscribe((res: any) => {
+    this.authService.get(`retailer-category?page=${this.pageRetailer}&limit=${this.limit}&categoryBy=${this.authService.currentUserValue.email}`).subscribe((res: any) => {
       this.retailerCategory = res.results;
       this.totalResultsRetailer = res.totalResults;
     });

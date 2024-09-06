@@ -98,12 +98,30 @@ export class DeliveryChallanComponent {
         }
         );
 
-        // Calculate totals correctly
-        this.challan.totalRate = this.product.products.reduce((sum: number, prod: any) => sum + prod.rate * prod.deliveryQty, 0).toFixed(2);
-        this.challan.totalGST = this.product.products.reduce((sum: number, prod: any) => sum + parseFloat((prod.rate * prod.deliveryQty * 0.18).toFixed(2)), 0).toFixed(2);
-        this.challan.totalAmount = (parseFloat(this.challan.totalRate) + parseFloat(this.challan.totalGST)).toFixed(2);
+        // Step 1: Calculate the total rate (without GST)
+        this.challan.totalRate = this.product.products
+          .reduce((sum: number, prod: any) => sum + prod.rate * prod.deliveryQty, 0)
+          .toFixed(2);
+
+        // Step 2: Apply the discount (discount is applied on totalRate before GST)
+        const discount = parseFloat(this.product.discount || 0);
+        const discountedTotalRate = (parseFloat(this.challan.totalRate) - discount).toFixed(2);
+        this.challan.discount = discount;
+
+        // Step 3: Calculate the GST on the discounted total rate
+        this.challan.totalGST = this.product.products
+          .reduce((sum: number, prod: any) => sum + parseFloat((prod.rate * prod.deliveryQty * 0.18).toFixed(2)), 0)
+          .toFixed(2);
+
+        // Step 4: Calculate the total amount (discounted total + GST)
+        this.challan.totalAmount = (parseFloat(discountedTotalRate) + parseFloat(this.challan.totalGST)).toFixed(2);
+
+        // Step 5: Round off the total amount
         this.challan.roundedOffTotal = Math.round(parseFloat(this.challan.totalAmount));
+
+        // Step 6: Convert the rounded total amount to words
         this.challan.totalInWords = this.convertNumberToWords(parseFloat(this.challan.roundedOffTotal));
+
       }
     });
   }

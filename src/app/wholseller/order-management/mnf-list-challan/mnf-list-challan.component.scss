@@ -1,4 +1,18 @@
 ::ng-deep .p-accordion .p-accordion-content {
-    padding: 1.25rem 0.5rem;
-    border: 1px solid #e5e7eb;
+  padding: 1.25rem 0.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.card {
+  height: 80vh;
+  padding: 1em;
+
+  .form-control {
+    border: 1px solid !important;
+    border-color: #d2d4d8 !important;
   }
+
+  .btn-success {
+    height: 44px !important;
+  }
+}
