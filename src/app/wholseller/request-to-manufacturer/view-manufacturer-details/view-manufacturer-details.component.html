@@ -6,37 +6,45 @@
 
     <div class="company-profile">
       <!-- Company Name -->
-      <h3 class="company-name">{{ CompanyData.companyName }}</h3>
+      <h3 class="company-name">{{ allVisabilityData?.companyName }}</h3>
       <hr>
 
       <!-- Introduction -->
-      <p class="introduction">{{ CompanyData.introduction }}</p>
+      <p class="introduction">{{ allVisabilityData?.introduction }}</p>
       
       <!-- Fact Sheet -->
       <div class="fact-sheet">
-        <h4>Fact Sheet</h4>
-        <p><strong>Established :</strong> {{ CompanyData.establishDate }}</p>
-        <p><strong>Founder :</strong> {{ CompanyData.fullName }}</p>
-        <p><strong>Legal Status of Firm :</strong> {{ CompanyData.leagalStatusOfFirm }}</p>
-        <p><strong>Registered On FTH :</strong> {{ CompanyData.registerOnFTH }}</p>
-        <p><strong>GST No :</strong> {{ CompanyData.GSTIN }}</p>
-        <p><strong>CIN No :</strong> 12345</p>
+        <h4>Fact Sheet</h4>      
+        <!-- Conditionally display fields based on the object's values -->
+        <p *ngIf="allVisabilityData?.establishDate"><strong>Established :</strong> {{ allVisabilityData?.establishDate }}</p>
+        <p *ngIf="allVisabilityData?.fullName"><strong>Founder :</strong> {{ allVisabilityData?.fullName }}</p>
+        <p *ngIf="allVisabilityData?.leagalStatusOfFirm"><strong>Legal Status of Firm :</strong> {{ allVisabilityData?.leagalStatusOfFirm }}</p>
+        <p *ngIf="allVisabilityData?.registerOnFTH"><strong>Registered On FTH :</strong> {{ allVisabilityData?.registerOnFTH | customDate:'MMM d, y' }}</p>
+        <p *ngIf="allVisabilityData?.GSTIN"><strong>GST No :</strong> {{ allVisabilityData?.GSTIN }}</p>
+        <p *ngIf="allVisabilityData?.code"><strong>Code :</strong> {{ allVisabilityData?.code }}</p>
+        <p *ngIf="allVisabilityData?.companyName"><strong>Company Name :</strong> {{ allVisabilityData?.companyName }}</p>
+        <p *ngIf="allVisabilityData?.address"><strong>Address :</strong> {{ allVisabilityData?.address }}</p>
+        <p *ngIf="allVisabilityData?.state"><strong>State :</strong> {{ allVisabilityData?.state }}</p>
+        <p *ngIf="allVisabilityData?.city"><strong>City :</strong> {{ allVisabilityData?.city }}</p>
+        <p *ngIf="allVisabilityData?.country"><strong>Country :</strong> {{ allVisabilityData?.country }}</p>
+        <p *ngIf="allVisabilityData?.pinCode"><strong>PIN Code :</strong> {{ allVisabilityData?.pinCode }}</p>
+        <p *ngIf="allVisabilityData?.turnover"><strong>Turnover :</strong> {{ allVisabilityData?.turnover }}</p>
       </div>
 
       <!-- Contact Details -->
       <div class="contact-details">
         <h4>Contact Details</h4>
-        <p><strong>Address :</strong> {{ CompanyData.address }}</p>
-        <p><strong>Phone :</strong> {{ CompanyData.mobNumber }}</p>
-        <p><strong>Email :</strong> <a href="mailto:{{ CompanyData.email }}">{{ CompanyData.email }}</a></p>
+        <p><strong>Address :</strong> {{ allVisabilityData?.address }}</p>
+        <p><strong>Phone :</strong> {{ allVisabilityData?.mobNumber }}</p>
+        <p><strong>Email :</strong> <a href="mailto:{{ allVisabilityData.email }}">{{ allVisabilityData?.email }}</a></p>
       </div>
 
       <!-- Social Media -->
       <div class="social-media">
         <h4>Social Media</h4>
-        <p><a href="{{ CompanyData.socialMedia.facebook }}" target="_blank">Facebook</a></p>
-        <p><a href="{{ CompanyData.socialMedia.instagram }}" target="_blank">Instagram</a></p>
-        <p><a href="{{ CompanyData.socialMedia.linkedin }}" target="_blank">LinkedIn</a></p>
+        <p><a href="{{ allVisabilityData?.socialMedia?.facebook }}" target="_blank">Facebook</a></p>
+        <p><a href="{{ allVisabilityData?.socialMedia?.instagram }}" target="_blank">Instagram</a></p>
+        <p><a href="{{ allVisabilityData?.socialMedia?.linkedin }}" target="_blank">LinkedIn</a></p>
       </div>
 
       <!-- Brands Section -->

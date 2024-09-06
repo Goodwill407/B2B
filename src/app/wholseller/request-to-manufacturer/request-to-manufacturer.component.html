@@ -90,7 +90,7 @@
               <!-- Brand Details -->
               <h5 class="brand-name">{{ brand.brandName }}</h5>
               <p class="brand-location">{{ brand.ownerDetails.city }}, {{ brand.ownerDetails.state }}</p>
-              <button class="btn btn-link" (click)="navigateToProfile(brand.ownerDetails.email)">View Profile</button>
+              <button class="btn btn-link" (click)="navigateToProfile(brand.ownerDetails._id,brand.ownerDetails.email)">View Profile</button>
               <button class="btn btn-outline-primary request-btn"
                 (click)="sendRequestToManufacturer(brand.ownerDetails)">Request to Add</button>
             </div>
@@ -104,7 +104,7 @@
               <!-- Product Details -->
               <h5 class="brand-name">{{ product.brand.brandName }}</h5>
               <p class="brand-location">{{ product.city }}, {{ product.state }}</p>
-              <button class="btn btn-link" (click)="navigateToProfile(product.ownerDetails.email)">View Profile</button>
+              <button class="btn btn-link" (click)="navigateToProfile(product.ownerDetails._id,product.ownerDetails.email)">View Profile</button>
               <button class="btn btn-outline-primary request-btn"
                 (click)="sendRequestToManufacturer(product.ownerDetails)">Request to Add</button>
             </div>

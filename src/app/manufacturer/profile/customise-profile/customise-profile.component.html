@@ -4,7 +4,7 @@
             <div *ngIf="currentStep == 1">
                 <form [formGroup]="mgfRegistrationForm">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h4 class="mb-0"><i class="bi bi-person-vcard-fill h3"></i> Profile</h4>
+                        <h4 class="mb-0"><i class="bi bi-person-vcard-fill h3"></i> Customise Profile</h4>
                         <!-- Add conditional button logic here if needed -->
                     </div>
                     <div class="card p-4 pt-2">
@@ -14,31 +14,31 @@
                             <!-- Full Name -->
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mt-3">
                                 <input type="checkbox" formControlName="fullName"> Full Name
-                                <input type="text" id="fullName" class="form-control">
+                                <input type="text" id="fullName" readonly class="form-control">
                             </div>
 
                             <!-- Company/Firm Name -->
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mt-3">
                                 <input type="checkbox" formControlName="companyName"> Company/Firm Name
-                                <input type="text" id="comName" class="form-control">
+                                <input type="text" id="comName" readonly class="form-control">
                             </div>
 
                             <!-- Address -->
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mt-3">
                                 <input type="checkbox" formControlName="address"> Address
-                                <textarea id="address" class="form-control"></textarea>
+                                <textarea id="address" readonly class="form-control"></textarea>
                             </div>
 
                             <!-- Company/Firm Introduction -->
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mt-3">
                                 <input type="checkbox" formControlName="introduction"> Company/Firm Introduction
-                                <textarea id="introduction" class="form-control"></textarea>
+                                <textarea id="introduction" readonly  class="form-control"></textarea>
                             </div>
 
                             <!-- Country -->
                             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 mt-2 mt-3">
                                 <input type="checkbox" formControlName="country"> Country
-                                <select id="country" class="form-select">
+                                <select id="country" class="form-select" disabled>
                                     <option value="">Select Country</option>
                                     <option *ngFor="let country of countries" [value]="country">{{ country }}</option>
                                 </select>
@@ -47,7 +47,7 @@
                             <!-- State -->
                             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 mt-3">
                                 <input type="checkbox" formControlName="state"> State
-                                <select id="state" (change)="stateWiseCity($event)" class="form-select">
+                                <select id="state" (change)="stateWiseCity($event)" disabled class="form-select">
                                     <option value="">Select State</option>
                                     <option *ngFor="let state of allState" [value]="state.iso2">{{ state.name }}</option>
                                 </select>
@@ -56,7 +56,7 @@
                             <!-- City -->
                             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 mt-3">
                                 <input type="checkbox" formControlName="city"> City
-                                <select id="city" class="form-select">
+                                <select id="city" disabled class="form-select">
                                     <option value="">Select City</option>
                                     <option *ngFor="let city of cityList" [value]="city.name">{{ city.name }}</option>
                                 </select>
@@ -65,36 +65,36 @@
                             <!-- Pin Code -->
                             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 mt-3">
                                 <input type="checkbox" formControlName="pinCode"> Zip / Pin Code
-                                <input type="text" id="pincode" class="form-control">
+                                <input type="text" id="pincode" readonly class="form-control">
                             </div>
 
                             <!-- Mobile Number -->
                             <div class="col-xl-7 col-lg-7 col-md-7 col-sm-12 mt-3">
                                 <input type="checkbox" formControlName="mobNumber"> Mobile Number
                                 <div class="d-flex mat-select">
-                                    <mat-form-field appearance="outline" class="w-25 me-2">
-                                        <mat-select formControlName="code">
+                                    <mat-form-field appearance="outline" class="w-25 me-2" >
+                                        <mat-select formControlName="code" [(ngModel)]="selectedCountryCode">
                                             <mat-option *ngFor="let country of countryCode" [value]="country.code">
                                                 <img [src]="country.flag" alt="{{ country.countryName }}"
                                                     class="country-flag" /> {{ country.code }}
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
-                                    <input type="text" id="mobNumber" class="form-control w-75" placeholder="Number" />
+                                    <input type="text" id="mobNumber" readonly class="form-control w-60" placeholder="Number" />
                                 </div>
                             </div>
 
                             <!-- Alternative Mobile Number -->
                             <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 ps-4 mt-3">
                                 <input type="checkbox" formControlName="mobNumber2"> Alternative Mobile Number
-                                <input type="text" id="mobNumberAlt" class="form-control">
+                                <input type="text" readonly id="mobNumberAlt" readonly class="form-control">
                             </div>
 
                             <!-- Legal Status of Firm -->
                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 pe-4 mt-3">
                                 <input type="checkbox" formControlName="leagalStatusOfFirm"> Legal Status of Firm
-                                <select id="leagalStatusOfFirm" class="form-select">
-                                    <option value="" disabled selected>Select Legal Status</option>
+                                <select id="leagalStatusOfFirm" disabled class="form-select">
+                                    <option value="" readonly selected>Select Legal Status</option>
                                     <option *ngFor="let status of legalStatusOptions" [value]="status">{{ status }}</option>
                                 </select>
                             </div>
@@ -102,37 +102,37 @@
                             <!-- Primary Email -->
                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 pe-4 mt-3">
                                 <input type="checkbox" formControlName="email"> Primary Email
-                                <input type="text" id="email" class="form-control">
+                                <input type="text" id="email" readonly class="form-control">
                             </div>
 
                             <!-- Alternative Email -->
                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 pe-4 mt-3">
                                 <input type="checkbox" formControlName="email2"> Alternative Email
-                                <input type="text" id="emailAlt" class="form-control">
+                                <input type="text" id="emailAlt" readonly class="form-control">
                             </div>
 
                             <!-- GSTIN -->
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mt-3 pe-4">
                                 <input type="checkbox" formControlName="GSTIN"> GSTIN
-                                <input type="text" id="gstin" class="form-control">
+                                <input type="text" id="gstin" readonly class="form-control">
                             </div>
 
                             <!-- PAN -->
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mt-3 ps-4">
                                 <input type="checkbox" formControlName="pan"> PAN
-                                <input type="text" id="pan" class="form-control">
+                                <input type="text" id="pan" readonly class="form-control">
                             </div>
 
                             <!-- Company Establishment Date -->
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mt-3 pe-4">
                                 <input type="checkbox" formControlName="establishDate"> Company Establishment Date
-                                <input type="date" id="establishDate" class="form-control">
+                                <input type="date" id="establishDate" readonly class="form-control">
                             </div>
 
                             <!-- Registered On FTH -->
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mt-3 ps-4">
                                 <input type="checkbox" formControlName="registerOnFTH"> Registered On FTH
-                                <input type="text" id="" class="form-control">
+                                <input type="text" id="" readonly class="form-control">
                             </div>
                         </div>
 
@@ -142,19 +142,19 @@
                         <div class="row" formGroupName="socialMedia">
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mt-3 pe-4">
                                 <input type="checkbox" formControlName="facebook"> Facebook
-                                <input type="text" id="fb" class="form-control">
+                                <input type="text" id="fb" readonly class="form-control">
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mt-2 ps-4">
                                 <input type="checkbox" formControlName="linkedIn"> Linkedin
-                                <input type="text" id="linkedin" class="form-control">
+                                <input type="text" id="linkedin" readonly class="form-control">
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mt-3 pe-4">
                                 <input type="checkbox" formControlName="instagram"> Instagram
-                                <input type="text" id="insta" class="form-control">
+                                <input type="text" id="insta" readonly class="form-control">
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mt-3 ps-4">
                                 <input type="checkbox" formControlName="webSite"> Company Website
-                                <input type="text" id="web" class="form-control">
+                                <input type="text" id="web" readonly class="form-control">
                             </div>
                         </div>
 
@@ -164,46 +164,46 @@
                         <div class="row" formGroupName="BankDetails">
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mt-3 pe-4">
                                 <input type="checkbox" formControlName="accountNumber"> Account Number
-                                <input type="text" id="acNo" class="form-control">
+                                <input type="text" id="acNo" readonly class="form-control">
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mt-3 ps-4">
                                 <input type="checkbox" formControlName="IFSCcode"> IFSC Code
-                                <input type="text" id="ifsc" class="form-control">
+                                <input type="text" id="ifsc" readonly class="form-control">
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mt-3 pe-4">
                                 <input type="checkbox" formControlName="bankName"> Bank Name
-                                <input type="text" id="bankName" class="form-control">
+                                <input type="text" id="bankName" readonly class="form-control">
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 mt-3 ps-4">
-                                <input type="checkbox" formControlName="branchName"> Branch Name
-                                <input type="text" id="branchName" class="form-control">
+                                <input type="checkbox" formControlName="branch"> Branch Name
+                                <input type="text" id="branch" readonly class="form-control">
                             </div>
                         </div>
 
                         <!-- for KyC -->
                         <h5 class="text-center mb-0 mt-4">KYC Details</h5>
                         <hr class="my-2">
-                        <div class="row" formGroupName="BankDetails">
+                        <div class="row">
                             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 mt-2 mt-3">
-                                <input type="checkbox" formControlName="country"> Document Type
-                                <select id="country" class="form-select">
+                                <input type="checkbox" formControlName="fileName"> Document Type
+                                <select id="country" disabled class="form-select">
                                     <option value="">Select Document</option>
                                     <option *ngFor="let document of documents" [value]="document">{{ document }}</option>
                                 </select>
                             </div>
                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 mt-3 ps-4">
-                                <input type="checkbox" formControlName="ifscCode"> Document Field
-                                <input type="file" id="ifsc" class="form-control">
+                                <input type="checkbox" formControlName="file"> Document Field
+                                <input type="file" id="ifsc" readonly class="form-control" disabled>
                             </div>                           
                         </div>
 
                          <!-- Company Logo -->
                          <h5 class="text-center mb-0 mt-4">Company Logo</h5>
                          <hr class="my-2">
-                         <div class="row" formGroupName="BankDetails">
+                         <div class="row" >
                          <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 mt-3 ps-4">
-                                 <input type="checkbox" formControlName="ifscCode"> Company Logo
-                                 <input type="file" id="ifsc" class="form-control">
+                                 <input type="checkbox" formControlName="logo"> Company Logo
+                                 <input type="file" id="ifsc" class="form-control" disabled>
                              </div>                           
                          </div>
                          <div class="row mt-5" *ngIf="!isDataSaved || isDataSaved">
