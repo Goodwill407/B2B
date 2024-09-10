@@ -1,19 +1,8 @@
-.labels-values {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-top: 30px;
-  }
-  
-  .label-value-pair {
-    margin-top: 5px;
-  }
-  
-  .label {
-    font-weight: bold;
-    color: #a8a8a8;
-  }
-  
-  .value {
-    margin-left: 5px;
-  }
+.form-group .form-control {
+  width: 100%;
+  /* border: none; */
+  box-shadow: none;
+  /* border-bottom: 1px solid #9e9e9e; */
+  border-radius: 5px;
+  padding-left: 10px;
+}

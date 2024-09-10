@@ -1,0 +1,55 @@
+<section class="content">
+    <div class="content-block">
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i>&nbsp; Inward Stock Entry</h4>
+        <div class="card">
+            @if(inwardStock.products.length > 0){
+            <p-table [value]="inwardStock.products">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Sr. No.</th>
+                        <th>Design No.</th>
+                        <th>Design Title</th>
+                        <th>Quantity</th>
+                        <th>Rate</th>
+                        <th>Amount</th>
+                        <th>Qty Received</th>
+                        <th>Issue</th>
+                        <th>Product Done</th>
+                        <th>Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-data let-index="rowIndex">
+                    <tr>
+                        <td>{{ index +1 }}</td>
+                        <td>{{ data.designNo }}</td>
+                        <td>{{ data.name }}</td>
+                        <td>{{ data.qty }}</td>
+                        <td>{{ data.rate }}</td>
+                        <td>{{ data.taxableValue }}</td>
+                        <td>{{ data.qtyReceived }}</td>
+                        <td>{{ data.issue || 'No'}}</td>
+                        <td>
+                            <input type="checkbox" class="form-check-input" [disabled]="data.status==='issue'"
+                                [(ngModel)]="data.doneChecked" (change)="doneProduct(data, $event)" id="">
+                        </td>
+
+                        <td>
+                            <button class="btn btn-outline-success" (click)="openEditDialog(data)">
+                                <i class="bi bi-pencil"></i>&nbsp; Edit
+                            </button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            @if(showFlag){
+            <div class="my-3 text-center">
+                <button (click)="submitDetails()" class="btn btn-outline-success">Submit Details</button>
+            </div>
+            }
+            }
+            @else {
+                <p class="text-center my-5">No products with pending status found.</p>
+            }
+        </div>
+    </div>
+</section>

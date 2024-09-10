@@ -74,7 +74,7 @@ export class DeliveryChallanComponent {
         this.challan.customerPhone = this.product.buyerPhone;
         this.challan.customerGSTIN = this.product.buyerGSTIN;
         this.challan.customerEmail = this.product.buyerEmail;
-        this.challan.challanNo = this.product.orderNo;
+        this.challan.pONumber = this.product.poNumber;
         this.challan.challanDate = new Date().toLocaleDateString(); // Format date as needed
         this.challan.lrNo = this.product.lorryReceiptNo || this.product.trackingNo || this.product.receiptNo;
         this.challan.eWayNo = this.product.ebill;
@@ -90,6 +90,7 @@ export class DeliveryChallanComponent {
             name: prod.name,
             designNo: prod.designNo, // Assuming designNo is HSN
             qty: `${prod.deliveryQty}`, // Assuming qty is the number of pieces
+            demandQty: prod.qty, // Assuming demandQty
             rate: prod.rate,
             taxableValue: total,
             gst: Number((total * 0.18).toFixed(2)),

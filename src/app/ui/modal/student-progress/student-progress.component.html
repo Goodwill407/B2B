@@ -1,133 +1,30 @@
-<!-- <mat-dialog-content> -->
+<div class="card p-3 mb-0">
 
-<div class="mx-auto my-4 w-75">
-  <div class="student-card">
-    <!-- <div class="row">
-      <div class="col-12">
-        <div class="card"> -->
-          <!-- <div class="card-body">
-            <h4 class="header justify-content-center"><u>Assessment Report:</u></h4>
-          </div> -->
-        <!-- </div>
+  <h5 mat-dialog-title><u>Edit Details</u></h5>
+  <div mat-dialog-content>
+    <form>
+      <div class="form-group mb-2">
+        <label for="qtyReceived">Quantity Received:</label>
+        <input type="number" class="form-control" [(ngModel)]="productData.qtyReceived" name="qtyReceived" id="qtyReceived">
       </div>
-    </div> -->
-    <div class="modalHeader">
-      <div class="editRowModal">
-          <div class="modalHeader clearfix">
-              <!-- <img [src]='staff.img' alt="avatar"> -->
-              <!-- <div class="modal-about"> -->
-                <div class="card-body">
-                  <h4 class="header d-flex justify-content-center"><u>Assessment Report:</u></h4>
-                </div>
-              <!-- </div> -->
-          </div>
+
+      <div class="form-group mb-2">
+        <label for="issue">Issue:</label>
+        <select class="form-select" [(ngModel)]="productData.issue" name="issue" (change)="onIssueChange()">
+          <option disabled value="">Select Issue</option>
+          <option *ngFor="let option of issueOptions" [value]="option">{{ option }}</option>
+        </select>
       </div>
-      <button mat-icon-button (click)="dialogRef.close()" class="modal-close-button" aria-label="Close dialog">
-          <mat-icon>close</mat-icon>
-      </button>
+
+      <div *ngIf="productData.issue == 'Other'">
+        <label for="otherIssue">Other Issue:</label>
+        <textarea class="form-control" [(ngModel)]="productData.otherIssue" name="otherIssue" id="otherIssue"></textarea>
+      </div>
+    </form>
   </div>
 
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body py-0">
-            <div class="header">
-              <h5 [class.auth-spinner]="loading">Aptitude Highlight</h5>
-            </div>
-            <apx-chart [series]="scoreAptitude?.series!" [chart]="scoreAptitude?.chart!"
-              [dataLabels]="scoreAptitude?.dataLabels!" [plotOptions]="scoreAptitude?.plotOptions!"
-              [yaxis]="scoreAptitude?.yaxis!" [xaxis]="scoreAptitude?.xaxis!" [fill]="scoreAptitude?.fill!"
-              >
-            </apx-chart>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body pt-0">
-            <div class="header">
-              <h5 [class.auth-spinner]="loading">Personality Highlight</h5>
-            </div>
-            <div class="px-4">
-              <b>MID -</b> {{ getFormattedPersonalityCounts()||'NA' }}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body py-0">
-            <div class="header">
-              <h5 [class.auth-spinner]="loading">Interest Highlight</h5>
-            </div>
-            <div class="row">
-              <div class="col-8">
-                <apx-chart [series]="studProfileInsert?.series" [chart]="studProfileInsert?.chart"
-                  [xaxis]="studProfileInsert?.xaxis" [title]="studProfileInsert?.title"></apx-chart>
-              </div>
-              <div class="col-4">
-                <div class="labels-values">
-                  <div *ngFor="let category of studProfileInsert?.xaxis.categories; let i = index" class="label-value-pair">
-                    <span class="label">{{ category }}</span>: <span class="value">{{ studProfileInsert?.series[0].data[i] }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body pt-0">
-            <div class="header">
-              <h5 [class.auth-spinner]="loading">Top 4 Career Cluster Fitment</h5>
-              <hr>
-            </div>
-            <div class="row px-4" *ngFor="let fitment of assessmentResponse.top4CareerClusterFitments">
-              <div class="col-6 mt-2"><span class="mb-1">◘</span>&nbsp;{{ fitment.career_name }}</div>
-              <div class="col-6 mt-2">
-                <div class="progress">
-                  <div class="progress-bar bg-info" role="progressbar" [style.width.%]="fitment.fitment"
-                    [attr.aria-valuenow]="fitment.fitment" aria-valuemin="0" aria-valuemax="100">
-                    {{ fitment.fitment }}%
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- <div class="row">
-        <div class="col-12">
-          <div class="card">
-            <div class="card-body py-0">
-              <div class="my-2  d-flex justify-content-center">
-                <button mat-button [matMenuTriggerFor]="menu" class="btn btn-outline-success mx-atuo">
-                  Download Report
-                </button>
-                <mat-menu #menu="matMenu">
-                  <button mat-menu-item (click)="downloadReport('long')">Long report</button>
-                  <button mat-menu-item (click)="downloadReport('short')">Short report</button>
-                  <button mat-menu-item (click)="downloadReport('preview')">Summary</button>
-                </mat-menu>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
-
+  <div mat-dialog-actions class="mt-3">
+    <button class="btn btn-outline-danger" (click)="onCancel()">Cancel</button>
+    <button  class="btn btn-outline-success ms-4" color="primary" (click)="onSave()">Save</button>
   </div>
 </div>
-<!-- </mat-dialog-content> -->
