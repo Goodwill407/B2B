@@ -1,31 +1,23 @@
-<div>
-  <h2 mat-dialog-title>Add User</h2>
-  <div mat-dialog-content>
-    <form [formGroup]="addCusForm!" (ngSubmit)="onSubmitClick()">
-      <div class="text-inside">
-        <mat-form-field class="example-full-width">
-          <input matInput placeholder="First Name" value={{fname}} formControlName="firstname">
-        </mat-form-field>
-      </div>
-      <div class="text-inside">
-        <mat-form-field class="example-full-width">
-          <input matInput placeholder="Last Name" value={{lname}} formControlName="lastname">
-        </mat-form-field>
-      </div>
-      <div class="text-inside">
-        <mat-form-field class="example-full-width">
-          <input matInput placeholder="Email address" formControlName="email">
-        </mat-form-field>
-      </div>
-      <div class="text-inside">
-        <mat-form-field class="example-full-width">
-          <textarea matInput placeholder="Address"></textarea>
-        </mat-form-field>
-      </div>
-      <div class="btn-sec">
-        <button class="btn-space" mat-raised-button color="primary">Save</button>
-        <button type="button" mat-button (click)="closeDialog()">Cancel</button>
-      </div>
-    </form>
+<div class="card p-3">
+  <h5>Return Product</h5>
+  <div class=" mb-2">
+    <label for="issue">Why are you returning this?</label>
+    <select class="form-select w-75" [(ngModel)]="selectedReason" name="issue" (change)="onReasonChange($event)">
+      <option disabled value="">Select Issue</option>
+      <option *ngFor="let reason of reasons" [value]="reason">{{ reason }}</option>
+    </select>
+  </div>
+
+  <div class=" mb-2" *ngIf="subReasons.length > 0">
+    <label for="subIssue">Please tell us more</label>
+    <select class="form-select w-75" [(ngModel)]="selectedSubReason" name="subIssue">
+      <option disabled value="">Select Sub Reason</option>
+      <option *ngFor="let subReason of subReasons" [value]="subReason">{{ subReason }}</option>
+    </select>
+  </div>
+
+  <div class="mt-3">
+    <button class="btn btn-outline-danger" (click)="onCancel()">Cancel</button>
+    <button class="btn btn-outline-success ms-4" (click)="onSave()">Save</button>
   </div>
 </div>

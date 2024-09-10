@@ -43,7 +43,15 @@ export class MnfListChallanComponent {
 
   viewDetails(data: any) {
     if (data) {
-      this.route.navigate(['/wholesaler/view-challan'], {
+      this.route.navigate(['/wholesaler/order-mng/view-challan'], {
+        queryParams: { product: data.id}
+      });
+    }
+  }
+
+  gotoInventory(data: any) {
+    if (data) {
+      this.route.navigate(['/wholesaler/order-mng/inward-stock'], {
         queryParams: { product: data.id}
       });
     }
