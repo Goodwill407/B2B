@@ -1,0 +1,63 @@
+<section class="content">
+    <div class="content-block">
+      <h4 class="title mt-3">
+        <i class="bi bi-person-vcard-fill icon"></i> View Brand And Send Request
+      </h4>
+  
+      <div class="company-profile">
+        <!-- Company Name -->
+        <h3 class="company-name">{{ CompanyData.companyName }}</h3>
+        <hr>
+  
+        <!-- Introduction -->
+        <p class="introduction">{{ CompanyData.introduction }}</p>
+        
+        <!-- Fact Sheet -->
+        <div class="fact-sheet">
+          <h4>Fact Sheet</h4>
+          <p><strong>Established :</strong> {{ CompanyData.establishDate }}</p>
+          <p><strong>Founder :</strong> {{ CompanyData.fullName }}</p>
+          <p><strong>Legal Status of Firm :</strong> {{ CompanyData.leagalStatusOfFirm }}</p>
+          <p><strong>Registered On FTH :</strong> {{ CompanyData.registerOnFTH }}</p>
+          <p><strong>GST No :</strong> {{ CompanyData.GSTIN }}</p>
+          <p><strong>CIN No :</strong> 12345</p>
+        </div>
+  
+        <!-- Contact Details -->
+        <div class="contact-details">
+          <h4>Contact Details</h4>
+          <p><strong>Address :</strong> {{ CompanyData.address }}</p>
+          <p><strong>Phone :</strong> {{ CompanyData.mobNumber }}</p>
+          <p><strong>Email :</strong> <a href="mailto:{{ CompanyData.email }}">{{ CompanyData.email }}</a></p>
+        </div>
+  
+        <!-- Social Media -->
+        <div class="social-media">
+          <h4>Social Media</h4>
+          <p><a href="{{ CompanyData.socialMedia.facebook }}" target="_blank">Facebook</a></p>
+          <p><a href="{{ CompanyData.socialMedia.instagram }}" target="_blank">Instagram</a></p>
+          <p><a href="{{ CompanyData.socialMedia.linkedin }}" target="_blank">LinkedIn</a></p>
+        </div>
+  
+        <!-- Brands Section -->
+        <div class="brands-section">
+          <h4>Our Brands</h4>
+          <div class="brand-list">
+            <div *ngFor="let brand of brandsDetails">
+              <div class="brand-item">
+                <img [src]="cdnPath + brand.brandLogo" [alt]="brand.brandName" />            
+              </div>
+              <div class="brand-name text-center mt-2"><strong>{{ brand.brandName }}</strong></div>
+            </div>
+          </div>
+        </div>    
+        <hr>
+  
+          <!-- Add Request Button -->
+          <div class="button-container">
+            <button class="add-request-button" (click)="acceptWholselerRequest()">Accept Request</button>
+          </div>
+      </div>
+    </div>
+  </section>
+  
