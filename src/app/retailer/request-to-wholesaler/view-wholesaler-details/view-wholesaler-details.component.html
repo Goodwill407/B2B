@@ -1,0 +1,71 @@
+<section class="content">
+    <div class="content-block">
+      <h4 class="title mt-2">
+        <i class="bi bi-person-vcard-fill icon"></i> View Wholeseler And Send Request
+      </h4>
+  
+      <div class="company-profile">
+        <!-- Company Name -->
+        <h3 class="company-name">{{ WholsellerData?.companyName }}</h3>
+        <hr>
+  
+        <!-- Introduction -->
+        <p class="introduction">{{ WholsellerData?.introduction }}</p>
+        
+        <!-- Fact Sheet -->
+        <div class="fact-sheet">
+          <h4>Fact Sheet</h4>      
+          <!-- Conditionally display fields based on the object's values -->
+          <p *ngIf="WholsellerData?.establishDate"><strong>Established :</strong> {{ WholsellerData?.establishDate }}</p>
+          <p *ngIf="WholsellerData?.fullName"><strong>Founder :</strong> {{ WholsellerData?.fullName }}</p>
+          <p *ngIf="WholsellerData?.leagalStatusOfFirm"><strong>Legal Status of Firm :</strong> {{ WholsellerData?.leagalStatusOfFirm }}</p>
+          <p *ngIf="WholsellerData?.registerOnFTH"><strong>Registered On FTH :</strong> {{ WholsellerData?.registerOnFTH | customDate:'MMM d, y' }}</p>
+          <p *ngIf="WholsellerData?.GSTIN"><strong>GST No :</strong> {{ WholsellerData?.GSTIN }}</p>
+          <p *ngIf="WholsellerData?.code"><strong>Mobile No. :</strong> {{ WholsellerData?.code }} {{WholsellerData?.mobNumber}}</p>
+          <p *ngIf="WholsellerData?.companyName"><strong>Company Name :</strong> {{ WholsellerData?.companyName }}</p>
+          <p *ngIf="WholsellerData?.address"><strong>Address :</strong> {{ WholsellerData?.address }}</p>
+          <p *ngIf="WholsellerData?.state"><strong>State :</strong> {{ WholsellerData?.state }}</p>
+          <p *ngIf="WholsellerData?.city"><strong>City :</strong> {{ WholsellerData?.city }}</p>
+          <p *ngIf="WholsellerData?.country"><strong>Country :</strong> {{ WholsellerData?.country }}</p>
+          <p *ngIf="WholsellerData?.pinCode"><strong>PIN Code :</strong> {{ WholsellerData?.pinCode }}</p>
+          <p *ngIf="WholsellerData?.turnover"><strong>Turnover :</strong> {{ WholsellerData?.turnover }}</p>
+        </div>
+  
+        <!-- Contact Details -->
+        <div class="contact-details">
+          <h4>Contact Details</h4>
+          <p><strong>Address :</strong> {{ WholsellerData?.address }}</p>
+          <p><strong>Phone :</strong> {{ WholsellerData?.mobNumber }}</p>
+          <p><strong>Email :</strong> <a href="mailto:{{ WholsellerData.email }}">{{ WholsellerData?.email }}</a></p>
+        </div>
+  
+        <!-- Social Media -->
+        <div class="social-media">
+          <h4>Social Media</h4>
+          <p><a href="{{ WholsellerData?.socialMedia?.facebook }}" target="_blank">Facebook</a></p>
+          <p><a href="{{ WholsellerData?.socialMedia?.instagram }}" target="_blank">Instagram</a></p>
+          <p><a href="{{ WholsellerData?.socialMedia?.linkedin }}" target="_blank">LinkedIn</a></p>
+        </div>
+  
+        <!-- Brands Section -->
+        <div class="brands-section">
+          <h4>Our Brands</h4>
+          <div class="brand-list">
+            <div *ngFor="let brand of brandsDetails">
+              <div class="brand-item">
+                <img [src]="cdnPath + brand.brandLogo" [alt]="brand.brandName" />            
+              </div>
+              <div class="brand-name text-center mt-2"><strong>{{ brand.brandName }}</strong></div>
+            </div>
+          </div>
+        </div>    
+        <hr>
+  
+          <!-- Add Request Button -->
+          <div class="button-container">
+            <button class="add-request-button" (click)="sendRequestToWholesaler()">Request To Add</button>
+          </div>
+      </div>
+    </div>
+  </section>
+  

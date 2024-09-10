@@ -1,0 +1,50 @@
+
+<section class="content">
+    <div class="content-block">
+      <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i>Retailer's Request List</h4>
+      <div class="card-table p-3">
+        <h5 class="mt-2">Retailer's List</h5>
+        <hr>
+        <div class="p-grid p-fluid">
+          <div class="p-col-12 text-center">
+            <p-table [value]="allRequestedList">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Wholesaler's Name</th>
+                  <th>Company Name</th>
+                  <th>Mobile Number</th>
+                  <th>Email</th>
+                  <th>Status</th>
+                  <th>Action</th>                  
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-request>
+                <tr>
+                  <td class="text-center">{{request.requestByFullName}}</td>
+                  <td class="text-center">{{request.requestByCompanyName}}</td>
+                  <td class="text-center">{{request.requestByMobileNumber}}</td>
+                  <td class="text-center">{{request.requestByEmail}}</td>
+                  <td class="text-center" [ngClass]="{
+                    'text-warning': request.status === 'pending',
+                    'text-danger': request.status === 'rejected',
+                    'text-success': request.status === 'accepted' }">
+                    {{request.status}}
+                  </td>
+                  <td class="text-center">
+                    <!-- Accept Button -->                    
+                    <button class="btn btn-icon p-2" pTooltip="Accept" tooltipPosition="top" (click)="requestAcceptOrRejectChange(request, 'accepted')">
+                      <i class="bi bi-check2-circle text-success"></i>
+                   </button>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+            <span *ngIf="!allRequestedList || allRequestedList.length == 0"
+              class="data-not-found d-flex justify-content-center align-items-center">Data Not Found</span>
+            <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows" [totalRecords]="totalResults"
+              [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>

@@ -1,0 +1,200 @@
+/* General Styles */
+.company-profile {
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+  }
+  
+  .company-name {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: start;
+    font-weight: 700;
+  }
+  
+  .introduction {
+    font-size: 0.95rem;
+    color: #7f8c8d;
+    margin-bottom: 25px;
+    text-align: justify;
+    padding: 15px;
+    border-radius: 6px;
+    // background-color: #f4f4f4;
+    border: 1px solid #dcdcdc;
+  }
+  
+  /* Section Headings */
+  .section-title {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    border-bottom: 2px solid #2c3e50;
+    padding-bottom: 6px;
+    margin-bottom: 20px;
+    display: inline-block;
+  }
+  
+  /* Fact Sheet Styling */
+  .fact-sheet {
+    background-color: #ffffff;
+    border: 1px solid #dcdcdc;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 25px;
+  }
+  
+  .fact-sheet p {
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+  }
+  
+  .fact-sheet p strong {
+    min-width: 180px;
+    color: #34495e;
+    font-weight: 600;
+  }
+  
+  
+  /* Contact Details Styling */
+  .contact-details {
+    background-color: #ffffff;
+    border: 1px solid #dcdcdc;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 25px;
+  }
+  
+  .contact-details p {
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+  }
+  
+  .contact-details p strong {
+    min-width: 110px;
+    color: #34495e;
+    font-weight: 600;
+  }
+  
+  .contact-details a {
+    color: #3498db;
+    text-decoration: none;
+  }
+  
+  .contact-details a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Social Media Styling */
+  .social-media {
+    background-color: #ffffff;
+    border: 1px solid #dcdcdc;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 25px;
+  }
+  
+  .social-media h2 {
+    font-size: 1.5rem;
+    color: #3498db;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 6px;
+    margin-bottom: 20px;
+    display: inline-block;
+  }
+  
+  .social-media p {
+    margin: 0;
+    padding: 8px 0;
+    font-size: 0.95rem;
+  }
+  
+  .social-media a {
+    color: #3498db;
+    text-decoration: none;
+  }
+  
+  .social-media a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Brands Section */
+  
+  .brands-section h4 {
+    font-size: 1.4rem; /* Slightly smaller font size */
+    margin-bottom: 15px;
+    text-align: center;
+    border-bottom: 2px solid #dcdcdc;
+    padding-bottom: 6px;
+  }
+  
+  /* Brand List Styling */
+  .brand-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Reduced gap */
+    justify-content: center;
+  }
+  
+  .brand-item {
+    width: 140px; /* Reduced width */
+    height: 160px; /* Reduced height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #2c3e50;
+    font-size: 0.8rem; /* Slightly smaller font size */
+    background-color: #f9f9f9;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .brand-item img {
+    max-width: 100px; /* Reduced logo size */
+    max-height: 100px; /* Reduced logo size */
+    margin-bottom: 8px;
+    object-fit: contain;
+  }
+  
+  .brand-name {
+    font-size: 0.8rem; /* Slightly smaller font size */
+    color: #2c3e50;
+  }
+  
+  /* Button Container Styling */
+  .button-container {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  /* Add Request Button Styling */
+  .add-request-button {
+    background-color: #3498db; /* Primary button color */
+    color: #ffffff; /* Text color */
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .add-request-button:hover {
+    background-color: #2980b9; /* Darker shade on hover */
+  }
+  
+  .add-request-button:focus {
+    outline: none;
+  }
+  
+  

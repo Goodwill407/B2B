@@ -1,0 +1,59 @@
+<section class="content">
+    <div class="content-block">
+      <div class="ads-flex">
+        <div class="flex-grow-1">
+            <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Requested Wholesaler's List</h4>  
+        <div class="card-table p-3">
+            <h5 class="mt-2">Wholesaler's List</h5>
+            <hr>
+            <div class="p-grid p-fluid ">
+              <div class="p-col-12 text-center">
+                <p-table [value]="allWholesaler">
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th>Wholesaler's Name</th>
+                      <th>Company Name</th>
+                      <th>Mobile Number</th>
+                      <th>Email</th>
+                      <th>Status</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-allWholesaler>
+                    <tr>
+                      <td class="text-center">{{allWholesaler.fullName}}</td>
+                      <td class="text-center">{{allWholesaler.companyName}}</td>
+                      <td class="text-center">{{allWholesaler.mobileNumber}}</td>
+                      <td class="text-center">{{allWholesaler.email}}</td>                     
+                      <td class="text-center" [ngClass]="{
+                        'text-warning': allWholesaler.status === 'pending',
+                        'text-danger': allWholesaler.status === 'rejected',
+                        'text-success': allWholesaler.status === 'accepted' }">
+                        {{allWholesaler.status}}
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+                <span *ngIf="!allWholesaler || allWholesaler.length == 0"
+                  class="data-not-found d-flex justify-content-center align-items-center">Data Not Found</span>
+                  <p-paginator (onPageChange)="onPageChange($event)"
+                  [first]="first" [rows]="rows" [totalRecords]="totalResults"
+                  [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
+              </div>
+            </div>
+      
+          </div>
+        </div>
+
+           <!-- Right-Side Ads Container -->
+      <div class="ads-right">
+        <app-right-side-advertise [imageUrls]="rightAdImages"></app-right-side-advertise>
+      </div>
+    </div>
+
+    <!-- Bottom-Side Ad Container -->
+    <div class="ads-bottom mb-3">
+      <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
+    </div>
+
+    </div>
+</section>  

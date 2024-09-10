@@ -17,6 +17,9 @@ import { ViewManufacturerDetailsComponent } from "./request-to-manufacturer/view
 import { MnfRequestListComponent } from "./request-to-manufacturer/mnf-request-list/mnf-request-list.component";
 import { ViewChallanComponent } from "./order-management/view-challan/view-challan.component";
 import { MnfListChallanComponent } from "./order-management/mnf-list-challan/mnf-list-challan.component";
+import { RetailersRequestsListComponent } from "./retailers-requests-list/retailers-requests-list.component";
+import { RejectedRetailersListComponent } from "./retailers-requests-list/rejected-retailers-list/rejected-retailers-list.component";
+import { ViewRetailersDetailsComponent } from "./retailers-requests-list/view-retailers-details/view-retailers-details.component";
 
 export const R_Auth:Route[] = [
     {path: 'order-mng',
@@ -40,4 +43,9 @@ export const R_Auth:Route[] = [
     {path: 'request-to-mnf', component: RequestToManufacturerComponent},
     {path:'mnf-details', component:ViewManufacturerDetailsComponent},
     {path:'requested-mnf_list', component:MnfRequestListComponent},
+    {path:'view-challan', component:ViewChallanComponent},
+    {path:'mnf-list-challan', component:MnfListChallanComponent},
+    {path:'retailers-requests-list', component:RetailersRequestsListComponent},
+    {path:'rejected-retailsers-list', component:RejectedRetailersListComponent},
+    {path:'view-retailser-Details', component:ViewRetailersDetailsComponent},
 ]
