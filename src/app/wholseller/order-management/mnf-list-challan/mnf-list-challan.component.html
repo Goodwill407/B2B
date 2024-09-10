@@ -16,7 +16,8 @@
                           <th>Company Name</th>
                           <th>Challan Date</th>
                           <th>Challan No</th>
-                          <th>Action</th>
+                          <th class="pe-0">Action</th>
+                          <th class="ps-0">Inward Stock <br> Entry</th>
                         </tr>
                       </ng-template>
                       <ng-template pTemplate="body" let-data let-index="rowIndex">
@@ -26,8 +27,11 @@
                           <td>{{ data.companyName }}</td>
                           <td>{{ data.challanDate }}</td>
                           <td>{{ data.challanNo }}</td>
-                          <td>
+                          <td class="pe-0">
                            <button class="btn btn-outline-success" (click)="viewDetails(data)"><i class="bi bi-eye"></i>&nbsp; View</button>
+                          </td>
+                          <td class="ps-0">
+                           <button class="btn btn-outline-success" (click)="gotoInventory(data)"><i class="bi bi-info-circle"></i>&nbsp; Check</button>
                           </td>
                         </tr>
                       </ng-template>

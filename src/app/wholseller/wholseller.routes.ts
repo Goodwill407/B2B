@@ -22,6 +22,12 @@ import { RejectedRetailersListComponent } from "./retailers-requests-list/reject
 import { ViewRetailersDetailsComponent } from "./retailers-requests-list/view-retailers-details/view-retailers-details.component";
 
 export const R_Auth:Route[] = [
+    {path: 'order-mng',
+        loadChildren:() => import('./order-management/order-management.route').then((mod)=>mod.Order_Management_Route)
+    },
+    {path: 'return-mng',
+        loadChildren:() => import('./returnManagement/return-mng.route').then((mod)=>mod.returnMng)
+    },
     {path: 'dashboard', component: DashboardComponent},
     {path: 'profile', component: WholesalerProfileComponent},
     {path: 'new-retailer', component: AddRetailerComponent},
@@ -34,7 +40,6 @@ export const R_Auth:Route[] = [
     {path: 'view-product', component: ViewProductComponent},
     {path: 'wishlist-product', component: WishlistProductComponent},
     {path: 'add-to-cart', component: CartProductComponent},
-    {path: 'place-order', component: PlaceOrderComponent},
     {path: 'request-to-mnf', component: RequestToManufacturerComponent},
     {path:'mnf-details', component:ViewManufacturerDetailsComponent},
     {path:'requested-mnf_list', component:MnfRequestListComponent},

@@ -868,7 +868,7 @@ export const ROUTES: RouteInfo[] = [
     role: ['wholesaler'],
     submenu: [
       {
-        path: '/wholesaler/mnf-list-challan',
+        path: '/wholesaler/order-mng/mnf-list-challan',
         title: 'New Orders',
         iconType: '',
         icon: '',
@@ -880,8 +880,20 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
       },
       {
-        path: '/wholesaler/mnf-list-challan',
+        path: '/wholesaler/order-mng',
         title: 'View Order Status',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },      
+      {
+        path: '/wholesaler/order-mng/ordered-products',
+        title: 'Ordered Products',
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -905,7 +917,7 @@ export const ROUTES: RouteInfo[] = [
     role: ['wholesaler'],
     submenu: [
       {
-        path: '/users/trainer',
+        path: '/wholesaler/return-mng/return-product',
         title: 'Order Return',
         iconType: '',
         icon: '',

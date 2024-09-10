@@ -1,0 +1,54 @@
+<section class="content">
+    <div class="content-block">
+        <div class="flex-grow-1">
+            <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i>&nbsp; Wholesaler Order List</h4>
+
+            <!-- Check if there are any products -->
+            <p-accordion [activeIndex]="0" class="card" *ngIf="inwardStock && objectKeys(inwardStock).length > 0">
+                <ng-container *ngFor="let distributor of inwardStock | keyvalue; let distIndex = index">
+                    <p-accordionTab class="px-0" [header]="'Manufacturer : ' + distributor.key">
+                        <!-- Table for products of each manufacturer -->
+                        <p-table [value]="distributor.value[0].products">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th>Sr. No.</th>
+                                    <th>Design No.</th>
+                                    <th>Design Title</th>
+                                    <th>Quantity</th>
+                                    <th>Rate</th>
+                                    <th>Amount</th>
+                                    <th>Qty Received</th>
+                                    <th>Issue</th>                                    
+                                    <th>Action</th>
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-product let-index="rowIndex">
+                                <tr>
+                                    <td>{{ index + 1 }}</td>
+                                    <td>{{ product.designNo }}</td>
+                                    <td>{{ product.name }}</td>
+                                    <td>{{ product.qty }}</td>
+                                    <td>{{ product.rate }}</td>
+                                    <td>{{ product.taxableValue }}</td>
+                                    <td>{{ product.qtyReceived }}</td>
+                                    <td>{{ product.issue || 'No' }}</td>                                  
+                                    <td>
+                                        <button class="btn btn-outline-success" (click)="returnProduct(product)">
+                                            <i class="bi bi-pencil"></i>&nbsp; Process to Return
+                                        </button>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </p-accordionTab>
+                </ng-container>
+            </p-accordion>
+
+            <!-- Show message if no products -->
+            <div class="text-danger m-5 h-2" *ngIf="!inwardStock || objectKeys(inwardStock).length === 0">
+                No Delivery Challan found for this Wholesaler.
+            </div>         
+            
+        </div>
+    </div>
+</section>
