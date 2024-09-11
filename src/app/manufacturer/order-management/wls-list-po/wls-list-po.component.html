@@ -12,6 +12,7 @@
               <ng-template pTemplate="header">
                 <tr>
                   <th>Sr No.</th>
+                  <th>Order Date</th>
                   <th>Design No.</th>
                   <th>Title</th>
                   <th>Qty</th>
@@ -23,6 +24,7 @@
               <ng-template pTemplate="body" let-product let-index="rowIndex">
                 <tr>
                   <td>{{ index + 1 }}</td>
+                  <td>{{distributor.orderDate | date:'dd-MM-yyyy'}}</td>
                   <td>{{ product.designNo }}</td>
                   <td>{{ product.name }}</td>
                   <td>{{ product.qty }}</td>

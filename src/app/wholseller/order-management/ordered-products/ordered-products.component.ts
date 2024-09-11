@@ -20,32 +20,40 @@ import { TableModule } from 'primeng/table';
   styleUrl: './ordered-products.component.scss'
 })
 export class OrderedProductsComponent {
+  inwardStock: Array<{ 
+    manufacturer: string; 
+    products: any[]; // This should be an array
+    deliveryProduct: { qty: number }; // Define the structure of deliveryProduct
+  }> = [];
 
-  inwardStock: { [key: string]: any[] } = {};
   showFlag: boolean = false;
 
   constructor(private authService: AuthService, private route: ActivatedRoute, private communicationService: CommunicationService, private dialog: MatDialog) { }
 
   ngOnInit() {
-    this.authService.get(`dilevery-order/get/challan?customerEmail=${this.authService.currentUserValue.email}`).subscribe(
+    this.authService.get(`dilevery-order/get-ordered/products?customerEmail=${this.authService.currentUserValue.email}`).subscribe(
       (res: any) => {
-        // Filter the response to only include products with status 'done'
-        this.inwardStock = res.reduce((acc: { [key: string]: any[] }, item: any) => {
-          const key = item.companyDetails; // Group by company details  
-          const filteredProducts = item.products.filter((product: any) => product.status === 'done');
+        // Map the response to extract manufacturer name, matching products, and deliveryProduct data
+        this.inwardStock = res.map((order: any) => {
+          const manufacturerName = order.matchingProducts[0]?.manufacturerFullName || 'Unknown Manufacturer';
   
-          if (filteredProducts.length > 0) {
-            if (!acc[key]) {
-              acc[key] = [];
+          // Update the matching product's quantity with deliveryProduct.qty based on designNumber
+          const updatedProducts = order.matchingProducts.map((product: any) => {
+            if (product.designNumber === order.deliveryProduct.designNo) {
+              return {
+                ...product,
+                quantity: order.deliveryProduct.qty  // Update the quantity field
+              };
             }
+            return product;
+          });
   
-            acc[key].push({
-              ...item,
-              products: filteredProducts // Replace the original products with the filtered ones
-            });
-          }  
-          return acc;
-        }, {} as { [key: string]: any[] });
+          return {
+            manufacturer: manufacturerName,
+            products: updatedProducts,  // Use the updated products
+            orderDetails: order.orderDetails  // Should have a qty property
+          };
+        });
   
         console.log(this.inwardStock);
       },
@@ -56,7 +64,11 @@ export class OrderedProductsComponent {
   }
   
 
-  objectKeys(obj: any): string[] {
-    return Object.keys(obj);
+  addPrice(obj:any){
+    console.log(obj);
+    this.authService.post('/wholesaler-products',obj).subscribe((res:any)=>{
+      debugger
+    })
   }
 }
+

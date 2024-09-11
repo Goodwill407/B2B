@@ -1,4 +1,4 @@
-import { CommonModule, NgStyle } from '@angular/common';
+import { CommonModule, DatePipe, NgStyle } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TableModule } from 'primeng/table';
@@ -16,7 +16,8 @@ import { ChangeDetectorRef } from '@angular/core';
     NgStyle,
     RouterModule,
     TableModule,
-    AccordionModule
+    AccordionModule,
+    DatePipe
   ],
   templateUrl: './wls-list-po.component.html',
   styleUrl: './wls-list-po.component.scss'
