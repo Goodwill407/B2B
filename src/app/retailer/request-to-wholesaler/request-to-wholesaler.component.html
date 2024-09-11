@@ -1,0 +1,61 @@
+
+<section class="content">
+    <div class="content-block">
+      <h4 class="mt-4">
+        <i class="bi bi-person-vcard-fill h3"></i> View Wholesaler's And Send Request
+      </h4>
+  
+      <div class="ads-flex">
+        <div class="flex-grow-1">
+          <!-- Card Table Wrapper -->
+          <div class="card-table p-0">
+            <!-- Search Section -->
+            
+            <div class="search-section p-3">
+            <div class="d-flex align-items-center p-2">                 
+                <label class="search-label ps-1">Search Wholesaler's </label>
+                              <div class="vertical-line"></div>    
+                  
+                <!-- Search Input -->                
+                <div class="d-flex align-items-center ms-2 position-relative">             
+                <input type="text" class="form-control me-2" [(ngModel)]="searchWholesaler"
+                                   placeholder="Search Wholesaler" />                 
+                <button class="btn btn-primary" (click)="searchByWholselers()">Search</button>
+            </div> 
+        </div> 
+        <hr mt-0>
+    </div> 
+  
+  
+  
+            <!-- Display Brand and Product Data -->
+            <div class="brand-list">
+              <!-- Section for Brand Data -->
+              <div *ngFor="let wholesaler of WholesalerData" class="brand-box">
+                <!-- Brand Logo -->
+                <div class="brand-logo-container">
+                  <img [src]="cdnPath + wholesaler.profileImg" alt="{{ wholesaler.companyName }}" class="brand-logo" />
+                </div>
+                <!-- Brand Details -->
+                <h5 class="brand-name">{{ wholesaler.companyName }}</h5>
+                <p class="brand-location">{{ wholesaler.city }}, {{ wholesaler.state }}</p>
+                <button class="btn btn-link" (click)="navigateToProfile(wholesaler.id,wholesaler.email)">View Profile</button>
+                <button class="btn btn-outline-primary request-btn"
+                  (click)="sendRequestToManufacturer(wholesaler)">Request to Add</button>
+              </div>           
+            </div>
+          </div>
+        </div>
+  
+        <!-- Right-Side Ads Container -->
+        <div class="ads-right mt-0">
+          <app-right-side-advertise [imageUrls]="rightAdImages"></app-right-side-advertise>
+        </div>
+      </div>
+  
+      <!-- Bottom-Side Ad Container -->
+      <div class="ads-bottom mb-3">
+        <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
+      </div>
+    </div>
+  </section>

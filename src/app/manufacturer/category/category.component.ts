@@ -153,7 +153,14 @@ export class CategoryComponent {
   }
 
   resetForm(form: FormGroup) {
-    form.reset();
+    form.reset();   
+    form.reset({
+      category: '',
+      productDiscount: '',
+      shippingDiscount: '',
+      categoryBy: this.authService.currentUserValue.email, // Keep default values if necessary
+      id: ''
+    });
     this.formType = 'Save';
   }
 }

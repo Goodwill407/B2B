@@ -152,7 +152,13 @@ export class BrandComponent {
   }
 
   resetForm() {
-    this.brandForm.reset();
+    this.brandForm.reset({
+      brandName: '',
+      brandDescription: '',    
+      brandOwner: this.authService.currentUserValue.email, // Keep default values if necessary
+      id: ''
+    });
+    // this.brandForm.reset();   
     this.imagePreview = null;
     this.formType = 'Save';
     this.fileInput.nativeElement.value = '';
