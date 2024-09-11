@@ -137,7 +137,7 @@ export class AddNewProductsComponent {
         quantity: ['', [Validators.required]],
         dateOfManufacture: ['', [Validators.required]],
         dateOfListing: ['', [Validators.required]],
-        currency: ['', [Validators.required]]
+        // currency: ['', [Validators.required]]
       }),            
       stepTwo: this.fb.group({
         colour: [''],
@@ -293,9 +293,9 @@ export class AddNewProductsComponent {
     })
   }
 
-
+  
   getAllBrands() {
-    this.authService.get('brand').subscribe(res => {
+    this.authService.get(`brand?brandOwner=${this.authService.currentUserValue.email}`).subscribe(res => {
       if (res) {
         this.allBrands = res.results.map((item: any) => item.brandName);
       }

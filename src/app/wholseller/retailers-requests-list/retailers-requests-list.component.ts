@@ -2,6 +2,8 @@ import { NgClass, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
+import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
@@ -12,7 +14,11 @@ import { TooltipModule } from 'primeng/tooltip';
   imports: [ TableModule,
     PaginatorModule,
     NgIf,
-    NgClass, RouterModule,TooltipModule],
+    NgClass,
+    RouterModule,
+    TooltipModule,
+    RightSideAdvertiseComponent,
+    BottomSideAdvertiseComponent,],
   templateUrl: './retailers-requests-list.component.html',
   styleUrl: './retailers-requests-list.component.scss'
 })
@@ -24,6 +30,14 @@ export class RetailersRequestsListComponent {
   first: number = 0;
   rows: number = 10;
   user: any;
+
+  // for ads
+  rightAdImages: string[] = [
+    'https://en.pimg.jp/081/115/951/1/81115951.jpg',
+    'https://en.pimg.jp/087/336/183/1/87336183.jpg'
+  ];
+
+  bottomAdImage: string = 'https://elmanawy.info/demo/gusto/cdn/ads/gusto-ads-banner.png';
 
   
   constructor(private authService: AuthService, private router: Router,private communicationService:CommunicationService) { }
