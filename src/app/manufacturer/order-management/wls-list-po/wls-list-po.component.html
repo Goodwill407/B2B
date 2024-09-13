@@ -6,10 +6,14 @@
       @if(products && products.length >0){
       <p-accordion [activeIndex]="0" class="card">
         <ng-container *ngFor="let distributor of products; let distIndex = index">
-          <p-accordionTab class="px-0" [header]="'Wholesaler : ' + distributor.buyerDetails + 
-          '<span style=&quot;margin-left: 15px;&quot;>| Order Date: ' + (distributor.orderDate | date:'dd-MM-yyyy') + 
-          '</span><span style=&quot;margin-left: 15px;&quot;>| PO Number: ' + distributor.poNumber + '</span>'"
-        >
+          <p-accordionTab class="px-0">
+            <ng-template pTemplate="header">
+              <div class="header-container">
+                <span>Wholesaler: {{ distributor.buyerDetails }}</span>
+                <span>Order Date: {{ distributor.orderDate | date: 'dd-MM-yyyy' }}</span>
+                <span>PO Number: {{ distributor.poNumber }}</span>
+              </div>
+            </ng-template>
             <!-- Table for Products of Each Manufacturer -->
             <p-table [value]="distributor.products">
               <ng-template pTemplate="header">

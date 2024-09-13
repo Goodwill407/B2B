@@ -82,6 +82,7 @@ export class ViewProductOwnComponent {
           id: res.id,
           productBy: res.productBy,
         };
+        this.setOfWholesalerPrice = res.setOfWholesalerPrice;
         this.selectColourCollection(this.product.colours[0]);
       }
     });
