@@ -27,7 +27,7 @@ export class WlsListPoComponent {
   products: any[] = [];
   userProfile: any;
   transportTypes: any = ['By Air', 'By Ship', 'By Road', 'By Courier'];
-  courierCompanies: any = ['FedEx','Delhivery','BlueDart','DHL','Shadowfax','Aramex Logistics Services','India Post','DTDC Courier'];
+  courierCompanies: any = ['FedEx', 'Delhivery', 'BlueDart', 'DHL', 'Shadowfax', 'Aramex Logistics Services', 'India Post', 'DTDC Courier'];
 
   constructor(public authService: AuthService, private router: Router, private communicationService: CommunicationService, private cd: ChangeDetectorRef) { }
 
@@ -63,14 +63,14 @@ export class WlsListPoComponent {
     });
   }
 
-  getCouriersCompany(){
-    this.authService.get('courier').subscribe((data)=>{
+  getCouriersCompany() {
+    this.authService.get('courier').subscribe((data) => {
       this.courierCompanies = data.results;
     })
   }
 
-  postCourierCompany(data:any){
-    this.authService.post('courier', data).subscribe((data)=>{
+  postCourierCompany(data: any) {
+    this.authService.post('courier', data).subscribe((data) => {
       console.log(data);
     })
   }
@@ -83,21 +83,18 @@ export class WlsListPoComponent {
   }
 
   updateTotals(distributor: any): void {
-    debugger;
     distributor.subTotal = distributor.products.reduce((sum: number, product: any) => sum + (product.deliveryQty * product.rate), 0);
-
     // Check if discount is defined and is an array
     if (Array.isArray(distributor.discounts) && distributor.discounts.length > 0) {
-        const discountPercentage = Number(distributor.discounts[0].productDiscount.replace('%', '')) / 100;
-        distributor.discount = distributor.subTotal * discountPercentage;
+      const discountPercentage = Number(distributor.discounts[0].productDiscount.replace('%', '')) / 100;
+      distributor.discount = distributor.subTotal * discountPercentage;
     } else {
-        distributor.discount = 0;
+      distributor.discount = 0;
     }
 
     distributor.gst = Number((distributor.subTotal * 0.18).toFixed(2));
     distributor.grandTotal = (distributor.subTotal - distributor.discount) + Number(distributor.gst);
-}
-
+  }
 
   onTransportTypeChange(distributor: any): void {
     // Reset dependent fields when transport type changes
@@ -114,21 +111,21 @@ export class WlsListPoComponent {
 
     if (!distributor.transportType) {
       isValid = false;
-      this.communicationService.showNotification('snackbar-dark','Please select a transport type.','bottom','center')      
+      this.communicationService.showNotification('snackbar-dark', 'Please select a transport type.', 'bottom', 'center')
     } else if (distributor.transportType === 'By Road') {
       if (!distributor.transportCompany || !distributor.lorryReceiptNo || !distributor.vehicleNo) {
         isValid = false;
-      this.communicationService.showNotification('snackbar-dark','Please fill in all the fields for "By Road".','bottom','center')        
+        this.communicationService.showNotification('snackbar-dark', 'Please fill in all the fields for "By Road".', 'bottom', 'center')
       }
     } else if (distributor.transportType === 'By Air' || distributor.transportType === 'By Ship') {
       if (!distributor.transportCompany || !distributor.receiptNo) {
         isValid = false;
-      this.communicationService.showNotification('snackbar-dark','Please fill in all the fields for "Company " or "Receipt No".','bottom','center')        
+        this.communicationService.showNotification('snackbar-dark', 'Please fill in all the fields for "Company " or "Receipt No".', 'bottom', 'center')
       }
     } else if (distributor.transportType === 'By Courier') {
       if (!distributor.courierCompany || (!distributor.otherCompanyName && distributor.courierCompany === 'Other') || !distributor.trackingNo) {
         isValid = false;
-      this.communicationService.showNotification('snackbar-dark','Please fill in all the fields for "By Courier".','bottom','center')        
+        this.communicationService.showNotification('snackbar-dark', 'Please fill in all the fields for "By Courier".', 'bottom', 'center')
       }
     }
 
@@ -149,10 +146,10 @@ export class WlsListPoComponent {
       distributor.otherCompanyName = '';
     }
   }
-  
+
   addOtherCompany(companyName: string): void {
     if (companyName && !this.courierCompanies.includes(companyName)) {
-      this.postCourierCompany({name: companyName});
+      this.postCourierCompany({ name: companyName });
     }
   }
 }

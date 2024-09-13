@@ -1,6 +1,7 @@
 <section class="content">
   <div class="content-block">
-    <p-accordion [activeIndex]="0" class="card mt-4" *ngIf="inwardStock && inwardStock.length > 0">
+    @if(inwardStock && inwardStock.length > 0){
+    <p-accordion [activeIndex]="0" class="card mt-4">
       <ng-container *ngFor="let distributor of inwardStock; let distIndex = index">
         <p-accordionTab class="px-0" [header]="'Manufacturer : ' + distributor['manufacturer']">
           <p-table [value]="distributor['products']">
@@ -13,7 +14,6 @@
                 <th>Quantity</th>
                 <th>MRP (1 Set)</th>
                 <th>Wholesaler Price</th>
-                <!-- <th>Action</th> -->
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-product let-index="rowIndex">
@@ -27,22 +27,28 @@
                   </span>
                 </td>
                 <td>{{ product.quantity }}</td>
-                <!-- <td>{{ distributor['deliveryProduct']?.qty || 'N/A' }}</td> -->
-                <!-- Ensure qty is part of the deliveryProduct object -->
                 <td>{{ product.setOfMRP }}</td>
                 <td style="width: 90px !important;">
-                  <input type="number" [(ngModel)]="product.wholesalerPrice" class="form-control">
+                  <input type="number" [(ngModel)]="product.setOfWholesalerPrice" class="form-control" />
                 </td>
-                <!-- <td>
-                  <button class="btn btn-outline-success" (click)="addPrice(product)">
-                    <i class="bi bi-pencil"></i>&nbsp;Add Price
-                  </button>
-                </td> -->
               </tr>
             </ng-template>
           </p-table>
+          <hr class="my-2">
+          <div class="text-center">
+            <button class="btn btn-success" 
+                    (click)="addPrice(distributor.products, distributor.orderDetails)" 
+                    [disabled]="!isWholesalerPriceFilled(distributor.products)">
+              <i class="bi bi-plus"></i>&nbsp;Add Product
+            </button>
+          </div>
         </p-accordionTab>
       </ng-container>
     </p-accordion>
+  }@else {
+    <div class="card mt-5 p-5">
+      <h4 class="text-center">No Product found.</h4>
+    </div>
+  }
   </div>
 </section>

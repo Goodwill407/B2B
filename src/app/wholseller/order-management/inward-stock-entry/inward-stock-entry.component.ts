@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import { StudentProgressComponent } from 'app/ui/modal/student-progress/student-progress.component';
 import { TableModule } from 'primeng/table';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-inward-stock-entry',
@@ -21,7 +22,7 @@ export class InwardStockEntryComponent {
   inwardStock: any = { products: [] };
   showFlag:boolean = false;
   
-  constructor(private authService: AuthService, private route: ActivatedRoute, private communicationService: CommunicationService,private dialog: MatDialog) { }
+  constructor(private authService: AuthService, private route: ActivatedRoute, private communicationService: CommunicationService,private dialog: MatDialog, private location: Location) { }
 
   ngOnInit() {
     this.route.queryParamMap.subscribe(params => {
@@ -34,7 +35,8 @@ export class InwardStockEntryComponent {
           } else {
             // Show a message or handle case when no product with 'pending' status
             this.inwardStock = { products: [] }; // No products to display
-            this.communicationService.customError('No products found');
+            this.communicationService.customError1('Product Already Checked for this challan');
+            setTimeout(()=>{this.location.back();}, 3000)
           }
         });
       }

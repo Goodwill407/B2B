@@ -179,7 +179,7 @@
         <div class="d-flex ">
           <div class="d-flex align-items-center justify-content-end me-2">
             <label for="">Quantity</label> &nbsp;
-            <input type="text" [(ngModel)]="quantity" class="form-control w-25">
+            <input type="text" [(ngModel)]="quantity" [min]="product?.minimumOrderQty" class="form-control w-25">
           </div>
           <button type="button" class="btn btn-wishlist" (click)="addToCart(product)">ADD TO CART</button>
         </div>

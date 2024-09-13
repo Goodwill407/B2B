@@ -23,7 +23,7 @@ export class OrderedProductsComponent {
   inwardStock: Array<{ 
     manufacturer: string; 
     products: any[]; // This should be an array
-    deliveryProduct: { qty: number }; // Define the structure of deliveryProduct
+    orderDetails: any; // Define the structure of deliveryProduct
   }> = [];
 
   showFlag: boolean = false;
@@ -31,6 +31,10 @@ export class OrderedProductsComponent {
   constructor(private authService: AuthService, private route: ActivatedRoute, private communicationService: CommunicationService, private dialog: MatDialog) { }
 
   ngOnInit() {
+   this.getProductToAdd();
+  }
+
+  getProductToAdd(){
     this.authService.get(`dilevery-order/get-ordered/products?customerEmail=${this.authService.currentUserValue.email}`).subscribe(
       (res: any) => {
         // Map the response to extract manufacturer name, matching products, and deliveryProduct data
@@ -64,11 +68,40 @@ export class OrderedProductsComponent {
   }
   
 
-  addPrice(obj:any){
-    console.log(obj);
-    this.authService.post('/wholesaler-products',obj).subscribe((res:any)=>{
-      debugger
-    })
+  addPrice(products: any[], orderDetails: any) {
+    let counter = 0; // To track the current product being sent
+    const totalProducts = products.length; // Total number of products
+  
+    products.forEach((product, index) => {
+      product.wholesalerEmail = `${this.authService.currentUserValue.email}`;
+      this.authService.post('wholesaler-products', product).subscribe(
+        (res: any) => {
+          console.log(`Product ${index + 1} of ${totalProducts} sent successfully`, res);
+        
+          counter++;
+          if (counter === totalProducts) {
+            this.changeStatus(orderDetails.orderId);
+          }
+        },
+        (err: any) => {
+          console.error('Error sending product', product, err);
+          this.communicationService.customError('Error sending product ' + product.designNumber);
+        }
+      );
+    });
   }
+  
+
+  changeStatus(id:any){
+    this.authService.patchWithEmail('dilevery-order/'+id,{productStatus:'added'}).subscribe((res:any)=>{
+      this.communicationService.customSuccess('Product Added successfully');
+      this.getProductToAdd();
+    });
+  }
+
+  isWholesalerPriceFilled(products: any[]): boolean {
+    return products.every(product => product.setOfWholesalerPrice && product.setOfWholesalerPrice > 0);
+  }
+  
 }
 

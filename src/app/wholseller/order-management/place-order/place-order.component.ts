@@ -4,13 +4,16 @@ import { ActivatedRoute } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { PaginatorModule } from 'primeng/paginator';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-place-order',
   standalone: true,
   imports: [
     CommonModule,
-    NgFor,
+    TableModule,
+    PaginatorModule,
   ],
   templateUrl: './place-order.component.html',
   styleUrls: ['./place-order.component.scss']
@@ -36,14 +39,22 @@ export class PlaceOrderComponent {
   };
   email: string | null = null;
   productBy: string | null = null;
+  showFlag: boolean = false;
+  tableData: any;
+  totalResults: any;
+  limit = 10;
+  page: number = 1
+  first: number = 0;
+  rows: number = 10;
+  isNewPO: boolean = false;
 
-  constructor(private route: ActivatedRoute, private authService: AuthService, private communicationService:CommunicationService) { }
+  constructor(private route: ActivatedRoute, private authService: AuthService, private communicationService: CommunicationService) { }
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe(params => {
       this.email = params.get('email');
       this.productBy = params.get('productBy');
-  
+
       if (this.email && this.productBy) {
         this.authService.get(`cart/place-order/products?email=${this.email}&productBy=${this.productBy}`)
           .subscribe((res: any) => {
@@ -57,7 +68,7 @@ export class PlaceOrderComponent {
               supplierEmail: `${response.manufacturer.email}`,
               supplierGSTIN: response.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
               buyerName: response.wholesaler.companyName,
-              logoUrl: this.authService.cdnPath+response.wholesaler.profileImg,
+              logoUrl: this.authService.cdnPath + response.wholesaler.profileImg,
               buyerAddress: response.wholesaler.address + ', ' + response.wholesaler.city + ', ' + response.wholesaler.state + ' - ' + response.wholesaler.pinCode,
               buyerPhone: response.wholesaler.mobNumber,
               buyerEmail: response.wholesaler.email,
@@ -85,11 +96,43 @@ export class PlaceOrderComponent {
             };
             this.purchaseOrder.roundedOffTotal = Math.round(parseFloat(this.purchaseOrder.totalAmount));
             this.purchaseOrder.totalInWords = this.convertNumberToWords(parseFloat(this.purchaseOrder.roundedOffTotal)) + " Rupees Only";
+            this.isNewPO = true;  // Set this flag to true for new orders
+            this.showFlag = true;
           });
+      }
+      else {
+        this.getAllData();
       }
     });
   }
-  
+
+  getAllData() {
+    this.showFlag = false;
+    this.authService.get(`product-order?buyerEmail=${this.authService.currentUserValue.email}&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
+      this.tableData = res.results;
+      this.totalResults = res.totalResults;
+    })
+  }
+
+  patchData(data: any) {
+    this.purchaseOrder = data;
+    this.isNewPO = false;  // Set to false to hide the "Generate PO" button
+    this.showFlag = true;  // Show the purchase order details
+  }
+
+  generatePO(obj: any) {
+    this.authService.post('product-order', obj).subscribe((res: any) => {
+      this.communicationService.showNotification('snackbar-success', 'PO Generated Successfully .. !', 'bottom', 'center');
+      this.getAllData();
+      this.isNewPO = false;  // After generating, ensure the button is hidden
+    });
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.limit = event.rows;
+    this.getAllData();
+  }
 
   convertNumberToWords(amount: number): string {
     const units = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
@@ -129,11 +172,6 @@ export class PlaceOrderComponent {
     return words.trim();
   }
 
-  generatePO(obj:any){
-    this.authService.post('product-order',obj).subscribe((res:any)=>{
-      this.communicationService.showNotification('snackbar-success', 'PO Generated Successfully .. !', 'bottom', 'center');
-    })
-  }
 
   printPurchaseOrder(): void {
     const data = document.getElementById('purchaseOrder');
