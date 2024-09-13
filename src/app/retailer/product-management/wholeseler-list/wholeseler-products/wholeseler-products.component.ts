@@ -1,38 +1,42 @@
 import { CommonModule, NgStyle } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '@core';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
+import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
 import ColorThief from 'colorthief';
 import { PaginatorModule } from 'primeng/paginator';
 
 @Component({
-  selector: 'app-view-manage-product',
+  selector: 'app-wholeseler-products',
   standalone: true,
   imports: [
     CommonModule,
     FormsModule,
     NgStyle,
     RouterModule,
-    PaginatorModule
+    PaginatorModule,
+    RightSideAdvertiseComponent,
+    BottomSideAdvertiseComponent,
   ],
-  templateUrl: './view-manage-product.component.html',
-  styleUrls: ['./view-manage-product.component.scss']
+  templateUrl: './wholeseler-products.component.html',
+  styleUrl: './wholeseler-products.component.scss'
 })
-export class ViewManageProductComponent implements OnInit, OnDestroy {
+export class WholeselerProductsComponent {
   filters = {
     brand: '',
     productType: '',
     gender: '',
-    category: '',
+    clothing: '',
     subCategory: ''
   };
 
   products: any[] = [];
   allBrand: any;  
-  allGender = ['Men', 'Women', 'Boys', 'Girls'];
-  allProductType = ["Clothing"];
-  allcategory = [];
+  allGender = ['Men', 'Women', 'Boys', 'Girls', 'Unisex'];
+  allProductType = [];
+  allClothingType = [];
   allSubCategory = [];
  
   limit = 10;
@@ -43,14 +47,28 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
 
   hoverIntervals: any = {}; // Track hover intervals for each product
   totalResults: any;
+  WholeselerEmail: any;
 
-  constructor(public authService: AuthService) { 
+  constructor(public authService: AuthService, private route:ActivatedRoute) { 
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
   }
 
+   // for ads
+   rightAdImages: string[] = [
+    'https://en.pimg.jp/081/115/951/1/81115951.jpg',
+    'https://en.pimg.jp/087/336/183/1/87336183.jpg'
+  ];
+
+  bottomAdImage: string = 'https://elmanawy.info/demo/gusto/cdn/ads/gusto-ads-banner.png';
+
   ngOnInit(): void {
-    this.getAllBrands();   
-    this.getAllProducts();
+    this.route.queryParams.subscribe(params => {
+      this.WholeselerEmail = params['email'];
+      if (this.WholeselerEmail) {
+        this.getAllProducts(this.WholeselerEmail);
+      }
+    })
+    this.getAllBrands();
   }
 
   ngOnDestroy(): void {
@@ -62,49 +80,18 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
   }
 
   getAllBrands() {
-    this.authService.get(`brand?brandOwner=${this.userProfile.email}`).subscribe((res: any) => {
+    this.authService.get(`brand?brandOwner=${this.WholeselerEmail}`).subscribe((res: any) => {
       this.allBrand = res.results;
     });
   }
-
-  // new Code
-  getCategoryByProductTypeAndGender(){
-    const productType=this.filters.productType
-    const gender=this.filters.gender
-
-    this.authService.get(`sub-category/get-category/by-gender?productType=${productType}&gender=${gender}`).subscribe((res:any)=>{
-      if(res){
-        this.allSubCategory=[]
-      }
-      this.allcategory = Array.from(new Set(res.results.map((item: any) => item.category)));      
-    },error=>{
-
-    })
-  }
-
-  getSubCategoryBYProductType_Gender_and_Category(){
-    const productType = this.filters.productType;
-    const gender = this.filters.gender;
-    const category = this.filters.category;
-
-    this.authService.get(`sub-category?productType=${productType}&gender=${gender}&category=${category}`).subscribe((res:any)=>{
-      if(res){
-        this.allSubCategory=[]
-      }
-      this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));      
-    },error=>{
-
-    })
-
-  }
   
-  getAllProducts() {
-    let url = `products/filter-products?productBy=${this.userProfile.email}&limit=${this.limit}&page=${this.page}`;
+  getAllProducts(email:any) {
+    let url = `wholesaler-products?wholesalerEmail=${this.WholeselerEmail}&limit=${this.limit}&page=${this.page}`;
 
     const brand = this.filters.brand;
     const productType = this.filters.productType;
     const gender = this.filters.gender;
-    const category = this.filters.category;
+    const clothing = this.filters.clothing;
     const subCategory = this.filters.subCategory;
 
     if (brand) {
@@ -117,8 +104,8 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
     if (gender) {
       url += `&gender=${gender}`;
     }
-    if (category) {
-      url += `&category=${category}`;
+    if (clothing) {
+      url += `&clothing=${clothing}`;
     }
     if (subCategory) {
       url += `&subCategory=${subCategory}`;
@@ -155,7 +142,7 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
   onPageChange(event: any) {
     this.page = event.page + 1;
     this.limit = event.rows;
-    this.getAllProducts();
+    this.getAllProducts(this.WholeselerEmail);
   }
 
   extractColorFromImage(product: any): void {
@@ -208,37 +195,31 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
     }
   }
 
+  getAllSubCategory() {
+    const productType = this.filters.productType;
+    const gender = this.filters.gender;
+    const clothing = this.filters.clothing;
   
-
+    let url = 'sub-category';
   
-
-  // Implement other methods like getAllProducts, getAllSubCategory, etc.
-
-  shareOnFacebook(product: any) {
-    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(this.getProductUrl(product))}`;
-    window.open(url, '_blank');
+    if (productType) {
+      url += `?productType=${productType}`;
+    }
+    if (gender) {
+      url += (url.includes('?') ? '&' : '?') + `gender=${gender}`;
+    }
+    if (clothing) {
+      url += (url.includes('?') ? '&' : '?') + `clothing=${clothing}`;
+    }
+  
+    this.authService.get(url).subscribe(res => {
+      if (res) {
+        this.allProductType = Array.from(new Set(res.results.map((item: any) => item.productType)));
+        this.allClothingType = Array.from(new Set(res.results.map((item: any) => item.category)));
+        this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
+      }
+    }, (error) => {
+      console.log(error);
+    });
   }
-
-  shareOnWhatsApp(product: any) {
-    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(this.getProductUrl(product))}`;
-    window.open(url, '_blank');
-  }
-
-  // shareOnInstagram(product: any) {
-  //   // Instagram does not have a direct sharing URL, you might need to use their API or a different approach
-  //   alert('Share on Instagram');
-  // }
-
-  shareOnTwitter(product: any) {
-    const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(this.getProductUrl(product))}`;
-    window.open(url, '_blank');
-  }
-
-  getProductUrl(product: any): string {
-    return `http://fashiontradershub.com`; // Change to your actual product URL
-  }  
-
-
 }
-
-
