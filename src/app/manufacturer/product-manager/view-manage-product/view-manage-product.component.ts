@@ -118,32 +118,20 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
   }
   
   getAllProducts() {
-    let url = `products/filter-products?productBy=${this.userProfile.email}&limit=${this.limit}&page=${this.page}`;
-
-    const brand = this.filters.brand;
-    const productType = this.filters.productType;
-    const gender = this.filters.gender;
-    const category = this.filters.category;
-    const subCategory = this.filters.subCategory;
-
-    if (brand) {
-      url += `&brand=${brand}`;
+    let url = `products/filter-products?limit=${this.limit}&page=${this.page}`;
+   
+    const Object={
+      "productBy": this.userProfile.email,
+      "brand":this.filters.brand,
+      "productType":this.filters.productType,
+      "gender": this.filters.gender,
+      "clothing": this.filters.category,
+      "subCategory":this.filters.subCategory
     }
 
-    if (productType) {
-      url += `&productType=${productType}`;
-    }
-    if (gender) {
-      url += `&gender=${gender}`;
-    }
-    if (category) {
-      url += `&category=${category}`;
-    }
-    if (subCategory) {
-      url += `&subCategory=${subCategory}`;
-    }
+   
 
-    this.authService.get(url).subscribe((res: any) => {
+    this.authService.post(url,Object).subscribe((res: any) => {
       if (res) {
         this.totalResults = res.totalResults;
         this.products = res.results.map((product: any) => ({
