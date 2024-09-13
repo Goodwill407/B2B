@@ -24,11 +24,8 @@
                       <td class="text-center">{{allWholesaler.companyName}}</td>
                       <td class="text-center">{{allWholesaler.mobileNumber}}</td>
                       <td class="text-center">{{allWholesaler.email}}</td>                     
-                      <td class="text-center" [ngClass]="{
-                        'text-warning': allWholesaler.status === 'pending',
-                        'text-danger': allWholesaler.status === 'rejected',
-                        'text-success': allWholesaler.status === 'accepted' }">
-                        {{allWholesaler.status}}
+                      <td class="text-center text-warning">
+                        {{allWholesaler.status == 'rejected'?'Pending':"Pending"}}
                       </td>
                     </tr>
                   </ng-template>

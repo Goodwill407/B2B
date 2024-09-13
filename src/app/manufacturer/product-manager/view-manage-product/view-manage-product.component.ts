@@ -68,34 +68,53 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
   }
 
   // new Code
-  getCategoryByProductTypeAndGender(){
+  // getCategoryByProductTypeAndGender(){
+  //   const productType=this.filters.productType
+  //   const gender=this.filters.gender
+
+  //   this.authService.get(`sub-category/get-category/by-gender?productType=${productType}&gender=${gender}`).subscribe((res:any)=>{
+  //     if(res){
+  //       this.allSubCategory=[]
+  //     }
+  //     this.allcategory = Array.from(new Set(res.results.map((item: any) => item.category)));      
+  //   },error=>{
+
+  //   })
+  // }
+  getCategoryByProductTypeAndGender() {
     const productType=this.filters.productType
     const gender=this.filters.gender
 
-    this.authService.get(`sub-category/get-category/by-gender?productType=${productType}&gender=${gender}`).subscribe((res:any)=>{
-      if(res){
-        this.allSubCategory=[]
+    this.authService.get(`sub-category/get-category/by-gender?productType=${productType}&gender=${gender}`).subscribe((res: any) => {
+      if (res) {
+        this.allSubCategory = []
       }
-      this.allcategory = Array.from(new Set(res.results.map((item: any) => item.category)));      
-    },error=>{
+      this.allcategory = Array.from(new Set(res.results.map((item: any) => item.category)));
+    }, error => {
 
-    })
-  }
-
+    });
+     }
+  
   getSubCategoryBYProductType_Gender_and_Category(){
     const productType = this.filters.productType;
     const gender = this.filters.gender;
     const category = this.filters.category;
-
-    this.authService.get(`sub-category?productType=${productType}&gender=${gender}&category=${category}`).subscribe((res:any)=>{
-      if(res){
-        this.allSubCategory=[]
+    const object=
+      {
+        "productType":productType ,
+        "gender":gender ,
+        "category":category ,     
       }
-      this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));      
-    },error=>{
+   
 
-    })
+    this.authService.post(`sub-category/filter`,object).subscribe((res: any) => {
+      if (res) {
+        this.allSubCategory = []
+      }
+      this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
+    }, error => {
 
+    });   
   }
   
   getAllProducts() {
