@@ -473,8 +473,8 @@ export const ROUTES: RouteInfo[] = [
     role: ['retailer'],
     submenu: [
       {
-        path: '/retailer/mnf-list',
-        title: 'Manufacturer List',
+        path: '/retailer/wholeseler-list',
+        title: "Wholeseler's List",
         iconType: '',
         icon: '',
         class: 'ml-menu',

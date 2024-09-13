@@ -1,0 +1,189 @@
+<section class="content">
+    <div class="content-block">
+      <h4 class="mt-3 flex-grow-1">
+        <div class="m-0 p-0 d-flex align-items-center">
+          <button class="btn text-start" (click)="navigateFun()">
+            <i class="bi bi-arrow-left-circle h4"></i>
+          </button>
+          <!-- <span class="text-center" style="margin-left: 474px;">Product Details</span> -->
+          <!-- <button type="button" class="btn btn-success ms-auto" (click)="editProduct()">Edit</button> -->
+        </div>
+      </h4>
+      <div class="card p-4 pt-2">
+        <h5 class="text-center mb">Product Details</h5>
+        <hr class="mt-0">
+        <div class="product-details-content">
+          <div class="product-images">
+            <div class="main-image">
+              <img *ngIf="selectedMediaType === 'image'" [src]="authService.cdnPath + selectedMedia"
+                alt="Main Product Image">
+              <video *ngIf="selectedMediaType === 'video'" style="width: 380px; height: 495px;"
+                [src]="authService.cdnPath + selectedMedia" controls></video>
+            </div>
+            <div class="thumbnail-images">
+              <div class="thumbnail" *ngFor="let media of product.media" (click)="changeMainMedia(media)"
+                [class.active]="media.src === selectedMedia">
+                <img *ngIf="media.type === 'image'" [src]="authService.cdnPath + media.src" alt="Product Thumbnail">
+                <div *ngIf="media.type === 'video'" class="video-thumbnail">
+                  <i class="bi bi-play-circle-fill"></i>
+                  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgcAFN3D0j48KEiZtXy9H8Z-brml1fSzLUAQ&s"
+                    style="width: 55px; height: 75px;" alt="Product Thumbnail">
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <div class="product-info">
+            <div class="">
+              <h6 class="mb-0">Brand : {{product.brand}}</h6>
+              <div class="d-flex justify-content-between">
+                <p><small>Design No. </small> <br> {{ product.designNumber }}</p>
+                <p><small>Clothing</small> <br> {{ product.clothingType }}</p>
+                <p><small>Sub Category</small> <br>{{ product.subCategory }}</p>
+                <p><small>Gender</small> <br>{{ product.gender }}</p>
+              </div>
+              <hr class="m-0">
+            </div>
+  
+            <div class="product-info-section">
+              <p><small>Title:</small></p>
+              <p>{{ product.title }}</p>
+            </div>
+  
+            <div class="product-info-section">
+              <p><small>Description:</small></p>
+              <p>{{ product.description }}</p>
+            </div>
+            <hr>
+            <div class="row">
+              <p class="col-md-4 col-sm-6"><small>Material</small> <br> {{ product.material }}</p>
+              <p class="col-md-4 col-sm-6"><small>Material Variety</small> <br> {{ product.materialVariety }}</p>
+              <p class="col-md-4 col-sm-6"><small>Pattern</small> <br> {{ product.pattern }}</p>
+            </div>
+            <div class="row">
+              <p class="col-md-4 col-sm-6"><small>Fit Type</small> <br> {{ product.fitType }}</p>
+              <p class="col-md-4 col-sm-6"><small>Occasion</small> <br> {{ product.occasion }}</p>
+              <p class="col-md-4 col-sm-6"><small>Lifestyle</small> <br> {{ product.lifestyle }}</p>
+            </div>
+  
+            <div class="row">
+              <p class="col-md-4 col-sm-6"><small>Closure Type</small><br> {{ product.closureType }}</p>
+              <p class="col-md-4 col-sm-6"><small>Pocket Description</small><br> {{ product.pocketDescription }}</p>
+              <p class="col-md-4 col-sm-6"><small>Sleeve Cuff Style</small><br> {{ product.sleeveCuffStyle }}</p>
+            </div>
+            <div class="row">
+              <p class="col-md-4 col-sm-6"><small>Neck / Collar Style</small><br> {{ product.neckCollarStyle }}</p>
+              <p class="col-md-4 col-sm-6"><small>Special Features</small><br> {{ product.specialFeatures }}</p>
+              <p class="col-md-4 col-sm-6"><small>Care Instructions</small><br> {{ product.careInstructions }}</p>
+            </div>
+  
+            <!-- <hr>
+  
+            <div class="">
+              <p><small>Sizes in Each Set</small> <br> {{ product.sizes }}</p>
+            </div> -->
+  
+            <hr>
+  
+            <div class="">
+              <p class="mb-0"><small>Colours / Designs :</small> {{selectedColourName}} </p>
+              <div class="d-flex">
+                <span *ngFor="let colour of product.colours" (click)="selectColourCollection(colour)"
+                  style="cursor: pointer; display: flex;">
+                  <div class="colour-info ">
+                    <span *ngIf="colour.image; else colourBox">
+                      <img [src]="authService.cdnPath + colour.image" alt="Colour Image" class="colour-image">
+                    </span>
+                    <ng-template #colourBox>
+                      <span [style.background]="colour.hex" class="colour-hex"></span>
+                    </ng-template>
+                  </div>
+                </span>
+              </div>
+            </div>
+  
+  
+          </div>
+        </div>
+        <hr>
+        <div class="mx-2">
+          <div class="row mt-2 p-2" style="background-color:#f0f8ff;">
+            <h5 class="mt-2 ps-0 mb-0">Standard Size Chart : </h5>
+            <!-- 1 Set = 4 Pieces (1 each of Size: XS, M, L, XL, XXL) -->
+            <h5 class="mb-0"><small><b>Note :</b> Minimum Order : {{product?.minimumOrderQty ||1}} Set</small></h5>
+            <small>
+              <span>1 Set = {{ product?.sizes?.length }} Pieces</span> ( 1 each of Size:
+              <span *ngFor="let size of product?.sizes; let i = index">
+                 {{ size.standardSize }}<span *ngIf="i < product.sizes.length - 1">,</span>
+              </span> )
+            </small>
+          
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Standard Size</th>
+                  <th>Brand Size <br><span class="required">(in inches)</span></th>
+                  <th>Chest Size <br><span class="required">(in inches)</span></th>
+                  <th>Shoulder Size <br><span class="required">(in inches)</span></th>
+                  <th>Front Length <br><span class="required">(in inches)</span></th>
+                  <th>Length <br><span class="required">(in inches)</span></th>
+                  <th>Width <br><span class="required">(in inches)</span></th>
+                  <th>Height <br><span class="required">(in inches)</span></th>
+                  <th>Weight <br><span class="required">(in grams)</span></th>
+                  <th>Manufacturer's <br>Price <span>(INR)</span></th>
+                  <th>MRP <span>(INR)</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let size of product.sizes; let i = index">
+                  <td><b>{{ size.standardSize }}</b></td>
+                  <td>{{ size.brandSize }}</td>
+                  <td>{{ size.chestSize }}</td>
+                  <td>{{ size.shoulderSize }}</td>
+                  <td>{{ size.frontLength }}</td>
+                  <td>{{ size.length }}</td>
+                  <td>{{ size.width }}</td>
+                  <td>{{ size.height }}</td>
+                  <td>{{ size.weight }}</td>
+                  <td>{{ size.manufacturerPrice }}</td>
+                  <td>{{ size.singleMRP }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <hr>
+        <div class="row mt-2">
+          <div class="col-4">
+            <label for="setOFnetWeight"><small>Total Weight (In grams)</small></label>
+            {{product?.setOFnetWeight}}
+          </div>
+  
+          <div class="col-4">
+            <label for="MRP"><small>Total Manufacturer's Price (INR)</small></label>
+            {{product?.setOfManPrice}}
+          </div>
+  
+          <div class="col-4">
+            <label for="MRP"><small>Total MRP (INR)</small></label>
+            {{product?.setOfMRP}}
+          </div>
+        </div>
+        <hr>
+        <div class="add-to-card">
+          <p class="col-md-3 col-sm-4 mb-0"><small>Date Available</small> <br> {{ product.dateAvailable }}</p>
+          <p class="col-md-3 col-sm-4 mb-0"><small>Availability</small> <br> {{ product.availability }}</p>
+          <button type="button" class="btn" [disabled]="wishlist" [ngClass]="wishlist?'btn-wishlist-true':'btn-wishlist'"
+            (click)="WishlistAdd()"><i class="bi bi-heart"></i>&nbsp; WISHLIST</button>
+          <div class="d-flex ">
+            <div class="d-flex align-items-center justify-content-end me-2">
+              <label for="">Quantity</label> &nbsp;
+              <input type="text" [(ngModel)]="quantity" class="form-control w-25">
+            </div>
+            <button type="button" class="btn btn-wishlist" (click)="addToCart(product)">ADD TO CART</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>

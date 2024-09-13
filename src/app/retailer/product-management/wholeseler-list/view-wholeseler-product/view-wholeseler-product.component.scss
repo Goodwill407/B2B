@@ -1,0 +1,153 @@
+.product-details {
+    padding: 20px;
+  }
+  
+  .product-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .product-details-content {
+    display: flex;
+  }
+  
+  .product-images {
+    flex: 1;
+    margin-right: 20px;
+  }
+  
+  .main-image img {
+    height: 495px;
+    width: 380px;
+  }
+  
+  .thumbnail-images {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .thumbnail {
+    cursor: pointer;
+  }
+  
+  .thumbnail img {
+    width: 55px;
+    height: 75px;
+    object-fit: cover;
+  }
+  
+  .thumbnail.active img {
+    border: 2px solid #000;
+  }
+  
+  .product-info {
+    flex: 2;
+  }
+  
+  .product-info-section {
+    margin-bottom: 20px;
+  }
+  
+  .product-info-section h3 {
+    margin-bottom: 5px;
+  }
+  
+  .product-info-section p {
+    margin: 5px 0;
+  }
+  
+  .back-button {
+    text-decoration: none;
+    color: #000;
+    font-weight: bold;
+  }
+  
+  .video-thumbnail {
+    position: relative;
+  }
+  
+  .video-thumbnail i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: white;
+    opacity: 0.8;
+  }
+  
+  .colour-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .colour-hex {
+    width: 50px;
+    height: 50px;
+    display: inline-block;
+    margin-left: 10px;
+    border: 1px solid #000;
+  }
+  
+  .colour-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-left: 10px;
+  }
+  
+  small {
+    color: #767474;
+    font-size: 13px;
+  }
+  
+  .add-to-card {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-around !important;
+  }
+  
+  .btn-wishlist {
+    border: #767474 2px solid;
+    box-shadow: #504e4e 2px 1px;
+    font-size: 14px !important;
+    padding-left: 25px;
+    padding-right: 25px;
+    color: #767474;
+  }
+  
+  .btn-wishlist-true {
+    border: #767474 2px solid;
+    box-shadow: #504e4e 2px 1px;
+    font-size: 14px !important;
+    padding-left: 25px;
+    padding-right: 25px;
+    color: #767474;
+    background-color: pink;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse; // Ensures there are no gaps between table cells
+    margin-top: 1rem; // Adds some space above the table
+  
+    th, td {
+      border: 1px solid lightgray; // Adds the border to the table cells
+      padding: 8px; // Adds some space inside the cells
+      text-align: center; // Centers the text in the cells
+    }
+  
+    thead th {
+      border-bottom: 2px solid lightgray; // Adds a thicker border to the bottom of the header row
+      font-weight: 500; // Makes the header bold
+      color: #767474; // Sets the text color of the header
+    }
+  }
+  
+  .required{
+    font-size: small !important;
+    color: rgb(250, 98, 98) !important;
+  }

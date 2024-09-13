@@ -92,6 +92,7 @@ export class WholesalerProfileComponent {
       fullName: [{ value: '', disabled: true }, Validators.required],
       companyName: [{ value: '', disabled: true }, Validators.required],
       address: ['', Validators.required],
+      introduction:['', Validators.required],
       country: ['India', Validators.required],
       state: ['', Validators.required],
       city: ['', Validators.required],
