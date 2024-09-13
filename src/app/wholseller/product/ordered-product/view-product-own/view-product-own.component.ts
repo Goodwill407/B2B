@@ -1,4 +1,4 @@
-import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -6,20 +6,19 @@ import { AuthService, CommunicationService } from '@core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-view-product',
+  selector: 'app-view-product-own',
   standalone: true,
   imports: [
     CommonModule,
-    NgIf, NgFor,
     FormsModule
   ],
-  templateUrl: './view-product.component.html',
-  styleUrls: ['./view-product.component.scss']
+  templateUrl: './view-product-own.component.html',
+  styleUrl: './view-product-own.component.scss'
 })
-export class ViewProductComponent {
+export class ViewProductOwnComponent {
   userProfile: any;
   wishlist: boolean = false;
-  quantity: any;
+  quantity: any = 1;
   constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService, private router: Router, private communicationService:CommunicationService) { }
 
   product: any;
@@ -28,6 +27,8 @@ export class ViewProductComponent {
   ProductId: any = '';
   selectedColourCollection: any = null;
   selectedColourName: string = '';
+  setOfWholesalerPrice: number = 0; // Initial price from the response
+  isEditEnabled: boolean = false; // To toggle edit mode for input fields
 
   ngOnInit(): void {
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
@@ -36,13 +37,12 @@ export class ViewProductComponent {
       this.ProductId = id;
       if (id) {
         this.getProductDetails(id);
-        this.checkWishlist()
       }
     });
   }
 
   getProductDetails(id: any) {
-    this.authService.get('products/' + id).subscribe((res: any) => {
+    this.authService.get('wholesaler-products/' + id).subscribe((res: any) => {
       if (res) {
         this.product = {
           brand: res.brand,
@@ -72,17 +72,17 @@ export class ViewProductComponent {
             images: colour.productImages,
             video: colour.productVideo
           })),
+          setOfWholesalerPrice: res.setOfWholesalerPrice,
           setOfManPrice: res.setOfManPrice,
           setOfMRP: res.setOfMRP,
           setOFnetWeight: res.setOFnetWeight,
           minimumOrderQty: res.minimumOrderQty,
           dateAvailable: res.dateOfListing ? new Date(res.dateOfListing).toLocaleDateString() : 'N/A',
-          availability: res.quantity > 0 ? `${res.quantity}` : 'Out of Stock',
+          availability: res.quantity > 0 ? `${res.quantity} (In Stock)` : 'Out of Stock',
           id: res.id,
           productBy: res.productBy,
         };
         this.selectColourCollection(this.product.colours[0]);
-        this.quantity = this.product.minimumOrderQty;
       }
     });
   }
@@ -112,49 +112,26 @@ export class ViewProductComponent {
     this.selectedMediaType = media[0]?.type;
   }
 
-  WishlistAdd() {
-    this.authService.post('wishlist', { productId: this.ProductId, email: this.userProfile.email }).subscribe((res: any) => {
-      this.checkWishlist();
-    },(err:any)=>{
-      this.wishlist = false;
-    })
+  // Method to calculate the total wholesaler price when user changes the values
+  calculateWholesalerPrice() {
+    this.setOfWholesalerPrice = this.product.sizes
+      .filter((size: any) => size.wholesalerPrice) // Only sum filled prices
+      .reduce((total: number, size: any) => total + Number(size.wholesalerPrice), 0);
   }
 
-  checkWishlist() {
-    this.authService.get('wishlist/checkout/wishlist?productId='+ this.ProductId +'&email='+this.userProfile.email).subscribe((res: any) => {
-      if (res) {
-        this.wishlist = true;
-      } else {
-        this.wishlist = false;
-      }
-    })
+  // Toggle edit mode to enable or disable input fields
+  toggleEditMode() {
+    if(this.isEditEnabled){this.updateProduct()}
+    this.isEditEnabled = !this.isEditEnabled;
   }
 
-  addToCart(data: any) {
-    const quantity = Number(this.quantity); // Convert to number
-    const availability = Number(data.availability); // Convert to number
-    const minimumOrderQty = Number(data.minimumOrderQty); // Convert to number
-
-    if (quantity > availability) {
-      this.communicationService.customError1('Quantity should not exceed available stock');
-      return;
-    } else if (quantity < minimumOrderQty) {
-      this.communicationService.customError1(`Quantity should be at least Minimum Order Quantity(${minimumOrderQty}).`);
-      return;
-    }
-    const cartBody = {
-    "email": this.userProfile.email,
-    "productBy": data.productBy,
-    "productId": data.id,
-    "quantity": this.quantity
-    }
-
-    this.authService.post('cart', cartBody).subscribe((res: any) => {
-      this.communicationService.customSuccess('Product Successfully Added in Cart');
-    },
-    (error) => {
-      this.communicationService.customError1(error.error.message);
-    }
-  )
+  updateProduct(){
+    this.product.setOfWholesalerPrice = this.setOfWholesalerPrice;
+    this.authService.patch(`wholesaler-products`,this.product).subscribe((data:any) => {
+      this.getProductDetails(this.ProductId);
+      this.communicationService.customSuccess('Wholesaler Price updated successfully')
+    });
   }
+ 
 }
+

@@ -81,7 +81,7 @@ export class CartProductComponent implements OnInit {
   }
 
   placeOrder(distributor:any){
-    this.router.navigate(['/wholesaler/place-order'], {
+    this.router.navigate(['/wholesaler/order-mng/place-order'], {
       queryParams: { productBy: distributor.products[0].productId.productBy, email:this.userProfile.email}
     });
   }

@@ -1,0 +1,22 @@
+::ng-deep .p-accordion .p-accordion-content {
+    padding: 1.25rem 0.5rem;
+    border: 1px solid #e5e7eb;
+  }
+  
+  .card {
+    height: 80vh;
+    padding: 1em;
+  
+    .form-control {
+      border: 1px solid !important;
+      width: 70px !important;
+      color: inherit !important;
+      font-size: inherit !important;
+      border-color: #d2d4d8 !important;
+    }
+  
+    .btn{
+       --bs-btn-padding-x: 0.35rem !important;
+      --bs-btn-padding-y: 0.275rem !important;
+    }
+  }

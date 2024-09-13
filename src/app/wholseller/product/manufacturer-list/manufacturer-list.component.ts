@@ -60,6 +60,6 @@ export class ManufacturerListComponent {
   }
 
   navigateToProduct(email: string) {
-    this.router.navigate(['/wholesaler/mnf-product'], {queryParams:{ email: email }});
+    this.router.navigate(['/wholesaler/product/mnf-product'], {queryParams:{ email: email }});
   }
 }
