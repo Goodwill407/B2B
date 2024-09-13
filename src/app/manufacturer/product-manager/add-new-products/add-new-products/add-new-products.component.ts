@@ -262,8 +262,15 @@ export class AddNewProductsComponent {
     const productType = this.stepOne.get('productType')?.value;
     const gender = this.stepOne.get('gender')?.value;
     const clothing = this.stepOne.get('clothing')?.value;
+    const object=
+      {
+        "productType":productType ,
+        "gender":gender ,
+        "category":clothing ,     
+      }
+   
 
-    this.authService.get(`sub-category?productType=${productType}&gender=${gender}&category=${clothing}`).subscribe((res: any) => {
+    this.authService.post(`sub-category/filter`,object).subscribe((res: any) => {
       if (res) {
         this.allSubCategory = []
       }

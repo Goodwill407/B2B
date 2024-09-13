@@ -51,8 +51,8 @@ export class RequestedWholesalerListComponent {
     this.authService.get(endpoint).subscribe({
       next: (res: any) => {
         // Handle the successful response
-        this.allWholesaler = res.results           // Assign the data to the local variable
-        this.totalResults = res.totalResults; // Store the total count of documents
+        this.allWholesaler = res.results.filter((item: any) => item.status === "pending" || item.status === "rejected");    // Assign the data to the local variable
+        this.totalResults = this.allWholesaler.length; // Store the total count of documents
       },
       error: (err: any) => {
         // Handle errors here

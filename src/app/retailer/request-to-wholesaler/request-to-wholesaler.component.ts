@@ -85,7 +85,10 @@ export class RequestToWholesalerComponent {
 
  searchByWholselers(): void {
     if (this.searchWholesaler) {     
-      this.authService.get(`wholesaler/get-search/wholesaler-by-address?searchKeywords=${this.searchWholesaler}`).subscribe(
+      const object={
+        searchKeywords:this.searchWholesaler
+      }
+      this.authService.post(`wholesaler/get-search/wholesaler-by-address`,object).subscribe(
         response => {    
           this.productTypeWise=[] 
           this.WholesalerData=response.results

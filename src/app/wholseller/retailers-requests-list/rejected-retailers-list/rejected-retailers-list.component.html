@@ -26,10 +26,7 @@
                   <td class="text-center">{{request.requestByCompanyName}}</td>
                   <td class="text-center">{{request.requestByMobileNumber}}</td>
                   <td class="text-center">{{request.requestByEmail}}</td>
-                  <td class="text-center" [ngClass]="{
-                    'text-warning': request.status === 'pending',
-                    'text-danger': request.status === 'rejected',
-                    'text-success': request.status === 'accepted' }">
+                  <td class="text-center text-warning">
                     {{request.status}}
                   </td>
                   <td class="text-center">
