@@ -6,6 +6,7 @@ import { AuthService, CommunicationService } from '@core';
 import { StudentProgressComponent } from 'app/ui/modal/student-progress/student-progress.component';
 import { TableModule } from 'primeng/table';
 import { Location } from '@angular/common';
+import { DialogformComponent } from 'app/ui/modal/dialogform/dialogform.component';
 
 @Component({
   selector: 'app-inward-stock-entry',
@@ -44,7 +45,7 @@ export class InwardStockEntryComponent {
   }
   
   openEditDialog(product: any): void {
-    const dialogRef = this.dialog.open(StudentProgressComponent, {
+    const dialogRef = this.dialog.open(DialogformComponent, {
       width: '400px',
       data: product  // Pass the current product data
     });
@@ -53,8 +54,8 @@ export class InwardStockEntryComponent {
       if (result) {
         this.inwardStock.products.map((product: any) => {
           if (product._id === result._id) {
-            product.qtyReceived = String(result.qtyReceived);
-            product.issue = result.issue || result.otherIssue;
+            product.subIssue = String(result.subReason);
+            product.issue = result.selectedReason || result.otherIssue;
             product.status = 'issue';
             product.doneChecked = false;
             this.authService.patchWithEmail(`dilevery-order/update/order/status/${this.inwardStock.id}/${product._id}`, {status:'issue'}).subscribe((res: any) => {

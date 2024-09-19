@@ -49,7 +49,7 @@ export class OrderedProductComponent {
   }
 
   getAllProducts(){
-    this.authService.get('wholesaler-products?wholesalerEmail' + this.authService.currentUserValue.email).subscribe((res: any) => {
+    this.authService.get('wholesaler-products?wholesalerEmail='+this.authService.currentUserValue.email).subscribe((res: any) => {
       if (res) {
         this.totalResults = res.totalResults;
         this.products = res.results.map((product: any) => ({

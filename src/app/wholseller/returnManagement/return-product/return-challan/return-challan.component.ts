@@ -1,54 +1,52 @@
-import { CommonModule, NgFor } from '@angular/common';
-import { Component } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
-
 @Component({
-  selector: 'app-delivery-challan',
+  selector: 'app-return-challan',
   standalone: true,
   imports: [
-    CommonModule,
-    NgFor,
+    CommonModule
   ],
-  templateUrl: './delivery-challan.component.html',
-  styleUrl: './delivery-challan.component.scss'
+  templateUrl: './return-challan.component.html',
+  styleUrl: './return-challan.component.scss'
 })
-export class DeliveryChallanComponent {
+export class ReturnChallanComponent implements OnInit {
   challan: any = { };
   email: any;
   product: any;
 
   constructor(private authService: AuthService, private route: ActivatedRoute, private communicationService: CommunicationService) { }
   ngOnInit(): void {
-    debugger
-    this.authService.get('dilevery-order/get/challan/number?email=' + this.authService.currentUserValue.email).subscribe((res: any) => {
-      this.challan.logoUrl = res.profileImg ? this.authService.cdnPath + res.profileImg : 'assets/images/user/person.png';
-      this.challan.challanNo = res.challanNo;
-    }, (err: any) => {
-      this.communicationService.customError(err.error.message);
-    });
+    // this.authService.get('dilevery-order/get/challan/number?email=' + this.authService.currentUserValue.email).subscribe((res: any) => {
+    //   this.challan.logoUrl = res.profileImg ? this.authService.cdnPath + res.profileImg : 'assets/images/user/person.png';
+    //   this.challan.challanNo = res.challanNo;
+    // }, (err: any) => {
+    //   this.communicationService.customError(err.error.message);
+    // });
     this.route.queryParamMap.subscribe(params => {
-      this.email = params.get('email');
+      // this.email = params.get('email');
       const productString = params.get('product');
       if (productString) {
         this.product = JSON.parse(productString); // Deserialize the product string back to an object
 
-        this.challan.companyName = this.product.supplierName;
-        this.challan.companyDetails = this.product.supplierDetails;
-        this.challan.companyAddress = this.product.supplierAddress;
-        this.challan.companyContact = `${this.product.supplierContact}`;
-        this.challan.companyGSTIN = this.product.supplierGSTIN;
-        this.challan.companyEmail = this.product.supplierEmail;
-
-        this.challan.customerName = this.product.buyerName;
-        this.challan.customerDetails = this.product.buyerDetails;
-        this.challan.customerAddress = this.product.buyerAddress;
-        this.challan.customerPhone = this.product.buyerPhone;
-        this.challan.customerGSTIN = this.product.buyerGSTIN;
-        this.challan.customerEmail = this.product.buyerEmail;
+        this.challan.companyName = this.product.companyName;
+        this.challan.companyDetails = this.product.companyDetails;
+        this.challan.companyAddress = this.product.companyAddress;
+        this.challan.companyContact = `${this.product.companyContact}`;
+        this.challan.companyGSTIN = this.product.companyGSTIN;
+        this.challan.companyEmail = this.product.companyEmail;
+        this.challan.logoUrl = this.product.logoUrl;
+        this.challan.challanNo = this.product.challanNo;
+        this.challan.customerName = this.product.customerName;
+        this.challan.customerDetails = this.product.customerDetails;
+        this.challan.customerAddress = this.product.customerAddress;
+        this.challan.customerPhone = this.product.customerPhone;
+        this.challan.customerGSTIN = this.product.customerGSTIN;
+        this.challan.customerEmail = this.product.customerEmail;
         this.challan.pONumber = this.product.poNumber;
         this.challan.challanDate = new Date().toLocaleDateString(); // Format date as needed
         this.challan.lrNo = this.product.lorryReceiptNo || this.product.trackingNo || this.product.receiptNo;
@@ -59,38 +57,41 @@ export class DeliveryChallanComponent {
 
         // Map the products array from the product data
         this.challan.products = this.product.products.map((prod: any, index: number) => {
-          const total = Number(prod.rate * prod.deliveryQty)
+          const total = Number(prod.rate * prod.qty)
           return {
             srNo: index + 1,
             name: prod.name,
             designNo: prod.designNo, // Assuming designNo is HSN
-            qty: `${prod.deliveryQty}`, // Assuming qty is the number of pieces
+            qty: `${prod.qty}`, // Assuming qty is the number of pieces
             demandQty: prod.qty, // Assuming demandQty
             rate: prod.rate,
             taxableValue: total,
             gst: Number((total * 0.18).toFixed(2)),
-            total: Number((total * 0.18 + total).toFixed(2))
+            total: Number((total * 0.18 + total).toFixed(2)),
+            issue: prod.issue,
+            subIssue: prod.subIssue
           }
         }
         );
 
         // Step 1: Calculate the total rate (without GST)
         this.challan.totalRate = this.product.products
-          .reduce((sum: number, prod: any) => sum + prod.rate * prod.deliveryQty, 0)
+          .reduce((sum: number, prod: any) => sum + prod.rate * prod.qty, 0)
           .toFixed(2);
 
         // Step 2: Apply the discount (discount is applied on totalRate before GST)
-        const discount = parseFloat(this.product.discount || 0);
-        const discountedTotalRate = (parseFloat(this.challan.totalRate) - discount).toFixed(2);
-        this.challan.discount = discount;
+        // const discount = parseFloat(this.product.discount || 0);
+        // const discountedTotalRate = (parseFloat(this.challan.totalRate) - discount).toFixed(2);
+        // this.challan.discount = discount;
 
         // Step 3: Calculate the GST on the discounted total rate
         this.challan.totalGST = this.product.products
-          .reduce((sum: number, prod: any) => sum + parseFloat((prod.rate * prod.deliveryQty * 0.18).toFixed(2)), 0)
+          .reduce((sum: number, prod: any) => sum + parseFloat((prod.rate * prod.qty * 0.18).toFixed(2)), 0)
           .toFixed(2);
 
         // Step 4: Calculate the total amount (discounted total + GST)
-        this.challan.totalAmount = (parseFloat(discountedTotalRate) + parseFloat(this.challan.totalGST)).toFixed(2);
+        // this.challan.totalAmount = (parseFloat(discountedTotalRate) + parseFloat(this.challan.totalGST)).toFixed(2);
+        this.challan.totalAmount = this.challan.totalRate;
 
         // Step 5: Round off the total amount
         this.challan.roundedOffTotal = Math.round(parseFloat(this.challan.totalAmount));
@@ -172,8 +173,8 @@ export class DeliveryChallanComponent {
 
 
   generateDC(obj: any): void {
-    this.authService.post('dilevery-order', obj).subscribe((res: any) => {
-      this.communicationService.customSuccess('Delivery Challan Generated Successfully');
+    this.authService.post('return-order', obj).subscribe((res: any) => {
+      this.communicationService.customSuccess('Return Ordered Generated Successfully');
     }, (error: any) => {
       this.communicationService.customError(error.error.message);
     });

@@ -39,7 +39,7 @@ export class WlsListPoComponent {
   }
 
   getAllProducts(email: string) {
-    const url = `/product-order/get-product-order/by-supplyer?supplierEmail=${email}`;
+    const url = `product-order/get-product-order/by-supplyer?supplierEmail=${email}`;
     this.authService.get(url).subscribe((res: any) => {
       if (res) {
         this.products = res;
@@ -47,6 +47,7 @@ export class WlsListPoComponent {
           distributor.products.forEach((product: any) => {
             product.deliveryQty = product.qty;
             product.transportType = '';
+            product.ebill = '';
             product.transportCompany = '';
             product.lorryReceiptNo = '';
             product.vehicleNo = '';
@@ -59,7 +60,7 @@ export class WlsListPoComponent {
         });
       }
     }, error => {
-      console.log(error);
+      this.communicationService.customError(error.error.message);
     });
   }
 

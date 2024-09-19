@@ -40,6 +40,7 @@ export class DialogformComponent implements OnInit {
   selectedReason: any = '';
   selectedSubReason: any = '';
   subReasons: string[] = [];
+  productData:any;
 
   reasons = ['Size or fit issue', 'Product quality issue', 'Damaged or used product', 'Does not look good on me', 'Did not like the color', 'Item no longer needed', 'Item or part missing', 'Product different from website',
   ];
@@ -55,8 +56,11 @@ export class DialogformComponent implements OnInit {
     'Product different from website': [ 'Product entirely different','Wrong brand received','Wrong size received','Wrong colour received','Wrong style received - print/design/fit','Product looks different from photo','Wrong product details mentioned',],
   };
 
+
   constructor(@Inject(MAT_DIALOG_DATA) private data: any,
-    public dialogRef: MatDialogRef<DialogformComponent>) { }
+    public dialogRef: MatDialogRef<DialogformComponent>) {
+      this.productData = data;
+     }
 
   ngOnInit(): void {
     // Initialize any necessary logic
@@ -68,7 +72,7 @@ export class DialogformComponent implements OnInit {
 
   onSave(): void {
     // Return the modified data to the parent component
-    this.dialogRef.close({ selectedReason: this.selectedReason, subReasonMapping: this.subReasonMapping });
+    this.dialogRef.close({ selectedReason: this.selectedReason, subReason: this.selectedSubReason,...this.productData });
   }
 
   onCancel(): void {
