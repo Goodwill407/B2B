@@ -87,10 +87,10 @@ export class SidebarComponent extends UnsubscribeOnDestroyAdapter implements OnI
       this.authService.get('users/'+this.authService.currentUserValue.id).subscribe((res:any) =>{
         this.userImg = res.profile?this.authService.cdnPath+ res.profile: 'assets/images/user/person.png';
         this.userFullName = res.fullName;
+      },(error)=>{
+        this.userImg = 'assets/images/user/person.png';
       });
         
-      // this.userImg = 'assets/images/user/person.png';
-
       this.sidebarItems = ROUTES.filter(
         (x) => x.role.indexOf(userRole) !== -1 || x.role.indexOf('All') !== -1
       );

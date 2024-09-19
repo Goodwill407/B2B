@@ -9,33 +9,35 @@
                     <img [src]="challan.logoUrl" alt="Company Logo">
                 </div>
                 <div class="company-info ms-4">
-                    <h1>{{ challan.companyName }}</h1>
-                    <p>{{ challan.companyDetails }}</p>
-                    <p style="width: 550px;">{{ challan.companyAddress }}</p>
-                    <p>{{ challan.companyContact }} || {{ challan.companyEmail}}</p>
+                    <h1>{{ challan.customerName }}</h1>
+                    <p>{{ challan.customerDetails }}</p>
+                    <p style="width: 550px;">{{ challan.customerAddress }}</p>
+                    <p>{{ challan.customerPhone }} || {{ challan.customerEmail}}</p>
+                    <p class="mb-2">GSTIN : {{ challan.customerGSTIN }}</p>
                 </div>
             </div>
 
             <section class="gstin my-0">
-                <p class="mb-2">GSTIN : {{ challan.companyGSTIN }}</p>
-                <h2>PROFORMA INVOICE</h2>
+                
+                <!-- <h2>DELIVERY CHALLAN</h2> -->
+                <h2>RETURN ORDER</h2>
             </section>
-            <hr class="my-1">
-            <div class="text-center">
-                <h5 class="mb-0"><u>CUSTOMER DETAILS</u></h5>
+            <div class="">
+                <h5 class="mb-0">TO,</h5>
+                <hr class="my-1">
             </div>
 
             <section class="customer-details">
                 <div class="customer-info">
-                    <p><strong>M/S :</strong> <span>{{ challan.customerName }}</span></p>
-                    <p><strong>Name :</strong> <span>{{ challan.customerDetails }}</span></p>
-                    <p><strong>Phone :</strong> <span>{{ challan.customerPhone }}</span></p>
-                    <p><strong>GSTIN :</strong> <span>{{ challan.customerGSTIN }}</span></p>
-                    <p><strong>Email :</strong> <span>{{ challan.customerEmail }}</span></p>
-                    <p><strong>Address :</strong> <span>{{ challan.customerAddress }}</span></p>
+                    <p><strong>M/S :</strong> <span>{{ challan.companyName }}</span></p>
+                    <p><strong>Name :</strong> <span>{{ challan.companyDetails }}</span></p>
+                    <p><strong>Phone :</strong> <span>{{ challan.companyContact }}</span></p>
+                    <p><strong>GSTIN :</strong> <span>{{ challan.companyGSTIN }}</span></p>
+                    <p><strong>Email :</strong> <span>{{ challan.companyEmail }}</span></p>
+                    <p><strong>Address :</strong> <span>{{ challan.companyAddress }}</span></p>
                 </div>
                 <div class="challan-info">
-                    <p><strong>Challan No :</strong> <span>{{ challan.challanNo }}</span></p>
+                    <p><strong>Delivery Challan No :</strong> <span>{{ challan.challanNo }}</span></p>
                     <p><strong>PO No :</strong> <span>{{ challan.pONumber }}</span></p>
                     <p><strong>Date :</strong> <span>{{ challan.challanDate| date:'dd/MM/yyyy' }}</span></p>
                     <p><strong>E-Way Bill No :</strong> <span>{{ challan.eWayNo }}</span></p>
@@ -57,7 +59,7 @@
             </section>
 
             <div class="text-center">
-                <h5 class="mb-0"><u>ORDER DETAILS</u></h5>
+                <h5 class="mb-0"><u>PRODUCT DETAILS</u></h5>
             </div>
             <hr class="my-1">
 
@@ -70,9 +72,11 @@
                             <th>Design Title</th>
                             <th>Quantity</th>
                             <th>Rate</th>
-                            <!-- <th>Taxable Value</th>
-                            <th>GST</th> -->
-                            <th>Total</th>
+                             <th>Amount</th>
+                             <th>Issue</th>
+                             <th>Sub Issue</th>
+                          <!--  <th>GST</th> -->
+                            <!-- <th>Total</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -83,6 +87,8 @@
                             <td>{{ product.qty }}</td>
                             <td>{{ product.rate }}</td>
                             <td>{{ product.taxableValue }}</td>
+                            <td>{{ product.issue }}</td>
+                            <td>{{ product.subIssue }}</td>
                             <!-- <td>{{ product.gst }}</td>
                             <td>{{ product.total }}</td> -->
                         </tr>
@@ -101,10 +107,11 @@
             <section class="totals d-flex justify-content-between">
                 <div class="total-amount">
                     <p><strong>Sub Total : </strong> <span>{{ challan.totalRate }}</span></p>
-                    <p><strong>Discount Amount : </strong> <span>{{ challan.discount }}</span></p>
-                    <p><strong>Total : </strong> <span>{{ challan.totalRate - challan.discount }}</span></p>
-                    <p><strong>Total GST : </strong> <span>{{ challan.totalGST }}</span></p>
-                    <p><strong>Total Amount After Tax : </strong> <span>{{ challan.totalAmount }}</span></p>
+                    <!-- <p><strong>Discount Amount : </strong> <span>{{ challan.discount }}</span></p> -->
+                    <!-- <p><strong>Total : </strong> <span>{{ challan.totalRate - challan.discount }}</span></p> -->
+                    <p><strong>Total : </strong> <span>{{ challan.totalRate }}</span></p>
+                    <!-- <p><strong>Total GST : </strong> <span>{{ challan.totalGST }}</span></p> -->
+                    <!-- <p><strong>Total Amount After Tax : </strong> <span>{{ challan.totalAmount }}</span></p> -->
                 </div>
                 <div class="total-amount">
                     <p><strong>Roundoff Total Amount : </strong> <span class="fw-bold ">{{ challan.roundedOffTotal }}</span></p>
@@ -114,7 +121,7 @@
 
         </div>
         <div class="text-center my-3">
-            <button class="btn btn-success" (click)="generateDC(challan)">Generate Delivery Challan</button>
+            <button class="btn btn-success" (click)="generateDC(challan)">Generate Return Order</button>
         </div>
     </div>
 </section>

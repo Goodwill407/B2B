@@ -98,6 +98,8 @@ export class PlaceOrderComponent {
             this.purchaseOrder.totalInWords = this.convertNumberToWords(parseFloat(this.purchaseOrder.roundedOffTotal)) + " Rupees Only";
             this.isNewPO = true;  // Set this flag to true for new orders
             this.showFlag = true;
+          },(error)=>{
+            this.communicationService.customError1(error.error.message);
           });
       }
       else {

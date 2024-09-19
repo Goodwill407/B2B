@@ -12,8 +12,9 @@
                 <th>Design Title</th>
                 <th>Size Set</th>
                 <th>Quantity</th>
-                <th>MRP (1 Set)</th>
-                <th>Wholesaler Price</th>
+                <th>MRP <br>(1 Set)</th>
+                <th>Manufacture's<br> Price  (1 Set)</th>
+                <th>Wholesaler<br> Price (1 Set)</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-product let-index="rowIndex">
@@ -28,6 +29,7 @@
                 </td>
                 <td>{{ product.quantity }}</td>
                 <td>{{ product.setOfMRP }}</td>
+                <td>{{ product.setOfManPrice }}</td>
                 <td style="width: 90px !important;">
                   <input type="number" [(ngModel)]="product.setOfWholesalerPrice" class="form-control" />
                 </td>

@@ -15,7 +15,7 @@
           <option value="">Select Gender</option>
           <option *ngFor="let gender of allGender" [value]="gender">{{gender}}</option>
         </select>
-        <select name="" class="form-select" [(ngModel)]="filters.clothing" (change)="getAllSubCategory()">
+        <select name="" class="form-select" [(ngModel)]="filters.category" (change)="getAllSubCategory()">
           <option value="">Select Clothing</option>
           <option *ngFor="let clothing of allClothingType" [value]="clothing">{{clothing}}</option>
         </select>

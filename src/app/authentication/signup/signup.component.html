@@ -1,18 +1,18 @@
-<div class="auth-container">
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="default" color="#fff" type="square-jelly-box" [fullScreen]="true">
+    <p style="color: rgb(242, 94, 94)"> Loading... </p>
+</ngx-spinner>
+<div class="auth-container" style="height: 100vh!important;">
     <div class="row auth-main">
-        <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="default" color="#fff" type="square-jelly-box" [fullScreen]="true">
-            <p style="color: rgb(242, 94, 94)"> Loading... </p>
-          </ngx-spinner>
         <div class="col-sm-6 px-0 d-none d-sm-block">
             <div class="left-img" style="background-image: url(assets/images/auth-image/register_img.jpg);"></div>
         </div>
         <div class="col-sm-6 auth-form-section">
-            <button class="btn float-end" (click)="gotoHome()"><b>Home</b></button>
-            <!-- <h2 class="welcome-msg-log mb-0 text-center mt-5">Fashion Traders Hub</h2>
-            <p class="auth-signup-text text-muted mb-0 w-100 text-center"> Registration</p> -->
+            <button class="btn float-end" (click)="gotoHome()"><b>Home</b></button><br><br>
+            <!-- <p class="auth-signup-text text-muted mb-0 w-100 text-center"> Registration</p> -->
             <div class="text-center">
-                <img src="assets/images/auth-image/fth-logo.png" height="230px" alt="Main_logo of FTH">
+                <img src="assets/images/auth-image/fth-logo.png" height="170px" width="260px" alt="Main_logo of FTH">
             </div>
+            <h6 class=" my-4 text-center">Register Yourself With Fashion Traders Hub</h6>
             <div class="auth-wrapper"></div>
             <div class="registration-form px-4">
                 <form [formGroup]="mgfRegistrationForm" (ngSubmit)="onSubmit()">
@@ -20,32 +20,34 @@
                     <div class="row d-flex justify-content-center">
                         <div *ngIf="!otpStep" class="row d-flex justify-content-center">
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                                <label class="lable-input" for="fullName">Full Name<span>*</span>:</label>
-                                <input type="text" id="fullName" formControlName="fullName" placeholder="Enter Full Name" class="form-control" />
+                                <label class="lable-input" for="fullName">Contact Person Name<span>*</span>:</label>
+                                <input type="text" id="fullName" formControlName="fullName"
+                                    placeholder="Enter Contact Person Name" class="form-control" />
                                 <div *ngIf="mgfRegistrationForm.get('fullName')?.touched && mgfRegistrationForm.get('fullName')?.invalid"
                                     class="text-danger">
-                                    Full Name is required.
+                                    Contact Person Name is required.
                                 </div>
                             </div>
 
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                                <label class="lable-input" for="companyName">Company Name:</label>
-                                <input type="text" id="companyName" formControlName="companyName" placeholder="Enter Company Name"
-                                    class="form-control" />
+                                <label class="lable-input" for="companyName">Company/Firm Name :</label>
+                                <input type="text" id="companyName" formControlName="companyName"
+                                    placeholder="Enter Company/Firm Name " class="form-control" />
                             </div>
 
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                                <label class="lable-input" for="role">Company Entity<span>*</span>:</label>
+                                <label class="lable-input" for="role">Organization Identity<span>*</span>:</label>
                                 <!-- <input type="text" id="role" formControlName="role" class="form-control" /> -->
-                                 <select formControlName="role" class="form-select" placeholder="Select Company Entity">
-                                    <option value="">Select Entity</option>
+                                <select formControlName="role" class="form-select"
+                                    placeholder="Select Organization Identity">
+                                    <option value="" disabled>Select Identity</option>
                                     <option value="manufacture">Manufacture</option>
                                     <option value="wholesaler">Wholesaler </option>
                                     <option value="retailer">Retailer</option>
-                                 </select>
+                                </select>
                                 <div *ngIf="mgfRegistrationForm.get('role')?.touched && mgfRegistrationForm.get('role')?.invalid"
                                     class="text-danger">
-                                    Company Entity is required.
+                                    Organization Identity is required.
                                 </div>
                             </div>
 
@@ -60,8 +62,8 @@
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
-                                    <input type="number" id="mobileNumber" placeholder="Enter Mobile No" formControlName="mobileNumber"
-                                        class="form-control w-75" />
+                                    <input type="number" id="mobileNumber" placeholder="Enter Mobile No"
+                                        formControlName="mobileNumber" class="form-control w-75" />
                                 </div>
                                 <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.touched && mgfRegistrationForm.get('mobileNumber')?.invalid"
                                     class="text-danger">
@@ -74,8 +76,8 @@
 
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                                 <label class="lable-input" for="email">Email Address<span>*</span>:</label>
-                                <input type="text" id="email" formControlName="email" placeholder="Enter your email address"
-                                    class="form-control" />
+                                <input type="text" id="email" formControlName="email"
+                                    placeholder="Enter your email address" class="form-control" />
                                 <div *ngIf="mgfRegistrationForm.get('email')?.touched && mgfRegistrationForm.get('email')?.invalid"
                                     class="text-danger">
                                     <div *ngIf="mgfRegistrationForm.get('email')?.errors?.['required']">Email is
@@ -122,7 +124,7 @@
 
                 <form [formGroup]="setPasswordFrom" (ngSubmit)="passwordSubmit()">
                     @if(showPasswordForm){
-                        <h4 class="text-muted text-center">Set Your Password</h4>
+                    <h4 class="text-muted text-center">Set Your Password</h4>
                     <div class="row justify-content-center">
                         <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 mb-2">
                             <label for="pass" class="form-label">Password<span class="required">*</span></label>
