@@ -108,8 +108,8 @@ export class ViewWholesalerDetailsComponent {
           this.communicationService.showNotification('snackbar-success', 'Request added successfully','bottom','center');
         },
         error => {
-          console.error('Error searching brand:', error);
-          // Handle error accordingly
+          this.communicationService.showNotification(
+          'snackbar-error',error.error.message , 'bottom','center');
         }
       );
     }

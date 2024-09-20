@@ -53,7 +53,7 @@ export const ROUTES: RouteInfo[] = [
   // },    
   {
     path: '',
-    title: `Profile`,
+    title: `Manufacture's Profile`,
     iconType: 'material-icons-outlined',
     icon: 'person',
     class: 'menu-toggle',
@@ -64,7 +64,7 @@ export const ROUTES: RouteInfo[] = [
     submenu: [
       {
         path: '/mnf/profile',
-        title: 'View Profile',
+        title: 'View/Edit Profile',
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -76,7 +76,7 @@ export const ROUTES: RouteInfo[] = [
       },
       {
         path: '/mnf/customise_profile',
-        title: 'Customise Profile',
+        title: 'Customise Profile for Customers',
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -474,7 +474,7 @@ export const ROUTES: RouteInfo[] = [
     submenu: [
       {
         path: '/retailer/wholeseler-list',
-        title: "Wholeseler's List",
+        title: "Wholesaler's List",
         iconType: '',
         icon: '',
         class: 'ml-menu',

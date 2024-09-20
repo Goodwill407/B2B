@@ -11,46 +11,131 @@
           <div class="card-table p-0">
             <!-- Search Section -->
             
-            <div class="search-section p-3">
-            <div class="d-flex align-items-center p-2">                 
-                <label class="search-label ps-1">Search Wholesaler's </label>
-                              <div class="vertical-line"></div>    
-                  
-                <!-- Search Input -->                
-                <div class="d-flex align-items-center ms-2 position-relative">             
-                <input type="text" class="form-control me-2" [(ngModel)]="searchWholesaler"
-                                   placeholder="Search Wholesaler" />                 
-                <button class="btn btn-primary" (click)="searchByWholselers()">Search</button>
-            </div> 
-        </div> 
-        <hr mt-0>
-    </div> 
-  
-  
-  
-            <!-- Display Brand and Product Data -->
-            <div class="brand-list p-0">
-              <!-- Section for Brand Data -->
-              <div *ngFor="let wholesaler of WholesalerData" class="brand-box">
-                <!-- Brand Logo -->
-                <div class="brand-logo-container">
-                  <img [src]="cdnPath + wholesaler.profileImg" alt="{{ wholesaler.companyName }}" class="brand-logo" />
+            <!-- Search Section -->
+          <div class="search-section p-3">
+
+            <!-- Tabs -->
+            <ul class="nav nav-tabs" id="searchTab" role="tablist">
+              <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="brand-tab" data-bs-toggle="tab" href="#brand" role="tab"
+                  aria-controls="brand" aria-selected="true">Search By Brand</a>
+              </li>
+              <li class="nav-item" role="presentation">
+                <a class="nav-link" id="product-tab" data-bs-toggle="tab" href="#product" role="tab"
+                  aria-controls="product" aria-selected="false">Search By Product Type</a>
+              </li>
+            </ul>
+
+            <!-- Search Label -->
+            <div class="d-flex align-items-center p-2">
+              <label class="search-label ps-1">Search :</label>
+              <div class="vertical-line"></div>
+
+              <div class="tab-content p-0" id="searchTabContent">
+                <!-- Search By Brand Tab -->
+                <div class="tab-pane fade show active" id="brand" role="tabpanel" aria-labelledby="brand-tab">
+                  <div class="d-flex align-items-center">
+                    <div class="brand-search d-flex align-items-center ms-2 position-relative">
+                      <input type="text" class="form-control me-2" [(ngModel)]="searchWholesaler" placeholder="Search Brand" />
+                      <button class="btn btn-primary" (click)="searchByWholselers()">Search</button>                     
+                      <!-- Suggestions dropdown -->
+                      <ul *ngIf="filteredSuggestions.length > 0" class="suggestions-list position-absolute">
+                        <li *ngFor="let suggestion of filteredSuggestions" (click)="selectSuggestion(suggestion)">
+                          {{ suggestion }}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
-                <!-- Brand Details -->
-                <h5 class="brand-name">{{ wholesaler.companyName }}</h5>
-                <p class="brand-location">{{ wholesaler.city }}, {{ wholesaler.state }}</p>
-                <button class="btn btn-link" (click)="navigateToProfile(wholesaler.id,wholesaler.email)">View Profile</button>
-                <button class="btn btn-outline-primary request-btn"
-                  (click)="sendRequestToManufacturer(wholesaler)">Request to Add</button>
-              </div>           
+                <!-- Search By Product Type Tab -->
+                <div class="tab-pane fade" id="product" role="tabpanel" aria-labelledby="product-tab">
+                  <div class="d-flex align-items-center ">
+                    <div class="product-search d-flex align-items-center ms-2">
+                      <select class="form-select me-2" [(ngModel)]="filters.productType" placeholder="Product Type">
+                        <option value="">Select Product Type</option>
+                        <option *ngFor="let type of allProductType" [value]="type.name">{{ type.name }}</option>
+                      </select>
+                      <select class="form-select me-2" [(ngModel)]="filters.gender"
+                        (change)="getCategoryByProductTypeAndGender()" placeholder="Gender">
+                        <option value="">Select Gender</option>
+                        <option *ngFor="let gender of allGender" [value]="gender">{{ gender }}</option>
+                      </select>
+                      <select class="form-select me-2" [(ngModel)]="filters.category"
+                        (change)="getSubCategoryBYProductType_Gender_and_Category()" placeholder="Product">
+                        <option value="">Select Category</option>
+                        <option *ngFor="let category of allcategory" [value]="category">{{ category }}</option>
+                      </select>
+                      <select class="form-select me-2" [(ngModel)]="filters.subCategory" placeholder="Sub-Category">
+                        <option value="">Select Sub-Category</option>
+                        <option *ngFor="let type of allSubCategory" [value]="type">{{ type }}</option>
+                      </select>
+  <!-- for country city and state -->                         
+                        <select id="country" [(ngModel)]="filters.country" class="form-select me-2">
+                            <option value="">Select Country</option>
+                            <option *ngFor="let country of countries" [value]="country">{{ country }}
+                            </option>
+                        </select>               
+                    
+                        <select id="state" [(ngModel)]="filters.state" (change)="stateWiseCity()" class="form-select me-2" >
+                            <option value="">Select State</option>
+                            <option *ngFor="let state of allState" [value]="state.iso2">{{ state.name }}
+                            </option>
+                        </select>                      
+                                        
+                        <select id="city" [(ngModel)]="filters.city" class="form-select me-2">
+                            <option value="">Select City</option>
+                            <option *ngFor="let city of cityList" [value]="city.name">{{ city.name }}
+                            </option>
+                        </select>                
+                      
+                      <button class="btn btn-primary ms-2" (click)="GetProductTypeWiseWholesaler()">Search</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+            <hr class="mb-0 mt-0">
+          </div>
+  
+  
+  
+             <!-- Display Brand and Product Data -->
+          <div class="brand-list">
+            <!-- Section for Brand Data -->
+            <div *ngFor="let wholesaler of wholesalerData" class="brand-box">
+              <!-- Brand Logo -->
+              <div class="brand-logo-container">
+                <img [src]="cdnPath + wholesaler.profileImg" alt="{{ wholesaler.companyName }}" class="brand-logo" />
+              </div>
+              <!-- Brand Details -->
+              <h5 class="brand-name">{{ wholesaler.companyName }}</h5>
+              <p class="brand-location">{{ wholesaler.city }}, {{ wholesaler.state }}</p>
+              <button class="btn btn-link" (click)="navigateToProfile(wholesaler.id,wholesaler.email)">View Profile</button>
+              <button class="btn btn-outline-primary request-btn"
+                (click)="sendRequestToWholesaler(wholesaler)">Request to Add</button>
+            </div>
+
+            <!-- Section for Product Data -->
+            <div *ngFor="let product of productTypeWise" class="brand-box">
+              <!-- Product Brand Logo -->
+              <div class="brand-logo-container">
+                <img [src]="cdnPath + product.profileImg" alt="{{ product.companyName }}" class="brand-logo" />
+              </div>
+              <!-- Product Details -->
+              <h5 class="brand-name">{{ product.companyName }}</h5>
+              <p class="brand-location">{{ product.city }}, {{ product.state }}</p>
+              <button class="btn btn-link" (click)="navigateToProfile(product.id,product.email)">View Profile</button>
+              <button class="btn btn-outline-primary request-btn"
+                (click)="sendRequestToWholesaler(product)">Request to Add</button>
+            </div>
+          </div>
           </div>
         </div>
   
         <!-- Right-Side Ads Container -->
-        <div class="ads-right mt-0">
+        <!-- <div class="ads-right mt-0">
           <app-right-side-advertise [imageUrls]="rightAdImages"></app-right-side-advertise>
-        </div>
+        </div> -->
       </div>
   
       <!-- Bottom-Side Ad Container -->
