@@ -2,7 +2,7 @@ import { NgClass, NgFor, NgIf } from '@angular/common';
 import { Component, ElementRef, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService, CommunicationService } from '@core';
+import { AuthService, CommunicationService, DirectionService } from '@core';
 import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
 
@@ -20,6 +20,8 @@ import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-si
   styleUrl: './request-to-wholesaler.component.scss'
 })
 export class RequestToWholesalerComponent {
+  page=1
+  limit=10;
   filters = {
     brand: '',
     productType: '',
@@ -37,6 +39,7 @@ export class RequestToWholesalerComponent {
   allSubCategory:any[]=[];
   allcategory:any[]=[];
   allGender = ['Men', 'Women', 'Boys', 'Girls'];
+  countries=['India']
   userProfile:any;
   WholsellerData:any
   filteredSuggestions: string[] = [];
@@ -46,10 +49,13 @@ export class RequestToWholesalerComponent {
   cdnPath:any
   SearchBrand:any;
   dataType:any;
-  productTypeWise:any;
+  productTypeWise:any[]=[];
+  allCountry: any;
+  allState: { name: string; cities: string[]; iso2: String }[] = [];
+  cityList: any;
 // ==========new data
   searchWholesaler:any
-  WholesalerData:any
+  wholesalerData: any[] = []; 
 
   RetailserData:any
 
@@ -61,7 +67,7 @@ export class RequestToWholesalerComponent {
 
   bottomAdImage: string = 'https://elmanawy.info/demo/gusto/cdn/ads/gusto-ads-banner.png';
 
-  constructor(private authService:AuthService, private route:Router, private communicationService:CommunicationService, private elementRef: ElementRef ){
+  constructor(private authService:AuthService,private direction: DirectionService, private route:Router, private communicationService:CommunicationService, private elementRef: ElementRef ){
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
   }
 
@@ -71,6 +77,7 @@ export class RequestToWholesalerComponent {
     this.getAllBrands()
     this.getProductType()
     this.getProductType()
+    this.getAllState()    
     this.getWholesalerProfileData()
   }
 
@@ -84,14 +91,14 @@ export class RequestToWholesalerComponent {
   }
 
  searchByWholselers(): void {
-    if (this.searchWholesaler) {     
+    if (this.searchWholesaler) {         
       const object={
-        searchKeywords:this.searchWholesaler
+        brand :this.searchWholesaler
       }
-      this.authService.post(`wholesaler/get-search/wholesaler-by-address`,object).subscribe(
+      this.authService.post(`wholesaler-products/filter-wholesaler-products-brands?page=${this.page}&limit=${this.limit}`,object).subscribe(
         response => {    
-          this.productTypeWise=[] 
-          this.WholesalerData=response.results
+          this.productTypeWise=[]
+          this.wholesalerData=response.results.map((item: any) => item.wholesaler);
           // Handle the response as needed, e.g., update the UI
         },
         error => {
@@ -145,8 +152,8 @@ export class RequestToWholesalerComponent {
 
   }
 
-  GetProductTypeWiseManufacturar() {
-    let url = `products/manufracturelist/byproduct`;
+  GetProductTypeWiseWholesaler() {
+    let url = `wholesaler-products/multiplefilters/filter-wholesalers`;
   
     // Construct the body object dynamically
     const body: any = {}; // Initialize an empty object
@@ -164,21 +171,21 @@ export class RequestToWholesalerComponent {
     if (this.filters.subCategory) {
       body.subCategory = this.filters.subCategory;
     }   
-    // if (this.filters.country) {
-    //   body.country = this.filters.country;
-    // }
-    // if (this.filters.city) {
-    //   body.city = this.filters.city;
-    // }
-    // if (this.filters.state) {
-    //   body.state = this.filters.state;
-    // }
+    if (this.filters.country) {
+      body.country = this.filters.country;
+    }
+    if (this.filters.city) {
+      body.city = this.filters.city;
+    }
+    if (this.filters.state) {
+      body.state = this.filters.state;
+    }
   
     // Call the API with the dynamically constructed body
     this.authService.post(url, body).subscribe(
       (res: any) => {
-        this.brandData=[]
-       this.productTypeWise=res 
+        this.wholesalerData=[]      
+       this.productTypeWise = res.results.map((item: any) => item.wholesaler);
        this.dataType="product"     
       },
       (error) => {
@@ -210,7 +217,7 @@ export class RequestToWholesalerComponent {
     this.route.navigate(['/retailer/view-wholesaler-details'], { queryParams: { id: id ,email:email } });
   }
 
-  sendRequestToManufacturer(wholesaler:any){  
+  sendRequestToWholesaler(wholesaler:any){  
     const requestBody={
       fullName : wholesaler.fullName ,
       companyName: wholesaler.companyName,
@@ -236,8 +243,7 @@ export class RequestToWholesalerComponent {
       this.brandData=response       
       this.communicationService.showNotification('snackbar-success', 'Request added successfully','bottom','center');
     },
-    error => {
-      console.error('Error searching brand:', error);
+    error => {    
       this.communicationService.showNotification(
         'snackbar-error',error.error.message , 'bottom','center');
     }
@@ -298,4 +304,27 @@ selectSuggestion(suggestion: string) {
   this.SearchBrand = suggestion; // Set the input value to the selected suggestion
   this.filteredSuggestions = []; // Clear suggestions
 }
+
+// for address filter
+stateWiseCity() {
+  const state = this.filters.state;
+  this.direction.getCities(`https://api.countrystatecity.in/v1/countries/IN/states/${state}/cities`).subscribe((res: any) => {
+    this.cityList = res;   
+  });
+}
+
+getAllCountry() {
+  this.direction.getAllCountry().subscribe((res: any) => {
+    this.allCountry = res
+  })
+}
+
+getAllState() {
+  this.direction.getStates('https://api.countrystatecity.in/v1/countries/IN/states').subscribe(res => {
+    this.allState = res;
+  });
+}
+
+
+
 }

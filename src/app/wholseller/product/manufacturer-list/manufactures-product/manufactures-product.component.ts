@@ -68,38 +68,24 @@ export class ManufacturesProductComponent {
   }
 
   getAllBrands() {
-    this.authService.get(`brand?page=1`).subscribe((res: any) => {
+    this.authService.get(`brand?brandOwner=${this.mnfEmail}`).subscribe((res: any) => {
       this.allBrand = res.results;
     });
   }
   
-  getAllProducts(email:any) {
-    let url = `products/filter-products?productBy=${email}&limit=${this.limit}&page=${this.page}`;
-
-    const brand = this.filters.brand;
-    const productType = this.filters.productType;
-    const gender = this.filters.gender;
-    const clothing = this.filters.clothing;
-    const subCategory = this.filters.subCategory;
-
-    if (brand) {
-      url += `&brand=${brand}`;
+  getAllProducts(email:any) {   
+    let url = `products/filter-products?limit=${this.limit}&page=${this.page}`;
+   
+    const Object={
+      "productBy":email,
+      "brand":this.filters.brand,
+      "productType":this.filters.productType,
+      "gender": this.filters.gender,
+      "clothing": this.filters.clothing,
+      "subCategory":this.filters.subCategory
     }
 
-    if (productType) {
-      url += `&productType=${productType}`;
-    }
-    if (gender) {
-      url += `&gender=${gender}`;
-    }
-    if (clothing) {
-      url += `&clothing=${clothing}`;
-    }
-    if (subCategory) {
-      url += `&subCategory=${subCategory}`;
-    }
-
-    this.authService.get(url).subscribe((res: any) => {
+    this.authService.post(url,Object).subscribe((res: any) => {
       if (res) {
         this.totalResults = res.totalResults;
         this.products = res.results.map((product: any) => ({
