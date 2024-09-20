@@ -68,7 +68,7 @@ export class ManufacturesProductComponent {
   }
 
   getAllBrands() {
-    this.authService.get(`brand?page=1`).subscribe((res: any) => {
+    this.authService.get(`brand?brandOwner=${this.mnfEmail}`).subscribe((res: any) => {
       this.allBrand = res.results;
     });
   }

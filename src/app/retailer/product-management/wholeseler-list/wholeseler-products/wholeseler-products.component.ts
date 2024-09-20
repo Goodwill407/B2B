@@ -28,15 +28,15 @@ export class WholeselerProductsComponent {
     brand: '',
     productType: '',
     gender: '',
-    clothing: '',
+    category: '',
     subCategory: ''
   };
 
   products: any[] = [];
   allBrand: any;  
   allGender = ['Men', 'Women', 'Boys', 'Girls', 'Unisex'];
-  allProductType = [];
-  allClothingType = [];
+  allProductType:any[] = [];
+  allcategory = [];
   allSubCategory = [];
  
   limit = 10;
@@ -65,10 +65,11 @@ export class WholeselerProductsComponent {
     this.route.queryParams.subscribe(params => {
       this.WholeselerEmail = params['email'];
       if (this.WholeselerEmail) {
-        this.getAllProducts(this.WholeselerEmail);
+        this.getAllProducts();
       }
     })
     this.getAllBrands();
+    this.getProductType()
   }
 
   ngOnDestroy(): void {
@@ -80,69 +81,76 @@ export class WholeselerProductsComponent {
   }
 
   getAllBrands() {
-    this.authService.get(`brand?brandOwner=${this.WholeselerEmail}`).subscribe((res: any) => {
-      this.allBrand = res.results;
+    this.authService.get(`wholesaler-products/unique-brands/${this.WholeselerEmail}`).subscribe((res: any) => {
+      this.allBrand = res.uniqueBrands;
     });
   }
   
-  getAllProducts(email:any) {
-    let url = `wholesaler-products?wholesalerEmail=${this.WholeselerEmail}&limit=${this.limit}&page=${this.page}`;
-
-    const brand = this.filters.brand;
-    const productType = this.filters.productType;
-    const gender = this.filters.gender;
-    const clothing = this.filters.clothing;
-    const subCategory = this.filters.subCategory;
-
-    if (brand) {
-      url += `&brand=${brand}`;
+  getAllProducts() {
+    // Construct the base URL with pagination parameters
+    let url = `wholesaler-products/multiplefilter?limit=${this.limit}&page=${this.page}`;
+  
+    // Initialize a filter object
+    const filters: any = {};
+  
+    // Set filters based on the available selections
+    if (this.filters.brand) {
+      filters.brand = this.filters.brand;
     }
+    if (this.filters.productType) {
+      filters.productType = this.filters.productType;
+    }
+    if (this.filters.gender) {
+      filters.gender = this.filters.gender;
+    }
+    if (this.filters.category) {
+      filters.clothing = this.filters.category; // Assuming 'Category' is referring to 'clothing'
+    }
+    if (this.filters.subCategory) {
+      filters.subCategory = this.filters.subCategory;
+    }
+    if (this.WholeselerEmail) {
+      filters.wholesalerEmail = this.WholeselerEmail;
+    }
+  
+    // Make the API request
+    this.authService.post(url, filters).subscribe(
+      (res: any) => {
+        if (res && res.products) {
+          // Assign results and total count
+          this.totalResults = res.totalResults;
+          this.products = res.products.map((product: any) => ({
+            designNumber: product.designNumber,
+            selectedImageUrl: product.colourCollections[0]?.productImages[0] || '', // Use first image
+            selectedImageUrls: product.colourCollections[0]?.productImages || [], // Array of images
+            productTitle: product.productTitle,
+            productDescription: product.productDescription,
+            selectedColor: product.colourCollections[0]?.colour || '', // Use first color
+            colors: product.colourCollections.map((c: any) => c.colour), // Array of colors
+            stock: product.quantity || 0, // Fallback to 0 if stock not available
+            id: product.id,
+            hoverIndex: 0 // To track which image is currently hovered over
+          }));
 
-    if (productType) {
-      url += `&productType=${productType}`;
-    }
-    if (gender) {
-      url += `&gender=${gender}`;
-    }
-    if (clothing) {
-      url += `&clothing=${clothing}`;
-    }
-    if (subCategory) {
-      url += `&subCategory=${subCategory}`;
-    }
-
-    this.authService.get(url).subscribe((res: any) => {
-      if (res) {
-        this.totalResults = res.totalResults;
-        this.products = res.results.map((product: any) => ({
-          designNo: product.designNumber,
-          selectedImageUrl: product.colourCollections[0]?.productImages[0] || '',
-          selectedImageUrls: product.colourCollections[0]?.productImages || [], // Initialize with all images for the first color
-          title: product.productTitle,
-          description: product.productDescription,
-          selectedColor: product.colourCollections[0]?.colour || '',
-          colors: product.colourCollections.map((c: any) => c.colour),
-          colourCollections: product.colourCollections,
-          stock: product.quantity || 2000, // Replace with actual stock value if available
-          id: product.id,
-          hoverIndex: 0
-        }));
-
-        this.products.forEach(product => {
-          if (!product.selectedColor) {
-            this.extractColorFromImage(product);
-          }
-        });
+          // Extract colors from images if no color information is available
+          this.products.forEach((product) => {
+            if (!product.selectedColor) {
+              this.extractColorFromImage(product);
+            }
+          });
+        }
+      },
+      (error) => {
+        console.error('Error fetching products:', error);
       }
-    }, (error) => {
-      console.log(error);
-    });
+    );
   }
+  
 
   onPageChange(event: any) {
     this.page = event.page + 1;
     this.limit = event.rows;
-    this.getAllProducts(this.WholeselerEmail);
+    this.getAllProducts();
   }
 
   extractColorFromImage(product: any): void {
@@ -193,33 +201,49 @@ export class WholeselerProductsComponent {
     for (const key in this.hoverIntervals) {
       clearInterval(this.hoverIntervals[key]);
     }
+  } 
+
+  // for master
+  getProductType(){   
+    this.authService.get(`producttype`).subscribe((res: any) => {
+      this.allProductType = res.results;
+    });
   }
 
-  getAllSubCategory() {
+  getCategoryByProductTypeAndGender(){
+    const productType=this.filters.productType
+    const gender=this.filters.gender
+
+    this.authService.get(`sub-category/get-category/by-gender?productType=${productType}&gender=${gender}`).subscribe((res:any)=>{
+      if(res){
+        this.allSubCategory=[]
+      }
+      this.allcategory = Array.from(new Set(res.results.map((item: any) => item.category)));      
+    },error=>{
+
+    })
+  }
+
+  getSubCategoryBYProductType_Gender_and_Category(){
     const productType = this.filters.productType;
     const gender = this.filters.gender;
-    const clothing = this.filters.clothing;
-  
-    let url = 'sub-category';
-  
-    if (productType) {
-      url += `?productType=${productType}`;
+    const category = this.filters.category;
+
+    const object=
+    {
+      "productType":productType ,
+      "gender":gender ,
+      "category":category ,     
+    } 
+
+  this.authService.post(`sub-category/filter`,object).subscribe((res: any) => {
+    if (res) {
+      this.allSubCategory = []
     }
-    if (gender) {
-      url += (url.includes('?') ? '&' : '?') + `gender=${gender}`;
-    }
-    if (clothing) {
-      url += (url.includes('?') ? '&' : '?') + `clothing=${clothing}`;
-    }
-  
-    this.authService.get(url).subscribe(res => {
-      if (res) {
-        this.allProductType = Array.from(new Set(res.results.map((item: any) => item.productType)));
-        this.allClothingType = Array.from(new Set(res.results.map((item: any) => item.category)));
-        this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
-      }
-    }, (error) => {
-      console.log(error);
-    });
+    this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
+  }, error => {
+
+  });
+
   }
 }

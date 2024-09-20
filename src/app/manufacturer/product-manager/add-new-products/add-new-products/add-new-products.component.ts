@@ -38,6 +38,10 @@ export class AddNewProductsComponent {
   @ViewChild('fileInput') fileInput!: ElementRef;
   CloudPath: string = ''
   ProductId: any;
+  sizeSet:any
+  sizeChart:any;
+  foundSizeSet:any
+  sizeChartFields: any[] = [];
 
   videoSizeError: string = '';
   userProfile: any
@@ -49,12 +53,7 @@ export class AddNewProductsComponent {
 
   selectedSizes: any = []
   colourCollections: any = []
-
-
-  // dropdown data
-  sizes: any = [
-    '5XS', '4XS', '3XS', '2XS', 'XS', 'S/36', 'M/38', 'L/40', 'XL/42', '2XL/44', '3XL/46', 'Free'
-  ];
+ 
   currencies: any = {}
   // currencyOptions = Object.values(this.currencies);
   selectedCurrency = 'INR'
@@ -80,18 +79,19 @@ export class AddNewProductsComponent {
   allProductType: any
   locationData: any;
   showFlag: boolean = false;
-  visibleFields:any=[]
+  visibleFields: any = []
 
-  allWomensleevetype:any=[]
-  allTopstyle:any=[]
-  allEmbellishmentfeature:any=[]
-  allNoofpockets:any=[]
-  allCoinpocket:any=[]
-  allWaistsizeset:any=[]
-  allTrouserfittype:any=[]
-  allRisestyle:any=[]
-  allTrouserstyle:any=[]
-  allTrouserpocket:any=[]
+  allWomensleevetype: any = []
+  allTopstyle: any = []
+  allEmbellishmentfeature: any = []
+  allNoofpockets: any = []
+  allCoinpocket: any = []
+  allWaistsizeset: any = []
+  allTrouserfittype: any = []
+  allRisestyle: any = []
+  allTrouserstyle: any = []
+  allTrouserpocket: any = []
+
 
   // visibleFields: any=['material','materialvariety','fabricPattern','selectedOccasion']
 
@@ -114,22 +114,8 @@ export class AddNewProductsComponent {
         clothing: ['', Validators.required],
         subCategory: ['', Validators.required],
 
-        // ============= depend on product Maching fields...           
-        // material: ['', Validators.required],
-        // materialvariety: [''],
-        // fabricPattern: ['', Validators.required],
-        // selectedOccasion: [[]],
-        // selectedlifeStyle: [[]],
-        // specialFeature: [[]],
-        // fitStyle: ['', Validators.required],
-        // neckStyle: ['', Validators.required],
-        // closureType: ['', Validators.required],
-        // pocketDescription: ['', Validators.required],
-        // sleeveCuffStyle: ['', Validators.required],
-        // sleeveLength: ['', Validators.required],
-        // careInstructions: [''],       
-        // ========== fix comman fields..
         sizes: this.fb.array([]),
+
         minimumOrderQty: ['', Validators.required],
         setOFnetWeight: ['', Validators.required],
         setOfMRP: ['', [Validators.required]],
@@ -138,7 +124,7 @@ export class AddNewProductsComponent {
         dateOfManufacture: ['', [Validators.required]],
         dateOfListing: ['', [Validators.required]],
         // currency: ['', [Validators.required]]
-      }),            
+      }),
       stepTwo: this.fb.group({
         colour: [''],
         colourName: ['', Validators.required],
@@ -148,8 +134,9 @@ export class AddNewProductsComponent {
       })
     });
 
-        // Create form controls based on the visibleFields array
+    // Create form controls based on the visibleFields array
     this.createFormControls(this.visibleFields);
+   
 
     this.CloudPath = this.authService.cdnPath
 
@@ -163,7 +150,7 @@ export class AddNewProductsComponent {
   ngOnInit() {
     // call master    
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
-    // this.getAllSubCategory()
+    // this.getAllSubCategory()   
     this.getMaterial()
     this.getFabricPttern()
     this.getOccasion()
@@ -181,7 +168,7 @@ export class AddNewProductsComponent {
     this.updateValidators()
     this.disbledFields()
     this.getProfileData();
-    this.getProductType();    
+    this.getProductType();
     this.getTrouserstyle();
     this.getTrouserpocket();
     this.getWomensleevetype()
@@ -197,7 +184,7 @@ export class AddNewProductsComponent {
     if (this.ProductId) {
       this.getProductDataById()
     }
-    
+
   }
 
   disbledFields() {
@@ -229,7 +216,99 @@ export class AddNewProductsComponent {
     });
   }
 
+  // Form step functions
+  nextStep() {
+    if (this.currentStep === 1) {
+      if (this.ProductId) {
+        this.UpdateStepOne()
+      }
+      else {
+        this.saveStepOneData();
+      }
+    } else if (this.currentStep === 2) {
+      this.saveStepTwoData();
+    }
+  }
   
+
+  get stepOne() {
+    return this.addProductForm.get('stepOne') as FormGroup;
+  }
+
+  get stepTwo() {
+    return this.addProductForm.get('stepTwo') as FormGroup;
+  }
+
+  // for size form array
+  // Mock function to simulate fetching dynamic fields from the backend
+  getSizeChartFields() {
+    
+    this.sizeChartFields = [
+      { name: 'brandSize', label: 'Brand Size', required: true },
+      { name: 'waist', label: 'Waist (in)', required: true },
+      { name: 'inseam', label: 'Inseam (in)', required: true },
+      { name: 'length', label: 'Length', required: true },
+      { name: 'rise', label: 'Rise (in)', required: true },
+      { name: 'width', label: 'Width', required: false },
+      { name: 'height', label: 'Height', required: true },
+      { name: 'weight', label: 'Weight', required: true },
+      { name: 'manufacturerPrice', label: "Manufacturer's Price", required: true },
+      { name: 'mrp', label: 'MRP', required: true }
+    ];
+  }
+
+  // Called when a size checkbox is checked/unchecked
+  onSizeChange(event: any, size: number) {
+    const sizesArray = this.stepOne.get('sizes') as FormArray;
+
+    if (event.target.checked) {
+      this.selectedSizes.push(size);
+      sizesArray.push(this.createSizeFormGroup(size));  // Add new form group for the selected size
+    } else {
+      const index = this.selectedSizes.indexOf(size);
+      this.selectedSizes.splice(index, 1);
+      sizesArray.removeAt(index);  // Remove form group for the deselected size
+    }
+  }
+
+  // Create a new FormGroup for each selected size
+  createSizeFormGroup(size: number): FormGroup {
+    const group = this.fb.group({
+      standardSize: [size],  // Always include standardSize
+    });
+
+    // Dynamically add controls for each field from the backend
+    this.sizeChartFields.forEach((field:any) => {
+      group.addControl(field.name, this.fb.control('', field.required ? Validators.required : null));
+    });
+
+    return group;
+  }
+
+  // For easier access to formArray controls
+  get sizesArray(): FormArray {
+    return this.stepOne.get('sizes') as FormArray;
+  }
+
+  // get total value
+  updateTotals() {
+    const sizes = this.sizesArray.controls;
+
+    let totalManufacturerPrice = 0;
+    let totalMRP = 0;
+    let totalWeight = 0;
+
+    for (let sizeGroup of sizes) {
+      totalManufacturerPrice += +sizeGroup.get('manufacturerPrice')?.value || 0;
+      totalMRP += +sizeGroup.get('singleMRP')?.value || 0;
+      totalWeight += +sizeGroup.get('weight')?.value || 0;
+    }
+
+    this.stepOne.get('setOfManPrice')?.setValue(totalManufacturerPrice, { emitEvent: false });
+    this.stepOne.get('setOfMRP')?.setValue(totalMRP, { emitEvent: false });
+    this.stepOne.get('setOFnetWeight')?.setValue(totalWeight, { emitEvent: false });
+  }
+
   getProfileData() {
     this.authService.get(`manufacturers/${this.userProfile.email}`).subscribe((res: any) => {
       this.locationData = res;
@@ -262,15 +341,15 @@ export class AddNewProductsComponent {
     const productType = this.stepOne.get('productType')?.value;
     const gender = this.stepOne.get('gender')?.value;
     const clothing = this.stepOne.get('clothing')?.value;
-    const object=
-      {
-        "productType":productType ,
-        "gender":gender ,
-        "category":clothing ,     
-      }
-   
+    const object =
+    {
+      "productType": productType,
+      "gender": gender,
+      "category": clothing,
+    }
 
-    this.authService.post(`sub-category/filter`,object).subscribe((res: any) => {
+
+    this.authService.post(`sub-category/filter`, object).subscribe((res: any) => {
       if (res) {
         this.allSubCategory = []
       }
@@ -293,365 +372,25 @@ export class AddNewProductsComponent {
   }
 
   mappingData(pType: any, gen: any, cat: any, sCat: any) {
-    this.authService.get(`mapping?productType=${pType}&gender=${gen}&category=${cat}&subCategory=${sCat}`).subscribe((res: any) => {
-     this.visibleFields=[]
-     this.visibleFields=res.results[0].inputs
-     this.createFormControls(this.visibleFields)
-    })
-  }
-
-  
-  getAllBrands() {
-    this.authService.get(`brand?brandOwner=${this.authService.currentUserValue.email}`).subscribe(res => {
-      if (res) {
-        this.allBrands = res.results.map((item: any) => item.brandName);
-      }
-
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-
-
-  getAllLifeStyle() {
-    this.authService.get('lifestyle').subscribe(res => {
-      if (res) {
-        this.allLifeStyle = res.results.map((item: any) => item.name);
-      }
-
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-  getMaterial() {
-    this.authService.get('material').subscribe(res => {
-      if (res) {
-        this.allMaterialType = res.results
-      }
-
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-  getFabricPttern() {
-    this.authService.get('pattern').subscribe(res => {
-      if (res) {
-        this.allFabricPattern = res.results
-      }
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-  getOccasion() {
-    this.authService.get('occasion').subscribe(
-      res => {
-        if (res && res.results) {
-          this.allOccasionType = res.results.map((item: any) => item.name);
-        }
-      },
-      error => {
-        console.log('Error', error);
-      }
-    );
-  }
-
-  getFitStyle() {
-    this.authService.get('fit-type').subscribe(res => {
-      if (res) {
-        this.allFitStyle = res.results
-      }
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-  getNeckStyle() {
-    this.authService.get('neck-style').subscribe(res => {
-      if (res) {
-        this.allNeckStyle = res.results
-      }
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-// new master
-  getTopstyle() {
-    this.authService.get('topstyle').subscribe(res => {
-      if (res) {
-        this.allTopstyle = res.results
-      }
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-  getWomensleevetype() {
-    this.authService.get('womensleevetype').subscribe(res => {
-      if (res) {
-        this.allWomensleevetype = res.results
-      }
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-  getEmbellishmentfeature() {
-    this.authService.get('embellishmentfeature').subscribe(res => {
-      if (res) {
-        this.allEmbellishmentfeature = res.results
-      }
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-  getNoofpockets() {
-    this.authService.get('noofpockets').subscribe(res => {
-      if (res) {
-        this.allNoofpockets = res.results
-      }
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-  getCoinpocket() {
-    this.authService.get('coinpocket').subscribe(res => {
-      if (res) {
-        this.allCoinpocket = res.results
-      }
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-  getWaistsizeset() {
-    this.authService.get('waistsizeset').subscribe(res => {
-      if (res) {
-        this.allWaistsizeset = res.results
-      }
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-  getTrouserfittype() {
-    this.authService.get('trouserfittype').subscribe(res => {
-      if (res) {
-        this.allTrouserfittype = res.results
-      }
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-  getRisestyle() {
-    this.authService.get('risestyle').subscribe(res => {
-      if (res) {
-        this.allRisestyle = res.results
-      }
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-  getTrouserstyle() {
-    this.authService.get('trouserstyle').subscribe(res => {
-      if (res) {
-        this.allTrouserstyle = res.results
-      }
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-  getTrouserpocket() {
-    this.authService.get('trouserpocket').subscribe(res => {
-      if (res) {
-        this.allTrouserpocket = res.results
-      }
-    },
-      errpr => {
-        console.log('error')
-      })
-  } 
-// ==================================
-  getAllClosureType() {
-    this.authService.get('closure-type').subscribe(res => {
-      if (res) {
-        this.allClosureType = res.results
-      }
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-  getPocketDiscription() {
-    this.authService.get('pocket-discription').subscribe(res => {
-      if (res) {
-        this.allPocketDiscription = res.results
-      }
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-  getSleeveCutStyle() {
-    this.authService.get('sleev-cut-style').subscribe(res => {
-      if (res) {
-        this.allSleeveCutStyle = res.results
-      }
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-  getSleeveLength() {
-    this.authService.get('sleeve-length').subscribe(res => {
-      if (res) {
-        this.allSleeveLength = res.results
-      }
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-  getSpecialFeature() {
-    this.authService.get('special-feature').subscribe(res => {
-      if (res) {
-        this.allSpecialFeature = res.results.map((item: any) => item.name);
-      }
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-  getAllCurrencyCode() {
-    this.authService.get('currency').subscribe(res => {
-      if (res) {
-        const data = res.results
-        this.currencies = Object.entries(data).map(([code, name]) => ({ code, name }));
-      }
-    })
-  }
-
-  // getAllSubCategory() {
-  //   this.authService.get(`sub-category`).subscribe(res => {
-  //     if (res) {
-  //       this.allSubCategory = res.results;
-  //     }
-  //   }, (error) => {
-  //     console.log(error);
-  //   });
-  // }
-
-  getallCareInstruction() {
-    this.authService.get('care-instruction').subscribe(res => {
-      if (res) {
-        this.allCareInstruction = res.results
-      }
-    },
-      errpr => {
-        console.log('error')
-      })
-  }
-
-  // Form step functions
-  nextStep() {
-    if (this.currentStep === 1) {
-      if (this.ProductId) {
-        this.UpdateStepOne()
-      }
-      else {
-        this.saveStepOneData();
-      }
-    } else if (this.currentStep === 2) {
-      this.saveStepTwoData();
+    const object = {
+      productType: pType,
+      gender: gen,
+      category: cat,
+      subCategory: sCat
     }
+    this.authService.post(`mapping/filter-subcategory`, object).subscribe((res: any) => {
+      this.visibleFields = []
+      this.visibleFields = res[0].inputs;
+      this.createFormControls(this.visibleFields)
+      // Check if "Size Set" or "Waist Size Set" is available
+      this.foundSizeSet = this.visibleFields.find((field:any) => field === "Size Set" || field === "Waist Size Set");
+
+  if (this.foundSizeSet) {
+    // Pass the found element to the function if either exists
+    this.getSizeSetForProducts(this.foundSizeSet);
   }
-
-  // prevStep() {
-  //   if (this.currentStep > 1) {
-  //     this.currentStep--;
-  //   }
-  // }
-
-  get stepOne() {
-    return this.addProductForm.get('stepOne') as FormGroup;
-  }
-
-  get stepTwo() {
-    return this.addProductForm.get('stepTwo') as FormGroup;
-  }
-
-  get sizesArray() {
-    return this.stepOne.get('sizes') as FormArray;
-  }
-
-  onSizeChange(event: any, size: string) {
-    if (event.target.checked) {
-      this.sizesArray.push(this.fb.group({
-        standardSize: size,
-        brandSize: ['', Validators.required],
-        chestSize: ['', Validators.required],
-        shoulderSize: ['', Validators.required],
-        frontLength: ['', Validators.required],
-        length: [''],
-        width: [''],
-        height: [''],
-        weight: ['', Validators.required],
-        manufacturerPrice: ['', Validators.required],
-        singleMRP: ['', Validators.required]
-      }));
-      this.updateTotals();
-    } else {
-      const index = this.sizesArray.controls.findIndex(x => x.get('size')?.value === size);
-      this.sizesArray.removeAt(index);
-    }
-  }
-
-  // get total value
-  updateTotals() {
-    const sizes = this.sizesArray.controls;
-
-    let totalManufacturerPrice = 0;
-    let totalMRP = 0;
-    let totalWeight = 0;
-
-    for (let sizeGroup of sizes) {
-      totalManufacturerPrice += +sizeGroup.get('manufacturerPrice')?.value || 0;
-      totalMRP += +sizeGroup.get('singleMRP')?.value || 0;
-      totalWeight += +sizeGroup.get('weight')?.value || 0;
-    }
-
-    this.stepOne.get('setOfManPrice')?.setValue(totalManufacturerPrice, { emitEvent: false });
-    this.stepOne.get('setOfMRP')?.setValue(totalMRP, { emitEvent: false });
-    this.stepOne.get('setOFnetWeight')?.setValue(totalWeight, { emitEvent: false });
+});
+    
   }
 
   // save Forms step One
@@ -694,7 +433,7 @@ export class AddNewProductsComponent {
     }
   }
 
-  // for Step two
+  // for Step two  =============================================================
   get productImages(): FormArray {
     return this.stepTwo.get('productImages') as FormArray;
   }
@@ -878,7 +617,7 @@ export class AddNewProductsComponent {
     const formattedDate = this.datePipe.transform(data.dateOfManufacture, 'yyyy-MM-dd');
     this.stepOne.patchValue({
       quantity: data.quantity,
-      dateOfManufacture: formattedDate,      
+      dateOfManufacture: formattedDate,
     });
   }
 
@@ -955,5 +694,295 @@ export class AddNewProductsComponent {
     const valueWithDash = `${symbol} -`;
     this.stepOne.get('MRP')?.setValue(valueWithDash, { emitEvent: false });
     console.log('Selected currency:', this.selectedCurrency);
+  }
+
+  getSizeSetForProducts(type:any){
+    const setType=type
+    this.authService.get(`size-set/size-type/size-set?sizeType=${setType}`).subscribe((data) =>{
+      this.sizeSet=data.Sizes;
+      this.sizeChart=data.sizeChart
+    })
+  }
+
+  // all Masters data======================
+
+  getAllBrands() {
+    this.authService.get(`brand?brandOwner=${this.authService.currentUserValue.email}`).subscribe(res => {
+      if (res) {
+        this.allBrands = res.results.map((item: any) => item.brandName);
+      }
+
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+
+
+  getAllLifeStyle() {
+    this.authService.get('lifestyle').subscribe(res => {
+      if (res) {
+        this.allLifeStyle = res.results.map((item: any) => item.name);
+      }
+
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getMaterial() {
+    this.authService.get('material').subscribe(res => {
+      if (res) {
+        this.allMaterialType = res.results
+      }
+
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getFabricPttern() {
+    this.authService.get('pattern').subscribe(res => {
+      if (res) {
+        this.allFabricPattern = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getOccasion() {
+    this.authService.get('occasion').subscribe(
+      res => {
+        if (res && res.results) {
+          this.allOccasionType = res.results.map((item: any) => item.name);
+        }
+      },
+      error => {
+        console.log('Error', error);
+      }
+    );
+  }
+
+  getFitStyle() {
+    this.authService.get('fit-type').subscribe(res => {
+      if (res) {
+        this.allFitStyle = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getNeckStyle() {
+    this.authService.get('neck-style').subscribe(res => {
+      if (res) {
+        this.allNeckStyle = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  
+  getTopstyle() {
+    this.authService.get('topstyle').subscribe(res => {
+      if (res) {
+        this.allTopstyle = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getWomensleevetype() {
+    this.authService.get('womensleevetype').subscribe(res => {
+      if (res) {
+        this.allWomensleevetype = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getEmbellishmentfeature() {
+    this.authService.get('embellishmentfeature').subscribe(res => {
+      if (res) {
+        this.allEmbellishmentfeature = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getNoofpockets() {
+    this.authService.get('noofpockets').subscribe(res => {
+      if (res) {
+        this.allNoofpockets = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getCoinpocket() {
+    this.authService.get('coinpocket').subscribe(res => {
+      if (res) {
+        this.allCoinpocket = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getWaistsizeset() {
+    this.authService.get('waistsizeset').subscribe(res => {
+      if (res) {
+        this.allWaistsizeset = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getTrouserfittype() {
+    this.authService.get('trouserfittype').subscribe(res => {
+      if (res) {
+        this.allTrouserfittype = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getRisestyle() {
+    this.authService.get('risestyle').subscribe(res => {
+      if (res) {
+        this.allRisestyle = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getTrouserstyle() {
+    this.authService.get('trouserstyle').subscribe(res => {
+      if (res) {
+        this.allTrouserstyle = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getTrouserpocket() {
+    this.authService.get('trouserpocket').subscribe(res => {
+      if (res) {
+        this.allTrouserpocket = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getAllClosureType() {
+    this.authService.get('closure-type').subscribe(res => {
+      if (res) {
+        this.allClosureType = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getPocketDiscription() {
+    this.authService.get('pocket-discription').subscribe(res => {
+      if (res) {
+        this.allPocketDiscription = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getSleeveCutStyle() {
+    this.authService.get('sleev-cut-style').subscribe(res => {
+      if (res) {
+        this.allSleeveCutStyle = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getSleeveLength() {
+    this.authService.get('sleeve-length').subscribe(res => {
+      if (res) {
+        this.allSleeveLength = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getSpecialFeature() {
+    this.authService.get('special-feature').subscribe(res => {
+      if (res) {
+        this.allSpecialFeature = res.results.map((item: any) => item.name);
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
+  }
+
+  getAllCurrencyCode() {
+    this.authService.get('currency').subscribe(res => {
+      if (res) {
+        const data = res.results
+        this.currencies = Object.entries(data).map(([code, name]) => ({ code, name }));
+      }
+    })
+  }
+
+  // getAllSubCategory() {
+  //   this.authService.get(`sub-category`).subscribe(res => {
+  //     if (res) {
+  //       this.allSubCategory = res.results;
+  //     }
+  //   }, (error) => {
+  //     console.log(error);
+  //   });
+  // }
+
+  getallCareInstruction() {
+    this.authService.get('care-instruction').subscribe(res => {
+      if (res) {
+        this.allCareInstruction = res.results
+      }
+    },
+      errpr => {
+        console.log('error')
+      })
   }
 }

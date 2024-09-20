@@ -2,44 +2,76 @@
 /* Search Section Styling */
 /* General Styles */
 .search-section {
-    background-color: #ffff;
-    // border: 1px solid #dcdcdc;
-    border-radius: 6px 6px 0px 0px;
-    padding: 20px;
-   } 
-  
-  .brand-search, .product-search {
-    width:100% ;
-    position: relative;
-  }
-  .brand-search input{
-    width:500px;
-  }
+  background-color: #ffff;
+  // border: 1px solid #dcdcdc;
+  border-radius: 6px 6px 0px 0px;
+  padding: 20px;
+ }
 
-  .vertical-line {
-    height: 24px;
-    width: 1px;
-    background-color: #dcdcdc;
-    margin: 0 10px;
-  }
-  
-  .form-control, .form-select {
-    border-radius: 6px;
-    border: 1px solid #dcdcdc;
-    min-width: 500px;
-  }
-  
-  .btn-primary {
-    background-color: #3498db;
-    border-color: #3498db;
-    font-size: 0.95rem;
-    font-weight: 600;
-  }
-  
-  .btn-primary:hover {
-    background-color: #2980b9;
-    border-color: #2980b9;
-  }
+.nav-tabs {
+  border-bottom: 2px solid #dcdcdc;
+}
+
+.nav-link {
+  font-size: 1rem;
+  color: #2c3e50;
+  padding: 10px 15px;
+  border: 1px solid transparent;
+}
+
+.nav-link.active {
+  color: #ffffff;
+  // background-color: #3498db;
+  border-color: #3498db;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+  background-color: #3498db;
+  // border-color: #3498db;
+}
+
+.tab-content {
+  // padding: 15px;
+}
+
+.brand-search, .product-search {
+  width:100% ;
+  position: relative;
+}
+.brand-search input{
+  width:400px;
+}
+
+.search-label {
+  font-size: 1rem;
+  width: 100px;
+  color: #2c3e50;
+}
+
+.vertical-line {
+  height: 24px;
+  width: 1px;
+  background-color: #dcdcdc;
+  margin: 0 10px;
+}
+
+.form-control, .form-select {
+  border-radius: 6px;
+  border: 1px solid #dcdcdc;
+}
+
+.btn-primary {
+  background-color: #3498db;
+  border-color: #3498db;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background-color: #2980b9;
+  border-color: #2980b9;
+}
 
   
   /* Brand List Section */
