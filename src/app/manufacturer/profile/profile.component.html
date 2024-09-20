@@ -48,16 +48,17 @@
                             </div>
 
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                <label class="label-input" for="introduction">Company/Firm Introduction<span
-                                        class="required">*</span></label>
+                                <label class="label-input" for="introduction">Company/Firm Introduction<span class="required">*</span></label>
                                 <textarea type="text" id="introduction" formControlName="introduction"
-                                    class="form-control"
-                                    [ngClass]="{ 'is-invalid': submitted && f.introduction.errors }"></textarea>
+                                    class="form-control" [ngClass]="{ 'is-invalid': submitted && f.introduction.errors }"></textarea>
+                                
+                                <!-- Validation Messages -->
                                 <div *ngIf="submitted && f.introduction.errors" class="invalid-feedback">
-                                    <div *ngIf="f.introduction.errors.required">Company/Firm Introduction is required.
-                                    </div>
+                                    <div *ngIf="f.introduction.errors.required">Company/Firm Introduction is required.</div>
+                                    <div *ngIf="f.introduction.errors.maxlength">Introduction cannot exceed 4000 characters.</div>
                                 </div>
                             </div>
+                            <div class="note"><span class="text-muted fw-bold">Note :</span> Write Introduction upto 4000 characters.</div>
 
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                 <label class="label-input" for="address">Address<span class="required">*</span></label>
@@ -119,9 +120,9 @@
                                     <mat-form-field appearance="outline" class="me-2">
                                         <mat-select formControlName="code">
                                             <mat-option *ngFor="let country of countryCode" [value]="country.code">
-                                                <!-- <img [src]="country.flag" alt="{{ country.countryName }}" -->
-                                                <img  alt="{{ country.countryName }}"
-                                                    class="country-flag" /> {{ country.code }}
+                                                <img [src]="country.flag" class="country-flag"
+                                                    alt="{{ country.countryName }}" />
+                                                {{ country.code }}
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
@@ -141,8 +142,9 @@
                                     <mat-form-field appearance="outline" class="me-2">
                                         <mat-select formControlName="altCode">
                                             <mat-option *ngFor="let country of countryCode" [value]="country.code">
-                                                <img 
-                                                    class="country-flag" /> {{ country.code }}
+                                                <img [src]="country.flag" class="country-flag"
+                                                    alt="{{ country.countryName }}" />
+                                                {{ country.code }}
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
@@ -176,7 +178,7 @@
                                     <div *ngIf="f.email2.errors.email">Email must be valid.</div>
                                 </div>
                             </div>
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
+                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="gstin">GSTIN<span class="required">*</span></label>
                                 <input type="text" id="gstin" formControlName="GSTIN" class="form-control"
                                     [ngClass]="{ 'is-invalid': submitted && f.GSTIN.errors }">
@@ -189,7 +191,8 @@
                                         15-character alphanumeric code with a valid structure (22AAAAA0000A1Z5).</div>
                                 </div>
                             </div>
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
+                            
+                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="pan">PAN<span class="required">*</span></label>
                                 <input type="text" id="pan" formControlName="pan" class="form-control"
                                     [ngClass]="{ 'is-invalid': submitted && f.pan.errors }">
@@ -201,7 +204,7 @@
                             <div *ngIf="mgfRegistrationForm.errors?.panMismatch && submitted" class="text-danger">
                                 GSTIN and PAN numbers do not match.
                             </div>
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6  pe-4">
+                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="establishDate">Company Establishment Date<span
                                         class="required">*</span></label>
                                 <input type="date" id="establishDate" formControlName="establishDate"
@@ -211,7 +214,7 @@
                                     <div *ngIf="f.establishDate.errors.required">Establishment Date is required.</div>
                                 </div>
                             </div>
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
+                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-">
                                 <label class="label-input" for="registerOnFTH">Registered On FTH <span
                                         class="required">*</span></label>
                                 <input type="text" id="registerOnFTH" formControlName="registerOnFTH"
@@ -219,36 +222,45 @@
                                     [ngClass]="{ 'is-invalid': submitted && f.registerOnFTH.errors }">
                             </div>
                         </div>
-
-                        <h5 class="text-center mb-0 mt-4">Social Media</h5>
-                        <hr class="my-2">
-                        <div class="row" formGroupName="socialMedia">
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                                <label class="label-input" for="fb">Facebook</label>
-                                <input type="text" id="fb" formControlName="facebook" class="form-control"
-                                    [ngClass]="{ 'is-invalid': submitted && f.socialMedia.get('facebook').errors }">
+                        <div class="row mt-3" *ngIf="allData">
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                                @if(allData.profileImg){
+                                <label class="label-input"> <b>Company Logo : <span
+                                            class="text-success">Uploaded</span></b> </label>
+                                <span class="ms-3"><button class="btn"
+                                        (click)="openImg(authService.cdnPath+allData.profileImg,400)"><i
+                                            class="bi bi-eye-fill h5"></i></button> </span>
+                                <!-- <img " class="ms-2"
+                                    [src]="authService.cdnPath + allData.profileImg" height="180px" width="180px"
+                                    alt="Document Img"> -->
+                                }
+                                @else {
+                                <label class="label-input"><b>Company Logo : </b> <span class="required">Not Uploaded
+                                        Yet.</span></label>
+                                }
                             </div>
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
-                                <label class="label-input" for="linkedin">Linkedin</label>
-                                <input type="text" id="linkedin" formControlName="linkedIn" class="form-control"
-                                    [ngClass]="{ 'is-invalid': submitted && f.socialMedia.get('linkedIn').errors }">
-                            </div>
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                                <label class="label-input" for="insta">Instagram</label>
-                                <input type="text" id="insta" formControlName="instagram" class="form-control"
-                                    [ngClass]="{ 'is-invalid': submitted && f.socialMedia.get('instagram').errors }">
-                            </div>
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
-                                <label class="label-input" for="web">Company Website</label>
-                                <input type="text" id="web" formControlName="webSite" class="form-control"
-                                    [ngClass]="{ 'is-invalid': submitted && f.socialMedia.get('webSite').errors }">
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                                @if(allData.fileName){
+                                <label class="label-input"> <b>KYC Documents : {{allData?.fileName}}</b> <span
+                                        class="required"><small>&nbsp; ( Approval Pending )</small></span></label>
+                                <span class="ms-3"><button class="btn"
+                                        (click)="openImg(authService.cdnPath +allData.file,800)"><i
+                                            class="bi bi-eye-fill h5"></i></button> </span>
+                                <!-- <img (click)="openImg(allData.file)" [src]="authService.cdnPath + allData.file"
+                                    height="180px" width="200px" alt="Document Img"> -->
+                                }
+                                @else {
+                                <label class="label-input"> <b>KYC Documents : <span class="required"><small>&nbsp;
+                                                Pending</small></span></b> </label>
+                                }
                             </div>
                         </div>
+                        <hr class="my-2">
 
                         <h5 class="text-center mb-0 mt-4">Bank Account Details</h5>
                         <hr class="my-2">
                         <div class="row" formGroupName="BankDetails">
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
                                 <label class="label-input" for="acNo">Account Number<span
                                         class="required">*</span></label>
                                 <input type="text" id="acNo" formControlName="accountNumber" class="form-control"
@@ -262,7 +274,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
                                 <label class="label-input" for="acType">Account Type<span
                                         class="required">*</span></label>
                                 <select id="acType" formControlName="accountType" class="form-select"
@@ -278,7 +290,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
                                 <label class="label-input" for="bankName">Bank Name<span
                                         class="required">*</span></label>
                                 <input type="text" id="bankName" formControlName="bankName" class="form-control"
@@ -288,7 +300,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
                                 <label class="label-input" for="ifsc">IFSC Code<span class="required">*</span></label>
                                 <input type="text" id="ifsc" formControlName="IFSCcode" class="form-control"
                                     [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('IFSCcode').errors }">
@@ -317,7 +329,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 ps-4">
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
                                 <label class="label-input" for="acType">City<span class="required">*</span></label>
                                 <input type="text" id="acNo" formControlName="city" class="form-control"
                                     [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('city').errors }">
@@ -327,7 +339,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 ps-4">
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
                                 <label class="label-input" for="acNo">Branch Name<span class="required">*</span></label>
                                 <input type="text" id="acNo" formControlName="branch" class="form-control"
                                     [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('branch').errors }">
@@ -337,31 +349,34 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row mt-3" *ngIf="allData">
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
-                                @if(allData.profileImg){
-                                <label class="label-input"> <b>Company Logo : </b> </label>
-                                <img (click)="openImg(allData.profileImg)" class="ms-2"
-                                    [src]="authService.cdnPath + allData.profileImg" height="180px" width="180px"
-                                    alt="Document Img">
-                                }
-                                @else {
-                                <label class="label-input"><b>Company Logo : </b><br> Not Uploaded .</label>
-                                }
+
+                        <hr class="my-2">
+                        <h5 class="text-center mb-0 mt-4">Social Media</h5>
+                        <hr class="my-2">
+                        <div class="row" formGroupName="socialMedia">
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
+                                <label class="label-input" for="fb">Facebook</label>
+                                <input type="text" id="fb" formControlName="facebook" class="form-control"
+                                    [ngClass]="{ 'is-invalid': submitted && f.socialMedia.get('facebook').errors }">
                             </div>
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
-                                @if(allData.fileName){
-                                <label class="label-input"> <b>KYC Documents : {{allData?.fileName}}</b> <span
-                                        class="required"><small>&nbsp; ( Approval Pending )</small></span></label>
-                                <img (click)="openImg(allData.file)" [src]="authService.cdnPath + allData.file"
-                                    height="180px" width="200px" alt="Document Img">
-                                }
-                                @else {
-                                <label class="label-input"> <b>KYC Documents : <span class="required"><small>&nbsp;
-                                                Pending</small></span></b> </label>
-                                }
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
+                                <label class="label-input" for="linkedin">Linkedin</label>
+                                <input type="text" id="linkedin" formControlName="linkedIn" class="form-control"
+                                    [ngClass]="{ 'is-invalid': submitted && f.socialMedia.get('linkedIn').errors }">
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
+                                <label class="label-input" for="insta">Instagram</label>
+                                <input type="text" id="insta" formControlName="instagram" class="form-control"
+                                    [ngClass]="{ 'is-invalid': submitted && f.socialMedia.get('instagram').errors }">
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
+                                <label class="label-input" for="web">Company Website</label>
+                                <input type="text" id="web" formControlName="webSite" class="form-control"
+                                    [ngClass]="{ 'is-invalid': submitted && f.socialMedia.get('webSite').errors }">
                             </div>
                         </div>
+
+
                         <div class="row" *ngIf="!isDataSaved || isDataSaved">
                             <div class="col-12 d-flex justify-content-center mt-3">
                                 <button *ngIf="!isDataSaved" type="submit" class="btn submit-btn me-3"

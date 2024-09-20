@@ -9,6 +9,8 @@ import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-si
 import { panMatchValidator } from '../../common/pan-validation'; // Adjust the path as needed
 import { MatSelectModule } from '@angular/material/select';
 import { KycUploadComponent } from 'app/common/kyc-upload/kyc-upload.component';
+import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-wholesaler-profile',
@@ -59,7 +61,8 @@ export class WholesalerProfileComponent {
     public authService: AuthService,
     private communicationService: CommunicationService,
     private direction: DirectionService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private dialog: MatDialog
   ) { }
 
   countries: any[] = [
@@ -92,11 +95,12 @@ export class WholesalerProfileComponent {
       fullName: [{ value: '', disabled: true }, Validators.required],
       companyName: [{ value: '', disabled: true }, Validators.required],
       address: ['', Validators.required],
-      introduction:['', Validators.required],
+      introduction: ['', [Validators.required, Validators.maxLength(4000)]],
       country: ['India', Validators.required],
       state: ['', Validators.required],
       city: ['', Validators.required],
       code: ['', Validators.required],
+      altCode: [''],
       pinCode: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
       mobNumber: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(/^\d{10}$/)]],
       mobNumber2: [''],
@@ -258,7 +262,10 @@ export class WholesalerProfileComponent {
     });
   }
 
-  openImg(path:any){
-    this.communicationService.openImg(path);
+  openImg(path:any,size:number){
+    const dialogRef = this.dialog.open(ImageDialogComponent, {
+      width: size+'px',
+      data: {path:path,width:size}  // Pass the current product data
+    });
   }
 }

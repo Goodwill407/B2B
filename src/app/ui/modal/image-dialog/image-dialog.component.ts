@@ -15,5 +15,12 @@ import { MatDividerModule } from '@angular/material/divider';
   styleUrl: './image-dialog.component.scss'
 })
 export class ImageDialogComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
+  imgPath:string = '';
+  width: any;
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
+    this.imgPath = data.path;
+    this.width = data.width;
+
+  }
+
 }

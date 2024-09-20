@@ -103,7 +103,7 @@ export const ROUTES: RouteInfo[] = [
   },    
   {
     path: '/mnf/category',
-    title: `Category`,
+    title: `Vendor Discounts`,
     iconType: 'material-icons-outlined',
     icon: 'view_timeline',
     class: '',

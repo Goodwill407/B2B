@@ -44,3 +44,11 @@ export function panMatchValidator(gstinControlName: string, panControlName: stri
     return null; // No error
   };
 }
+
+export function maxWordCountValidator(maxWords: number): ValidatorFn {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    const value = control.value || '';
+    const wordCount = value.split(/\s+/).filter((word:any) => word.length > 0).length;
+    return wordCount > maxWords ? { maxWords: { actualCount: wordCount, maxWords: maxWords } } : null;
+  };
+}

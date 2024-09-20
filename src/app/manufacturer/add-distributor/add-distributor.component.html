@@ -1,64 +1,74 @@
 <section class="content">
     <div class="content-block">
-        <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="default" color="#fff" type="square-jelly-box" [fullScreen]="true">
+        <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="default" color="#fff" type="square-jelly-box"
+            [fullScreen]="true">
             <p style="color: rgb(242, 94, 94)"> Sending Invitation By Mail ... </p>
-          </ngx-spinner>
+        </ngx-spinner>
 
-        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Invite New Wholesaler's/ Retailer's</h4>
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Invite New Distributor</h4>
 
         <div class="registration-form px-4 mt-4">
             <form [formGroup]="mgfRegistrationForm" (ngSubmit)="onSubmit()">
                 <div class="d-flex">
-                    <h5>Invite Single  Wholesaler's/ Retailer's</h5>
+                    <h5>Invite Single Distributor</h5>
                     <div class="ms-auto navigation-link-log">
-                        <div type="button" class="" routerLink="/mnf/bulk-invite">Invite Bulk  Wholesaler's/ Retailer's</div>
+                        <div type="button" class="" routerLink="/mnf/bulk-invite">Invite Bulk Distributor</div>
                     </div>
                 </div>
                 <div class="row ms-4">
 
                     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                        <label class="lable-input" for="fullName">Wholesaler's/ Retailer Name<span>*</span>:</label>
-                        <input type="text" id="fullName" formControlName="fullName" class="form-control" placeholder="Full Name" />
+                        <label class="lable-input" for="fullName">Distributor Name<span>*</span>:</label>
+                        <input type="text" id="fullName" formControlName="fullName" class="form-control"
+                            placeholder="Full Name" />
                         <div *ngIf="mgfRegistrationForm.get('fullName')?.touched && mgfRegistrationForm.get('fullName')?.invalid"
                             class="text-danger">
-                            Full Name is required.
+                            Distributor Name is required.
                         </div>
                     </div>
 
                     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                        <label class="lable-input" for="companyName">Company Name :</label>
-                        <input type="text" id="companyName" formControlName="companyName" class="form-control" placeholder="Company Name" />
+                        <label class="lable-input" for="companyName">Company/Firm Name :</label>
+                        <input type="text" id="companyName" formControlName="companyName" class="form-control"
+                            placeholder="Company/Firm Name" />
                         <div *ngIf="mgfRegistrationForm.get('companyName')?.touched && mgfRegistrationForm.get('companyName')?.invalid"
                             class="text-danger">
-                            Company Name is required.
+                            Company/Firm Name is required.
                         </div>
                     </div>
 
                     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                        <label class="lable-input" for="role">Company Entity<span>*</span>:</label>
-                         <select formControlName="role" class="form-select" placeholder="Select Designation">
-                            <option value="">Select Company Entity</option>
-                            <option value="wholesaler">Distributer </option>
-                            <option value="retailer">Retailer</option>
-                         </select>
+                        <label class="lable-input" for="role">Distributor's Identity<span>*</span>:</label>
+                        <select formControlName="role" class="form-select" placeholder="Select Designation">
+                            <option value="" disabled>Select Identity</option>
+                            @for(type of identityType;track type){
+                            @if(type.name!=='manufacture'){
+                            <option value="type.name" dis>{{type.name|titlecase}}</option>
+                            }
+                            }
+                        </select>
                         <div *ngIf="mgfRegistrationForm.get('role')?.touched && mgfRegistrationForm.get('role')?.invalid"
                             class="text-danger">
-                            Designation is required.
+                            Distributor's Identity is required.
                         </div>
                     </div>
-                    
+
                     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                         <div class="row">
                             <!-- Email Address Field -->
                             <div class="col-md-6">
                                 <label class="lable-input" for="email">Email Address<span>*</span>:</label>
-                                <input type="text" id="email" formControlName="email" class="form-control" placeholder="Email Address"/>
-                                <div *ngIf="mgfRegistrationForm.get('email')?.touched && mgfRegistrationForm.get('email')?.invalid" class="text-danger">
-                                    <div *ngIf="mgfRegistrationForm.get('email')?.errors?.['required']">Email is required.</div>
-                                    <div *ngIf="mgfRegistrationForm.get('email')?.errors?.['email']">Invalid email format.</div>
+                                <input type="text" id="email" formControlName="email" class="form-control"
+                                    placeholder="Email Address" />
+                                <div *ngIf="mgfRegistrationForm.get('email')?.touched && mgfRegistrationForm.get('email')?.invalid"
+                                    class="text-danger">
+                                    <div *ngIf="mgfRegistrationForm.get('email')?.errors?.['required']">Email is
+                                        required.</div>
+                                    <div *ngIf="mgfRegistrationForm.get('email')?.errors?.['email']">Invalid email
+                                        format.</div>
                                 </div>
                             </div>
-                            
+
                             <!-- Mobile Number Field -->
                             <div class="col-md-6">
                                 <label class="lable-input" for="mobileNumber">Mobile Number<span>*</span>:</label>
@@ -66,22 +76,28 @@
                                     <mat-form-field appearance="outline" class="me-1">
                                         <mat-select formControlName="code">
                                             <mat-option *ngFor="let country of countryCode" [value]="country.code">
-                                                <img [src]="country.flag" alt="{{ country.countryName }}" class="country-flag" />{{ country.code }}
+                                                <img [src]="country.flag" alt="{{ country.countryName }}"
+                                                    class="country-flag" />{{ country.code }}
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                     <input type="number" id="mobileNumber" formControlName="mobileNumber"
-                                           placeholder="Number" class="form-control w-75" />
+                                        placeholder="Number" class="form-control w-75" />
                                 </div>
-                                <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.touched && mgfRegistrationForm.get('mobileNumber')?.invalid" class="text-danger" style="margin-top: -22px;">
-                                    <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.errors?.['required']">Mobile number is required.</div>
-                                    <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.errors?.['pattern']">Mobile number must be 10 digits.</div>
+                                <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.touched && mgfRegistrationForm.get('mobileNumber')?.invalid"
+                                    class="text-danger" style="margin-top: -22px;">
+                                    <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.errors?.['required']">Mobile
+                                        number is required.</div>
+                                    <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.errors?.['pattern']">Mobile
+                                        number must be 10 digits.</div>
                                 </div>
                             </div>
+                            <div class="text-danger"><small>*Please provide the correct email address and mobile number,
+                                    as the invitation will be sent to these details.</small></div>
                         </div>
                     </div>
-                    
-                    
+
+
 
                     <!-- <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                         <label class="lable-input" for="email">Email Address<span>*</span>:</label>
