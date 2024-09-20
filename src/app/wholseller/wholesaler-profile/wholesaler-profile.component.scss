@@ -1,11 +1,35 @@
 .registration-form {
-    .lable-input {
-        margin-top: 15px;
+  .label-input {
+      margin-top: 15px !important;
 
-        span {
-            color: red;
-        }
-    }
+      span {
+          color: red;
+      }
+  }
+  textarea{
+      height: 150px !important;
+  }
+  .note{
+      font-size: small;
+      color: #f0ad4e;
+      text-align: end;
+  }
+}
+
+::ng-deep .mat-mdc-option {
+  padding: 0;
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+}
+
+::ng-deep .mat-mdc-option .mat-pseudo-checkbox-minimal {
+  margin-left: -7px !important;
+  flex-shrink: 0;
+}
+
+::ng-deep .mat-pseudo-checkbox {
+  width: 11px !important;
+  height: 12px;
 }
 
 .submit-btn {
@@ -14,10 +38,6 @@
     // margin: 2rem !important;
     background-color: #f0ad4e;
     color: #fff;
-}
-
-.form-control {
-    margin-bottom: 1rem !important; /* Adjust the value as needed */
 }
 
 // for disbled feilds

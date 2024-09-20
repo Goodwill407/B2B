@@ -1,21 +1,21 @@
 <section class="content">
     <div class="content-block">
-        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Category</h4>
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Vendor Discounts/ Schemes</h4>
         <div class="card p-3">        
 
             <mat-tab-group>
-                <mat-tab label="Wholesaler's Category">
-                    <h5 class="mt-4">Add Wholesaler's Category</h5>
+                <mat-tab label="For Wholesaler's">
+                    <h5 class="mt-4">Wholesaler's</h5>
                     <hr class="mt-0">
                     <form [formGroup]="categoryForm1" (ngSubmit)="onSubmit('wholesaler')">
                         <div class="row">
                             <div class="w-50">
-                                <label for="category">Category Name :</label>
+                                <label for="category">Scheme Name :</label>
                                 <input type="text" id="category" formControlName="category" class="form-control"
-                                    placeholder="Enter Category Name" />
+                                    placeholder="Enter Scheme Name" />
                                 <div *ngIf="categoryForm1.get('category')?.touched && categoryForm1.get('category')?.invalid"
                                     class="text-danger">
-                                    Category is required.
+                                    Scheme Name is required.
                                 </div>
                             </div>
                         </div>
@@ -51,14 +51,14 @@
                     </form>
 
                     <div class="card p-2">
-                        <h5 class="mt-2">Wholesaler's Category List:</h5>
+                        <h5 class="mt-2">Wholesaler's Scheme List:</h5>
                         <hr class="mt-0">
                         <div class="p-grid p-fluid">
                             <div class="p-col-12 text-center">
                                 <p-table [value]="wholesalerCategory">
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th>Category</th>
+                                            <th>Scheme Name</th>
                                             <th>Product Discount</th>
                                             <th>Shipping Discount</th>
                                             <th>Action</th>
@@ -91,24 +91,24 @@
                                     [rows]="rows" [totalRecords]="totalResultsWholesaler"
                                     [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
                                 }@else {
-                                <p class="text-center">No Wholesaler category found.</p>
+                                <p class="text-center">No Wholesaler's Scheme found.</p>
                                 }
                             </div>
                         </div>
                     </div>
                 </mat-tab>
-                <mat-tab label="Retailer's Category">
-                    <h5 class="mt-4">Add Retailer's Category</h5>
+                <mat-tab label="For Retailer's">
+                    <h5 class="mt-4">Retailer</h5>
                     <hr class="mt-0">
                     <form [formGroup]="categoryForm2" (ngSubmit)="onSubmit('retailer')">
                         <div class="row">
                             <div class="w-50">
-                                <label for="category">Category Name :</label>
+                                <label for="category">Scheme Name :</label>
                                 <input type="text" id="category" formControlName="category" class="form-control"
-                                    placeholder="Enter Category Name" />
+                                    placeholder="Enter Scheme Name" />
                                 <div *ngIf="categoryForm2.get('category')?.touched && categoryForm2.get('category')?.invalid"
                                     class="text-danger">
-                                    Category is required.
+                                    Scheme Name is required.
                                 </div>
                             </div>
                         </div>
@@ -145,14 +145,14 @@
                     </form>
 
                     <div class="card p-2">
-                        <h5 class="mt-2">Retailer's Category List:</h5>
+                        <h5 class="mt-2">Retailer's Scheme List:</h5>
                         <hr class="mt-0">
                         <div class="p-grid p-fluid">
                             <div class="p-col-12 text-center">
                                 <p-table [value]="retailerCategory">
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th>Category</th>
+                                            <th>Scheme Name</th>
                                             <th>Product Discount</th>
                                             <th>Shipping Discount</th>
                                             <th>Action</th>
@@ -185,7 +185,7 @@
                                     [rows]="rows" [totalRecords]="totalResultsRetailer"
                                     [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
                                 }@else {
-                                <p>No retailer categories found.</p>
+                                <p>No Retailer's Scheme found.</p>
                                 }
                             </div>
                         </div>

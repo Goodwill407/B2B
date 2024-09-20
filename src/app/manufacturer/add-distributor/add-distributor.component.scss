@@ -48,3 +48,18 @@
     border-color: #9e9e9e !important;
 }
 
+::ng-deep .mat-mdc-option {
+    padding: 0;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+  
+  ::ng-deep .mat-mdc-option .mat-pseudo-checkbox-minimal {
+    margin-left: -7px !important;
+    flex-shrink: 0;
+  }
+  
+  ::ng-deep .mat-pseudo-checkbox {
+    width: 11px !important;
+    height: 12px;
+  }

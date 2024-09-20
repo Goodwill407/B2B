@@ -39,11 +39,13 @@ export class AddDistributorComponent {
     // { countryName: 'United Kingdom', flag: 'assets/images/flags/uk.png', code: '+44' },
     // { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
   ];
+  identityType: any;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private spinner: NgxSpinnerService) {}
 
   ngOnInit() {
     this.initializeForm();
+    this.getIdentityType();
   }
 
   initializeForm() {
@@ -70,5 +72,10 @@ export class AddDistributorComponent {
     })
   }
 
+  getIdentityType(){
+    this.authService.get('entitytype').subscribe((res:any) =>{
+      this.identityType = res.results;
+    });
+  }
   
 }

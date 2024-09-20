@@ -1,10 +1,12 @@
 import { CommonModule, DatePipe, JsonPipe, NgClass } from '@angular/common';
-import { panMatchValidator } from '../../common/pan-validation';
+import { maxWordCountValidator, panMatchValidator } from '../../common/pan-validation';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService, CommunicationService, DirectionService } from '@core';
 import { MatSelectModule } from '@angular/material/select';
 import { KycUploadComponent } from 'app/common/kyc-upload/kyc-upload.component';
+import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-profile',
@@ -41,7 +43,7 @@ export class ProfileComponent {
   Allcities: any;
   allData: any;
 
-  constructor(private fb: FormBuilder, public authService: AuthService, private communicationService: CommunicationService, private datePipe: DatePipe, private direction: DirectionService) { }
+  constructor(private fb: FormBuilder, public authService: AuthService, private communicationService: CommunicationService, private datePipe: DatePipe, private direction: DirectionService,private dialog: MatDialog) { }
 
   countries: any[] = [
     'India',
@@ -73,7 +75,7 @@ export class ProfileComponent {
       fullName: ['', Validators.required],
       companyName: ['', Validators.required],
       address: ['', Validators.required],
-      introduction: ['', Validators.required],
+      introduction: ['', [Validators.required, Validators.maxLength(4000)]],
       country: ['India', Validators.required],
       state: ['', Validators.required],
       city: ['', Validators.required],
@@ -241,7 +243,10 @@ export class ProfileComponent {
     });
   }
 
-  openImg(path:any){
-    this.communicationService.openImg(path);
+  openImg(path:any,size:number){
+    const dialogRef = this.dialog.open(ImageDialogComponent, {
+      width: size+'px',
+      data: {path:path,width:size}  // Pass the current product data
+    });
   }
 }

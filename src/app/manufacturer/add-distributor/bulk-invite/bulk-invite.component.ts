@@ -1,4 +1,4 @@
-import { NgFor, NgIf } from '@angular/common';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -11,7 +11,7 @@ import { AuthService, CommunicationService } from '@core';
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    NgFor, NgIf,
+    CommonModule,
     RouterModule,
     MatInputModule,
     MatSelectModule,
@@ -22,10 +22,12 @@ import { AuthService, CommunicationService } from '@core';
 export class BulkInviteSingleComponent {
   inviteForm!: FormGroup;
   isSubmitted: boolean = false;
+  identityType: any;
 
   constructor(private fb: FormBuilder, private communicationService: CommunicationService, private authService: AuthService) { }
 
   ngOnInit(): void {
+    this.getIdentityType();
     this.inviteForm = this.fb.group({
       invitations: this.fb.array([this.createDistributorFormGroup()])
     });
@@ -39,7 +41,7 @@ export class BulkInviteSingleComponent {
     return this.fb.group({
       role:['',Validators.required],
       fullName: ['', Validators.required],
-      companyName: [''],
+      companyName: ['', Validators.required],
       code: ['+91', Validators.required],
       mobileNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       email: ['', [Validators.required, Validators.email]]
@@ -52,6 +54,12 @@ export class BulkInviteSingleComponent {
     // { countryName: 'United Kingdom', flag: 'assets/images/flags/uk.png', code: '+44' },
     // { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
   ];
+
+  getIdentityType(){
+    this.authService.get('entitytype').subscribe((res:any) =>{
+      this.identityType = res.results;
+    });
+  }
 
   addDistributor(): void {
     this.invitations.push(this.createDistributorFormGroup());
@@ -92,7 +100,17 @@ export class BulkInviteSingleComponent {
   getErrorMessage(controlName: string, index: number): string {
     const control = this.invitations.at(index).get(controlName);
     if (control?.hasError('required')) {
-      return `${controlName.replace(/([A-Z])/g, ' $1')} is required.`;
+      // return `${controlName.replace(/([A-Z])/g, ' $1')} is required.`;
+      switch(controlName){
+        case 'role': return 'Identity is required.';
+        case 'fullName': return 'Full Name is required.';
+        case 'companyName': return 'Company/Firm Name is required.';
+        case 'code': return 'Country Code is required.';
+        case'mobileNumber': return 'Mobile Number is required.';
+        case 'email': return 'Email is required.';
+        default: return '';
+      }
+
     } else if (control?.hasError('email')) {
       return 'Please enter a valid email address.';
     } else if (control?.hasError('pattern') && controlName === 'mobileNumber') {
