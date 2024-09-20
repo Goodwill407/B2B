@@ -34,7 +34,6 @@ export class StudentProgressComponent {
       otherIssue: data?.otherIssue || '',
       ...data // Spread other properties like designNo, name, etc.
     };
-    debugger
   }
 
   onSave(): void {

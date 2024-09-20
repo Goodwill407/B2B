@@ -1,14 +1,14 @@
 <section class="content">
     <div class="content-block">
         <div class="flex-grow-1">
-            <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i>&nbsp; Wholesaler Order List</h4>
+            <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i>&nbsp; Return Order</h4>
 
             <!-- Check if there are any products -->
-            <p-accordion [activeIndex]="0" class="card" *ngIf="inwardStock && objectKeys(inwardStock).length > 0">
-                <ng-container *ngFor="let distributor of inwardStock | keyvalue; let distIndex = index">
-                    <p-accordionTab class="px-0" [header]="'Manufacturer : ' + distributor.key">
+            <p-accordion [activeIndex]="0" class="card">
+                <ng-container *ngFor="let distributor of inwardStock">
+                    <p-accordionTab class="px-0" [header]="'Manufacturer : ' + distributor.companyDetails">
                         <!-- Table for products of each manufacturer -->
-                        <p-table [value]="distributor.value[0].products">
+                        <p-table [value]="distributor.products">
                             <ng-template pTemplate="header">
                                 <tr>
                                     <th>Sr. No.</th>
@@ -17,9 +17,9 @@
                                     <th>Quantity</th>
                                     <th>Rate</th>
                                     <th>Amount</th>
-                                    <th>Qty Received</th>
-                                    <th>Issue</th>                                    
-                                    <th>Action</th>
+                                    <th>Issue</th>
+                                    <th>Sub Issue</th>
+                                    <!-- <th>Action</th> -->
                                 </tr>
                             </ng-template>
                             <ng-template pTemplate="body" let-product let-index="rowIndex">
@@ -30,25 +30,102 @@
                                     <td>{{ product.qty }}</td>
                                     <td>{{ product.rate }}</td>
                                     <td>{{ product.taxableValue }}</td>
-                                    <td>{{ product.qtyReceived }}</td>
-                                    <td>{{ product.issue || 'No' }}</td>                                  
-                                    <td>
+                                    <td>{{ product.issue }}</td>
+                                    <td>{{ product.subIssue }}</td>
+                                    <!-- <td>
                                         <button class="btn btn-outline-success" (click)="returnProduct(product)">
-                                            <i class="bi bi-pencil"></i>&nbsp; Process to Return
+                                            <i class="bi bi-arrow-clockwise"></i>&nbsp;Return
                                         </button>
-                                    </td>
+                                    </td> -->
                                 </tr>
                             </ng-template>
                         </p-table>
+                        <hr>
+                        <div class="d-flex">
+                            <!-- <div class="totals">
+                <p class="mb-1 fw-bold">Sub Total: {{ distributor.subTotal }}</p>
+                <p class="mb-1 fw-bold">GST (18%): {{ distributor.gst }}</p>
+                <p class="mb-1 fw-bold">Discount: {{ distributor.discount }}</p>
+                <p class="mb-1 fw-bold">Grand Total: {{ distributor.grandTotal }}</p>
+              </div> 
+              <div class="vr mx-3"></div>-->
+                            <div class="shipping-details">
+
+                                <label for="ebill">E-Way Bill No :</label>
+                                <input type="text" class="form-control" [(ngModel)]="distributor.ebill" id="ebill"
+                                    placeholder="e-way bill no">
+
+                                <label for="type">Transport Type:</label>
+                                <select class="form-select" [(ngModel)]="distributor.transportType"
+                                    (change)="onTransportTypeChange(distributor)">
+                                    <option value="" disabled>Select Type</option>
+                                    <option *ngFor="let type of transportTypes" [value]="type">{{ type }}</option>
+                                </select>
+
+                            </div>
+                            <div class="vr mx-3"></div>
+                            <div class="">
+
+                                <div *ngIf="distributor.transportType === 'By Road'">
+                                    <label for="company">Transport Company:</label>
+                                    <input type="text" class="form-control" [(ngModel)]="distributor.transportCompany"
+                                        id="company">
+
+                                    <label for="lorryReceiptNo">Lorry Receipt No:</label>
+                                    <input type="text" class="form-control" [(ngModel)]="distributor.lorryReceiptNo"
+                                        id="lorryReceiptNo">
+
+                                    <label for="vehicleNo">Vehicle Number:</label>
+                                    <input type="text" class="form-control" [(ngModel)]="distributor.vehicleNo"
+                                        id="vehicleNo">
+                                </div>
+
+
+                                <div
+                                    *ngIf="distributor.transportType === 'By Air' || distributor.transportType === 'By Ship'">
+                                    <label for="company">Company:</label>
+                                    <input type="text" class="form-control" [(ngModel)]="distributor.transportCompany"
+                                        id="company">
+
+                                    <label for="receiptNo">Receipt No:</label>
+                                    <input type="text" class="form-control" [(ngModel)]="distributor.receiptNo"
+                                        id="receiptNo">
+                                </div>
+
+
+                                <div *ngIf="distributor.transportType === 'By Courier'">
+                                    <label for="company">Courier Company:</label>
+                                    <select class="form-select" [(ngModel)]="distributor.courierCompany"
+                                        (change)="onCourierCompanyChange(distributor)">
+                                        <option value="" disabled>Select Company</option>
+                                        <option *ngFor="let company of courierCompanies" [value]="company.name">{{
+                                            company.name }}</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+
+                                    <div *ngIf="distributor.courierCompany === 'Other'">
+                                        <label for="otherCompany">Other Company Name:</label>
+                                        <input type="text" class="form-control"
+                                            [(ngModel)]="distributor.otherCompanyName" id="otherCompany"
+                                            (blur)="addOtherCompany(distributor.otherCompanyName)">
+                                    </div>
+                                    <label for="trackingNo">Tracking No:</label>
+                                    <input type="text" class="form-control" [(ngModel)]="distributor.trackingNo"
+                                        id="trackingNo">
+                                </div>
+                            </div>
+                            <button class="btn btn-success mx-auto" (click)="deliveryChallan(distributor)">
+                                <i class="bi bi-cart-check"></i> Return Delivery Challan
+                            </button>
+                        </div>
                     </p-accordionTab>
                 </ng-container>
             </p-accordion>
 
             <!-- Show message if no products -->
-            <div class="text-danger m-5 h-2" *ngIf="!inwardStock || objectKeys(inwardStock).length === 0">
+            <div class="text-danger m-5 h-2" *ngIf="!inwardStock">
                 No Delivery Challan found for this Wholesaler.
-            </div>         
-            
+            </div>
         </div>
     </div>
 </section>

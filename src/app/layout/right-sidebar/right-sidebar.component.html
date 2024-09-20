@@ -14,14 +14,14 @@
               <label>
                 <input type="radio" name="value" value="light" [checked]="isDarTheme === false ? true : false"
                   (click)="lightThemeBtnClick()">
-                <img src="assets/images/light.png">
+                <img src="assets/images/light.png" loading="lazy">
               </label>
               <div class="mt-1 text-md text-center"> Light </div>
             </div>
             <div class="flex flex-col mt-3"> <label>
                 <input type="radio" name="value" value="dark" [checked]="isDarTheme === true ? true : false"
                   (click)="darkThemeBtnClick()">
-                <img src="assets/images/dark.png">
+                <img src="assets/images/dark.png" loading="lazy">
               </label>
               <div class="mt-1 text-md text-center"> Dark </div>
             </div>
@@ -64,10 +64,10 @@
             </ul>
           </div>
         </div>
-        <div class="rightSetting">
+        <!-- <div class="rightSetting">
           <h6 class="font-medium m-b-10">RTL Layout</h6>
           <mat-slide-toggle class="mt-2" [checked]="isRtl" (change)="switchDirection($event)"></mat-slide-toggle>
-        </div>
+        </div> -->
       </div>
     </div>
   </ng-scrollbar>

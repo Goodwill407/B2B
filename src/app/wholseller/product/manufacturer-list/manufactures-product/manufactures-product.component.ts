@@ -24,8 +24,8 @@ export class ManufacturesProductComponent {
     brand: '',
     productType: '',
     gender: '',
-    clothing: '',
-    subCategory: ''
+    category: '',
+    subCategory: '',
   };
 
   products: any[] = [];
@@ -73,17 +73,18 @@ export class ManufacturesProductComponent {
     });
   }
   
-  getAllProducts(email:any) {   
+  getAllProducts(email:any) {    
     let url = `products/filter-products?limit=${this.limit}&page=${this.page}`;
    
     const Object={
-      "productBy":email,
+      "productBy": email,
       "brand":this.filters.brand,
       "productType":this.filters.productType,
       "gender": this.filters.gender,
-      "clothing": this.filters.clothing,
+      "clothing": this.filters.category,
       "subCategory":this.filters.subCategory
     }
+
 
     this.authService.post(url,Object).subscribe((res: any) => {
       if (res) {
@@ -172,7 +173,7 @@ export class ManufacturesProductComponent {
   getAllSubCategory() {
     const productType = this.filters.productType;
     const gender = this.filters.gender;
-    const clothing = this.filters.clothing;
+    const clothing = this.filters.category;
   
     let url = 'sub-category';
   

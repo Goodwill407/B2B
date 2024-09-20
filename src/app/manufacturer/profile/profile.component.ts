@@ -78,6 +78,7 @@ export class ProfileComponent {
       state: ['', Validators.required],
       city: ['', Validators.required],
       code: ['', Validators.required],
+      altCode: [''],
       pinCode: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
       mobNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       mobNumber2: [''],

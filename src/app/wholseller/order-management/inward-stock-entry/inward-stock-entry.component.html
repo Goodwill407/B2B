@@ -12,8 +12,8 @@
                         <th>Quantity</th>
                         <th>Rate</th>
                         <th>Amount</th>
-                        <th>Qty Received</th>
                         <th>Issue</th>
+                        <th>Sub Issue</th>
                         <th>Product Done</th>
                         <th>Action</th>
                     </tr>
@@ -26,8 +26,8 @@
                         <td>{{ data.qty }}</td>
                         <td>{{ data.rate }}</td>
                         <td>{{ data.taxableValue }}</td>
-                        <td>{{ data.qtyReceived }}</td>
                         <td>{{ data.issue || 'No'}}</td>
+                        <td>{{ data.subReason ||'No' }}</td>
                         <td>
                             <input type="checkbox" class="form-check-input" [disabled]="data.status==='issue'"
                                 [(ngModel)]="data.doneChecked" (change)="doneProduct(data, $event)" id="">

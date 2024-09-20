@@ -8,7 +8,6 @@
                 <i class="bi bi-arrow-left-circle h4"></i>
             </button>
             <h5 class="text-center mb-0 flex-grow-1"> KYC Details</h5>
-
         </div>
         <hr class="my-2">
         <div class="row">
@@ -31,8 +30,8 @@
                 </div>
                 <div *ngIf="submitted && kycForm.controls['file'].errors" class="text-danger">
                     <small *ngIf="kycForm.controls['file'].errors?.['required']">File upload is required.</small>
+                    <small *ngIf="kycForm.controls['file'].errors?.['invalidFormat']">Invalid file format. Only PNG, JPEG, and JPG are allowed.</small>
                 </div>
-
             </div>
 
             <div class="col-6">
@@ -41,31 +40,33 @@
                 </div>
             </div>
         </div>
+
         <hr class="my-2">
         <div class="m-0 p-0 d-flex align-items-center">
-           <h5 class="text-center mb-0 flex-grow-1"> Company Logo</h5>
+            <h5 class="text-center mb-0 flex-grow-1">Company Logo</h5>
         </div>
         <hr class="my-2">
         <div class="row">
             <div class="col-6">
-              <label class="label-input mt-4">Upload Company Logo:</label>
-              <input type="file" class="form-control" id="profileImg" (change)="onProfileImgSelect($event)" #profileImgInput />
-              <div *ngIf="selectedProfileImgName" class="mt-2">
-                <small>Selected Company Logo: {{ selectedProfileImgName }}</small>
-              </div>
-              <div *ngIf="submitted && kycForm.controls['profileImg'].errors" class="text-danger">
-                <small *ngIf="kycForm.controls['profileImg'].errors?.['required']">Company Logo is required.</small>
-                <small *ngIf="kycForm.controls['profileImg'].errors?.['maxSizeExceeded']">Image size should not exceed 5MB.</small>
-              </div>
+                <label class="label-input mt-4">Upload Company Logo:</label>
+                <input type="file" class="form-control" id="profileImg" (change)="onProfileImgSelect($event)" #profileImgInput />
+                <div *ngIf="selectedProfileImgName" class="mt-2">
+                    <small>Selected Company Logo: {{ selectedProfileImgName }}</small>
+                </div>
+                <div *ngIf="submitted && kycForm.controls['profileImg'].errors" class="text-danger">
+                    <small *ngIf="kycForm.controls['profileImg'].errors?.['required']">Company Logo is required.</small>
+                    <small *ngIf="kycForm.controls['profileImg'].errors?.['invalidFormat']">Invalid file format. Only PNG, JPEG, and JPG are allowed.</small>
+                    <small *ngIf="kycForm.controls['profileImg'].errors?.['maxSizeExceeded']">Image size should not exceed 2MB.</small>
+                    <small *ngIf="kycForm.controls['profileImg'].errors?.['invalidDimensions']">Image dimensions should be 300x300 pixels.</small>
+                </div>
             </div>
-          
+
             <div class="col-6">
-              <div *ngIf="profileImgPreviewUrl" class="mt-2">
-                <img [src]="profileImgPreviewUrl" alt="Profile Image Preview" class="img-thumbnail" style="max-width: 190px !important;" />
-              </div>
+                <div *ngIf="profileImgPreviewUrl" class="mt-2">
+                    <img [src]="profileImgPreviewUrl" alt="Profile Image Preview" class="img-thumbnail" style="max-width: 190px;" />
+                </div>
             </div>
-          </div>
-          
+        </div>
 
         <div class="row mt-4">
             <div class="col-6 text-center">
