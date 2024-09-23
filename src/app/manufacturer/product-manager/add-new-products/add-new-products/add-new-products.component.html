@@ -492,7 +492,7 @@
                             
                         </div>
                         <!-- ===================== -->
-
+                        
                         <div *ngIf="sizeSet?.length" class="m-0 p-4 border mt-2 pt-2 rounded" style="background-color: aliceblue;">
                             <div class="row">
                               <h5 class="mb-2 ps-0">Standard Size Set<span class="required">*</span></h5>
@@ -506,23 +506,22 @@
                             </div>
                           
                             <div *ngIf="sizesArray.controls.length > 0" class="row mt-2" formArrayName="sizes">
-                              <h5 class="mt-4">Size Chart :</h5>
-                              <div class="col-12">
+                              <h5 class="mt-4">{{foundSizeSet}} :</h5>
+                              <hr>
+                              <div class="col-12">                               
                                 <div class="row mb-2">
-                                  <div class="col" *ngFor="let field of sizeChartFields">{{ field.label }}<span *ngIf="field.required" class="required">*</span></div>
+                                  <div class="col" *ngFor="let field of sizeChartFields">
+                                    <label class="custom-label">{{ field.label }}<span *ngIf="field.required" class="required">*</span></label>
+                                  </div>
                                 </div>
                               </div>
-                          
+                              
                               <div class="col-12" *ngFor="let sizeGroup of sizesArray.controls; let i = index" [formGroupName]="i">
-                                <div class="row">
-                                  <!-- Display the dynamically created form fields based on backend data -->
-                                  <div class="col mt-2">
-                                    <label>{{ sizeGroup.get('standardSize')?.value }}</label>
-                                  </div>
-                          
+                                <div class="row">                         
                                   <div class="col" *ngFor="let field of sizeChartFields">
-                                    <input type="text" [formControlName]="field.name" class="form-control" 
+                                    <input type="text" [formControlName]="field.name" class="form-control custom-input" 
                                            [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get(field.name)?.invalid}" placeholder="">
+                              
                                     <!-- Validation feedback -->
                                     <div *ngIf="submittedStep1 && sizeGroup.get(field.name)?.invalid" class="invalid-feedback">
                                       <div *ngIf="sizeGroup.get(field.name)?.hasError('required')">
@@ -532,24 +531,14 @@
                                   </div>
                                 </div>
                               </div>
-                            </div>
+
+                            </div>                          
+                              
+                            
                           </div>
                           
-
-                        <div  class="row mt-2">
-                            <div class="col-2">
-                                <label for="minimumOrderQty">Minimum Order Quantity<span
-                                        class="required">*</span></label>
-                                <input type="text" id="minimumOrderQty" formControlName="minimumOrderQty"
-                                    class="form-control"
-                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('minimumOrderQty')?.invalid}">
-                                <div *ngIf="submittedStep1 && stepOne.get('minimumOrderQty')?.invalid"
-                                    class="invalid-feedback">
-                                    <div *ngIf="stepOne.get('minimumOrderQty')?.hasError('required')">
-                                        Minimum Order Quantity is required
-                                    </div>
-                                </div>
-                            </div>
+                    <div *ngIf="showFlag2" class="total-data">
+                        <div  class="row mt-2">                            
                             <div class="col-2">
                                 <label for="setOFnetWeight">Total Weight<span class="required">*</span></label>
                                 <input type="text" id="setOFnetWeight" formControlName="setOFnetWeight"
@@ -594,6 +583,19 @@
 
                         </div>
                         <div  class="row mt-2">
+                            <div class="col-2">
+                                <label for="minimumOrderQty">Minimum Order Quantity<span
+                                        class="required">*</span></label>
+                                <input type="text" id="minimumOrderQty" formControlName="minimumOrderQty"
+                                    class="form-control"
+                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('minimumOrderQty')?.invalid}">
+                                <div *ngIf="submittedStep1 && stepOne.get('minimumOrderQty')?.invalid"
+                                    class="invalid-feedback">
+                                    <div *ngIf="stepOne.get('minimumOrderQty')?.hasError('required')">
+                                        Minimum Order Quantity is required
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="quantity">Total Quantity<span class="required">*</span>
@@ -636,6 +638,7 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
                         <!-- } -->
                     </div>
 

@@ -293,3 +293,31 @@ video {
 textarea.form-control {
   min-height: calc(4.5em + 0.75rem + calc(var(--bs-border-width)* 2));
 }
+
+// for size set
+.custom-label {
+  text-align: center;
+  font-size: 12px; /* Smaller font size for labels */
+  font-weight: 500; /* Optional: Adjust font weight for better readability */
+  margin-bottom: 5px; /* Space between label and input */
+  display: block; /* Ensures label is on its own line above the input */
+}
+
+.custom-input {
+  height: 35px; /* Adjust input height for consistency */
+  padding: 5px 10px; /* Padding for input fields */
+  font-size: 14px; /* Slightly smaller font size for inputs */
+}
+
+.required {
+  color: red; /* Style the required asterisk */
+}
+
+.is-invalid {
+  border-color: red; /* Red border for invalid inputs */
+}
+
+.invalid-feedback {
+  font-size: 11px; /* Small font for error messages */
+  color: red;
+}
