@@ -42,6 +42,7 @@ export class AddNewProductsComponent {
   sizeChart:any;
   foundSizeSet:any
   sizeChartFields: any[] = [];
+  showFlag2: boolean = false;
 
   videoSizeError: string = '';
   userProfile: any
@@ -93,7 +94,7 @@ export class AddNewProductsComponent {
   allTrouserpocket: any = []
 
 
-  // visibleFields: any=['material','materialvariety','fabricPattern','selectedOccasion']
+  
 
   constructor(private fb: FormBuilder,
     private authService: AuthService,
@@ -135,7 +136,7 @@ export class AddNewProductsComponent {
     });
 
     // Create form controls based on the visibleFields array
-    this.createFormControls(this.visibleFields);
+    // this.createFormControls(this.visibleFields);
    
 
     this.CloudPath = this.authService.cdnPath
@@ -166,7 +167,7 @@ export class AddNewProductsComponent {
     this.getAllBrands()
     this.getAllCurrencyCode()
     this.updateValidators()
-    this.disbledFields()
+    // this.disbledFields()
     this.getProfileData();
     this.getProductType();
     this.getTrouserstyle();
@@ -188,9 +189,17 @@ export class AddNewProductsComponent {
   }
 
   disbledFields() {
-    this.stepOne.get('setOfManPrice')?.disable();
-    this.stepOne.get('setOFnetWeight')?.disable();
-    this.stepOne.get('setOfMRP')?.disable();
+    if(this.foundSizeSet){
+      this.stepOne.get('setOfManPrice')?.disable();
+      this.stepOne.get('setOFnetWeight')?.disable();
+      this.stepOne.get('setOfMRP')?.disable();
+    }   
+    else{
+      this.stepOne.get('setOfManPrice')?.enable();
+      this.stepOne.get('setOFnetWeight')?.enable();
+      this.stepOne.get('setOfMRP')?.enable();
+    }
+   
   }
 
   // stepOne vlidation
@@ -243,18 +252,40 @@ export class AddNewProductsComponent {
   // Mock function to simulate fetching dynamic fields from the backend
   getSizeChartFields() {
     
+  if(this.foundSizeSet==='Size Set'){
+    this.sizeChartFields=[]
     this.sizeChartFields = [
+      { name: 'standardSize', label: 'Standard Size', required: false },
       { name: 'brandSize', label: 'Brand Size', required: true },
-      { name: 'waist', label: 'Waist (in)', required: true },
-      { name: 'inseam', label: 'Inseam (in)', required: true },
-      { name: 'length', label: 'Length', required: true },
-      { name: 'rise', label: 'Rise (in)', required: true },
+      { name: 'chestSize', label: 'Chest Size', required: true },
+      { name: 'shoulderSize', label: 'Shoulder Size', required: true },
+      { name: 'frontLength', label: 'Front Length', required: true },
+      { name: 'length', label: 'Length', required: false },
       { name: 'width', label: 'Width', required: false },
       { name: 'height', label: 'Height', required: true },
       { name: 'weight', label: 'Weight', required: true },
       { name: 'manufacturerPrice', label: "Manufacturer's Price", required: true },
-      { name: 'mrp', label: 'MRP', required: true }
+      { name: 'singleMRP', label: 'MRP', required: true }
     ];
+  }
+  else if (this.foundSizeSet==="Waist Size Set"){
+    this.sizeChartFields=[]
+    this.sizeChartFields = [
+  { name: 'standardSize', label: 'Standard Size', required: false },
+  { name: 'brandSize', label: 'Brand Size', required: true },
+  { name: 'waistSizeSetStandardSize', label: 'Waist Size Set (Standard Size)', required: false },
+  { name: 'waist', label: 'Waist (in)', required: true },
+  { name: 'inseam', label: 'Inseam (in)', required: true },
+  { name: 'lengthIn', label: 'Length (in)', required: true },
+  { name: 'rise', label: 'Rise (in)', required: true },
+  { name: 'length', label: 'Length', required: false },
+  { name: 'width', label: 'Width', required: false },
+  { name: 'height', label: 'Height', required: true },
+  { name: 'weight', label: 'Weight', required: true },
+  { name: 'manufacturerPrice', label: "Manufacturer's Price", required: true },
+  { name: 'singleMRP', label: 'MRP', required: true }
+    ];
+  }
   }
 
   // Called when a size checkbox is checked/unchecked
@@ -271,19 +302,28 @@ export class AddNewProductsComponent {
     }
   }
 
+ 
   // Create a new FormGroup for each selected size
-  createSizeFormGroup(size: number): FormGroup {
-    const group = this.fb.group({
-      standardSize: [size],  // Always include standardSize
-    });
+createSizeFormGroup(size: number): FormGroup {
+  const group = this.fb.group({
+    standardSize: [size],  // Always include standardSize
+  });
 
-    // Dynamically add controls for each field from the backend
-    this.sizeChartFields.forEach((field:any) => {
-      group.addControl(field.name, this.fb.control('', field.required ? Validators.required : null));
-    });
+  // Dynamically add controls for each field from the backend
+  this.sizeChartFields.forEach((field: any) => {
+    group.addControl(field.name, this.fb.control('', field.required ? Validators.required : null));
+    
+    // Subscribe to changes for manufacturerPrice, singleMRP, and weight to trigger updateTotals
+    if (['manufacturerPrice', 'singleMRP', 'weight'].includes(field.name)) {
+      group.get(field.name)?.valueChanges.subscribe(() => {
+        this.updateTotals();
+      });
+    }
+  });
 
-    return group;
-  }
+  return group;
+}
+
 
   // For easier access to formArray controls
   get sizesArray(): FormArray {
@@ -322,44 +362,57 @@ export class AddNewProductsComponent {
     });
   }
 
-  getCategoryByProductTypeAndGender() {
-    const productType = this.stepOne.get('productType')?.value;
-    const gender = this.stepOne.get('gender')?.value;
+async getCategoryByProductTypeAndGender(productType?: any, gender?: any) {
+  const ProductType = this.stepOne.get('productType')?.value || productType;
+  const Gender = this.stepOne.get('gender')?.value || gender;
 
-    this.authService.get(`sub-category/get-category/by-gender?productType=${productType}&gender=${gender}`).subscribe((res: any) => {
-      if (res) {
-        this.allSubCategory = []
+  if (ProductType && Gender) {
+    try {
+      const res: any = await this.authService.get(`sub-category/get-category/by-gender?productType=${ProductType}&gender=${Gender}`).toPromise();
+      if (res && res.results) {
+        this.allSubCategory = [];
+        this.allClothingType = Array.from(new Set(res.results.map((item: any) => item.category)));
+      } else {
+        this.allClothingType = [];
       }
-      this.allClothingType = Array.from(new Set(res.results.map((item: any) => item.category)));
-    }, error => {
-
-    });
-    this.checkAllFieldsSelected();
-  }
-
-  getSubCategoryBYProductType_Gender_and_Category() {
-    const productType = this.stepOne.get('productType')?.value;
-    const gender = this.stepOne.get('gender')?.value;
-    const clothing = this.stepOne.get('clothing')?.value;
-    const object =
-    {
-      "productType": productType,
-      "gender": gender,
-      "category": clothing,
+    } catch (error) {
+      console.error('Error fetching categories:', error);
     }
 
-
-    this.authService.post(`sub-category/filter`, object).subscribe((res: any) => {
-      if (res) {
-        this.allSubCategory = []
-      }
-      this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
-    }, error => {
-
-    });
     this.checkAllFieldsSelected();
+  } else {
+    console.warn('ProductType or Gender is not defined');
+    this.allClothingType = [];
+  }
+}
+
+async getSubCategoryBYProductType_Gender_and_Category(ProductType?: any, Gender?: any, Clothing?: any) {
+  const productType = this.stepOne.get('productType')?.value || ProductType;
+  const gender = this.stepOne.get('gender')?.value || Gender;
+  const clothing = this.stepOne.get('clothing')?.value || Clothing;
+  const object = {
+    productType,
+    gender,
+    category: clothing,
+  };
+
+  try {
+    const res: any = await this.authService.post(`sub-category/filter`, object).toPromise();
+    if (res) {
+      (this.addProductForm.get('stepOne.sizes') as FormArray).clear();
+      this.allSubCategory = [];
+      this.showFlag2 = false;
+      this.selectedSizes = [];
+      this.sizeChartFields = [];
+      this.sizeSet = [];
+    }
+    this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
+  } catch (error) {
+    console.error('Error fetching subcategories:', error);
   }
 
+  this.checkAllFieldsSelected();
+}
   checkAllFieldsSelected() {
     const productType = this.stepOne.get('productType')?.value;
     const gender = this.stepOne.get('gender')?.value;
@@ -371,26 +424,69 @@ export class AddNewProductsComponent {
     this.showFlag = !!(productType && gender && clothing && subCategory);
   }
 
-  mappingData(pType: any, gen: any, cat: any, sCat: any) {
-    const object = {
-      productType: pType,
-      gender: gen,
-      category: cat,
-      subCategory: sCat
-    }
-    this.authService.post(`mapping/filter-subcategory`, object).subscribe((res: any) => {
-      this.visibleFields = []
-      this.visibleFields = res[0].inputs;
-      this.createFormControls(this.visibleFields)
-      // Check if "Size Set" or "Waist Size Set" is available
-      this.foundSizeSet = this.visibleFields.find((field:any) => field === "Size Set" || field === "Waist Size Set");
 
-  if (this.foundSizeSet) {
-    // Pass the found element to the function if either exists
-    this.getSizeSetForProducts(this.foundSizeSet);
-  }
-});
+async mappingData(pType: any, gen: any, cat: any, sCat: any) {
+  const object = {
+    productType: pType,
+    gender: gen,
+    category: cat,
+    subCategory: sCat
+  };
+
+  try {
+    const res: any = await this.authService.post(`mapping/filter-subcategory`, object).toPromise();
+
+    // Clear data
+    (this.addProductForm.get('stepOne.sizes') as FormArray).clear();
+    this.visibleFields = [];
+    this.showFlag2 = false;
+    this.selectedSizes = [];
+    this.sizeChartFields = [];
+    this.sizeSet = [];
     
+    this.visibleFields = res[0].inputs;
+    this.createFormControls(this.visibleFields);
+
+    if (this.ProductId) {
+      this.stepOne.patchValue(this.productDetails);
+    }
+
+    // Check if "Size Set" or "Waist Size Set" is available
+    this.foundSizeSet = this.visibleFields.find((field: any) => field === "Size Set" || field === "Waist Size Set");
+    this.showFlag2 = true;
+    if(this.ProductId){
+     // Format and patch dates
+     const formattedDate1 = this.datePipe.transform(this.productDetails.dateOfManufacture, 'yyyy-MM-dd');
+     const formattedDate2 = this.datePipe.transform(this.productDetails.dateOfListing, 'yyyy-MM-dd');
+     this.stepOne.patchValue({
+       dateOfManufacture: formattedDate1,
+       dateOfListing: formattedDate2,  //          
+     }); 
+     }
+
+    if (this.foundSizeSet) {
+      this.disbledFields();
+      // Pass the found element to the function if either exists
+      this.getSizeSetForProducts(this.foundSizeSet);
+    }
+  } catch (error) {
+    console.error('Error mapping data:', error);
+  }
+}
+
+
+  getSizeSetForProducts(type:any){
+    this.sizeChart='';
+    this.sizeChart='';
+    const setType=type
+    this.authService.get(`size-set/size-type/size-set?sizeType=${setType}`).subscribe((data) =>{
+      this.sizeSet=data.Sizes;
+      // for patch size array
+      if(this.ProductId){
+      this.patchSizesArray(this.productDetails.sizes);
+      }
+      this.getSizeChartFields()
+    })        
   }
 
   // save Forms step One
@@ -584,34 +680,50 @@ export class AddNewProductsComponent {
     return this.CloudPath + video;
   }
 
-  getProductDataById() {
-    this.spinner.show()
-    this.authService.getById('products', this.ProductId).subscribe(res => {
+  
+
+  async getProductDataById() {
+    this.spinner.show();
+    try {
+      const res = await this.authService.getById('products', this.ProductId).toPromise();
       this.productDetails = res;
+  
       if (this.productDetails) {
-        if (this.currentStep == 2) {
-          this.colourCollections = this.productDetails.colourCollections
+        if (this.currentStep === 2) {
+          this.colourCollections = this.productDetails.colourCollections;
         } else {
-          this.stepOne.patchValue(this.productDetails)
-          const formattedDate1 = this.datePipe.transform(this.productDetails.dateOfManufacture, 'yyyy-MM-dd');
-          const formattedDate2 = this.datePipe.transform(this.productDetails.dateOfListing, 'yyyy-MM-dd');
-          this.stepOne.patchValue({
-            dateOfManufacture: formattedDate1,
-            dateOfListing: formattedDate2
-          });
-          this.stepOne.get('ProductDeimension')?.patchValue({
-            length: this.productDetails.ProductDeimension[0].length,
-            width: this.productDetails.ProductDeimension[0].width,
-            height: this.productDetails.ProductDeimension[0].height,
-          });
+          this.stepOne.patchValue(this.productDetails);
+          
+          
+          // Fetch categories and subcategories
+          await this.getCategoryByProductTypeAndGender(this.productDetails.productType, this.productDetails.gender);
+          await this.getSubCategoryBYProductType_Gender_and_Category(
+            this.productDetails.productType,
+            this.productDetails.gender,
+            this.productDetails.clothing
+          );      
+  
+          // Patch dimensions
+          if (this.productDetails.ProductDeimension?.length) {
+            this.stepOne.get('ProductDeimension')?.patchValue({
+              length: this.productDetails.ProductDeimension[0].length,
+              width: this.productDetails.ProductDeimension[0].width,
+              height: this.productDetails.ProductDeimension[0].height,
+            });
+          }
+  
+          // Patch sizes
           this.patchSizesArray(this.productDetails.sizes);
         }
       }
-      this.spinner.hide()
-    }, error => {
-      this.spinner.hide()
-    })
+    } catch (error) {
+      console.error('Error fetching product data:', error);
+    } finally {
+      this.spinner.hide();
+    }
   }
+  
+  
 
   onEditFormData(data: any) {
     const formattedDate = this.datePipe.transform(data.dateOfManufacture, 'yyyy-MM-dd');
@@ -696,13 +808,7 @@ export class AddNewProductsComponent {
     console.log('Selected currency:', this.selectedCurrency);
   }
 
-  getSizeSetForProducts(type:any){
-    const setType=type
-    this.authService.get(`size-set/size-type/size-set?sizeType=${setType}`).subscribe((data) =>{
-      this.sizeSet=data.Sizes;
-      this.sizeChart=data.sizeChart
-    })
-  }
+  
 
   // all Masters data======================
 
@@ -963,17 +1069,7 @@ export class AddNewProductsComponent {
         this.currencies = Object.entries(data).map(([code, name]) => ({ code, name }));
       }
     })
-  }
-
-  // getAllSubCategory() {
-  //   this.authService.get(`sub-category`).subscribe(res => {
-  //     if (res) {
-  //       this.allSubCategory = res.results;
-  //     }
-  //   }, (error) => {
-  //     console.log(error);
-  //   });
-  // }
+  } 
 
   getallCareInstruction() {
     this.authService.get('care-instruction').subscribe(res => {
