@@ -7,6 +7,8 @@ import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-
 import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { KycUploadComponent } from 'app/common/kyc-upload/kyc-upload.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.component';
 
 @Component({
   selector: 'app-profile',
@@ -52,7 +54,7 @@ export class ProfileComponent {
 
   bottomAdImage: string = 'https://5.imimg.com/data5/QE/UV/YB/SELLER-56975382/i-will-create-10-sizes-html5-creative-banner-ads.jpg';
 
-  constructor(private fb: FormBuilder, public authService: AuthService, private communicationService: CommunicationService, private datePipe: DatePipe, private direction: DirectionService) { }
+  constructor(private fb: FormBuilder, public authService: AuthService, private communicationService: CommunicationService, private datePipe: DatePipe, private direction: DirectionService,private dialog: MatDialog) { }
 
   countries: any[] = [
     'India',
@@ -84,11 +86,12 @@ export class ProfileComponent {
       fullName: ['', Validators.required],
       companyName: ['', Validators.required],
       address: ['', Validators.required],
-      introduction: ['', Validators.required],
+      introduction: ['', [Validators.required, Validators.maxLength(4000)]],
       country: ['India', Validators.required],
       state: ['', Validators.required],
       city: ['', Validators.required],
       code: ['', Validators.required],
+      altCode: [''],
       pinCode: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
       mobNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       mobNumber2: [''],
@@ -249,8 +252,11 @@ export class ProfileComponent {
     });
   }
 
-  openImg(path:any){
-    this.communicationService.openImg(path);
+  openImg(path:any,size:number){
+    const dialogRef = this.dialog.open(ImageDialogComponent, {
+      width: size+'px',
+      data: {path:path,width:size}  // Pass the current product data
+    });
   }
 }
 
