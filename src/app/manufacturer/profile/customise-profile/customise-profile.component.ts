@@ -1,6 +1,6 @@
 import { CommonModule, DatePipe, JsonPipe, NgClass } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { AuthService, CommunicationService, DirectionService } from '@core';
 import { KycUploadComponent } from 'app/common/kyc-upload/kyc-upload.component';
@@ -12,9 +12,10 @@ import { panMatchValidator } from 'app/common/pan-validation';
   imports: [
     ReactiveFormsModule,
     CommonModule,
-    NgClass,   
+    NgClass,
     MatSelectModule,
-    KycUploadComponent
+    KycUploadComponent,
+    FormsModule
   ],
   templateUrl: './customise-profile.component.html',
   styleUrl: './customise-profile.component.scss',
@@ -37,9 +38,10 @@ export class CustomiseProfileComponent {
   allCountry: any;
   Allcities: any;
   allData: any;
-  documents:any=['PAN Card']
-  allVisabilityData:any
-  selectedCountryCode:any='India'
+  documents: any = ['PAN Card'];
+  allBrands: any;
+  allVisabilityData: any
+  selectedCountryCode: any = 'India'
 
   constructor(private fb: FormBuilder, public authService: AuthService, private communicationService: CommunicationService, private datePipe: DatePipe, private direction: DirectionService) { }
 
@@ -66,15 +68,15 @@ export class CustomiseProfileComponent {
     this.getSavedProfileData()
     // this.disabledFields();
     this.getAllState();
-    
+    this.getAllBrands();
   }
 
   initializeValidation() {
     this.mgfRegistrationForm = this.fb.group({
       logo: [false],  // No validation
       fileName: [false],
-      file:[false],
-      profileImg: [false],      
+      file: [false],
+      profileImg: [false],
       leagalStatusOfFirm: [false],
       fullName: [false],
       companyName: [false],
@@ -85,11 +87,11 @@ export class CustomiseProfileComponent {
       city: [false],
       country: [false],
       pinCode: [false],
-      mobNumber:[false],
-      mobNumber2:[false],
-      email2:[false],
+      mobNumber: [false],
+      mobNumber2: [false],
+      email2: [false],
       GSTIN: [false],
-      pan:[false],
+      pan: [false],
       code: [false],
       establishDate: [false],
       turnover: [false],
@@ -97,8 +99,8 @@ export class CustomiseProfileComponent {
       socialMedia: this.fb.group({
         facebook: [false],
         linkedIn: [false],
-        instagram:[false],
-        webSite:[false]
+        instagram: [false],
+        webSite: [false]
 
       }),
       BankDetails: this.fb.group({
@@ -106,27 +108,22 @@ export class CustomiseProfileComponent {
         accountType: [false],
         bankName: [false],
         branch: [false],
-        IFSCcode:[false],
+        IFSCcode: [false],
         country: [false],
-        city: [false],       
+        city: [false],
       }),
-      
     });
-    }
-  
-
-
+  }
 
   get f() {
     return this.mgfRegistrationForm.controls;
-  } 
-
+  }
 
   getSavedProfileData() {
     this.authService.get(`manufacturers/${this.userProfile.email}`).subscribe((res: any) => {
-      if (res) {      
-        this.allData = res; 
-        this.GetProfileVisabilityData()     
+      if (res) {
+        this.allData = res;
+        this.GetProfileVisabilityData()
       } else {
       }
     }, error => {
@@ -152,37 +149,26 @@ export class CustomiseProfileComponent {
   saveProfileData() {
     // Retrieve the raw form data including all fields
     const formData = this.mgfRegistrationForm.getRawValue();
-    formData.id=this.allData.id  
-    // Call the API endpoint to patch the visibility settings for the manufacturer
-    this.authService.patch(`manufacturers/visibility`,formData).subscribe(
+    formData.id = this.allData.id
+    
+    this.authService.patch(`manufacturers/visibility`, formData).subscribe(
       (res: any) => {
-        if (res) {       
-          this.communicationService.showNotification(
-            'snackbar-success',
-            'Customised Profile Data saved successfully!',
-            'bottom',
-            'center'
-          );
+        if (res) {
+          this.communicationService.customError('Customised Profile Data saved successfully!');
           this.GetProfileVisabilityData()
         }
       },
       (error) => {
-        // Handle error and show notification to the user
-        this.communicationService.showNotification(
-          'snackbar-danger',
-          error.error?.message || 'An error occurred while saving the profile data.',
-          'bottom',
-          'center'
-        );
+        this.communicationService.customError(error.error?.message || 'An error occurred while saving the profile data.' );
       }
     );
   }
 
-  GetProfileVisabilityData(){
+  GetProfileVisabilityData() {
     this.authService.get(`manufacturers/visible-profile/${this.allData.id}`).subscribe((res: any) => {
       if (res) {
-       this.allVisabilityData=res.visibilitySettings
-       this.mgfRegistrationForm.patchValue(this.allVisabilityData)
+        this.allVisabilityData = res.visibilitySettings
+        this.mgfRegistrationForm.patchValue(this.allVisabilityData)
       } else {
       }
     }, error => {
@@ -191,8 +177,26 @@ export class CustomiseProfileComponent {
       }
     })
   }
+
+  getAllBrands() {
+    this.authService.get(`brand/brandlist/${this.userProfile.email}`).subscribe((res: any) => {
+      if (res) {
+        this.allBrands = res; // Fetch and store brand data
+      }
+    }, error => {
+      if (error.error.message === "Manufacturer not found") {
+      }
+    });
+  }
   
- 
+  updateBrand(id: string, data: any) {
+    const value = data.target.checked; // Get the checkbox value
+    this.authService.patch(`brand/updatevisibility`, { id: id, visibility: value }).subscribe((data: any) => {
+      console.log(data); // Log the response for debugging
+    }, error => {
+      console.error('Error updating brand:', error); // Log error if any
+    });
+  }
 
   editUserData() {
     this.mgfRegistrationForm.enable();
@@ -228,7 +232,7 @@ export class CustomiseProfileComponent {
     });
   }
 
-  openImg(path:any){
+  openImg(path: any) {
     this.communicationService.openImg(path);
   }
 }
