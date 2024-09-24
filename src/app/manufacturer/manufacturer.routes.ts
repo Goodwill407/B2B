@@ -17,6 +17,7 @@ import { WholselerDetailsViewComponent } from "./wholselers-requests/wholseler-d
 import { WlsListPoComponent } from "./order-management/wls-list-po/wls-list-po.component";
 import { DeliveryChallanComponent } from "./order-management/delivery-challan/delivery-challan.component";
 import { CustomiseProfileComponent } from "./profile/customise-profile/customise-profile.component";
+import { InventryStockComponent } from "./product-manager/inventry-stock/inventry-stock.component";
 
 
 export const M_Auth:Route[] = [
@@ -31,6 +32,7 @@ export const M_Auth:Route[] = [
     {path: 'manage-distributor', component: ManageDistributorComponent},
     {path: 'manage-product', component: ViewManageProductComponent},
     {path: 'view-product', component: ViewProductComponent},
+    {path: 'stock-inventory', component: InventryStockComponent},
     {path: 'category', component: CategoryComponent},
     {path: 'wholselers-Requests', component: WholselersRequestsComponent},
     {path: 'Rejected-Requests', component: RejectedRequestsListComponent},

@@ -96,6 +96,7 @@ export class CustomiseProfileComponent {
       establishDate: [false],
       turnover: [false],
       registerOnFTH: [false],
+      delingInView: [false],
       socialMedia: this.fb.group({
         facebook: [false],
         linkedIn: [false],
@@ -154,7 +155,7 @@ export class CustomiseProfileComponent {
     this.authService.patch(`manufacturers/visibility`, formData).subscribe(
       (res: any) => {
         if (res) {
-          this.communicationService.customError('Customised Profile Data saved successfully!');
+          this.communicationService.customSuccess('Customised Profile Data saved successfully!');
           this.GetProfileVisabilityData()
         }
       },

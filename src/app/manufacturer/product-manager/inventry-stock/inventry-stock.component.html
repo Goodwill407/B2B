@@ -1,0 +1,66 @@
+<section class="content">
+    <div class="content-block">
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> View And Manage Distributor's </h4>
+        <div class="card-table p-3">
+            <!-- <div class="card-table2 p-3"> -->
+            <div class="table-header mt-3">
+                <h5 class="mb-0">Wholesaler's List</h5>
+                <div class="search-container">
+                    <!-- <input type="text" class="form-control search-box" placeholder="Search Wholesaler's..." (input)="onSearchChange($event)"> -->
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+            </div>
+            <hr>
+            <div class="p-grid p-fluid">
+                <div class="p-col-12 text-center">
+                    <p-table [value]="products">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Brand</th>
+                                <th>Type</th>
+                                <th>Gender</th>
+                                <th>Category</th>
+                                <th>Sub Type</th>
+                                <th>Design No.</th>
+                                <th>Initial Stock</th>
+                                <th>Listing Date</th>
+                                <th>Stock In Hand</th>
+                                <th>Action</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-prod>
+                            <tr>
+                                <td class="text-center">{{ prod.brand }}</td>
+                                <td class="text-center">{{ prod.productType }}</td>
+                                <td class="text-center">{{ prod.gender }}</td>
+                                <td class="text-center">{{ prod.clothing }}</td>
+                                <td class="text-center">{{ prod.subCategory }}</td>
+                                <td class="text-center">{{ prod.designNumber }}</td>
+                                <!-- Display Pre-processed Discount Categories -->
+                                <td class="text-center">{{ prod.initialQTY||'NA' }}</td>
+                                <td class="text-center">{{ prod.dateOfListing|date:'dd-MM-yyyy' }}</td>
+                                <td class="text-center">{{ prod.quantity }}</td>
+                                <!-- <td class="text-center fw-bold" [ngClass]="prod.isActive ? 'text-success' : 'text-danger'">
+                                  {{ prod.isActive ? 'Active' : 'Inactive' }}
+                                </td> -->
+                                <!-- Action Buttons -->
+                                <td>
+                                    <button [routerLink]="['/mnf/add-new-product',{id: prod.id}]" class="btn btn-outline-success">Add Stock</button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+
+
+                </div>
+            </div>
+
+            <!-- Pagination moved to the bottom of the card -->
+            <div class="text-center mt-3">
+                <p-paginator *ngIf="products && products.length > 0" (onPageChange)="onPageChange($event)"
+                    [first]="first" [rows]="rows" [totalRecords]="totalResults" [rowsPerPageOptions]="[10, 20, 30]">
+                </p-paginator>
+            </div>
+        </div>
+    </div>
+</section>

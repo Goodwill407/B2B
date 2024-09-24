@@ -1,24 +1,22 @@
-/* profile-dialog.component.css */
-.dialog-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
+/* Override styles for mat-dialog */
+::ng-deep .mat-dialog-container {
+  padding: 0; /* Remove default padding */
 }
 
-.dialog-col {
-  flex: 1;
-  margin-right: 10px;
+::ng-deep .mat-dialog-content {
+  margin: 0; /* Remove margin if needed */
 }
 
-.dialog-col:last-child {
-  margin-right: 0;
+::ng-deep .mat-dialog-actions {
+  margin-top: 0; /* Remove any top margin */
 }
 
-h5 {
-  font-weight: 470px;
-  margin-top: 10px;
+/* Adjust the image properties */
+::ng-deep .mat-dialog-content img {
+  max-width: 100%; /* Make sure the image is responsive */
+  height: auto; /* Maintain aspect ratio */
+  margin: 0; /* Remove any unwanted margins */
 }
-
-p, a {
-  margin: 0;
+::ng-deep .mat-mdc-dialog-content {
+  max-height: 83vh;
 }
