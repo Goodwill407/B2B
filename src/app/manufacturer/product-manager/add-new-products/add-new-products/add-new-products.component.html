@@ -742,7 +742,7 @@
                                     <tr>
                                         <th>Sr. NO.</th>
                                         <th>Colour Name</th>
-                                        <th>Colour Image</th>
+                                        <th>Icon Image</th>
                                         <th>Product Video</th>
                                         <th>Product Images</th>
                                         <th>Actions</th>
@@ -752,12 +752,32 @@
                                     <tr *ngFor="let collection of colourCollections; let i = index">
                                         <td>{{ i + 1 }}</td>
                                         <td>{{ collection.colourName | titlecase }}</td>
-                                        <td><img [src]="getColorIconPath(collection.colourImage)" alt=""></td>
-                                        <td><video controls [src]="getVideoPath(collection.productVideo)"></video></td>
+                                        <td>
+                                            <ng-container *ngIf="collection.colourImage; else colorImageFallback">
+                                                <img [src]="getColorIconPath(collection.colourImage)" alt="Color Icon">
+                                            </ng-container>
+                                            <ng-template #colorImageFallback>
+                                                <span [style.background]="collection.colour" class="colour-hex"></span>
+                                              </ng-template>
+                                        </td>
+                                        <td>
+                                            <ng-container *ngIf="collection.productVideo; else noVideo">
+                                                <video controls [src]="getVideoPath(collection.productVideo)"></video>
+                                            </ng-container>
+                                            <ng-template #noVideo>
+                                                Not Video
+                                            </ng-template>
+                                            
+                                        </td>
                                         <td>
                                             <div class="product-images">
-                                                <img *ngFor="let image of collection.productImages"
-                                                    [src]="getProductImagePath(image)" alt="Product Image">
+                                                <ng-container *ngIf="collection.productImages.length; else noImages">
+                                                    <img *ngFor="let image of collection.productImages"
+                                                        [src]="getProductImagePath(image)" alt="Product Image">
+                                                </ng-container>
+                                                <ng-template #noImages>
+                                                    No Images Available
+                                                </ng-template>
                                             </div>
                                         </td>
                                         <td>
@@ -767,6 +787,7 @@
                                             </button>
                                         </td>
                                     </tr>
+                                    
                                 </tbody>
                             </table>
                         </div>

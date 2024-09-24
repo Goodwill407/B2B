@@ -67,20 +67,7 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
     });
   }
 
-  // new Code
-  // getCategoryByProductTypeAndGender(){
-  //   const productType=this.filters.productType
-  //   const gender=this.filters.gender
 
-  //   this.authService.get(`sub-category/get-category/by-gender?productType=${productType}&gender=${gender}`).subscribe((res:any)=>{
-  //     if(res){
-  //       this.allSubCategory=[]
-  //     }
-  //     this.allcategory = Array.from(new Set(res.results.map((item: any) => item.category)));      
-  //   },error=>{
-
-  //   })
-  // }
   getCategoryByProductTypeAndGender() {
     const productType=this.filters.productType
     const gender=this.filters.gender
