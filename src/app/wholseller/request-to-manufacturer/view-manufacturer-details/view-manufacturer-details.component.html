@@ -6,23 +6,35 @@
 
     <div class="company-profile">
       <!-- Company Name -->
-      <h3 class="company-name">{{ allVisabilityData?.companyName }}</h3>
+      <div class="company-head">
+        <img src="{{cdnPath+allVisabilityData?.profileImg}}" alt="">
+        <div class="">
+          <h3 class="company-name">{{ allVisabilityData?.companyName }}</h3>
+          <p class="mb-1">{{ allVisabilityData?.address }}</p>
+          <p class="mb-1"><a href="mailto:{{ allVisabilityData.email }}">{{ allVisabilityData?.email }}</a></p>
+          <p class="mb-1">{{ allVisabilityData?.mobNumber }}</p>
+        </div>
+      </div>
       <hr>
 
       <!-- Introduction -->
       <p class="introduction">{{ allVisabilityData?.introduction }}</p>
-      
+
       <!-- Fact Sheet -->
       <div class="fact-sheet">
-        <h4>Fact Sheet</h4>      
+        <h4>Fact Sheet</h4>
         <!-- Conditionally display fields based on the object's values -->
-        <p *ngIf="allVisabilityData?.establishDate"><strong>Established :</strong> {{ allVisabilityData?.establishDate }}</p>
+        <p *ngIf="allVisabilityData?.establishDate"><strong>Established :</strong> {{ allVisabilityData?.establishDate |
+          customDate:'MMM d, y' }}</p>
         <p *ngIf="allVisabilityData?.fullName"><strong>Founder :</strong> {{ allVisabilityData?.fullName }}</p>
-        <p *ngIf="allVisabilityData?.leagalStatusOfFirm"><strong>Legal Status of Firm :</strong> {{ allVisabilityData?.leagalStatusOfFirm }}</p>
-        <p *ngIf="allVisabilityData?.registerOnFTH"><strong>Registered On FTH :</strong> {{ allVisabilityData?.registerOnFTH | customDate:'MMM d, y' }}</p>
+        <p *ngIf="allVisabilityData?.leagalStatusOfFirm"><strong>Legal Status of Firm :</strong> {{
+          allVisabilityData?.leagalStatusOfFirm }}</p>
+        <p *ngIf="allVisabilityData?.registerOnFTH"><strong>Registered On FTH :</strong> {{
+          allVisabilityData?.registerOnFTH | customDate:'MMM d, y' }}</p>
         <p *ngIf="allVisabilityData?.GSTIN"><strong>GST No :</strong> {{ allVisabilityData?.GSTIN }}</p>
-        <p *ngIf="allVisabilityData?.code"><strong>Code :</strong> {{ allVisabilityData?.code }}</p>
-        <p *ngIf="allVisabilityData?.companyName"><strong>Company Name :</strong> {{ allVisabilityData?.companyName }}</p>
+        <!-- <p *ngIf="allVisabilityData?.code"><strong>Code :</strong> {{ allVisabilityData?.code }}</p> -->
+        <p *ngIf="allVisabilityData?.companyName"><strong>Company Name :</strong> {{ allVisabilityData?.companyName }}
+        </p>
         <p *ngIf="allVisabilityData?.address"><strong>Address :</strong> {{ allVisabilityData?.address }}</p>
         <p *ngIf="allVisabilityData?.state"><strong>State :</strong> {{ allVisabilityData?.state }}</p>
         <p *ngIf="allVisabilityData?.city"><strong>City :</strong> {{ allVisabilityData?.city }}</p>
@@ -36,15 +48,33 @@
         <h4>Contact Details</h4>
         <p><strong>Address :</strong> {{ allVisabilityData?.address }}</p>
         <p><strong>Phone :</strong> {{ allVisabilityData?.mobNumber }}</p>
-        <p><strong>Email :</strong> <a href="mailto:{{ allVisabilityData.email }}">{{ allVisabilityData?.email }}</a></p>
+        <p><strong>Email :</strong> <a href="mailto:{{ allVisabilityData.email }}">{{ allVisabilityData?.email }}</a>
+        </p>
       </div>
 
       <!-- Social Media -->
       <div class="social-media">
         <h4>Social Media</h4>
-        <p><a href="{{ allVisabilityData?.socialMedia?.facebook }}" target="_blank">Facebook</a></p>
+        <!-- <p><a href="{{ allVisabilityData?.socialMedia?.facebook }}" target="_blank">Facebook</a></p>
         <p><a href="{{ allVisabilityData?.socialMedia?.instagram }}" target="_blank">Instagram</a></p>
-        <p><a href="{{ allVisabilityData?.socialMedia?.linkedin }}" target="_blank">LinkedIn</a></p>
+        <p><a href="{{ allVisabilityData?.socialMedia?.linkedin }}" target="_blank">LinkedIn</a></p> -->
+        <div class="share-options">
+          <a href="{{ allVisabilityData?.socialMedia?.facebook }}" target="_blank" class="share-icon facebook">
+            <i class="fab fa-facebook"></i>
+          </a>
+          <!-- <a href="https://www.facebook.com/sharer/sharer.php?u=http://fashiontradershub.com/#/authentication/signin&amp;title=product-Name&amp;image=http://fashiontradershub.com/assets/images/auth-image/img1.jpg" target="_blank" class="facebook-share" previewlistener="true">Facebook</a>
+
+          <a href="http://www.facebook.com/share.php?u=https%3A%2F%2Fartofcookin.com%2Frecipe%2FChoclate-Cake&amp;&amp;image=" target="_blank" class="facebook-share" previewlistener="true">Facebook</a> -->
+          <!-- <a href="{{ allVisabilityData?.socialMedia?.instagram }}" target="_blank" class="share-icon whatsapp">
+            <i class="fab fa-whatsapp"></i>
+          </a> -->
+          <a href="#" href="{{ allVisabilityData?.socialMedia?.instagram }}" target="_blank" class="share-icon insta">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="{{ allVisabilityData?.socialMedia?.linkedin }}" target="_blank" class="share-icon twitter">
+            <i class="bi bi-linkedin"></i>
+          </a>
+        </div>
       </div>
 
       <!-- Brands Section -->
@@ -53,18 +83,18 @@
         <div class="brand-list">
           <div *ngFor="let brand of brandsDetails">
             <div class="brand-item">
-              <img [src]="cdnPath + brand.brandLogo" [alt]="brand.brandName" />            
+              <img [src]="cdnPath + brand.brandLogo" [alt]="brand.brandName" />
             </div>
             <div class="brand-name text-center mt-2"><strong>{{ brand.brandName }}</strong></div>
           </div>
         </div>
-      </div>    
+      </div>
       <hr>
 
-        <!-- Add Request Button -->
-        <div class="button-container">
-          <button class="add-request-button" (click)="sendRequestToManufacturer()">Request To Add</button>
-        </div>
+      <!-- Add Request Button -->
+      <div class="button-container">
+        <button class="add-request-button" (click)="sendRequestToManufacturer()">Request To Add</button>
+      </div>
     </div>
   </div>
 </section>

@@ -105,7 +105,7 @@ export class ViewManufacturerDetailsComponent  {
     }
 
     getBrandsOfManufacturer(){
-      this.authService.get(`brand/brandlist/${this.email}`).subscribe((res: any) => {
+      this.authService.get(`brand/visible/brandlist/${this.email}/true`).subscribe((res: any) => {
         if (res) {
           this.brandsDetails=res
         } else {
