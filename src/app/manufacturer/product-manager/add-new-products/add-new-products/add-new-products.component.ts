@@ -257,13 +257,13 @@ export class AddNewProductsComponent {
     this.sizeChartFields = [
       { name: 'standardSize', label: 'Standard Size', required: false },
       { name: 'brandSize', label: 'Brand Size', required: true },
-      { name: 'chestSize', label: 'Chest Size', required: true },
-      { name: 'shoulderSize', label: 'Shoulder Size', required: true },
-      { name: 'frontLength', label: 'Front Length', required: true },
-      { name: 'length', label: 'Length', required: false },
-      { name: 'width', label: 'Width', required: false },
-      { name: 'height', label: 'Height', required: true },
-      { name: 'weight', label: 'Weight', required: true },
+      { name: 'chestSize', label: 'Chest Size (in cm)', required: true },
+      { name: 'shoulderSize', label: 'Shoulder Size (in cm)', required: true },
+      { name: 'frontLength', label: 'Front Length (in cm)', required: true },
+      { name: 'length', label: 'Length (in cm)', required: false },
+      { name: 'width', label: 'Width (in cm)', required: false },
+      { name: 'height', label: 'Height (in cm)', required: true },
+      { name: 'weight', label: 'Weight (in gm)', required: true },
       { name: 'manufacturerPrice', label: "Manufacturer's Price", required: true },
       { name: 'singleMRP', label: 'MRP', required: true }
     ];
@@ -273,15 +273,15 @@ export class AddNewProductsComponent {
     this.sizeChartFields = [
   { name: 'standardSize', label: 'Standard Size', required: false },
   { name: 'brandSize', label: 'Brand Size', required: true },
-  { name: 'waistSizeSetStandardSize', label: 'Waist Size Set (Standard Size)', required: false },
-  { name: 'waist', label: 'Waist (in)', required: true },
-  { name: 'inseam', label: 'Inseam (in)', required: true },
-  { name: 'lengthIn', label: 'Length (in)', required: true },
-  { name: 'rise', label: 'Rise (in)', required: true },
-  { name: 'length', label: 'Length', required: false },
-  { name: 'width', label: 'Width', required: false },
-  { name: 'height', label: 'Height', required: true },
-  { name: 'weight', label: 'Weight', required: true },
+  { name: 'waistSizeSetStandardSize', label: 'Waist Size Set', required: false },
+  { name: 'waist', label: 'Waist(in cm)', required: true },
+  { name: 'inseam', label: 'Inseam(in cm)', required: true },
+  { name: 'lengthIn', label: 'Length(in cm)', required: true },
+  { name: 'rise', label: 'Rise(in cm)', required: true },
+  { name: 'length', label: 'Length(in cm)', required: false },
+  { name: 'width', label: 'Width(in cm)', required: false },
+  { name: 'height', label: 'Height(in cm)', required: true },
+  { name: 'weight', label: 'Weight(in Gm)', required: true },
   { name: 'manufacturerPrice', label: "Manufacturer's Price", required: true },
   { name: 'singleMRP', label: 'MRP', required: true }
     ];
@@ -325,8 +325,9 @@ createSizeFormGroup(size: number): FormGroup {
 }
 
 
+
   // For easier access to formArray controls
-  get sizesArray(): FormArray {
+  get sizesArray(): FormArray {   
     return this.stepOne.get('sizes') as FormArray;
   }
 
@@ -349,6 +350,8 @@ createSizeFormGroup(size: number): FormGroup {
     this.stepOne.get('setOFnetWeight')?.setValue(totalWeight, { emitEvent: false });
   }
 
+    
+
   getProfileData() {
     this.authService.get(`manufacturers/${this.userProfile.email}`).subscribe((res: any) => {
       this.locationData = res;
@@ -370,9 +373,14 @@ async getCategoryByProductTypeAndGender(productType?: any, gender?: any) {
     try {
       const res: any = await this.authService.get(`sub-category/get-category/by-gender?productType=${ProductType}&gender=${Gender}`).toPromise();
       if (res && res.results) {
-        this.allSubCategory = [];
+        // for clear
+        this.allSubCategory = [];  
+        if(!this.ProductId) {
+        this.stepOne.get('subCategory')?.patchValue(''); 
+        this.stepOne.get('clothing')?.patchValue(''); 
+      }   
         this.allClothingType = Array.from(new Set(res.results.map((item: any) => item.category)));
-      } else {
+      } else {        
         this.allClothingType = [];
       }
     } catch (error) {
@@ -401,6 +409,9 @@ async getSubCategoryBYProductType_Gender_and_Category(ProductType?: any, Gender?
     if (res) {
       (this.addProductForm.get('stepOne.sizes') as FormArray).clear();
       this.allSubCategory = [];
+      if(!this.ProductId) {
+        this.stepOne.get('subCategory')?.patchValue('');         
+      } 
       this.showFlag2 = false;
       this.selectedSizes = [];
       this.sizeChartFields = [];
@@ -443,6 +454,7 @@ async mappingData(pType: any, gen: any, cat: any, sCat: any) {
     this.selectedSizes = [];
     this.sizeChartFields = [];
     this.sizeSet = [];
+    this.foundSizeSet='';
     
     this.visibleFields = res[0].inputs;
     this.createFormControls(this.visibleFields);
@@ -465,7 +477,7 @@ async mappingData(pType: any, gen: any, cat: any, sCat: any) {
      }
 
     if (this.foundSizeSet) {
-      this.disbledFields();
+      this.disbledFields()
       // Pass the found element to the function if either exists
       this.getSizeSetForProducts(this.foundSizeSet);
     }
@@ -754,7 +766,7 @@ async mappingData(pType: any, gen: any, cat: any, sCat: any) {
       }));
       this.selectedSizes.push(size.standardSize); // Keep track of selected sizes
     });
-  }
+  }  
 
   // update step one data
   UpdateStepOne() {

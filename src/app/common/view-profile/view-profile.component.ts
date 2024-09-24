@@ -113,12 +113,12 @@ export class ViewProfileComponent {
 
   navigateFun() {
     this.location.back();
-  }
+  } 
 
   getAllWholesalerCategory() {
     const email=this.userEmail.email
-    this.authService.get(`wholesaler-category?email=${email}`).subscribe((res: any) => {
-      this.wholesalerCategory = res.results;            
+    this.authService.get(`wholesaler-category?categoryBy=${this.authService.currentUserValue.email}`).subscribe((res: any) => {
+      this.wholesalerCategory = res.results;     
     });
   }
   // selectCategory(event: any) {
