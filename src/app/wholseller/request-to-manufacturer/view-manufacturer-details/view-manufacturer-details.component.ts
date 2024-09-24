@@ -32,38 +32,38 @@ export interface Company {
 @Component({
   selector: 'app-view-manufacturer-details',
   standalone: true,
-  imports:[NgFor, CommonModule, CustomDatePipe],
+  imports: [NgFor, CommonModule, CustomDatePipe],
   templateUrl: './view-manufacturer-details.component.html',
   styleUrls: ['./view-manufacturer-details.component.scss'],
   providers: [DatePipe]
 })
 
-export class ViewManufacturerDetailsComponent  {
+export class ViewManufacturerDetailsComponent {
   // Define a company variable of type Company
   company!: Company;
-  email:any
-  CompanyData:any
-  brandsDetails:any
-  cdnPath:any
-  userProfile:any;
-  WholsellerData:any;
-  allVisabilityData:any;
-  id:any
+  email: any
+  CompanyData: any
+  brandsDetails: any
+  cdnPath: any
+  userProfile: any;
+  WholsellerData: any;
+  allVisabilityData: any;
+  id: any
 
-  constructor(private route: ActivatedRoute, private authService:AuthService,private communicationService:CommunicationService) {
-    this.cdnPath=authService.cdnPath
+  constructor(private route: ActivatedRoute, private authService: AuthService, private communicationService: CommunicationService) {
+    this.cdnPath = authService.cdnPath
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
   }
 
   // Initialize the company data in ngOnInit
   ngOnInit(): void {
-     // Access the query parameter
-     this.route.queryParams.subscribe(params => {
-      this.id = params['id']; 
-      this.email=params['email']      
+    // Access the query parameter
+    this.route.queryParams.subscribe(params => {
+      this.id = params['id'];
+      this.email = params['email']
       this.getManufacturerData()
       this.getBrandsOfManufacturer()
-      this.getUserProfileData() 
+      this.getUserProfileData()
       this.GetProfileVisabilityData()
     });
 
@@ -91,57 +91,57 @@ export class ViewManufacturerDetailsComponent  {
     };
   }
 
-  getManufacturerData(){   
-      this.authService.get(`manufacturers/${this.email}`).subscribe((res: any) => {
-        if (res) {
-          this.CompanyData=res
-        } else {
-        }
-      }, error => {
-        if (error.error.message === "Manufacturer not found") {
-          
-        }
-      })
-    }
-
-    getBrandsOfManufacturer(){
-      this.authService.get(`brand/visible/brandlist/${this.email}/true`).subscribe((res: any) => {
-        if (res) {
-          this.brandsDetails=res
-        } else {
-        }
-      }, error => {
-        if (error.error.message === "Manufacturer not found") {
-          
-        }
-      })
-    }
-
-    sendRequestToManufacturer(){  
-      const requestBody={
-        fullName : this.CompanyData.fullName ,
-        companyName: this.CompanyData.companyName,
-        email:  this.CompanyData.email,
-        code:  this.CompanyData.code,
-        mobileNumber:  this.CompanyData.mobNumber,
-        requestByFullName: this.WholsellerData.fullName,
-        requestByCompanyName: this.WholsellerData.companyName,
-        requestByEmail: this.WholsellerData.email,
-        requestByCountry: this.WholsellerData.country,
-        requestByCity: this.WholsellerData.city,
-        requestByState: this.WholsellerData.state,
-        requestByCountryCode:this.WholsellerData.code,
-        requestByMobileNumber:this.WholsellerData.mobNumber,
-        requestByRole: this.userProfile.role,
-        role: "Manufacturer" ,
-        state:  this.CompanyData.state,
-        city:  this.CompanyData.city,
-        country:  this.CompanyData.country
+  getManufacturerData() {
+    this.authService.get(`manufacturers/${this.email}`).subscribe((res: any) => {
+      if (res) {
+        this.CompanyData = res
+      } else {
       }
-    this.authService.post('request',requestBody).subscribe(
-      response => {        
-           
-        this.communicationService.showNotification('snackbar-success', 'Request added successfully','bottom','center');
+    }, error => {
+      if (error.error.message === "Manufacturer not found") {
+
+      }
+    })
+  }
+
+  getBrandsOfManufacturer() {
+    this.authService.get(`brand/visible/brandlist/${this.email}/true`).subscribe((res: any) => {
+      if (res) {
+        this.brandsDetails = res
+      } else {
+      }
+    }, error => {
+      if (error.error.message === "Manufacturer not found") {
+
+      }
+    })
+  }
+
+  sendRequestToManufacturer() {
+    const requestBody = {
+      fullName: this.CompanyData.fullName,
+      companyName: this.CompanyData.companyName,
+      email: this.CompanyData.email,
+      code: this.CompanyData.code,
+      mobileNumber: this.CompanyData.mobNumber,
+      requestByFullName: this.WholsellerData.fullName,
+      requestByCompanyName: this.WholsellerData.companyName,
+      requestByEmail: this.WholsellerData.email,
+      requestByCountry: this.WholsellerData.country,
+      requestByCity: this.WholsellerData.city,
+      requestByState: this.WholsellerData.state,
+      requestByCountryCode: this.WholsellerData.code,
+      requestByMobileNumber: this.WholsellerData.mobNumber,
+      requestByRole: this.userProfile.role,
+      role: "Manufacturer",
+      state: this.CompanyData.state,
+      city: this.CompanyData.city,
+      country: this.CompanyData.country
+    }
+    this.authService.post('request', requestBody).subscribe(
+      response => {
+
+        this.communicationService.showNotification('snackbar-success', 'Request added successfully', 'bottom', 'center');
       },
       error => {
         console.error('Error searching brand:', error);
@@ -153,22 +153,43 @@ export class ViewManufacturerDetailsComponent  {
   getUserProfileData() {
     this.authService.get(`wholesaler/${this.userProfile.email}`).subscribe((res: any) => {
       if (res) {
-       this.WholsellerData=res
-        
+        this.WholsellerData = res
+
       } else {
         // Handle the case where there's no datap
       }
     }, error => {
       if (error.error.message === "Manufacturer not found") {
-  
+
       }
     })
   }
-  GetProfileVisabilityData(){
+  GetProfileVisabilityData() {
     this.authService.get(`manufacturers/visible-profile/${this.id}`).subscribe((res: any) => {
-      if (res) {        
+      if (res) {
         // res.registerOnFTH =res.registerOnFTH ? this.datePipe.transform(res.registerOnFTH, 'yyyy-MM-dd') : null;
-       this.allVisabilityData=res;       
+        this.allVisabilityData = res;
+        const uniqueValues = {
+          productType: new Set<string>(),
+          gender: new Set<string>(),
+          clothing: new Set<string>(),
+          subCategory: new Set<string>()
+        };
+        
+        const data = res.uniqueProducts.forEach((product: any) => {
+          uniqueValues.productType.add(product.productType);
+          uniqueValues.gender.add(product.gender);
+          uniqueValues.clothing.add(product.clothing);
+          uniqueValues.subCategory.add(product.subCategory);
+        });
+        
+        this.allVisabilityData.dealingIn = {
+          productType: Array.from(uniqueValues.productType).join(', '),
+          gender: Array.from(uniqueValues.gender).join(', '),
+          clothing: Array.from(uniqueValues.clothing).join(', '),
+          subCategory: Array.from(uniqueValues.subCategory).join(', ')
+        };
+      
       } else {
       }
     }, error => {
@@ -178,7 +199,7 @@ export class ViewManufacturerDetailsComponent  {
     })
   }
 
-    
 
-  }
+
+}
 

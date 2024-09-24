@@ -9,10 +9,24 @@
       <div class="company-head">
         <img src="{{cdnPath+allVisabilityData?.profileImg}}" alt="">
         <div class="">
-          <h3 class="company-name">{{ allVisabilityData?.companyName }}</h3>
+          <h3 class="company-name mb-1">{{ allVisabilityData?.companyName }}</h3>
           <p class="mb-1">{{ allVisabilityData?.address }}</p>
-          <p class="mb-1"><a href="mailto:{{ allVisabilityData.email }}">{{ allVisabilityData?.email }}</a></p>
+          <p class="mb-1"><a href="mailto:{{ allVisabilityData?.email }}">{{ allVisabilityData?.email }}</a></p>
           <p class="mb-1">{{ allVisabilityData?.mobNumber }}</p>
+          <a *ngIf="allVisabilityData?.visibilitySettings?.socialMedia?.webSite" href="{{ allVisabilityData?.socialMedia?.webSite }}" target="_blank" class="facebook">
+            {{ allVisabilityData?.socialMedia?.webSite}}
+          </a>
+          <div class="share-options">
+            <a *ngIf="allVisabilityData?.visibilitySettings?.socialMedia?.facebook" href="{{ allVisabilityData?.socialMedia?.facebook }}" target="_blank" class="share-icon facebook">
+              <i class="fab fa-facebook"></i>
+            </a>
+            <a  *ngIf="allVisabilityData?.visibilitySettings?.socialMedia?.instagram" href="{{ allVisabilityData?.socialMedia?.instagram }}" target="_blank" class="share-icon insta">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a *ngIf="allVisabilityData?.visibilitySettings?.socialMedia?.linkedIn" href="{{ allVisabilityData?.socialMedia?.linkedin }}" target="_blank" class="share-icon twitter">
+              <i class="bi bi-linkedin"></i>
+            </a>
+          </div>
         </div>
       </div>
       <hr>
@@ -48,32 +62,18 @@
         <h4>Contact Details</h4>
         <p><strong>Address :</strong> {{ allVisabilityData?.address }}</p>
         <p><strong>Phone :</strong> {{ allVisabilityData?.mobNumber }}</p>
-        <p><strong>Email :</strong> <a href="mailto:{{ allVisabilityData.email }}">{{ allVisabilityData?.email }}</a>
+        <p><strong>Email :</strong> <a href="mailto:{{ allVisabilityData?.email }}">{{ allVisabilityData?.email }}</a>
         </p>
       </div>
 
       <!-- Social Media -->
-      <div class="social-media">
-        <h4>Social Media</h4>
-        <!-- <p><a href="{{ allVisabilityData?.socialMedia?.facebook }}" target="_blank">Facebook</a></p>
-        <p><a href="{{ allVisabilityData?.socialMedia?.instagram }}" target="_blank">Instagram</a></p>
-        <p><a href="{{ allVisabilityData?.socialMedia?.linkedin }}" target="_blank">LinkedIn</a></p> -->
-        <div class="share-options">
-          <a href="{{ allVisabilityData?.socialMedia?.facebook }}" target="_blank" class="share-icon facebook">
-            <i class="fab fa-facebook"></i>
-          </a>
-          <!-- <a href="https://www.facebook.com/sharer/sharer.php?u=http://fashiontradershub.com/#/authentication/signin&amp;title=product-Name&amp;image=http://fashiontradershub.com/assets/images/auth-image/img1.jpg" target="_blank" class="facebook-share" previewlistener="true">Facebook</a>
-
-          <a href="http://www.facebook.com/share.php?u=https%3A%2F%2Fartofcookin.com%2Frecipe%2FChoclate-Cake&amp;&amp;image=" target="_blank" class="facebook-share" previewlistener="true">Facebook</a> -->
-          <!-- <a href="{{ allVisabilityData?.socialMedia?.instagram }}" target="_blank" class="share-icon whatsapp">
-            <i class="fab fa-whatsapp"></i>
-          </a> -->
-          <a href="#" href="{{ allVisabilityData?.socialMedia?.instagram }}" target="_blank" class="share-icon insta">
-            <i class="fab fa-instagram"></i>
-          </a>
-          <a href="{{ allVisabilityData?.socialMedia?.linkedin }}" target="_blank" class="share-icon twitter">
-            <i class="bi bi-linkedin"></i>
-          </a>
+      <div class="social-media" *ngIf="allVisabilityData?.uniqueProducts && allVisabilityData?.uniqueProducts?.length > 0">
+        <h4>Dealing In</h4>
+        <div class="d-flex justify-content-between">
+          <p><span class="fw-medium">Product Type</span><br>{{allVisabilityData?.dealingIn?.productType}}</p>
+          <p><span class="fw-medium">Gender</span><br>{{allVisabilityData?.dealingIn?.gender}}</p>
+          <p><span class="fw-medium">Category</span><br>{{allVisabilityData?.dealingIn?.clothing}}</p>
+          <p><span class="fw-medium">Sub Category</span><br>{{allVisabilityData?.dealingIn?.subCategory}}</p>
         </div>
       </div>
 
