@@ -1,6 +1,6 @@
 <section class="content">
     <div class="content-block">
-        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> View And Manage Wholesaler's & Retailer's </h4>
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> View And Manage Distributor's </h4>
         <div class="card-table p-3">
         <mat-tab-group>
             <mat-tab label="Wholesaler's Category">
@@ -8,7 +8,7 @@
                     <div class="table-header mt-3">
                         <h5 class="mb-0">Wholesaler's List</h5>
                         <div class="search-container">
-                            <input type="text" class="form-control search-box" placeholder="Search Distributors..." (input)="onSearchChange($event)">
+                            <input type="text" class="form-control search-box" placeholder="Search Wholesaler's..." (input)="onSearchChange($event)">
                             <i class="fas fa-search search-icon"></i>
                         </div>
                     </div>
@@ -95,6 +95,7 @@
                                 <th>Email</th>
                                 <th>Country</th>
                                 <th>City</th>
+                                <th>Discount</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -107,6 +108,7 @@
                                 <td class="text-center">{{retailers.email}}</td>
                                 <td class="text-center">{{retailers.country}}</td>
                                 <td class="text-center">{{retailers.city}}</td>
+                                <td class="text-center">{{retailers.discountCategories}}</td>
                                 <td class="text-center fw-bold" [ngClass]="retailers.isActive?'text-success':'text-danger'">{{retailers.isActive?'Active':'Inactive'}}</td>
                                 <td>
                                     <div class="button-container text-center">
