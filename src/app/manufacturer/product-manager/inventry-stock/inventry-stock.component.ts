@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '@core';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
@@ -31,7 +31,7 @@ export class InventryStockComponent {
   userProfile: any;
   totalResults: any;
 
-  constructor(public authService: AuthService) { 
+  constructor(public authService: AuthService, private router:Router) { 
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
   }
 
@@ -78,4 +78,8 @@ export class InventryStockComponent {
     this.getAllProducts();
   }
 
+  editProduct(id:any) {
+    debugger
+    this.router.navigate(['mnf/add-new-product'], { queryParams: { id: id } });
+  }
 }
