@@ -232,6 +232,11 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
     return `http://fashiontradershub.com`; // Change to your actual product URL
   }  
 
+  // Method to return truncated description
+  // getTruncatedDescription(description: string, limit: number): string {
+  //   return description.length > limit ? description.substring(0, 5) + '...' : description;
+  // }
+
 
 }
 

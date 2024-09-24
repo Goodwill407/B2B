@@ -45,34 +45,30 @@
             <div class="color-options mt-0">
               <button *ngFor="let color of product.colors"
                       [ngStyle]="{'background-color': color, 'border': color === '#FFFFFF' ? '1px solid #000' : 'none'}"
-                      [class.active]="product.selectedColor === color"
+                      [class.active]="product.selectedColor === color"                      
                       (click)="changeProductImage(product, color)">
               </button>
             </div>
             <h6 class="title" [routerLink]="['/mnf/view-product',{id: product.id}]">{{product.title}}</h6>
-            <p>{{product.description}}</p>
+            <p class="truncate-text">{{ product.description }}</p>
             <div class="availability">
               <span *ngIf="product.stock > 0" class="in-stock">In stock - Qty {{product.stock}}</span>
               <span *ngIf="product.stock === 0" class="out-of-stock">Out of stock</span>
             </div>
             <!-- Social Media Share Buttons -->
-            <div class="share-options">
+            <!-- <div class="share-options">
               <a  (click)="shareOnFacebook(product)" class="share-icon facebook">
                 <i class="fab fa-facebook"></i>
               </a>
-              <!-- <a href="https://www.facebook.com/sharer/sharer.php?u=http://fashiontradershub.com/#/authentication/signin&amp;title=product-Name&amp;image=http://fashiontradershub.com/assets/images/auth-image/img1.jpg" target="_blank" class="facebook-share" previewlistener="true">Facebook</a>
-
-              <a href="http://www.facebook.com/share.php?u=https%3A%2F%2Fartofcookin.com%2Frecipe%2FChoclate-Cake&amp;&amp;image=" target="_blank" class="facebook-share" previewlistener="true">Facebook</a> -->
+             
               <a (click)="shareOnWhatsApp(product)" class="share-icon whatsapp">
                 <i class="fab fa-whatsapp"></i>
               </a>
-              <!-- <a href="#" (click)="shareOnInstagram(product)" class="share-icon">
-                <i class="fab fa-instagram"></i>
-              </a> -->
+             
               <a  (click)="shareOnTwitter(product)" class="share-icon twitter">
                 <i class="fab fa-twitter"></i>
               </a>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>

@@ -41,9 +41,7 @@
                                 <select formControlName="role" class="form-select"
                                     placeholder="Select Organization Identity">
                                     <option value="" disabled>Select Identity</option>
-                                    <option value="manufacture">Manufacture</option>
-                                    <option value="wholesaler">Wholesaler </option>
-                                    <option value="retailer">Retailer</option>
+                                    <option *ngFor="let item of allIdentity" [value]="item.name">{{item.name}}</option>                                   
                                 </select>
                                 <div *ngIf="mgfRegistrationForm.get('role')?.touched && mgfRegistrationForm.get('role')?.invalid"
                                     class="text-danger">
