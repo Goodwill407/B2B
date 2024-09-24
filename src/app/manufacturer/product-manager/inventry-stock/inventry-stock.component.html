@@ -45,7 +45,7 @@
                                 </td> -->
                                 <!-- Action Buttons -->
                                 <td>
-                                    <button [routerLink]="['/mnf/add-new-product',{id: prod.id}]" class="btn btn-outline-success">Add Stock</button>
+                                    <button (click)="editProduct(prod.id)" class="btn btn-outline-success">Add Stock</button>
                                 </td>
                             </tr>
                         </ng-template>
