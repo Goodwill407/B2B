@@ -209,6 +209,18 @@ export const ROUTES: RouteInfo[] = [
         role: [''],
         submenu: [],
       },      
+      {
+        path: '/mnf/stock-inventory',
+        title: 'Stock Inventory',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },      
     ],
   },
 
