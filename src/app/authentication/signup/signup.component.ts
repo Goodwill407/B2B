@@ -38,6 +38,7 @@ export class SignupComponent implements OnInit {
   c_hide = true;
   otpFields: string[] = ['', '', '', '', '', ''];
   email: any = '';
+  allIdentity:any;
 
   countryCode = [
     // { countryName: 'United States', flag: 'assets/images/flags/us.jpg', code: '+1' },
@@ -53,6 +54,7 @@ export class SignupComponent implements OnInit {
     this.email = this.route.snapshot.paramMap.get('email') || '';
     this.initializeForm();
     this.initializePasswordForm();
+    this.getallIdentity()
     if (this.email) {
       this.authService.get(`invitations/${this.email}`).subscribe((res: any) => {
         this.mgfRegistrationForm.patchValue(res);
@@ -64,6 +66,18 @@ export class SignupComponent implements OnInit {
       });
 
     }
+  }
+
+  getallIdentity(){
+    this.authService.get('entitytype').subscribe((data:any)=>{
+      if(data){
+        this.allIdentity=data.results;
+      }
+
+    },error=>{
+
+    })
+
   }
 
   initializeForm() {
