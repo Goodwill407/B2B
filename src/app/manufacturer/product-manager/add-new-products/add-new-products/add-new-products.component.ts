@@ -325,8 +325,9 @@ createSizeFormGroup(size: number): FormGroup {
 }
 
 
+
   // For easier access to formArray controls
-  get sizesArray(): FormArray {
+  get sizesArray(): FormArray {   
     return this.stepOne.get('sizes') as FormArray;
   }
 
@@ -348,6 +349,8 @@ createSizeFormGroup(size: number): FormGroup {
     this.stepOne.get('setOfMRP')?.setValue(totalMRP, { emitEvent: false });
     this.stepOne.get('setOFnetWeight')?.setValue(totalWeight, { emitEvent: false });
   }
+
+    
 
   getProfileData() {
     this.authService.get(`manufacturers/${this.userProfile.email}`).subscribe((res: any) => {
@@ -754,7 +757,7 @@ async mappingData(pType: any, gen: any, cat: any, sCat: any) {
       }));
       this.selectedSizes.push(size.standardSize); // Keep track of selected sizes
     });
-  }
+  }  
 
   // update step one data
   UpdateStepOne() {
