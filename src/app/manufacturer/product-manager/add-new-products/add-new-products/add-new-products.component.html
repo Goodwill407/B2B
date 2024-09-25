@@ -622,7 +622,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <div *ngIf="!ProductId" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="productTitle">Date Of Manufacture<span
                                         class="required">*</span></label>
                                 <input type="date" id="dateOfManufacture" formControlName="dateOfManufacture"
@@ -636,7 +636,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <div *ngIf="!ProductId" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="dateOfListing">Date Of Listing<span
                                         class="required">*</span></label>
                                 <input type="date" id="dateOfListing" formControlName="dateOfListing"
@@ -647,6 +647,36 @@
                                     class="invalid-feedback">
                                     <div *ngIf="stepOne.get('dateOfListing')?.hasError('required')">
                                         Date Of Listing is required
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- forUpdate -->
+                            <div *ngIf="ProductId" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="updatedDate">Updated Date<span
+                                        class="required">*</span></label>
+                                <input type="date" id="updatedDate" formControlName="updatedDate"
+                                    class="form-control"
+                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('updatedDate')?.invalid}">
+                                <!-- Validation feedback for the Product Title field -->
+                                <div *ngIf="submittedStep1 && stepOne.get('updatedDate')?.invalid"
+                                    class="invalid-feedback">
+                                    <div *ngIf="stepOne.get('updatedDate')?.hasError('required')">
+                                        Updated Date is required
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="ProductId" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="alertStock">Alert Stock<span
+                                        class="required">*</span></label>
+                                <input type="date" id="alertStock" formControlName="alertStock"
+                                    class="form-control"
+                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('alertStock')?.invalid}">
+                                <!-- Validation feedback for the Product Title field -->
+                                <div *ngIf="submittedStep1 && stepOne.get('alertStock')?.invalid"
+                                    class="invalid-feedback">
+                                    <div *ngIf="stepOne.get('alertStock')?.hasError('required')">
+                                        Alert Stock is required
                                     </div>
                                 </div>
                             </div>
