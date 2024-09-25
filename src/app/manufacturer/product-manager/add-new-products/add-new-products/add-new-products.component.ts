@@ -113,9 +113,7 @@ export class AddNewProductsComponent {
         productType: ['', Validators.required],
         gender: ['', Validators.required],
         clothing: ['', Validators.required],
-        subCategory: ['', Validators.required],
-        newQuantity:['', Validators.required],
-        
+        subCategory: ['', Validators.required],        
 
         sizes: this.fb.array([]),
 
@@ -126,7 +124,10 @@ export class AddNewProductsComponent {
         quantity: ['', [Validators.required]],
         dateOfManufacture: ['', [Validators.required]],
         dateOfListing: ['', [Validators.required]],
-        // currency: ['', [Validators.required]]
+        // forUpdate form
+        newQuantity:['', Validators.required],
+        updatedDate: ['', [Validators.required]],
+        alertStock: ['', [Validators.required]]
       }),
       stepTwo: this.fb.group({
         colour: [''],
@@ -510,6 +511,8 @@ export class AddNewProductsComponent {
     this.submittedStep1 = true
     // removeFormControl
     this.addProductForm.get('stepOne')?.removeControl('newQuantity');
+    this.addProductForm.get('stepOne')?.removeControl('updatedDate');
+    this.addProductForm.get('stepOne')?.removeControl('alertStock');
 
     if (this.stepOne.valid) {
       const productBy = this.userProfile.email
@@ -777,6 +780,8 @@ export class AddNewProductsComponent {
 
   // update step one data
   UpdateStepOne() {       
+    this.addProductForm.get('stepOne')?.removeControl('quantity');
+    this.addProductForm.get('stepOne')?.removeControl('quantity');
     this.addProductForm.get('stepOne')?.removeControl('quantity');
     
     if (this.stepOne.invalid) {
