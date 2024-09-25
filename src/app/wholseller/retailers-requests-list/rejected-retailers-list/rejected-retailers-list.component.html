@@ -12,8 +12,8 @@
             <p-table [value]="allRequestedList">
               <ng-template pTemplate="header">
                 <tr>
-                  <th>Wholesaler's Name</th>
-                  <th>Company Name</th>
+                  <th>Retailer's Name</th>
+                  <th>Company/Firm Name</th>
                   <th>Mobile Number</th>
                   <th>Email</th>
                   <th>Status</th>
@@ -39,7 +39,7 @@
               </ng-template>
             </p-table>
             <span *ngIf="!allRequestedList || allRequestedList.length == 0"
-              class="data-not-found d-flex justify-content-center align-items-center">Data Not Found</span>
+              class="data-not-found d-flex justify-content-center align-items-center"></span>
             <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows" [totalRecords]="totalResults"
               [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
           </div>
