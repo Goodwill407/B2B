@@ -686,7 +686,7 @@ export const ROUTES: RouteInfo[] = [
   }, 
   {
     path: '/wholesaler/profile',
-    title: `Wholesaler Profile`,
+    title: `Wholesaler's Profile`,
     iconType: 'material-icons-outlined',
     icon: 'person',
     class: '',
