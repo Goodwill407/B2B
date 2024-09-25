@@ -155,7 +155,7 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
   extractColorFromImage(product: any): void {
     const image = new Image();
     image.crossOrigin = 'Anonymous';
-    image.src = this.authService.cdnPath + product.selectedImageUrl;
+    image.src = this.authService.cdnPath + (product.selectedImageUrl||'/b2b/1727183682898-no-image.png');
 
     image.onload = () => {
       const colorThief = new ColorThief();
@@ -187,6 +187,14 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
     product.selectedImageUrl = product.selectedImageUrls[nextIndex];
   }
   
+  disableImage(product: any,color:string): boolean {
+    const selectedColor = product.colourCollections.find((c: any) => c.colour === color);
+    if (selectedColor.productImages.length > 0) {
+      return false;
+    }else{
+      return true;
+    }
+  }
   
   changeProductImage(product: any, color: string): void {
     const selectedColor = product.colourCollections.find((c: any) => c.colour === color);

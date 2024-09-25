@@ -14,12 +14,22 @@
       <hr class="mt-0">
       <div class="product-details-content">
         <div class="product-images">
-          <div class="main-image">
-            <img *ngIf="selectedMediaType === 'image'" [src]="authService.cdnPath + selectedMedia"
-              alt="Main Product Image">
-            <video *ngIf="selectedMediaType === 'video'" style="width: 380px; height: 495px;"
-              [src]="authService.cdnPath + selectedMedia" controls></video>
-          </div>
+          <div class="zoom-container">
+            <img #mainImage 
+                 *ngIf="selectedMediaType === 'image'" 
+                 [src]="authService.cdnPath + selectedMedia" 
+                 (mousemove)="zoomImage($event)" 
+                 (mouseleave)="resetZoom($event)" 
+                 alt="Main Product Image" 
+                 class="zoom-image">
+            
+            <video *ngIf="selectedMediaType === 'video'" 
+                   style="width: 380px; height: 495px;"
+                   [src]="authService.cdnPath + selectedMedia" 
+                   controls>
+            </video>
+            <button *ngIf="selectedMediaType === 'image'" (click)="openImg(authService.cdnPath + selectedMedia,1400)" class="action-button"><i class="bi bi-zoom-in"></i></button>
+        </div>
           <div class="thumbnail-images">
             <div class="thumbnail" *ngFor="let media of product.media" (click)="changeMainMedia(media)"
               [class.active]="media.src === selectedMedia">
@@ -88,7 +98,7 @@
           <div class="">
             <p class="mb-0"><small>Colours / Designs :</small> {{selectedColourName}} </p>
             <div class="d-flex">
-              <span *ngFor="let colour of product.colours" (click)="selectColourCollection(colour)"
+              <span *ngFor="let colour of product.colours" [ngClass]="{'disabled': !(colour?.images?.length > 0)}" (click)="selectColourCollection(colour)"
                 style="cursor: pointer; display: flex;">
                 <div class="colour-info ">
                   <span *ngIf="colour.image; else colourBox">
