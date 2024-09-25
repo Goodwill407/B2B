@@ -779,9 +779,8 @@ export class AddNewProductsComponent {
   }
 
   // update step one data
-  UpdateStepOne() {       
-    this.addProductForm.get('stepOne')?.removeControl('quantity');
-    this.addProductForm.get('stepOne')?.removeControl('quantity');
+  UpdateStepOne() {  
+    this.submittedStep1 = true;     
     this.addProductForm.get('stepOne')?.removeControl('quantity');
     
     if (this.stepOne.invalid) {
