@@ -1,8 +1,10 @@
 import { CommonModule, NgFor, NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '@core';
+import { MatDialog } from '@angular/material/dialog';
+import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.component';
 
 @Component({
   selector: 'app-view-product',
@@ -15,7 +17,7 @@ import { AuthService } from '@core';
   styleUrls: ['./view-product.component.scss']
 })
 export class ViewProductComponent {
-  constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService, private router: Router) { }
+  constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService, private router: Router, private renderer: Renderer2,private dialog: MatDialog) { }
 
   product: any;
   selectedMedia: any;
@@ -23,6 +25,8 @@ export class ViewProductComponent {
   ProductId: any = '';
   selectedColourCollection: any = null;
   selectedColourName: string = '';
+  @ViewChild('mainImage') mainImage!: ElementRef; // Reference to the main image element
+  zoomed: boolean = false;
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
@@ -98,5 +102,40 @@ export class ViewProductComponent {
     this.product.media = media;
     this.selectedMedia = media[0]?.src;
     this.selectedMediaType = media[0]?.type;
+  }
+
+  zoomImage(event: MouseEvent) {
+    const imageElement = this.mainImage?.nativeElement; // Get the native image element
+
+    if (!imageElement) {
+      console.error('Image element not found.');
+      return;
+    }
+    this.renderer.setStyle(imageElement, 'transform', `scale(1.8)`);
+    this.renderer.setStyle(imageElement, 'cursor', 'zoom-in');
+    this.renderer.setStyle(imageElement, 'transform-origin', `${event.offsetX}px ${event.offsetY}px`);
+  }
+
+  resetZoom(event: MouseEvent) {
+    const imageElement = this.mainImage?.nativeElement; // Get the native image element
+
+    if (!imageElement) {
+      console.error('Image element not found.');
+      return;
+    }
+
+    this.renderer.setStyle(imageElement, 'transform', 'none');
+    this.renderer.setStyle(imageElement, 'cursor', 'default');
+  }
+
+  openImg(path:any,size:number){
+    const dialogRef = this.dialog.open(ImageDialogComponent, {
+      // width: size+'px',
+      data: {path:path,width:size},  // Pass the current product data
+      width: '90%', // Set the desired width
+      height: '90%', // Set the desired height
+      maxWidth: '90vw', // Maximum width to prevent overflow
+      maxHeight: '90vh' // Maximum height to prevent overflow
+    });
   }
 }

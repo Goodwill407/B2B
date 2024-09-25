@@ -29,6 +29,7 @@ export class InventryStockComponent {
   first: number = 0;
   rows: number = 10;
   userProfile: any;
+  brand:string = '';
   totalResults: any;
 
   constructor(public authService: AuthService, private router:Router) { 
@@ -37,38 +38,32 @@ export class InventryStockComponent {
 
   ngOnInit(): void {
     this.getAllProducts();
+    this.getAllBrand();
   }
 
-  getAllProducts() {
+  getAllProducts(brand: string='') {
     let url = `products/filter-products?limit=${this.limit}&page=${this.page}`;
    
     const Object={
       "productBy": this.userProfile.email,
-      // "brand":this.filters.brand
+      "brand": brand
     }
-
-   
 
     this.authService.post(url,Object).subscribe((res: any) => {
       if (res) {
         this.totalResults = res.totalResults;
         this.products = res.results;
-        // this.products = res.results.map((product: any) => ({
-        //   designNo: product.designNumber,
-        //   selectedImageUrl: product.colourCollections[0]?.productImages[0] || '',
-        //   selectedImageUrls: product.colourCollections[0]?.productImages || [], // Initialize with all images for the first color
-        //   title: product.productTitle,
-        //   description: product.productDescription,
-        //   selectedColor: product.colourCollections[0]?.colour || '',
-        //   colors: product.colourCollections.map((c: any) => c.colour),
-        //   colourCollections: product.colourCollections,
-        //   stock: product.quantity || 2000, // Replace with actual stock value if available
-        //   id: product.id,
-        //   hoverIndex: 0
-        // }));
       }
     }, (error) => {
       console.log(error);
+    });
+  }
+
+  getAllBrand(){
+    this.authService.get(`brand?page=${0}&brandOwner=${this.userProfile.email}`).subscribe((res: any) => {
+      this.allBrand = res.results;
+    },(err: any) => {
+      // this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
     });
   }
 

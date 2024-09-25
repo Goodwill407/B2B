@@ -76,7 +76,7 @@ export const ROUTES: RouteInfo[] = [
       },
       {
         path: '/mnf/customise_profile',
-        title: 'Customise Profile for Customers',
+        title: 'Customize Profile for Customers',
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -402,7 +402,7 @@ export const ROUTES: RouteInfo[] = [
   }, 
   {
     path: '/retailer/retailer-profile',
-    title: `Profile`,
+    title: `Retailer's Profile`,
     iconType: 'material-icons-outlined',
     icon: 'person',
     class: '',
@@ -686,7 +686,7 @@ export const ROUTES: RouteInfo[] = [
   }, 
   {
     path: '/wholesaler/profile',
-    title: `Profile`,
+    title: `Wholesaler Profile`,
     iconType: 'material-icons-outlined',
     icon: 'person',
     class: '',
