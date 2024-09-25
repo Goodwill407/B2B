@@ -157,14 +157,14 @@
 }
 
 .share-icon:hover {
-
   transform: scale(1.5);
-  /* Scale up the icon */
 }
 
 .truncate-text {
-  white-space: nowrap;        
-  overflow: hidden;           
-  text-overflow: ellipsis;    
-  max-width: 50ch;    
-}       
+  display: -webkit-box;              
+  -webkit-line-clamp: 2;             
+  -webkit-box-orient: vertical;      
+  overflow: hidden;                  
+  text-overflow: ellipsis;           
+  max-width: 100ch;                        
+}

@@ -93,6 +93,15 @@ export class OrderedProductComponent {
     this.limit = event.rows;
     this.getAllProducts();
   }
+    
+  disableImage(product: any,color:string): boolean {
+    const selectedColor = product.colourCollections.find((c: any) => c.colour === color);
+    if (selectedColor.productImages.length > 0) {
+      return false;
+    }else{
+      return true;
+    }
+  }
 
   changeProductImage(product: any, color: string): void {
     const selectedColor = product.colourCollections.find((c: any) => c.colour === color);

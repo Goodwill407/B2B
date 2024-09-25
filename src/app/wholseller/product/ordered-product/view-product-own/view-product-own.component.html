@@ -104,18 +104,17 @@
                     <div class="">
                         <p class="mb-0"><small>Colours / Designs :</small> {{selectedColourName}} </p>
                         <div class="d-flex">
-                            <span *ngFor="let colour of product.colours" (click)="selectColourCollection(colour)"
+                            <span *ngFor="let colour of product.colours" [ngClass]="{'disabled': !(colour?.images?.length > 0)}" (click)="selectColourCollection(colour)"
                                 style="cursor: pointer; display: flex;">
                                 <div class="colour-info ">
-                                    <span *ngIf="colour.image; else colourBox">
-                                        <img [src]="authService.cdnPath + colour.image" alt="Colour Image"
-                                            class="colour-image">
-                                    </span>
-                                    <ng-template #colourBox>
-                                        <span [style.background]="colour.hex" class="colour-hex"></span>
-                                    </ng-template>
+                                  <span *ngIf="colour.image; else colourBox">
+                                    <img [src]="authService.cdnPath + colour.image" alt="Colour Image" class="colour-image">
+                                  </span>
+                                  <ng-template #colourBox>
+                                    <span [style.background]="colour.hex" class="colour-hex"></span>
+                                  </ng-template>
                                 </div>
-                            </span>
+                              </span>
                         </div>
                     </div>
 
