@@ -118,6 +118,14 @@ export class SigninComponent
     gotoHome(){
       window.open('https://fashiontradershub.com/','_self');
     }
+
+    navigate(email:string){
+      if(email){
+        this.router.navigate(['/authentication/forgot-password'],{queryParams:{email:email}});
+      }else{
+        this.communicationService.showNotification('snackbar-danger',`Please Enter your Email`,'bottom','center');
+      }      
+    }
   }
   
   

@@ -9,6 +9,8 @@ import { NgIf } from '@angular/common';
 import { WindowService } from 'window.service';
 import { RecaptchaVerifier, getAuth, signInWithPhoneNumber } from 'firebase/auth';
 import { AuthService, CommunicationService } from '@core';
+import { HttpClient } from '@angular/common/http';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-forgot-password',
@@ -23,77 +25,90 @@ import { AuthService, CommunicationService } from '@core';
     MatIconModule,
     MatButtonModule,
     RouterLink,
+    NgxSpinnerModule
   ],
 })
 export class ForgotPasswordComponent implements OnInit {
   mobForm!: UntypedFormGroup;
   passwordForm!: UntypedFormGroup;
-  submitted = false;
-  returnUrl!: string;
+  otpForm!: UntypedFormGroup;
+  otpFields: string[] = ['', '', '', '', '', ''];
   mobileVerified = false;
+  otpSend = false; // Track if OTP has been sent
+  userDetails: any = {}; // Will hold user data from the server
+  showPasswordForm = false;
   hide = true;
-  chide = true;
-
-  otpField: string = '';
-  otpSend: boolean = false;
-  winRef: any;
+  c_hide = true;
 
   constructor(
     private formBuilder: UntypedFormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private communicationService: CommunicationService,
-    windowRef: WindowService, private authSer:AuthService
-  ) {
-    this.winRef = windowRef;
-  }
+    private authSer: AuthService,
+    private http: HttpClient,
+    private spinner: NgxSpinnerService
+  ) {}
 
   ngOnInit() {
+    let email: string = '';
+    this.route.queryParamMap.subscribe(params => {
+      email = params.get('email') || '';
+      this.getUser(email);
+    });
+
+    // Mobile/email selection form
     this.mobForm = this.formBuilder.group({
-      username: ['', [Validators.required]],
+      username: [null, [Validators.required]], 
     });
 
-    this.passwordForm = this.formBuilder.group({
+    // OTP form
+    this.otpForm = this.formBuilder.group({
       otp: ['', [Validators.required, Validators.pattern('^[0-9]{6}$')]],
-      newPassword: ['', [Validators.required, Validators.minLength(8), this.strongPasswordValidator]],
-      confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
-    }, {
-      validator: this.MustMatch('newPassword', 'confirmPassword')
     });
 
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    // Password reset form
+    this.passwordForm = this.formBuilder.group({
+      password: ['', [Validators.required, Validators.minLength(8), this.strongPasswordValidator]],
+      confirmPassword: ['', Validators.required],
+    }, {
+      validator: this.mustMatch('password', 'confirmPassword')
+    });
   }
 
-  get f() { return this.mobForm.controls; }
-  get pf() { return this.passwordForm.controls; }
+  getUser(email: string) {
+    this.authSer.get('users/registered-user/' + email).subscribe((res: any) => {
+      this.userDetails = res;
+    });
+  }
 
   onSubmitMobForm() {
-    this.submitted = true;
     if (this.mobForm.invalid) {
       return;
-    } else {
-      // this.sendLoginOtp();
-      this.GetOtp();
     }
+    this.GetOtp();
   }
 
   onSubmitPasswordForm() {
     if (this.passwordForm.invalid) {
       return;
     }
-
-    // Call backend to reset the password
-    // Assuming backend call is successful
-    this.router.navigate(['/dashboard/main']);
+    const data = this.passwordForm.value;
+      delete data.confirmPassword
+      data.email = this.userDetails.email
+      this.authSer.post(`auth/reset-password`, data).subscribe((res: any) => {
+        this.communicationService.showNotification('snackbar-success', 'Password is Updated Successfully...!', 'bottom', 'center');
+        
+        this.router.navigate([`/authentication/signin`]);
+      }, (err: any) => {
+        this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
+      }); 
   }
 
-  MustMatch(controlName: string, matchingControlName: string) {
+  mustMatch(controlName: string, matchingControlName: string) {
     return (formGroup: UntypedFormGroup) => {
       const control = formGroup.controls[controlName];
       const matchingControl = formGroup.controls[matchingControlName];
-      if (matchingControl.errors && !matchingControl.errors['mustMatch']) {
-        return;
-      }
       if (control.value !== matchingControl.value) {
         matchingControl.setErrors({ mustMatch: true });
       } else {
@@ -108,63 +123,97 @@ export class ForgotPasswordComponent implements OnInit {
     const hasUpper = /[A-Z]/.test(value);
     const hasLower = /[a-z]/.test(value);
     const valid = hasNumber && hasUpper && hasLower;
-    if (!valid) {
-      return { strongPassword: true };
-    }
-    return null;
+    return valid ? null : { strongPassword: true };
   }
 
-  // ======= OTP ======
-  // sendLoginOtp() {
-  //   const auth = getAuth();
-  //   this.winRef.recaptchaVerifier = new RecaptchaVerifier(
-  //     'recaptcha-container',
-  //     {
-  //       size: 'invisible',
-  //     },
-  //     auth
-  //   );
-  //   const appVerifier = this.winRef.recaptchaVerifier;
-
-  //   const phoneNumber = `+1${this.mobForm.value.mobNumber}`; // Ensure proper phone number format
-  //   signInWithPhoneNumber(auth, phoneNumber, appVerifier)
-  //     .then((confirmationResult) => {
-  //       this.otpSend = true;
-  //       this.winRef.confirmationResult = confirmationResult;
-  //       this.communicationService.showNotification('snackbar-success', 'OTP has been sent to your mobile number...!!!', 'bottom', 'center');
-  //     })
-  //     .catch((error) => {
-  //       if (error.message == "INVALID_PHONE_NUMBER : Invalid format.") {
-  //         this.communicationService.showNotification('snackbar-danger', 'Invalid Mobile No...!!!', 'bottom', 'center');
-  //       } else if (error.message == "CAPTCHA_CHECK_FAILED : Hostname match not found") {
-  //         this.communicationService.showNotification('snackbar-danger', 'Captcha check failed...!!!', 'bottom', 'center');
-  //       }
-  //     });
-  // }
-
   GetOtp() {
-    // const userId = this.loginForm.value.userId;
-    this.authSer.post('auth/otp-send', this.mobForm.value).subscribe((data: any) => {
-      if (data) {
-        this.otpSend = true;
-        this.mobileVerified = true;
-        this.communicationService.showNotification('snackbar-success', 'OTP has been sent to your mobile number...!!!', 'bottom', 'center');
-      }
-    }, (error) => {
-      // this.error = 'Invalid User Id'
-      // this.toastr.error('', 'Email Username or Password!');
-      this.communicationService.showNotification('snackbar-danger', 'Invalid User Id...!!!', 'bottom', 'center');
+    const username = this.mobForm.get('username')?.value;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    this.spinner.show();
+    if (emailRegex.test(username)) {
+      this.sendEmailOtp(username, this.userDetails?.fullName);
+    } else {
+      this.sendMobileOtp(username);
+    }
+  }
+  
+  sendMobileOtp(mobileNumber: string) {
+    const otpUrl = `https://2factor.in/API/V1/d5e40971-765b-11ef-8b17-0200cd936042/SMS/+91${mobileNumber}/AUTOGEN/OTP1`;
+    this.http.get(otpUrl).subscribe((res: any) => {
+      this.otpSend = true;
+      this.mobileVerified = true;
+      this.communicationService.showNotification('snackbar-success', 'Mobile OTP sent successfully!', 'bottom', 'center');
+      this.spinner.hide();
+    }, (err: any) => {
+      this.spinner.hide();
+      this.communicationService.showNotification('snackbar-danger', 'Failed to send mobile OTP', 'bottom', 'center');
+    });
+  }
+  
+  sendEmailOtp(email: string, fullName: string) {
+    this.authSer.post(`auth/forgot-password?email=${email}&fullName=${fullName}`, {}).subscribe((res: any) => {
+      this.otpSend = true;
+      this.mobileVerified = true;
+      this.communicationService.showNotification('snackbar-success', 'Email verification sent successfully!', 'bottom', 'center');
+      this.spinner.hide();
+    }, (err: any) => {
+      this.spinner.hide();
+      this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
     });
   }
 
-  verifyOtp() {
-    this.winRef.confirmationResult
-      .confirm(this.otpField)
-      .then((result: any) => {
-        // this.register();
-      })
-      .catch((error: any) => {
-        this.communicationService.showNotification('snackbar-danger', 'Wrong OTP...!!!', 'bottom', 'center');
-      });
+  verifyOtpForm() {
+    const username = this.mobForm.get('username')?.value;
+    const otp = this.otpForm.get('otp')?.value;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    this.spinner.show();
+    if (emailRegex.test(username)) {
+      this.verifyEmailOtp(username, otp);
+    } else {
+      this.verifyMobileOtp(username, otp);
+    }
+  }
+  
+  verifyMobileOtp(mobileNumber: string, otp: string) {
+    const verifyUrl = `https://2factor.in/API/V1/d5e40971-765b-11ef-8b17-0200cd936042/SMS/VERIFY3/+91${mobileNumber}/${otp}`;
+    this.http.get(verifyUrl).subscribe((res: any) => {
+      this.showPasswordForm = true;
+      this.spinner.hide();
+    }, (err: any) => {
+      this.spinner.hide();
+      this.communicationService.showNotification('snackbar-danger', 'Mobile OTP verification failed', 'bottom', 'center');
+    });
+  }
+  
+  verifyEmailOtp(email: string, otp: string) {
+    this.authSer.post(`auth/verify-email?email=${email}&otp=${otp}`, {}).subscribe((res: any) => {
+      this.showPasswordForm = true;
+      this.spinner.hide();
+    }, (err: any) => {
+      this.spinner.hide();
+      this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
+    });
+  }
+
+  maskEmail(email: string): string {
+    const prefix = email.split('@')[0]; 
+    const domain = email.split('@')[1]; 
+    const visiblePrefix = prefix.substring(0, 2);  
+    const visibleSuffix = prefix.substring(prefix.length - 2); 
+    const maskedMiddle = '*'.repeat(prefix.length - 4);
+    return visiblePrefix + maskedMiddle + visibleSuffix + '@' + domain;
+  }
+  
+  maskMobNo(mobNo: string): string {
+    return mobNo.slice(0, 2) + '****' + mobNo.slice(-2);
+  }
+
+  onOtpChange(index: number, event: any) {
+    const value = event.target.value;
+    if (value.length === 1 && index < 5) {
+      (document.getElementById(`otp${index + 2}`) as HTMLElement).focus();
+    }
+    this.otpFields[index] = value;
+    this.otpForm.controls['otp'].setValue(this.otpFields.join(''));
   }
 }
