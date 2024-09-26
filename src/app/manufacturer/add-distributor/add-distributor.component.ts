@@ -51,7 +51,7 @@ export class AddDistributorComponent {
   initializeForm() {
     this.mgfRegistrationForm = this.fb.group({
       fullName: ['', Validators.required],
-      companyName: ['',],
+      companyName: ['',Validators.required],
       role: ['', Validators.required],
       code: ['+91', Validators.required],
       mobileNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],

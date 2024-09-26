@@ -30,6 +30,7 @@ export class ViewProfileComponent {
   filteredDiscounts:any
   addDiscountBtnHide=true;
   isDropdownDisabled:boolean=false;
+  retailerDiscount:any
 
 
   constructor(private fb: FormBuilder, private route: ActivatedRoute, private authService: AuthService, private location: Location,private datePipe: DatePipe
@@ -56,8 +57,14 @@ export class ViewProfileComponent {
             res.registerOnFTH = res.registerOnFTH ? this.datePipe.transform(res.registerOnFTH, 'yyyy-MM-dd') : null;
             this.mgfRegistrationForm.patchValue(res);
             this.mgfRegistrationForm.disable();
-            this.getAllWholesalerCategory()
-            this.getDiscountData()
+            this.getAllWholesalerCategoryOrRetailerCategory()
+            if(this.user=='wholesaler'){
+              this.getWholesalerDiscountData() 
+            }
+            else if(this.user=='retailer'){
+              this.getRetailerDiscountData()
+            }
+                     
           } else {
           }
         },
@@ -115,43 +122,58 @@ export class ViewProfileComponent {
     this.location.back();
   } 
 
-  getAllWholesalerCategory() {
+  getAllWholesalerCategoryOrRetailerCategory() {
     const email=this.userEmail.email
-    this.authService.get(`wholesaler-category?categoryBy=${this.authService.currentUserValue.email}`).subscribe((res: any) => {
+    this.authService.get(`${this.user}-category?categoryBy=${this.authService.currentUserValue.email}`).subscribe((res: any) => {
       this.wholesalerCategory = res.results;     
     });
   }
-  // selectCategory(event: any) {
-  //   // Use JSON.parse to convert the selected object string back to an object
-   
-  //   console.log(this.SelectedCategory); // Log the entire object for debugging
-  // }
+ 
 
   addDiscountForWholesaler() {
-    // const wholesalerId = this.allWholselerData.id; // Replace with actual wholesaler ID
-    const objBody = {
-      email: this.allWholselerData.email,
-      discountGivenBy: this.userEmail.email, // Use the correct property of the selected object
-      category: this.SelectedCategory.category, // Use the correct property name
-      productDiscount: this.SelectedCategory.productDiscount, // Example; replace with actual property names
-      shippingDiscount: this.SelectedCategory.shippingDiscount, // Example; replace with actual property names
-    };
-  
-    this.authService.post(`wholesaler/assigndiscount`, objBody).subscribe(
+  const objBody = {
+    email: this.allWholselerData.email,
+    discountGivenBy: this.userEmail.email, // Use the correct property of the selected object
+    category: this.SelectedCategory.category, // Assuming this.SelectedCategory has category
+    productDiscount: this.SelectedCategory.productDiscount, // Replace with actual property names
+    shippingDiscount: this.SelectedCategory.shippingDiscount, // Replace with actual property names
+  };
+
+  // Initialize URL variable
+  let url = '';
+
+  if (this.user === 'wholesaler') {
+    url = `wholesaler/assigndiscount`;
+  } else if (this.user === 'retailer') {
+    url = `wholesaler/retailer/assigndiscount`; // Adjust URL according to your backend API
+  }
+
+  // Ensure URL is set before making the API call
+  if (url) {
+    this.authService.post(url, objBody).subscribe(
       (res: any) => {
-        if(res){
-          this.isDropdownDisabled = true; // Disable the dropdown if category is found
-          this.addDiscountBtnHide = false; // Show the button
+        if (res) {
+          this.isDropdownDisabled = true; // Disable the dropdown if a category is selected
+          this.addDiscountBtnHide = false; // Show the "Add Discount" button
+          this.communicationService.showNotification(
+            'snackbar-success',
+            'Added Discount successfully',
+            'bottom',
+            'center'
+          );
         }
-        this.communicationService.showNotification('snackbar-success', 'Added Discount successfully','bottom','center');
       },
       (error) => {
         console.error('Error:', error); // Handle error response
       }
     );
+  } else {
+    console.error('Invalid user type for assigning discount'); // Error for undefined user type
   }
+}
 
-  getDiscountData() {
+
+  getWholesalerDiscountData() {
     this.authService.get(`wholesaler/getdiscount/${this.allWholselerData.id}/${this.userEmail.email}`).subscribe(
       (res: any) => {
         if (res) {
@@ -175,7 +197,33 @@ export class ViewProfileComponent {
         console.error("Error fetching discount data", error);
       }
     );
-  }
+  } 
+
+  getRetailerDiscountData() {
+    this.authService.get(`wholesaler/retailer/getdiscount/${this.allWholselerData.id}/${this.userEmail.email}`).subscribe(
+      (res: any) => {
+        if (res) {
+          this.filteredDiscounts = res;
+
+          // Find the matching category from the wholesalerCategory array
+          this.SelectedCategory = this.wholesalerCategory.find(
+            (category: any) => category.category === res.category
+          );
+
+          // Set the dropdown's disabled state based on your condition
+          if (this.SelectedCategory) {
+            if (this.SelectedCategory.category) {
+              this.isDropdownDisabled = true; // Disable the dropdown if category is found
+              this.addDiscountBtnHide = false; // Show the button
+            }
+          }
+        }
+      },
+      (error) => {
+        console.error("Error fetching discount data", error);
+      }
+    );
+  } 
   
   editDiscountCategory(){
     this.addDiscountBtnHide=true;   
