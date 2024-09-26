@@ -40,7 +40,7 @@
               </ng-template>
             </p-table>
             <!-- <span *ngIf="!allRequestedList || allRequestedList.length == 0"
-              class="data-not-found d-flex justify-content-center align-items-center">Data Not Found</span> -->
+              class="data-not-found d-flex justify-content-center align-items-center"> </span> -->
             <p-paginator  *ngIf="allRequestedList.length > 0" (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows" [totalRecords]="totalResults"
               [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
           </div>

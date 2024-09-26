@@ -31,8 +31,8 @@
                   </ng-template>
                 </p-table>
                 <span *ngIf="!allWholesaler || allWholesaler.length == 0"
-                  class="data-not-found d-flex justify-content-center align-items-center">Data Not Found</span>
-                  <p-paginator (onPageChange)="onPageChange($event)"
+                  class="data-not-found d-flex justify-content-center align-items-center"> </span>
+                  <p-paginator *ngIf="allWholesaler && allWholesaler.length > 5" (onPageChange)="onPageChange($event)"
                   [first]="first" [rows]="rows" [totalRecords]="totalResults"
                   [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
               </div>
