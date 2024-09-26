@@ -49,7 +49,7 @@ export class ViewRetailersDetailsComponent {
   
   acceptWholselerRequest(): void {
     // Construct the API endpoint URL dynamically
-    const endpoint = `request/accept/${this.CompanyData.id}/${this.data.requestByEmail}/${this.data.email}`;
+    const endpoint = `request/accept/${this.data.id}/${this.data.requestByEmail}/${this.data.email}`;
   
     // Create the request payload with the updated status
     const payload = {
@@ -70,32 +70,5 @@ export class ViewRetailersDetailsComponent {
       }
     });
   }
-
-  // requestAcceptOrRejectChange(data: any, status: string): void {
-  //   // Construct the API endpoint URL dynamically
-  //   const endpoint = `request/accept/${data.id}/${data.requestByEmail}/${data.email}`;
-  
-  //   // Create the request payload with the updated status
-  //   const payload = {
-  //     status: status
-  //   };
-  
-  //   // Send a POST request to the backend using authService
-  //   this.authService.post(endpoint, payload).subscribe({
-  //     next: (res: any) => {
-  //       // Reload the manufacturer list after the request is processed
-  //       this.getAllWholesaler();
-        
-  //       // Show a notification based on the status
-  //       const message = status === 'accepted' ? 'Request Accepted successfully' : 'Request Rejected successfully';
-  //       this.communicationService.showNotification('snackbar-success', message, 'bottom', 'center');
-  //     },
-  //     error: (err: any) => {
-  //       // Handle errors gracefully
-  //       console.error('Error processing request:', err);
-  //       this.communicationService.showNotification('snackbar-error', 'An error occurred while processing the request', 'bottom', 'center');
-  //     }
-  //   });
-  // }
 
 }
