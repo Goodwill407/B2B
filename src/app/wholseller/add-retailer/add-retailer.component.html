@@ -29,7 +29,7 @@
                             </div>
 
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                                <label class="lable-input" for="companyName">Company/Firm Name :</label>
+                                <label class="lable-input" for="companyName">Company/Firm Name<span>*</span>:</label>
                                 <input type="text" id="companyName" formControlName="companyName" class="form-control"
                                     placeholder="Company Name" />
                                 <div *ngIf="mgfRegistrationForm.get('companyName')?.touched && mgfRegistrationForm.get('companyName')?.invalid"

@@ -82,7 +82,7 @@ export class AddNewProductsComponent {
   showFlag: boolean = false;
   visibleFields: any = []
 
-  allWomensleevetype: any = []
+  
   allTopstyle: any = []
   allEmbellishmentfeature: any = []
   allNoofpockets: any = []
@@ -92,7 +92,29 @@ export class AddNewProductsComponent {
   allRisestyle: any = []
   allTrouserstyle: any = []
   allTrouserpocket: any = []
+  // for womens dropdown master
+  allWomensleevetype: any = []
+  AllfitType:any=[]
+  Allneckline:any=[]
+  Allelasticity:any=[]  
+  AllworkType:any=[]
+  Allcollarstyle:any=[]   
+  AllwaistType:any=[]
+  AllwaistRise:any=[]
+  AllweaveType:any=[]
+  AllethnicDesign:any=[]
+  AllsareeStyle:any=[]
+  AllapparelSilhouette:any=[]  
+  AllethnicBottomsStyle:any=[]
+  AllwomenStyle:any=[]  
+  AllfinishType:any=[]
+  AllitemStyle:any=[]
+  Allsocksstyle:any=[]
+  allTrourserPocket:any=[];
+  allIncludedComponent:any=[];  
+  allItemLength:any=[];
 
+  
 
 
 
@@ -183,6 +205,21 @@ export class AddNewProductsComponent {
     this.getTrouserpocket()
     this.getTrouserstyle()
     this.getRisestyle()
+    this.getAllSocksStyle()
+    this.getAllTrourserPocket()
+    this.getAllIncludedComponent()   
+    this.getAllCollarStyle()
+    this.getAllWomenStyle()
+    this.getAllFinishType()
+    this.getAllEthnicBottomsStyle()
+    this.getAllApparelSilhouette()
+    this.getAllSareeStyle()
+    this.getAllEthnicDesign()
+    this.getAllWeaveType()
+    this.getAllWaistType() 
+    this.getallItemLength()
+    this.getAllWorkType()
+    this.getAllelasticity()
     if (this.ProductId) {
       this.getProductDataById()
     }
@@ -217,7 +254,7 @@ export class AddNewProductsComponent {
       const validators = [];
 
       // Example: Adding required validator for some fields
-      if (['material', 'fabricPattern'].includes(field)) {
+      if (['material'].includes(field)) {
         validators.push(Validators.required);
       }
 
@@ -1106,4 +1143,306 @@ export class AddNewProductsComponent {
         console.log('error')
       })
   }
+
+  // master for womens data
+
+
+getAllWaistType() {
+    this.authService.get('waisttype').subscribe(res => {
+        if (res) {
+            this.AllwaistType = res.results;
+        }
+    },
+    error => {
+        console.log('error');
+    });
+}
+
+getAllWeaveType() {
+    this.authService.get('weavetype').subscribe(res => {
+        if (res) {
+            this.AllweaveType = res.results;
+        }
+    },
+    error => {
+        console.log('error');
+    });
+}
+
+getAllEthnicDesign() {
+    this.authService.get('ethnicdesign').subscribe(res => {
+        if (res) {
+            this.AllethnicDesign = res.results;
+        }
+    },
+    error => {
+        console.log('error');
+    });
+}
+
+getAllSareeStyle() {
+    this.authService.get('sareestyle').subscribe(res => {
+        if (res) {
+            this.AllsareeStyle = res.results;
+        }
+    },
+    error => {
+        console.log('error');
+    });
+}
+
+getAllWomenStyle() {
+    this.authService.get('womenstyle').subscribe(res => {
+        if (res) {
+            this.AllwomenStyle = res.results;
+        }
+    },
+    error => {
+        console.log('error');
+    });
+}
+
+getAllWorkType() {
+    this.authService.get('worktype').subscribe(res => {
+        if (res) {
+            this.AllworkType = res.results;
+        }
+    },
+    error => {
+        console.log('error');
+    });
+}
+
+getAllFinishType() {
+    this.authService.get('finishtype').subscribe(res => {
+        if (res) {
+            this.AllfinishType = res.results;
+        }
+    },
+    error => {
+        console.log('error');
+    });
+}
+
+getAllApparelSilhouette() {
+    this.authService.get('apparelsilhouette').subscribe(res => {
+        if (res) {
+            this.AllapparelSilhouette = res.results;
+        }
+    },
+    error => {
+        console.log('error');
+    });
+}
+
+getAllEthnicBottomsStyle() {
+    this.authService.get('ethnic-bottoms-style').subscribe(res => {
+        if (res) {
+            this.AllethnicBottomsStyle = res.results;
+        }
+    },
+    error => {
+        console.log('error');
+    });
+}
+
+//   getAllBlazerClosureType() {
+//     this.authService.get('blazerclousertype').subscribe(res => {
+//         if (res) {
+//             this.AllblazerClosureType = res.results;
+//         }
+//     },
+//     error => {
+//         console.log('error');
+//     });
+// }
+
+// getAllWomenKurtaLength() {
+//     this.authService.get('women-kurta-length').subscribe(res => {
+//         if (res) {
+//             this.AllwomenKurtaLength = res.results;
+//         }
+//     },
+//     error => {
+//         console.log('error');
+//     });
+// }
+
+// getAllBackStyle() {
+//     this.authService.get('backstyle').subscribe(res => {
+//         if (res) {
+//             this.AllbackStyle = res.results;
+//         }
+//     },
+//     error => {
+//         console.log('error');
+//     });
+// }
+
+// getAllBraSize() {
+//     this.authService.get('brasize').subscribe(res => {
+//         if (res) {
+//             this.AllbraSize = res.results;
+//         }
+//     },
+//     error => {
+//         console.log('error');
+//     });
+// }
+
+// getAllBraStyle() {
+//     this.authService.get('brastyle').subscribe(res => {
+//         if (res) {
+//             this.AllbraStyle = res.results;
+//         }
+//     },
+//     error => {
+//         console.log('error');
+//     });
+// }
+
+// getAllBraPadType() {
+//     this.authService.get('brapadtype').subscribe(res => {
+//         if (res) {
+//             this.AllbraPadType = res.results;
+//         }
+//     },
+//     error => {
+//         console.log('error');
+//     });
+// }
+
+// getAllBraClosure() {
+//     this.authService.get('braclosure').subscribe(res => {
+//         if (res) {
+//             this.AllbraClosure = res.results;
+//         }
+//     },
+//     error => {
+//         console.log('error');
+//     });
+// }
+
+// getAllCupSize() {
+//     this.authService.get('cupsize').subscribe(res => {
+//         if (res) {
+//             this.AllcupSize = res.results;
+//         }
+//     },
+//     error => {
+//         console.log('error');
+//     });
+// }
+
+// getAllOpacity() {
+//     this.authService.get('opacity').subscribe(res => {
+//         if (res) {
+//             this.Allopacity = res.results;
+//         }
+//     },
+//     error => {
+//         console.log('error');
+//     });
+// }
+
+// getAllEntityType() {
+//     this.authService.get('entitytype').subscribe(res => {
+//         if (res) {
+//             this.AllentityType = res.results;
+//         }
+//     },
+//     error => {
+//         console.log('error');
+//     });
+// }
+
+// getAllSizeSet() {
+//     this.authService.get('size-set').subscribe(res => {
+//         if (res) {
+//             this.AllsizeSet = res.results;
+//         }
+//     },
+//     error => {
+//         console.log('error');
+//     });
+// }
+
+
+
+getAllSocksStyle() {
+    this.authService.get('socks-style').subscribe(res => {
+        if (res) {
+            this.Allsocksstyle = res.results;
+        }
+    },
+    error => {
+        console.log('error');
+    });
+}
+
+getAllTrourserPocket() {
+  this.authService.get('trouserpocket').subscribe(res => {
+      if (res) {
+          this.allTrourserPocket = res.results;
+      }
+  },
+  error => {
+      console.log('error');
+  });
+}
+getAllIncludedComponent() {
+  this.authService.get('include-componenet').subscribe(res => {
+      if (res) {
+          this.allTrourserPocket = res.results;
+      }
+  },
+  error => {
+      console.log('error');
+  });
+}
+
+getAllCollarStyle() {
+  this.authService.get('collar-style').subscribe(res => {
+      if (res) {
+          this.Allcollarstyle = res.results;
+      }
+  },
+  error => {
+      console.log('error');
+  });
+}
+
+getallItemLength() {
+  this.authService.get('length').subscribe(res => {
+      if (res) {
+          this.allItemLength = res.results;
+      }
+  },
+  error => {
+      console.log('error');
+  });
+}
+
+getAllelasticity(){
+  this.authService.get('elastic').subscribe(res => {
+    if (res) {
+        this.Allelasticity = res.results;
+    }
+},
+error => {
+    console.log('error');
+});
+}
+
+// getAllFitStyle(){
+//   this.authService.get('fit-type').subscribe(res => {
+//     if (res) {
+//         this.allFitStyle = res.results;
+//     }
+// },
+// error => {
+//     console.log('error');
+// });
+// }
+
 }
