@@ -45,42 +45,6 @@ export class ManageDistributorComponent {
 
   distributors: any = [];
 
-//   getPendingInvites(searchKey: string = '') {
-//     // Modify the API request to include the searchKey parameter
-//     this.authService.get(`manufacturers/get-referred/manufactures?page=${this.page}&limit=${this.limit}&refByEmail=${this.user.email}&searchKeywords=${searchKey}`).subscribe((res: any) => {
-//         this.distributors = res.results;
-//         const dicounts = this.distributors.discountGiven   
-//         const discount = dicounts.filter(data => distributors.email === data.discountGivenBy  )  
-//         this.totalResults = res.totalResults;
-//     });
-// }
-// getPendingInvitesWholseler(searchKey: string = '') {
-//   this.authService
-//     .get(
-//       `manufacturers/get-referred/manufactures?page=${this.page}&limit=${this.limit}&refByEmail=${this.user.email}&searchKeywords=${searchKey}`
-//     )
-//     .subscribe((res: any) => {
-//       this.distributors = res.results;
-//       this.totalResults = res.totalResults;
-
-//       // Process discounts for each distributor
-//       this.distributors.forEach((distributor: any) => {
-//         if (distributor.discountGiven?.length) {
-//           // Filter discounts for the distributor by email
-//           const filteredDiscounts = distributor.discountGiven.filter(
-//             (discount: any) => discount.discountGivenBy === this.user.email
-//           );
-
-//           // Create a comma-separated list of discount categories
-//           distributor.discountCategories = filteredDiscounts.length
-//             ? filteredDiscounts.map((discount: any) => discount.discountCategory).join(', ')
-//             : 'No Discounts';
-//         } else {
-//           distributor.discountCategories = 'No Discounts';
-//         }
-//       });
-//     });
-// }
 
 getPendingInvitesWholseler(searchKey: string = '') {
   this.authService
@@ -110,7 +74,6 @@ getPendingInvitesWholseler(searchKey: string = '') {
     });
 }
 
-
 getPendingInvitesRetailers(searchKey: string = '') {
   this.authService
     .get(
@@ -120,24 +83,25 @@ getPendingInvitesRetailers(searchKey: string = '') {
       this.retailers = res.results;
       this.totalResults = res.totalResults;
 
-      // Process discounts for each distributor
-      this.retailers.forEach((retailers: any) => {
-        if (retailers.discountGiven?.length) {
-          // Filter discounts for the distributor by email
-          const filteredDiscounts = retailers.discountGiven.filter(
+      // Process discounts for each retailer
+      this.retailers.forEach((retailer: any) => {
+        if (retailer.discountGiven?.length) {
+          // Filter discounts for the retailer by email
+          const filteredDiscounts = retailer.discountGiven.filter(
             (discount: any) => discount.discountGivenBy === this.user.email
           );
 
           // Create a comma-separated list of discount categories
-          retailers.discountCategories = filteredDiscounts.length
-            ? filteredDiscounts.map((discount: any) => discount.discountCategory).join(', ')
+          retailer.discountCategories = filteredDiscounts.length
+            ? filteredDiscounts.map((discount: any) => discount.category).join(', ') // Corrected from discountCategory to category
             : 'No Discounts';
         } else {
-          retailers.discountCategories = 'No Discounts';
+          retailer.discountCategories = 'No Discounts';
         }
       });
     });
 }
+
 
 
 

@@ -58,7 +58,13 @@ export class ViewProfileComponent {
             this.mgfRegistrationForm.patchValue(res);
             this.mgfRegistrationForm.disable();
             this.getAllWholesalerCategoryOrRetailerCategory()
-            this.getWholesalerDiscountData()           
+            if(this.user=='wholesaler'){
+              this.getWholesalerDiscountData() 
+            }
+            else if(this.user=='retailer'){
+              this.getRetailerDiscountData()
+            }
+                     
           } else {
           }
         },
@@ -125,31 +131,76 @@ export class ViewProfileComponent {
  
 
   addDiscountForWholesaler() {
-    // const wholesalerId = this.allWholselerData.id; // Replace with actual wholesaler ID
-    const objBody = {
-      email: this.allWholselerData.email,
-      discountGivenBy: this.userEmail.email, // Use the correct property of the selected object
-      category: this.SelectedCategory.category, // Use the correct property name
-      productDiscount: this.SelectedCategory.productDiscount, // Example; replace with actual property names
-      shippingDiscount: this.SelectedCategory.shippingDiscount, // Example; replace with actual property names
-    };
-  
-    this.authService.post(`wholesaler/assigndiscount`, objBody).subscribe(
+  const objBody = {
+    email: this.allWholselerData.email,
+    discountGivenBy: this.userEmail.email, // Use the correct property of the selected object
+    category: this.SelectedCategory.category, // Assuming this.SelectedCategory has category
+    productDiscount: this.SelectedCategory.productDiscount, // Replace with actual property names
+    shippingDiscount: this.SelectedCategory.shippingDiscount, // Replace with actual property names
+  };
+
+  // Initialize URL variable
+  let url = '';
+
+  if (this.user === 'wholesaler') {
+    url = `wholesaler/assigndiscount`;
+  } else if (this.user === 'retailer') {
+    url = `wholesaler/retailer/assigndiscount`; // Adjust URL according to your backend API
+  }
+
+  // Ensure URL is set before making the API call
+  if (url) {
+    this.authService.post(url, objBody).subscribe(
       (res: any) => {
-        if(res){
-          this.isDropdownDisabled = true; // Disable the dropdown if category is found
-          this.addDiscountBtnHide = false; // Show the button
+        if (res) {
+          this.isDropdownDisabled = true; // Disable the dropdown if a category is selected
+          this.addDiscountBtnHide = false; // Show the "Add Discount" button
+          this.communicationService.showNotification(
+            'snackbar-success',
+            'Added Discount successfully',
+            'bottom',
+            'center'
+          );
         }
-        this.communicationService.showNotification('snackbar-success', 'Added Discount successfully','bottom','center');
       },
       (error) => {
         console.error('Error:', error); // Handle error response
       }
     );
+  } else {
+    console.error('Invalid user type for assigning discount'); // Error for undefined user type
   }
+}
+
 
   getWholesalerDiscountData() {
     this.authService.get(`wholesaler/getdiscount/${this.allWholselerData.id}/${this.userEmail.email}`).subscribe(
+      (res: any) => {
+        if (res) {
+          this.filteredDiscounts = res;
+
+          // Find the matching category from the wholesalerCategory array
+          this.SelectedCategory = this.wholesalerCategory.find(
+            (category: any) => category.category === res.category
+          );
+
+          // Set the dropdown's disabled state based on your condition
+          if (this.SelectedCategory) {
+            if (this.SelectedCategory.category) {
+              this.isDropdownDisabled = true; // Disable the dropdown if category is found
+              this.addDiscountBtnHide = false; // Show the button
+            }
+          }
+        }
+      },
+      (error) => {
+        console.error("Error fetching discount data", error);
+      }
+    );
+  } 
+
+  getRetailerDiscountData() {
+    this.authService.get(`wholesaler/retailer/getdiscount/${this.allWholselerData.id}/${this.userEmail.email}`).subscribe(
       (res: any) => {
         if (res) {
           this.filteredDiscounts = res;
