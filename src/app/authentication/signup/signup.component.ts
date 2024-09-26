@@ -38,7 +38,7 @@ export class SignupComponent implements OnInit {
   c_hide = true;
   otpFields: string[] = ['', '', '', '', '', ''];
   email: any = '';
-  allIdentity:any;
+  allIdentity: any;
 
   countryCode = [
     // { countryName: 'United States', flag: 'assets/images/flags/us.jpg', code: '+1' },
@@ -68,13 +68,13 @@ export class SignupComponent implements OnInit {
     }
   }
 
-  getallIdentity(){
-    this.authService.get('entitytype').subscribe((data:any)=>{
-      if(data){
-        this.allIdentity=data.results;
+  getallIdentity() {
+    this.authService.get('entitytype').subscribe((data: any) => {
+      if (data) {
+        this.allIdentity = data.results;
       }
 
-    },error=>{
+    }, error => {
 
     })
 
@@ -88,7 +88,8 @@ export class SignupComponent implements OnInit {
       code: ['+91', Validators.required],
       mobileNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       email: [this.email, [Validators.required, Validators.email]],
-      otp: [''],
+      otp: [''], // For email OTP
+      mobileOtp: [''], // For mobile OTP
       refByEmail: [''],
     });
   }
@@ -105,27 +106,30 @@ export class SignupComponent implements OnInit {
   onSubmit() {
     const data = this.mgfRegistrationForm.value;
     data.refByEmail = this.invitedBy ? this.invitedBy[0] : '';
+
     if (this.otpStep) {
-      this.authService.post(`auth/verify-email?email=${data.email}&otp=${data.otp}`, {}).subscribe((res: any) => {
-        console.log('Form submitted with OTP:', res);
-        this.showPasswordForm = true;
-      });
+      // Verify both email OTP and mobile OTP
+      this.verifyEmailOtp(data.email, data.otp);
+      this.verifyMobileOtp(data.mobileNumber, data.mobileOtp);
     } else {
       if (this.mgfRegistrationForm.valid) {
         delete data.otp;
+        delete data.mobileOtp; // Remove otp fields from the registration data
         data.mobileNumber = String(data.mobileNumber);
         this.spinner.show();
+
+        // Call register API
         this.authService.post('auth/register', data).subscribe((res: any) => {
-          this.authService.post(`auth/send-verification-email?email=${data.email}`, {}).subscribe((res: any) => {
-            this.otpStep = true;
-            this.mgfRegistrationForm.controls['otp'].setValidators([Validators.required, Validators.minLength(6)]);
-            this.mgfRegistrationForm.controls['otp'].updateValueAndValidity();
-            console.log('Verification email sent successfully');
-            this.spinner.hide();
-          }, (err: any) => {
-            this.spinner.hide();
-            this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
-          });
+          // Send both email OTP and mobile OTP
+          this.sendEmailOtp(data.email, data.fullName);
+          this.sendMobileOtp(data.mobileNumber);
+
+          this.otpStep = true;
+          this.mgfRegistrationForm.controls['otp'].setValidators([Validators.required, Validators.minLength(6)]);
+          this.mgfRegistrationForm.controls['mobileOtp'].setValidators([Validators.required, Validators.minLength(6)]);
+          this.mgfRegistrationForm.controls['otp'].updateValueAndValidity();
+          this.mgfRegistrationForm.controls['mobileOtp'].updateValueAndValidity();
+          this.spinner.hide();
         }, (err: any) => {
           this.spinner.hide();
           this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
@@ -133,6 +137,26 @@ export class SignupComponent implements OnInit {
       }
     }
   }
+
+  sendMobileOtp(mobileNumber: string) {
+    const otpUrl = `https://2factor.in/API/V1/d5e40971-765b-11ef-8b17-0200cd936042/SMS/+91${mobileNumber}/AUTOGEN/OTP1`;
+    this.http.get(otpUrl).subscribe((res: any) => {
+      console.log('Mobile OTP sent successfully');
+    }, (err: any) => {
+      console.log('Error sending mobile OTP:', err);
+      this.communicationService.showNotification('snackbar-danger', 'Failed to send mobile OTP', 'bottom', 'center');
+    });
+  }
+
+  sendEmailOtp(email: string, fullName: string) {
+    this.authService.post(`auth/send-verification-email?email=${email}&fullName=${fullName}`, {}).subscribe((res: any) => {
+      console.log('Verification email sent successfully');
+    }, (err: any) => {
+      this.spinner.hide();
+      this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
+    });
+  }
+  
 
   passwordSubmit() {
     if (this.setPasswordFrom.valid) {
@@ -175,12 +199,47 @@ export class SignupComponent implements OnInit {
     };
   }
 
+  onMobileOtpChange(index: number, event: any): void {
+    const value = event.target.value;
+    const input = event.target as HTMLInputElement;
+    const nextInput = document.getElementById(`mobileOtp${index + 2}`) as HTMLInputElement;
+    if (input.value.length === 1 && nextInput) {
+      nextInput.focus(); // Move to the next input field
+    }
+    this.otpFields[index] = value;
+    this.mgfRegistrationForm.controls['mobileOtp'].setValue(this.otpFields.join(''));
+  }
+  
+
+  verifyMobileOtp(mobileNumber: string, mobileOtp: string) {
+    const verifyUrl = `https://2factor.in/API/V1/d5e40971-765b-11ef-8b17-0200cd936042/SMS/VERIFY3/+91${mobileNumber}/${mobileOtp}`;
+    this.http.get(verifyUrl).subscribe((res: any) => {
+      console.log('Mobile OTP verified successfully:', res);
+      this.showPasswordForm = true;
+    }, (err: any) => {
+      console.log('Error verifying mobile OTP:', err);
+      this.showPasswordForm = false;
+      this.communicationService.showNotification('snackbar-danger', 'Mobile OTP verification failed', 'bottom', 'center');
+    });
+  }
+
+  verifyEmailOtp(email: string, otp: string) {
+    this.authService.post(`auth/verify-email?email=${email}&otp=${otp}`, {}).subscribe((res: any) => {
+      console.log('Email OTP verified successfully:', res);
+      this.showPasswordForm = true;
+    }, (err: any) => {
+      this.showPasswordForm = false;
+      this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
+    });
+  }
+  
+
   changeUserStatus(user: any) {
     this.authService.patchWithEmail(`invitations/${user}`, { status: 'accepted' }).subscribe((res) => {
       this.communicationService.showNotification('snackbar-success', 'User status updated successfully', 'bottom', 'center');
     });
   }
-  gotoHome(){
-    window.open('https://fashiontradershub.com/','_self');
+  gotoHome() {
+    window.open('https://fashiontradershub.com/', '_self');
   }
 }

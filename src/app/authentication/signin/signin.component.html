@@ -50,7 +50,7 @@
 
             <div class="d-flex justify-content-around mt-5 bottom-btn">
               <button type="button" class="btn" routerLink="/authentication/signup">Click Here To Register!</button>
-              <button type="button" class="btn">Forgot Password</button>
+              <button type="button" (click)="navigate(authForm.controls['email'].value)" class="btn">Forgot Password</button>
             </div>
           </form>
 

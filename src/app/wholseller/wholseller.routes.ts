@@ -6,12 +6,6 @@ import { RetailerInviteStatusComponent } from "./retailer-invite-status/retailer
 import { ManageRetailerComponent } from "./manage-retailer/manage-retailer.component";
 import { WholesalerProfileComponent } from "./wholesaler-profile/wholesaler-profile.component";
 import { DashboardComponent } from "./dashboard/dashboard.component";
-import { ManufacturerListComponent } from "./product/manufacturer-list/manufacturer-list.component";
-import { ManufacturesProductComponent } from "./product/manufacturer-list/manufactures-product/manufactures-product.component";
-import { ViewProductComponent } from "./product/manufacturer-list/manufactures-product/view-product/view-product.component";
-import { WishlistProductComponent } from "./product/wishlist-product/wishlist-product.component";
-import { CartProductComponent } from "./product/cart-product/cart-product.component";
-import { PlaceOrderComponent } from "./order-management/place-order/place-order.component";
 import { RequestToManufacturerComponent } from "./request-to-manufacturer/request-to-manufacturer.component";
 import { ViewManufacturerDetailsComponent } from "./request-to-manufacturer/view-manufacturer-details/view-manufacturer-details.component";
 import { MnfRequestListComponent } from "./request-to-manufacturer/mnf-request-list/mnf-request-list.component";

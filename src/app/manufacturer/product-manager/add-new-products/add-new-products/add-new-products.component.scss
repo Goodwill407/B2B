@@ -328,3 +328,19 @@ textarea.form-control {
   margin-left: 10px;
   border: 1px solid #000;
 }
+
+.img-details{
+  color: #5c5757;
+  h5{
+    text-decoration: underline;
+  }
+  p{
+    padding-left: 0px !important;
+    display: list-item;
+    margin-left : 1em;
+    span{
+      font-weight: 410;
+    }
+    margin-bottom: -1px !important;
+  }
+}
