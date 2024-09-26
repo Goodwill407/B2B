@@ -30,6 +30,7 @@ export class ViewProfileComponent {
   filteredDiscounts:any
   addDiscountBtnHide=true;
   isDropdownDisabled:boolean=false;
+  retailerDiscount:any
 
 
   constructor(private fb: FormBuilder, private route: ActivatedRoute, private authService: AuthService, private location: Location,private datePipe: DatePipe
@@ -56,8 +57,8 @@ export class ViewProfileComponent {
             res.registerOnFTH = res.registerOnFTH ? this.datePipe.transform(res.registerOnFTH, 'yyyy-MM-dd') : null;
             this.mgfRegistrationForm.patchValue(res);
             this.mgfRegistrationForm.disable();
-            this.getAllWholesalerCategory()
-            this.getDiscountData()
+            this.getAllWholesalerCategoryOrRetailerCategory()
+            this.getWholesalerDiscountData()           
           } else {
           }
         },
@@ -115,17 +116,13 @@ export class ViewProfileComponent {
     this.location.back();
   } 
 
-  getAllWholesalerCategory() {
+  getAllWholesalerCategoryOrRetailerCategory() {
     const email=this.userEmail.email
-    this.authService.get(`wholesaler-category?categoryBy=${this.authService.currentUserValue.email}`).subscribe((res: any) => {
+    this.authService.get(`${this.user}-category?categoryBy=${this.authService.currentUserValue.email}`).subscribe((res: any) => {
       this.wholesalerCategory = res.results;     
     });
   }
-  // selectCategory(event: any) {
-  //   // Use JSON.parse to convert the selected object string back to an object
-   
-  //   console.log(this.SelectedCategory); // Log the entire object for debugging
-  // }
+ 
 
   addDiscountForWholesaler() {
     // const wholesalerId = this.allWholselerData.id; // Replace with actual wholesaler ID
@@ -151,7 +148,7 @@ export class ViewProfileComponent {
     );
   }
 
-  getDiscountData() {
+  getWholesalerDiscountData() {
     this.authService.get(`wholesaler/getdiscount/${this.allWholselerData.id}/${this.userEmail.email}`).subscribe(
       (res: any) => {
         if (res) {
@@ -175,7 +172,7 @@ export class ViewProfileComponent {
         console.error("Error fetching discount data", error);
       }
     );
-  }
+  } 
   
   editDiscountCategory(){
     this.addDiscountBtnHide=true;   

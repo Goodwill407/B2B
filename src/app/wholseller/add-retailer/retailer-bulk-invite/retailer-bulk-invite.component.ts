@@ -50,7 +50,7 @@ export class RetailerBulkInviteComponent {
   createDistributorFormGroup(): FormGroup {
     return this.fb.group({
       distributorName: ['', Validators.required],
-      companyName: [''],
+      companyName: ['',Validators.required],
       code: ['+91', Validators.required],
       mobileNumber: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]]

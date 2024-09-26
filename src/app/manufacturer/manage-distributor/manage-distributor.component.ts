@@ -54,6 +54,34 @@ export class ManageDistributorComponent {
 //         this.totalResults = res.totalResults;
 //     });
 // }
+// getPendingInvitesWholseler(searchKey: string = '') {
+//   this.authService
+//     .get(
+//       `manufacturers/get-referred/manufactures?page=${this.page}&limit=${this.limit}&refByEmail=${this.user.email}&searchKeywords=${searchKey}`
+//     )
+//     .subscribe((res: any) => {
+//       this.distributors = res.results;
+//       this.totalResults = res.totalResults;
+
+//       // Process discounts for each distributor
+//       this.distributors.forEach((distributor: any) => {
+//         if (distributor.discountGiven?.length) {
+//           // Filter discounts for the distributor by email
+//           const filteredDiscounts = distributor.discountGiven.filter(
+//             (discount: any) => discount.discountGivenBy === this.user.email
+//           );
+
+//           // Create a comma-separated list of discount categories
+//           distributor.discountCategories = filteredDiscounts.length
+//             ? filteredDiscounts.map((discount: any) => discount.discountCategory).join(', ')
+//             : 'No Discounts';
+//         } else {
+//           distributor.discountCategories = 'No Discounts';
+//         }
+//       });
+//     });
+// }
+
 getPendingInvitesWholseler(searchKey: string = '') {
   this.authService
     .get(
@@ -73,7 +101,7 @@ getPendingInvitesWholseler(searchKey: string = '') {
 
           // Create a comma-separated list of discount categories
           distributor.discountCategories = filteredDiscounts.length
-            ? filteredDiscounts.map((discount: any) => discount.discountCategory).join(', ')
+            ? filteredDiscounts.map((discount: any) => discount.category).join(', ') // Corrected from discountCategory to category
             : 'No Discounts';
         } else {
           distributor.discountCategories = 'No Discounts';
@@ -81,6 +109,7 @@ getPendingInvitesWholseler(searchKey: string = '') {
       });
     });
 }
+
 
 getPendingInvitesRetailers(searchKey: string = '') {
   this.authService
@@ -126,8 +155,8 @@ getPendingInvitesRetailers(searchKey: string = '') {
     });
   }
 
-  viewProfile(distributors:any){
-    this.router.navigate(['/common/view-profile'],{queryParams:{email:distributors.email,role:'wholesaler',showFlag:'true'}});
+  viewProfile(distributors:any,role:any){
+    this.router.navigate(['/common/view-profile'],{queryParams:{email:distributors.email,role:role,showFlag:'true'}});
   }
 
 
