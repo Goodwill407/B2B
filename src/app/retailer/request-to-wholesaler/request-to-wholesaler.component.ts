@@ -54,7 +54,7 @@ export class RequestToWholesalerComponent {
   allState: { name: string; cities: string[]; iso2: String }[] = [];
   cityList: any;
 // ==========new data
-  searchWholesaler:any
+ 
   wholesalerData: any[] = []; 
 
   RetailserData:any
@@ -91,9 +91,9 @@ export class RequestToWholesalerComponent {
   }
 
  searchByWholselers(): void {
-    if (this.searchWholesaler) {         
+    if (this.SearchBrand) {         
       const object={
-        brand :this.searchWholesaler
+        brand :this.SearchBrand
       }
       this.authService.post(`wholesaler-products/filter-wholesaler-products-brands?page=${this.page}&limit=${this.limit}`,object).subscribe(
         response => {    
@@ -141,7 +141,13 @@ export class RequestToWholesalerComponent {
     const gender = this.filters.gender;
     const category = this.filters.category;
 
-    this.authService.get(`sub-category?productType=${productType}&gender=${gender}&category=${category}`).subscribe((res:any)=>{
+    const object = {
+      productType,
+      gender,
+      category
+    };
+
+    this.authService.post(`sub-category/filter`, object).subscribe((res:any)=>{
       if(res){
         this.allSubCategory=[]
       }
@@ -272,9 +278,9 @@ onSearchBrandChange() {
       brandName: this.SearchBrand
     };
 
-    this.authService.post('brand/searchmanufacturelist', object).subscribe(
-      (response: any[]) => { 
-       this.filteredSuggestions = response.map((item: any) => item.brandName); // Extract 'brandName' from each item
+    this.authService.post('wholesaler-products/filter-wholesaler-products-brands', object).subscribe(
+      (response) => { 
+       this.filteredSuggestions = response.results.map((item: any) => item.product.brand); // Extract 'brandName' from each item
         // Handle the response as needed, e.g., update the UI
       },
       (error) => {
@@ -284,6 +290,26 @@ onSearchBrandChange() {
     );
   }   
 }
+
+onBrandSearchChange(): void {
+  if (this.SearchBrand) {
+
+    const object={
+      brandName:this.SearchBrand
+    }
+    this.authService.post('brand/searchmanufacturelist',object).subscribe(
+      response => {    
+        this.productTypeWise=[] 
+        this.brandData=response
+        // Handle the response as needed, e.g., update the UI
+      },
+      error => {
+        console.error('Error searching brand:', error);
+        // Handle error accordingly
+      }
+    );
+  }   
+} 
 
 getRetailerProfileData(){
   this.authService.get(`retailer/${this.userProfile.email}`).subscribe((res: any) => {
@@ -301,7 +327,7 @@ getRetailerProfileData(){
 }
 
 selectSuggestion(suggestion: string) {
-  this.SearchBrand = suggestion; // Set the input value to the selected suggestion
+  this.SearchBrand = suggestion; // Set the input value to the selecSearchBrandted suggestion
   this.filteredSuggestions = []; // Clear suggestions
 }
 

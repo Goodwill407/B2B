@@ -36,7 +36,7 @@
                 <div class="tab-pane fade show active" id="brand" role="tabpanel" aria-labelledby="brand-tab">
                   <div class="d-flex align-items-center">
                     <div class="brand-search d-flex align-items-center ms-2 position-relative">
-                      <input type="text" class="form-control me-2" [(ngModel)]="searchWholesaler" placeholder="Search Brand" />
+                      <input type="text" class="form-control me-2" [(ngModel)]="SearchBrand" (input)="onSearchBrandChange()" placeholder="Search Brand" />
                       <button class="btn btn-primary" (click)="searchByWholselers()">Search</button>                     
                       <!-- Suggestions dropdown -->
                       <ul *ngIf="filteredSuggestions.length > 0" class="suggestions-list position-absolute">

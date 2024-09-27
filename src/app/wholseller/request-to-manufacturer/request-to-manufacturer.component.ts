@@ -131,7 +131,13 @@ export class RequestToManufacturerComponent {
     const gender = this.filters.gender;
     const category = this.filters.category;
 
-    this.authService.get(`sub-category?productType=${productType}&gender=${gender}&category=${category}`).subscribe((res:any)=>{
+    const object = {
+      productType,
+      gender,
+      category
+    };
+
+    this.authService.post(`sub-category/filter`, object).subscribe((res:any)=>{
       if(res){
         this.allSubCategory=[]
       }

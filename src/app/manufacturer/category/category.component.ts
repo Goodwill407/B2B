@@ -36,6 +36,8 @@ export class CategoryComponent {
   firstWholesaler: number = 0;
   firstRetailer: number = 0;
   rows: number = 10;
+  deleteBtnDisabled: boolean = false;
+  activeTab: string = 'wholesaler'; // Track active tab
 
   constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private router: Router) { }
 
@@ -143,17 +145,19 @@ export class CategoryComponent {
     });
   }
 
-  editForm(category: any) {
-    if (category.categoryBy === 'wholesaler') {
-      this.categoryForm1.patchValue(category);
-    } else if (category.categoryBy === 'retailer') {
-      this.categoryForm2.patchValue(category);
+  editForm(data: any, userType: string) {
+    if (userType === 'wholesaler') {
+      this.categoryForm1.patchValue(data);
+      this.deleteBtnDisabled = true;
+    } else if (userType === 'retailer') {
+      this.categoryForm2.patchValue(data);
+      this.deleteBtnDisabled = true;
     }
     this.formType = 'Update';
   }
 
   resetForm(form: FormGroup) {
-    form.reset();   
+    form.reset();
     form.reset({
       category: '',
       productDiscount: '',
@@ -162,5 +166,12 @@ export class CategoryComponent {
       id: ''
     });
     this.formType = 'Save';
+    this.deleteBtnDisabled = false; // Reset delete button state
+  }
+
+  // Handle tab changes
+  onTabChange(event: any) {
+    this.activeTab = event.index === 0 ? 'wholesaler' : 'retailer';
+    this.resetForm(this.activeTab === 'wholesaler' ? this.categoryForm1 : this.categoryForm2);
   }
 }
