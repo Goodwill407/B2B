@@ -10,6 +10,14 @@
      color: #fff;
  }
 
+ .cancel-btn {
+     padding-right: 2.5rem !important;
+     padding-left: 2.5rem !important;
+     // margin: 2rem !important;
+     background-color: #fc7b4c;
+     color: #fff;
+ }
+
  ::ng-deep .p-datatable,
  .btn {
      font-size: 13px !important;

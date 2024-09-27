@@ -36,6 +36,7 @@ export class BrandComponent {
   rows: number = 10;
   cdnPath: string = '';
   userProfile: any;
+  isEditing = false;
   @ViewChild('fileInput') fileInput!: ElementRef;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private router: Router, private spinner: NgxSpinnerService) { }
@@ -60,33 +61,34 @@ export class BrandComponent {
   onImageChange(event: any) {
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const img = new Image();
-        img.src = reader.result as string;
-        img.onload = () => {
-          this.imageError = '';
-          this.imageFormatError = '';
+        const reader = new FileReader();
+        reader.onload = () => {
+            const img = new Image();
+            img.src = reader.result as string;
+            img.onload = () => {
+                this.imageError = '';
+                this.imageFormatError = '';
 
-          const validFormat = file.type === 'image/jpeg' || file.type === 'image/png';
+                const validFormat = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif';
 
-          if (!validFormat) {
-            this.imageFormatError = 'Invalid image format. Please upload an image in jpeg/png format.';
-          }
+                if (!validFormat) {
+                    this.imageFormatError = 'Invalid image format. Please upload an image in jpeg/png/gif format.';
+                }
 
-          if (validFormat) {
-            this.imagePreview = reader.result;
-            this.brandForm.patchValue({ brandLogo: file });
-            this.brandForm.get('brandLogo')?.updateValueAndValidity();
-          } else {
-            this.imagePreview = null;
-            this.brandForm.patchValue({ brandLogo: null });
-          }
+                if (validFormat) {
+                    this.imagePreview = reader.result;
+                    this.brandForm.patchValue({ brandLogo: file });
+                    this.brandForm.get('brandLogo')?.updateValueAndValidity();
+                } else {
+                    this.imagePreview = null;
+                    this.brandForm.patchValue({ brandLogo: null });
+                }
+            };
         };
-      };
-      reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
     }
-  }
+}
+
 
   onSubmit() {
     if (this.brandForm.valid) {
@@ -94,25 +96,21 @@ export class BrandComponent {
       const formData = new FormData();
       formData.append('brandName', this.brandForm.get('brandName')?.value);
       formData.append('brandDescription', this.brandForm.get('brandDescription')?.value);
-      formData.append('brandLogo', this.brandForm.get('brandLogo')?.value);
       formData.append('brandOwner', this.brandForm.get('brandOwner')?.value);
+      
+      const brandLogo = this.brandForm.get('brandLogo')?.value;
+      if (brandLogo && brandLogo instanceof File) {
+          formData.append('brandLogo', brandLogo);
+      }
 
       if (this.formType === 'Save') {
         this.authService.post('brand', formData).subscribe((res: any) => {
-          this.communicationService.showNotification('snackbar-success', 'Brand created successfully', 'bottom', 'center');
           this.resetForm();
-        },(err: any) => {
-          this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
-          this.spinner.hide();
         });
       } else {
         formData.append('id', this.brandForm.get('id')?.value);
         this.authService.patch(`brand`, formData).subscribe((res: any) => {
-          this.communicationService.showNotification('snackbar-success', 'Brand updated successfully', 'bottom', 'center');
           this.resetForm();
-        },(err: any) => {
-          this.spinner.hide();
-          this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
         });
       }
     }
@@ -124,7 +122,7 @@ export class BrandComponent {
       this.distributors = res.results;
       this.totalResults = res.totalResults;
       this.spinner.hide();
-    },(err: any) => {
+    }, (err: any) => {
       this.spinner.hide();
       this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
     });
@@ -144,6 +142,7 @@ export class BrandComponent {
   }
 
   editForm(data: any) {
+    this.isEditing = true;
     this.brandForm.patchValue(data);
     this.formType = 'Update';
     this.imagePreview = this.cdnPath + data.brandLogo;
@@ -154,14 +153,14 @@ export class BrandComponent {
   resetForm() {
     this.brandForm.reset({
       brandName: '',
-      brandDescription: '',    
+      brandDescription: '',
       brandOwner: this.authService.currentUserValue.email, // Keep default values if necessary
       id: ''
     });
-    // this.brandForm.reset();   
     this.imagePreview = null;
     this.formType = 'Save';
-    this.fileInput.nativeElement.value = '';
+    this.isEditing = false;
+    this.fileInput.nativeElement.value = ''; // Clear the file input
     this.brandForm.get('brandLogo')?.setValidators([Validators.required]); // Re-add validators for new entries
     this.brandForm.get('brandLogo')?.updateValueAndValidity();
     this.getAllBrands();

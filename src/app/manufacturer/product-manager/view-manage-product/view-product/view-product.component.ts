@@ -11,13 +11,14 @@ import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.com
   standalone: true,
   imports: [
     CommonModule,
-    NgIf,NgFor,
+    NgIf, NgFor,
   ],
   templateUrl: './view-product.component.html',
   styleUrls: ['./view-product.component.scss']
 })
 export class ViewProductComponent {
-  constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService, private router: Router, private renderer: Renderer2,private dialog: MatDialog) { }
+  hoveredColourName: string ='';
+  constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService, private router: Router, private renderer: Renderer2, private dialog: MatDialog) { }
 
   product: any;
   selectedMedia: any;
@@ -70,7 +71,7 @@ export class ViewProductComponent {
             images: colour.productImages,
             video: colour.productVideo
           })),
-          itemWeight: res.netWeight,
+          setOFnetWeight: res.setOFnetWeight,
           dimensions: res.ProductDeimension.map((dim: any) => `L: ${dim.length}, W: ${dim.width}, H: ${dim.height}`).join(' | '),
           dateAvailable: res.dateOfListing ? new Date(res.dateOfListing).toLocaleDateString() : 'N/A',
           availability: res.quantity > 0 ? `${res.quantity} (In Stock)` : 'Out of Stock'
@@ -129,14 +130,22 @@ export class ViewProductComponent {
     this.renderer.setStyle(imageElement, 'cursor', 'default');
   }
 
-  openImg(path:any,size:number){
+  openImg(path: any, size: number) {
     const dialogRef = this.dialog.open(ImageDialogComponent, {
       // width: size+'px',
-      data: {path:path,width:size},  // Pass the current product data
+      data: { path: path, width: size },  // Pass the current product data
       width: '90%', // Set the desired width
       height: '90%', // Set the desired height
       maxWidth: '90vw', // Maximum width to prevent overflow
       maxHeight: '90vh' // Maximum height to prevent overflow
     });
+  }
+  onHoverColour(colour: any) {
+    this.hoveredColourName = this.selectedColourName; // Save the current selected name to revert later
+    this.selectedColourName = colour.name; // Set the name to the hovered color name
+  }
+
+  onLeaveColour() {
+    this.selectedColourName = this.hoveredColourName; // Revert to the original selected name when hover is removed
   }
 }

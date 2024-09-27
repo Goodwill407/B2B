@@ -57,8 +57,8 @@
                     <small *ngIf="kycForm.controls['profileImg'].errors?.['required']">Company Logo is required.</small>
                     <small *ngIf="kycForm.controls['profileImg'].errors?.['invalidFormat']">Invalid file format. Only PNG, JPEG, and JPG are allowed.</small>
                     <small *ngIf="kycForm.controls['profileImg'].errors?.['maxSizeExceeded']">Image size should not exceed 2MB.</small>
-                    <small *ngIf="kycForm.controls['profileImg'].errors?.['invalidDimensions']">Image dimensions should be 300x300 pixels.</small>
                 </div>
+                
             </div>
 
             <div class="col-6">

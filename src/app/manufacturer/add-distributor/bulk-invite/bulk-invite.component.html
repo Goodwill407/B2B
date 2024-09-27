@@ -34,7 +34,7 @@
         <div *ngFor="let distributor of invitations.controls; let i = index" class="d-flex justify-content-between"
           [formGroupName]="i">
           <div>
-            <select formControlName="role" class="form-select">
+            <select formControlName="role" class="form-select fix-width">
               <option value="" disabled>Select Identity</option>
               @for(type of identityType;track type){
               @if(type.name!=='manufacture'){
@@ -62,7 +62,7 @@
             </div>
           </div>
           <div>
-            <span class="d-flex mat-select" style="width: 350px; height: 22px;">
+            <span class="d-flex mat-select" style="width: 305px; height: 22px;">
               <mat-form-field appearance="outline" class="w-25 me-2">
                 <mat-select formControlName="code">
                   <mat-option *ngFor="let country of countryCode" [value]="country.code">

@@ -1,0 +1,47 @@
+
+<section class="content">
+    <div class="content-block">
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Product Stock Summary</h4>
+        <div class="card-table2 p-3">
+            <div class="table-header d-flex align-items-center">
+                <h5 class="mb-0">Distributor's List</h5>
+                <div class="ms-auto">
+                    <!-- Show the button only if more than one distributor is selected -->
+                    <button  class="btn " (click)="navigateFun()"><i class="bi bi-arrow-left-circle h4"></i></button>
+                </div>
+            </div>
+            <hr>
+            <div class="p-grid p-fluid">
+                <div class="p-col-12 text-center">
+                    <p-table [value]="product">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                
+                                <th>Distributor's Name</th>
+                                <th>Company Name/ Firm Name</th>
+                                <th>Mobile Number</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-distributor>
+                            <tr>
+                                <td class="text-center">{{distributor.fullName}}</td>
+                                <td class="text-center">{{distributor.companyName}}</td>
+                                <td class="text-center">{{distributor.mobileNumber}}</td>
+                                <td class="text-center">{{distributor.email}}</td>
+                                <td class="text-center text-danger fw-bold">Pending</td>
+                                <td class="text-center">
+                                    <!-- <button class="btn btn-outline-success" (click)="reInvite(distributor)">Re-Invite</button> -->
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    <span *ngIf="!product || product.length == 0"
+                          class="data-not-found d-flex justify-content-center align-items-center"> </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
