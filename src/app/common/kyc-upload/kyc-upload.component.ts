@@ -72,6 +72,7 @@ export class KycUploadComponent implements OnInit {
     if (file && this.validateFileFormat(file)) {
       this.profileImgFile = file;
       this.selectedProfileImgName = file.name;
+      
       this.kycForm.patchValue({ profileImg: file.name });
   
       const reader = new FileReader();
@@ -80,21 +81,14 @@ export class KycUploadComponent implements OnInit {
         img.src = e.target.result;
   
         img.onload = () => {
-          const width = img.width;
-          const height = img.height;
-  
-          if (width === 300 && height === 300) {
-            this.profileImgPreviewUrl = reader.result as string;
-  
-            // Validate the image size (max 2MB)
-            const maxSize = 2 * 1024 * 1024;
-            if (file.size > maxSize) {
-              this.kycForm.controls['profileImg'].setErrors({ maxSizeExceeded: true });
-              this.profileImgPreviewUrl = null;
-            }
-          } else {
-            this.kycForm.controls['profileImg'].setErrors({ invalidDimensions: true });
+          // Validate the image size (max 2MB)
+          const maxSize = 2 * 1024 * 1024; // 2MB
+          if (file.size > maxSize) {
+            this.kycForm.controls['profileImg'].setErrors({ maxSizeExceeded: true });
             this.profileImgPreviewUrl = null;
+          } else {
+            // If no size error, set the preview URL
+            this.profileImgPreviewUrl = reader.result as string;
           }
         };
       };
@@ -106,7 +100,7 @@ export class KycUploadComponent implements OnInit {
 
   // Validate that the file is of a supported image format
   validateFileFormat(file: File): boolean {
-    const allowedFormats = ['image/png', 'image/jpeg', 'image/jpg'];
+    const allowedFormats = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
     return allowedFormats.includes(file.type);
   }
   
@@ -139,6 +133,9 @@ export class KycUploadComponent implements OnInit {
           (res: any) => {
             if (res) {
               this.communicationService.showNotification('snackbar-success', 'File Uploaded Successfully...', 'bottom', 'center');
+              setTimeout(() => {
+                this.navigateFun();
+              },600)
             }
           },
           error => {

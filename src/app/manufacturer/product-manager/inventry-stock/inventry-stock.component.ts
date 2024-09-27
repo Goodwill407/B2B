@@ -74,7 +74,9 @@ export class InventryStockComponent {
   }
 
   editProduct(id:any) {
-    debugger
     this.router.navigate(['mnf/add-new-product'], { queryParams: { id: id } });
+  }
+  productSummary(id:any){
+    this.router.navigate(['mnf/product-summary'], { queryParams: { id: id } });
   }
 }

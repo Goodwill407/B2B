@@ -2,6 +2,7 @@ import { CommonModule, DatePipe, JsonPipe, NgClass } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
+import { Router } from '@angular/router';
 import { AuthService, CommunicationService, DirectionService } from '@core';
 import { KycUploadComponent } from 'app/common/kyc-upload/kyc-upload.component';
 import { panMatchValidator } from 'app/common/pan-validation';
@@ -43,7 +44,7 @@ export class CustomiseProfileComponent {
   allVisabilityData: any
   selectedCountryCode: any = 'India'
 
-  constructor(private fb: FormBuilder, public authService: AuthService, private communicationService: CommunicationService, private datePipe: DatePipe, private direction: DirectionService) { }
+  constructor(private fb: FormBuilder, public authService: AuthService, private communicationService: CommunicationService, private route:Router, private direction: DirectionService) { }
 
   countries: any[] = [
     'India',
@@ -235,6 +236,11 @@ export class CustomiseProfileComponent {
 
   openImg(path: any) {
     this.communicationService.openImg(path);
+  }
+
+  navigateToProfile() {
+    // Navigate to the target route with email as query parameter
+    this.route.navigate(['/mnf/preview-profile'], { queryParams: { id: this.allData.id ,email:this.userProfile.email } });
   }
 }
 

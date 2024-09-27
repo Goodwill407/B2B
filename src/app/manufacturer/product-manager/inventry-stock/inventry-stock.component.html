@@ -43,13 +43,14 @@
                                 <!-- Display Pre-processed Discount Categories -->
                                 <td class="text-center">{{ prod.initialQTY||'NA' }}</td>
                                 <td class="text-center">{{ prod.dateOfListing|date:'dd-MM-yyyy' }}</td>
-                                <td class="text-center">{{ prod.quantity }}</td>
+                                <td class="text-center" [ngClass]="{'text-danger':prod.quantity < prod.minimumOrderQty}">{{ prod.quantity }}</td>
                                 <!-- <td class="text-center fw-bold" [ngClass]="prod.isActive ? 'text-success' : 'text-danger'">
                                   {{ prod.isActive ? 'Active' : 'Inactive' }}
                                 </td> -->
                                 <!-- Action Buttons -->
                                 <td>
-                                    <button (click)="editProduct(prod.id)" class="btn btn-outline-success">Add Stock</button>
+                                    <button (click)="editProduct(prod.id)" class="btn btn-outline-success me-1">Add Stock</button>
+                                    <button (click)="productSummary(prod.id)" class="btn btn-outline-warning">Summary</button>
                                 </td>
                             </tr>
                         </ng-template>
