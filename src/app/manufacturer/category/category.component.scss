@@ -23,3 +23,7 @@
 ::ng-deep .p-tooltip-text {
     font-size: 10px !important;
 }
+
+.btn:disabled{
+    border: none !important;
+}

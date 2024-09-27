@@ -1,7 +1,7 @@
 import { CommonModule, DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, CommunicationService, DirectionService } from '@core';
 import { amountAsyncValidator } from '@core/models/validators/amount-validation';
 
@@ -40,6 +40,7 @@ export class AddNewProductsComponent {
   ProductId: any;
   sizeSet: any
   sizeChart: any;
+  sizeChartdata:any[]=[]
   foundSizeSet: any
   sizeChartFields: any[] = [];
   showFlag2: boolean = false;
@@ -125,7 +126,8 @@ export class AddNewProductsComponent {
     private spinner: NgxSpinnerService,
     private route: ActivatedRoute,
     private datePipe: DatePipe,
-    private direction: DirectionService) {
+    private direction: DirectionService,
+    private router:Router) {
     this.addProductForm = this.fb.group({
       stepOne: this.fb.group({
         designNumber: ['', Validators.required],
@@ -147,8 +149,8 @@ export class AddNewProductsComponent {
         dateOfManufacture: ['', [Validators.required]],
         dateOfListing: ['', [Validators.required]],
         // forUpdate form
-        newQuantity:['', Validators.required],
-        updatedDate: ['', [Validators.required]],
+        newQuantity:[''],
+        updatedDate: [''],
         alertStock: ['', [Validators.required]]
       }),
       stepTwo: this.fb.group({
@@ -291,19 +293,21 @@ export class AddNewProductsComponent {
   getSizeChartFields() {
 
     if (this.foundSizeSet === 'Size Set') {
-      this.sizeChartFields = []
+      this.sizeChartFields = []     
       this.sizeChartFields = [
         { name: 'standardSize', label: 'Standard Size', required: false },
         { name: 'brandSize', label: 'Brand Size', required: true },
         { name: 'chestSize', label: 'Chest Size (in cm)', required: true },
         { name: 'shoulderSize', label: 'Shoulder Size (in cm)', required: true },
         { name: 'frontLength', label: 'Front Length (in cm)', required: true },
+        { name: 'neckSize', label: 'Neck Size (in cm)', required: false },
         { name: 'length', label: 'Length (in cm)', required: false },
         { name: 'width', label: 'Width (in cm)', required: false },
         { name: 'height', label: 'Height (in cm)', required: true },
         { name: 'weight', label: 'Weight (in gm)', required: true },
-        { name: 'manufacturerPrice', label: "Manufacturer's Price", required: true },
-        { name: 'singleMRP', label: 'MRP', required: true }
+        { name: 'wsPrice', label: 'W/S Price', required: true },
+        { name: 'rtlPrice', label: 'Rtl Price', required: true },
+        { name: 'mrp', label: 'MRP', required: true }
       ];
     }
     else if (this.foundSizeSet === "Waist Size Set") {
@@ -534,6 +538,7 @@ export class AddNewProductsComponent {
     const setType = type
     this.authService.get(`size-set/size-type/size-set?sizeType=${setType}`).subscribe((data) => {
       this.sizeSet = data.Sizes;
+      this.sizeChartdata=data.sizeChart
       // for patch size array
       if (this.ProductId) {
         this.patchSizesArray(this.productDetails.sizes);
@@ -548,8 +553,7 @@ export class AddNewProductsComponent {
     this.submittedStep1 = true
     // removeFormControl
     this.addProductForm.get('stepOne')?.removeControl('newQuantity');
-    this.addProductForm.get('stepOne')?.removeControl('updatedDate');
-    this.addProductForm.get('stepOne')?.removeControl('alertStock');
+    this.addProductForm.get('stepOne')?.removeControl('updatedDate');   
 
     if (this.stepOne.valid) {
       const productBy = this.userProfile.email
@@ -624,6 +628,7 @@ export class AddNewProductsComponent {
     fileInput.click();
   }
 
+ 
   async saveStepTwoData() {
     this.submittedStep2 = true;
     this.stepTwo.markAllAsTouched();
@@ -643,6 +648,15 @@ export class AddNewProductsComponent {
             'center'
           );
           this.updateValidators();
+          
+          // Show the popup after saving successfully       
+  
+          // Option 1: Close popup after 2 seconds and navigate to view-product page
+          setTimeout(() => {          
+            this.router.navigate([`mnf/manage-product`]);
+          }, 1500); 
+  
+          // Option 2: Alternatively, you can add a manual action (like a button click) to navigate
         }
       } catch (error) {
         console.log('Error', error);
@@ -652,6 +666,10 @@ export class AddNewProductsComponent {
       console.log('Form is invalid');
       this.spinner.hide();
     }
+  }
+
+  navigateOnProduct(){
+    this.router.navigateByUrl('mnf/manage-product')
   }
 
 
