@@ -3,14 +3,14 @@
         <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Vendor Discounts/ Schemes</h4>
         <div class="card p-3">        
 
-            <mat-tab-group>
+            <mat-tab-group  (selectedIndexChange)="onTabChange($event)">
                 <mat-tab label="For Wholesaler's">
                     <h5 class="mt-4">Wholesaler's</h5>
                     <hr class="mt-0">
                     <form [formGroup]="categoryForm1" (ngSubmit)="onSubmit('wholesaler')">
                         <div class="row">
                             <div class="w-50">
-                                <label for="category">Scheme Name :</label>
+                                <label for="category">Scheme Name <span class="required">*</span></label>
                                 <input type="text" id="category" formControlName="category" class="form-control"
                                     placeholder="Enter Scheme Name" />
                                 <div *ngIf="categoryForm1.get('category')?.touched && categoryForm1.get('category')?.invalid"
@@ -22,7 +22,7 @@
 
                         <div class="row">
                             <div class="col-lg-3 col-md-3 col-sm-6 mt-2">
-                                <label for="productDiscount">Product Discount : <small>(in %)</small> </label>
+                                <label for="productDiscount">Product Discount<span class="required">*</span><small>(in %)</small> </label>
                                 <input type="text" id="productDiscount" formControlName="productDiscount"
                                     placeholder="Enter Product Discount in ( % )" class="form-control" />
                                 <div *ngIf="categoryForm1.get('productDiscount')?.touched && categoryForm1.get('productDiscount')?.invalid"
@@ -32,7 +32,7 @@
                             </div>
 
                             <div class="col-lg-3 col-md-3 col-sm-6 mt-2">
-                                <label for="shippingDiscount">Shipping Discount : <small>(in %)</small> </label>
+                                <label for="shippingDiscount">Shipping Discount<span class="required">*</span><small>(in %)</small> </label>
                                 <input type="text" id="shippingDiscount" formControlName="shippingDiscount"
                                     placeholder="Enter Shipping Discount in ( % )" class="form-control" />
                                 <div *ngIf="categoryForm1.get('shippingDiscount')?.touched && categoryForm1.get('shippingDiscount')?.invalid"
@@ -73,10 +73,10 @@
                                             <td class="py-0">
                                                 <div class="button-container text-center">
                                                     <button class="btn btn-icon p-2" pTooltip="Edit"
-                                                        (click)="editForm(wholesalerCategory)" tooltipPosition="top">
+                                                        (click)="editForm(wholesalerCategory,'wholesaler')" tooltipPosition="top">
                                                         <i class="bi bi-pencil-fill"></i>
                                                     </button>
-                                                    <button class="btn btn-icon p-2"
+                                                    <button class="btn btn-icon p-2" [disabled]="deleteBtnDisabled"
                                                         (click)="deleteWholesalerCategory(wholesalerCategory)"
                                                         pTooltip="Delete" tooltipPosition="top">
                                                         <i class="fas fa-trash-alt"></i>
@@ -103,7 +103,7 @@
                     <form [formGroup]="categoryForm2" (ngSubmit)="onSubmit('retailer')">
                         <div class="row">
                             <div class="w-50">
-                                <label for="category">Scheme Name :</label>
+                                <label for="category">Scheme Name<span class="required">*</span></label>
                                 <input type="text" id="category" formControlName="category" class="form-control"
                                     placeholder="Enter Scheme Name" />
                                 <div *ngIf="categoryForm2.get('category')?.touched && categoryForm2.get('category')?.invalid"
@@ -115,7 +115,7 @@
 
                         <div class="row">
                             <div class="col-lg-3 col-md-3 col-sm-6 mt-2">
-                                <label for="productDiscount">Product Discount : <small>(in %)</small> </label>
+                                <label for="productDiscount">Product Discount<span class="required">*</span><small>(in %)</small> </label>
                                 <input type="text" id="productDiscount" formControlName="productDiscount"
                                     placeholder="Enter Product Discount in ( % )" class="form-control" />
                                 <div *ngIf="categoryForm2.get('productDiscount')?.touched && categoryForm2.get('productDiscount')?.invalid"
@@ -125,7 +125,7 @@
                             </div>
 
                             <div class="col-lg-3 col-md-3 col-sm-6 mt-2">
-                                <label for="shippingDiscount">Shipping Discount : <small>(in %)</small> </label>
+                                <label for="shippingDiscount">Shipping Discount<span class="required">*</span><small>(in %)</small> </label>
                                 <input type="text" id="shippingDiscount" formControlName="shippingDiscount"
                                     placeholder="Enter Shipping Discount in ( % )" class="form-control" />
                                 <div *ngIf="categoryForm2.get('shippingDiscount')?.touched && categoryForm2.get('shippingDiscount')?.invalid"
@@ -167,10 +167,10 @@
                                             <td class="py-0">
                                                 <div class="button-container text-center">
                                                     <button class="btn btn-icon p-2" pTooltip="Edit"
-                                                        (click)="editForm(retailerCategory)" tooltipPosition="top">
+                                                        (click)="editForm(retailerCategory,'retailer')" tooltipPosition="top">
                                                         <i class="bi bi-pencil-fill"></i>
                                                     </button>
-                                                    <button class="btn btn-icon p-2"
+                                                    <button class="btn btn-icon p-2" [disabled]="deleteBtnDisabled"
                                                         (click)="deleteRetailerCategory(retailerCategory)"
                                                         pTooltip="Delete" tooltipPosition="top">
                                                         <i class="fas fa-trash-alt"></i>
@@ -191,17 +191,7 @@
                         </div>
                     </div>
                 </mat-tab>
-            </mat-tab-group>
-            <!-- <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
-                    tabindex="0">
-
-                </div>
-                <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab"
-                    tabindex="0">
-                    
-                </div>
-            </div> -->
+            </mat-tab-group>           
         </div>
 
     </div>
