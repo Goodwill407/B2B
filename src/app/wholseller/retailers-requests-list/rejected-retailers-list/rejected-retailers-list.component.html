@@ -38,9 +38,9 @@
                 </tr>
               </ng-template>
             </p-table>
-            <span *ngIf="!allRequestedList || allRequestedList.length == 0"
+            <span *ngIf="!allRequestedList || allRequestedList?.length == 0"
               class="data-not-found d-flex justify-content-center align-items-center"></span>
-            <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows" [totalRecords]="totalResults"
+            <p-paginator *ngIf="allRequestedList && allRequestedList?.length > 0" (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows" [totalRecords]="totalResults"
               [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
           </div>
         </div>

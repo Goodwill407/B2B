@@ -25,7 +25,6 @@ export class ProductSummaryComponent {
   ngOnInit() {
     this.route.params.subscribe(params => {
       const id = params['id'];
-      // this.ProductId = id;
       if (id) {
         this.getProductDetails(id);
       }

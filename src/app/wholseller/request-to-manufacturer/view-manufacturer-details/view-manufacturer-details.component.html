@@ -6,9 +6,12 @@
 
     <div class="company-profile">
       <!-- Company Name -->
+      <button class="btn navigate" (click)="navigateFun()">
+        <i class="bi bi-arrow-left-circle h4"></i>
+      </button>
       <div class="company-head">
         <img src="{{cdnPath+allVisabilityData?.profileImg}}" alt="">
-        <div class="">
+        <div class="ms-4">
           <h3 class="company-name mb-1">{{ allVisabilityData?.companyName }}</h3>
           <p class="mb-1">{{ allVisabilityData?.address }}</p>
           <p class="mb-1"><a href="mailto:{{ allVisabilityData?.email }}">{{ allVisabilityData?.email }}</a></p>
@@ -102,6 +105,10 @@
           <p *ngIf="allVisabilityData?.visibilitySettings?.code">
             <strong>Country Code :</strong> {{ allVisabilityData?.code }}
           </p>
+          <p *ngIf="allVisabilityData?.visibilitySettings?.fileName"><strong>KYC Document :</strong> {{
+            allVisabilityData?.fileName }} <span class="ms-3" *ngIf="allVisabilityData?.visibilitySettings?.file"><button class="btn"
+                (click)="openImg(authService.cdnPath +allVisabilityData?.file,800)"><i class="bi bi-eye-fill h5"></i></button>
+            </span></p>
         </div>
         
         
@@ -113,6 +120,22 @@
         <p><strong>Phone :</strong> {{ allVisabilityData?.mobNumber }}</p>
         <p><strong>Email :</strong> <a href="mailto:{{ allVisabilityData?.email }}">{{ allVisabilityData?.email }}</a>
         </p>
+      </div>
+      
+      <!-- Contact Details -->
+      <div class="contact-details" *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.bankName||
+      allVisabilityData?.visibilitySettings?.BankDetails?.branch||
+      allVisabilityData?.visibilitySettings?.BankDetails?.accountNumber||
+      allVisabilityData?.visibilitySettings?.BankDetails?.IFSCcode">
+        <h4>Bank Details</h4>
+        <p *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.bankName"><strong>Bank Name :</strong> {{
+          allVisabilityData?.BankDetails?.bankName }}</p>
+        <p *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.branch"><strong>Branch :</strong> {{
+          allVisabilityData?.BankDetails?.branch }}</p>
+        <p *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.accountNumber"><strong>Ac. No :</strong>{{
+          allVisabilityData?.BankDetails?.accountNumber }}</p>
+        <p *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.IFSCcode"><strong>IFSC code :</strong>{{
+          allVisabilityData?.BankDetails?.IFSCcode }}</p>
       </div>
 
       <!-- Social Media -->
@@ -127,7 +150,7 @@
       </div>
 
       <!-- Brands Section -->
-      <div class="brands-section">
+      <div class="brands-section" *ngIf="brandsDetails && brandsDetails?.length > 0">
         <h4>Our Brands</h4>
         <div class="brand-list">
           <div *ngFor="let brand of brandsDetails">

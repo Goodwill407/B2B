@@ -151,3 +151,24 @@ small {
   font-size: small !important;
   color: rgb(250, 98, 98) !important;
 }
+.disabled {
+  pointer-events: none;
+}
+
+.action-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  color: rgb(6, 6, 6);
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+  z-index: 10;
+}
+
+.action-button:hover {
+  color: #fff;
+  background-color: #757474;
+}

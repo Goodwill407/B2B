@@ -5,6 +5,13 @@
   border-radius: 8px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
   border: 1px solid #e0e0e0;
+  position: relative;
+  .navigate{
+      position: absolute;
+      top: 5px; 
+      left: 5px;
+      padding: 0;
+  }
 }
 
 .company-head{

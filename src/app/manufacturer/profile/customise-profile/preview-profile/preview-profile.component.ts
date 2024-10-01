@@ -5,6 +5,8 @@ import { AuthService, CommunicationService } from '@core';
 import { Location } from '@angular/common';
 import { CustomDatePipe } from 'app/common/custom-pipe.pipe';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-preview-profile',
@@ -26,7 +28,7 @@ export class PreviewProfileComponent {
   allVisabilityData: any;
   id: any
 
-  constructor(private route: ActivatedRoute, private authService: AuthService, private location: Location, private spinner: NgxSpinnerService) {
+  constructor(private route: ActivatedRoute, public authService: AuthService, private location: Location, private spinner: NgxSpinnerService, private dialog: MatDialog) {
     this.cdnPath = authService.cdnPath;
   }
 
@@ -97,5 +99,12 @@ export class PreviewProfileComponent {
 
   navigateFun() {
     this.location.back();
+  }
+
+  openImg(path:any,size:number){
+    const dialogRef = this.dialog.open(ImageDialogComponent, {
+      width: size+'px',
+      data: {path:path,width:size}  // Pass the current product data
+    });
   }
 }

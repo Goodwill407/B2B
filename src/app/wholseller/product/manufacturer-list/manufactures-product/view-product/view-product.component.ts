@@ -20,7 +20,8 @@ export class ViewProductComponent {
   userProfile: any;
   wishlist: boolean = false;
   quantity: any;
-  constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService, private router: Router, private communicationService:CommunicationService) { }
+  hoveredColourName: string = '';
+  constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService, private router: Router, private communicationService: CommunicationService) { }
 
   product: any;
   selectedMedia: any;
@@ -115,13 +116,13 @@ export class ViewProductComponent {
   WishlistAdd() {
     this.authService.post('wishlist', { productId: this.ProductId, email: this.userProfile.email }).subscribe((res: any) => {
       this.checkWishlist();
-    },(err:any)=>{
+    }, (err: any) => {
       this.wishlist = false;
     })
   }
 
   checkWishlist() {
-    this.authService.get('wishlist/checkout/wishlist?productId='+ this.ProductId +'&email='+this.userProfile.email).subscribe((res: any) => {
+    this.authService.get('wishlist/checkout/wishlist?productId=' + this.ProductId + '&email=' + this.userProfile.email).subscribe((res: any) => {
       if (res) {
         this.wishlist = true;
       } else {
@@ -143,18 +144,27 @@ export class ViewProductComponent {
       return;
     }
     const cartBody = {
-    "email": this.userProfile.email,
-    "productBy": data.productBy,
-    "productId": data.id,
-    "quantity": this.quantity
+      "email": this.userProfile.email,
+      "productBy": data.productBy,
+      "productId": data.id,
+      "quantity": this.quantity
     }
 
     this.authService.post('cart', cartBody).subscribe((res: any) => {
       this.communicationService.customSuccess('Product Successfully Added in Cart');
     },
-    (error) => {
-      this.communicationService.customError1(error.error.message);
-    }
-  )
+      (error) => {
+        this.communicationService.customError1(error.error.message);
+      }
+    )
+  }
+
+  onHoverColour(colour: any) {
+    this.hoveredColourName = this.selectedColourName; // Save the current selected name to revert later
+    this.selectedColourName = colour.name; // Set the name to the hovered color name
+  }
+
+  onLeaveColour() {
+    this.selectedColourName = this.hoveredColourName; // Revert to the original selected name when hover is removed
   }
 }

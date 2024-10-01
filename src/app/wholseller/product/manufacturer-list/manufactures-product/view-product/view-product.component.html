@@ -41,6 +41,7 @@
               <p><small>Clothing</small> <br> {{ product.clothingType }}</p>
               <p><small>Sub Category</small> <br>{{ product.subCategory }}</p>
               <p><small>Gender</small> <br>{{ product.gender }}</p>
+              <p><small>FSIN</small> <br>{{ product?.FSIN }}</p>
             </div>
             <hr class="m-0">
           </div>
@@ -88,9 +89,10 @@
           <div class="">
             <p class="mb-0"><small>Colours / Designs :</small> {{selectedColourName}} </p>
             <div class="d-flex">
-              <span *ngFor="let colour of product.colours" (click)="selectColourCollection(colour)"
-                style="cursor: pointer; display: flex;">
-                <div class="colour-info ">
+              <span *ngFor="let colour of product.colours" [ngClass]="{'disabled': !(colour?.images?.length > 0)}"
+                (click)="selectColourCollection(colour)" (mouseenter)="onHoverColour(colour)"
+                (mouseleave)="onLeaveColour()" style="cursor: pointer; display: flex;">
+                <div class="colour-info">
                   <span *ngIf="colour.image; else colourBox">
                     <img [src]="authService.cdnPath + colour.image" alt="Colour Image" class="colour-image">
                   </span>
@@ -114,10 +116,10 @@
           <small>
             <span>1 Set = {{ product?.sizes?.length }} Pieces</span> ( 1 each of Size:
             <span *ngFor="let size of product?.sizes; let i = index">
-               {{ size.standardSize }}<span *ngIf="i < product.sizes.length - 1">,</span>
+              {{ size.standardSize }}<span *ngIf="i < product.sizes.length - 1">,</span>
             </span> )
           </small>
-        
+
           <table class="table">
             <thead>
               <tr>
@@ -152,7 +154,7 @@
           </table>
         </div>
       </div>
-      
+
       <hr>
       <div class="row mt-2">
         <div class="col-4">
