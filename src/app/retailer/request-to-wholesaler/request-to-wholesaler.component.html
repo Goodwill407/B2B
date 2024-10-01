@@ -18,11 +18,13 @@
             <ul class="nav nav-tabs" id="searchTab" role="tablist">
               <li class="nav-item" role="presentation">
                 <a class="nav-link active" id="brand-tab" data-bs-toggle="tab" href="#brand" role="tab"
-                  aria-controls="brand" aria-selected="true">Search By Brand</a>
+                   aria-controls="brand" aria-selected="true"
+                   (shown.bs.tab)="onTabChange('brand')">Search By Brand</a>
               </li>
               <li class="nav-item" role="presentation">
                 <a class="nav-link" id="product-tab" data-bs-toggle="tab" href="#product" role="tab"
-                  aria-controls="product" aria-selected="false">Search By Product Type</a>
+                   aria-controls="product" aria-selected="false"
+                   (shown.bs.tab)="onTabChange('product')">Search By Product Type</a>
               </li>
             </ul>
 

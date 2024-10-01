@@ -272,6 +272,16 @@ getWholesalerProfileData() {
   })
 }
 
+// for clear data after change tab
+onTabChange(tabName: string) {
+  if (tabName === 'brand') {
+    this.productTypeWise = [];  // Clear product array when switching to brand tab
+  } else if (tabName === 'product') {
+    this.wholesalerData = [];  // Clear brand array when switching to product tab
+  }
+}
+
+
 onSearchBrandChange() {
   if (this.SearchBrand) {
     const object = {
