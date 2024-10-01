@@ -48,7 +48,7 @@ export class RequestToManufacturerComponent {
   cdnPath:any
   SearchBrand:any;
   dataType:any;
-  productTypeWise:any;
+  productTypeWise: any[] = [];
 
    // for ads
    rightAdImages: string[] = [
@@ -78,6 +78,16 @@ export class RequestToManufacturerComponent {
       this.filteredSuggestions = [];
     }
   }
+
+  // clear data after change Tab
+  onTabChange(tabName: string) {
+    if (tabName === 'brand') {
+      this.productTypeWise = [];  // Clear product array when switching to brand tab
+    } else if (tabName === 'product') {
+      this.brandData = [];  // Clear brand array when switching to product tab
+    }
+  }
+
 
   onBrandSearchChange(): void {
     if (this.SearchBrand) {

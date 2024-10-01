@@ -365,7 +365,7 @@
                                     <option [value]="type.name" *ngFor="let type of allCareInstruction">{{type.name}}
                                     </option>
                                 </select>
-                            </div>                          
+                            </div>
 
                             <div *ngIf="visibleFields.includes('scoksStyle')"
                                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
@@ -380,7 +380,8 @@
 
                             <div *ngIf="visibleFields.includes('troursePocketDescription')"
                                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                                <label class="label-input" for="troursePocketDescription">Trourse Pocket Description </label>
+                                <label class="label-input" for="troursePocketDescription">Trourse Pocket Description
+                                </label>
                                 <select name="troursePocketDescription" id="troursePocketDescription"
                                     class="form-select" formControlName="troursePocketDescription">
                                     <option value="" disabled selected>Select</option>
@@ -466,12 +467,14 @@
                                     </option>
                                 </select>
                             </div>
-                            
-                            <div *ngIf="visibleFields.includes('trourseLength')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+
+                            <div *ngIf="visibleFields.includes('trourseLength')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="trourseLength"> Trourse Length <span
                                         class="required">*</span>
                                     (in Sets)</label>
-                                <input type="text" id="trourseLength" formControlName="trourseLength" class="form-control"
+                                <input type="text" id="trourseLength" formControlName="trourseLength"
+                                    class="form-control"
                                     [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('trourseLength')?.invalid}">
                                 <div *ngIf="submittedStep1 && stepOne.get('trourseLength')?.invalid"
                                     class="invalid-feedback">
@@ -565,7 +568,7 @@
                                 </select>
                             </div>
 
-                            <!-- Item Length Dropdown -->                            
+                            <!-- Item Length Dropdown -->
                             <div *ngIf="visibleFields.includes('itemLength')"
                                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="itemLength">Length</label>
@@ -595,7 +598,8 @@
                                 <label class="label-input" for="itemStyle">Select Style</label>
                                 <select name="itemStyle" id="itemStyle" class="form-select" formControlName="itemStyle">
                                     <option value="" disabled selected>Select</option>
-                                    <option [value]="type.name" *ngFor="let type of AllwomenStyle">{{type.name}}</option>
+                                    <option [value]="type.name" *ngFor="let type of AllwomenStyle">{{type.name}}
+                                    </option>
                                 </select>
                             </div>
 
@@ -666,20 +670,21 @@
                             </div>
 
                             <!-- Bottom Included Dropdown -->
-                            <div *ngIf="visibleFields.includes('bottomIncluded')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <div *ngIf="visibleFields.includes('bottomIncluded')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="bottomIncluded">Bottom Included</label>
                                 <div class="form-check">
-                                    <input type="radio" class="form-check-input" id="bottomIncludedYes" name="bottomIncluded" value="yes" 
-                                           formControlName="bottomIncluded">
+                                    <input type="radio" class="form-check-input" id="bottomIncludedYes"
+                                        name="bottomIncluded" value="yes" formControlName="bottomIncluded">
                                     <label class="form-check-label" for="bottomIncludedYes">Yes</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" class="form-check-input" id="bottomIncludedNo" name="bottomIncluded" value="no" 
-                                           formControlName="bottomIncluded">
+                                    <input type="radio" class="form-check-input" id="bottomIncludedNo"
+                                        name="bottomIncluded" value="no" formControlName="bottomIncluded">
                                     <label class="form-check-label" for="bottomIncludedNo">No</label>
                                 </div>
                             </div>
-                            
+
 
                             <!-- Ethnic Bottoms Style Dropdown -->
                             <div *ngIf="visibleFields.includes('ethnicBottomsStyle')"
@@ -705,9 +710,10 @@
                                 </select>
                             </div>
 
-                            <!-- Ghera In MTR Dropdown -->                            
-                            <div *ngIf="visibleFields.includes('gheraInMTR')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                                <label class="label-input" for="gheraInMTR">  Ghera (InMTR) <span
+                            <!-- Ghera In MTR Dropdown -->
+                            <div *ngIf="visibleFields.includes('gheraInMTR')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="gheraInMTR"> Ghera (InMTR) <span
                                         class="required">*</span></label>
                                 <input type="text" id="gheraInMTR" formControlName="gheraInMTR" class="form-control"
                                     [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('gheraInMTR')?.invalid}">
@@ -749,7 +755,7 @@
                                 </div>
                             </div>
 
-                            <div *ngIf="sizesArray.controls.length > 0" class="row mt-2" formArrayName="sizes">
+                            <!-- <div *ngIf="sizesArray.controls.length > 0" class="row mt-2" formArrayName="sizes">
                                 <h5 class="mt-4">{{foundSizeSet}} :</h5>
                                 <hr>
                                 <div class="col-12">
@@ -781,14 +787,169 @@
                                     </div>
                                 </div>
 
-                            </div>               
+                            </div>                -->
 
-                            
+                            <div *ngIf="sizesArray.controls.length > 0" class="row mt-2" formArrayName="sizes">
+                                <h5 class="mt-4">{{ foundSizeSet }} :</h5>
+                                <hr>
 
+                                <!-- Headings Row: Size, Item Dimension, Price -->
+                                <!-- <div class="col-12">
+                                    <div class="row text-center">
+                                       
+                                        <div class="item-size ">
+                                            <h6>Size</h6>
+                                            <hr>
+                                        </div>
+                                      
+                                        <div class="item-dimention ">
+                                            <h6>Item Dimension</h6><hr>
+                                        </div>
+                                     
+                                        <div class="item-price ">
+                                            <h6>Price</h6><hr>
+                                        </div>
+                                    </div>
+                                </div> -->
 
+                                <!-- Labels Row: -->
+                                <div class="col-12">
+                                    <div class="row text-center">
+                                        <!-- First 4 columns under Size -->
+                                        <div class="col" *ngFor="let field of sizeChartFields.slice(0, 4)">
+                                            <label class="custom-label">
+                                                {{ field.label.split('(')[0] }}<span *ngIf="field.required"
+                                                    class="required"></span>
+                                                <br>
+                                                <small
+                                                    *ngIf="field.label.includes('(in cm)') || field.label.includes('(in gm)' )">
+                                                    ({{ field.label.split('(')[1] }})
+                                                </small>
+                                            </label>
+                                        </div>
+
+                                        <!-- Next 5 columns under Item Dimension -->
+                                        <div class="col" *ngFor="let field of sizeChartFields.slice(4, 9)">
+                                            <label class="custom-label">
+                                                {{ field.label.split('(')[0] }}<span *ngIf="field.required"
+                                                    class="required"></span>
+                                                <br>
+                                                <small
+                                                    *ngIf="field.label.includes('(in cm)') || field.label.includes('(in gm)' )">
+                                                    ({{ field.label.split('(')[1] }})
+                                                </small>
+                                            </label>
+                                        </div>
+
+                                        <!-- Last 3 columns under Price -->
+                                        <div class="col" *ngFor="let field of sizeChartFields.slice(9)">
+                                            <label class="custom-label">
+                                                {{ field.label.split('(')[0] }}<span *ngIf="field.required"
+                                                    class="required"></span>
+                                                <br>
+                                                <small
+                                                    *ngIf="field.label.includes('(in cm)') || field.label.includes('(in gm)' )">
+                                                    ({{ field.label.split('(')[1] }})
+                                                </small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Form Fields Row: -->
+                                <div class="col-12" *ngFor="let sizeGroup of sizesArray.controls; let i = index"
+                                    [formGroupName]="i">
+                                    <div class="row">
+                                        <!-- First 4 fields under Size -->
+                                        <div class="col" *ngFor="let field of sizeChartFields.slice(0, 4)">
+                                            <input type="text" [formControlName]="field.name"
+                                                class="form-control custom-input"
+                                                [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get(field.name)?.invalid}"
+                                                placeholder="">
+                                            <!-- Validation feedback -->
+                                            <div *ngIf="submittedStep1 && sizeGroup.get(field.name)?.invalid"
+                                                class="invalid-feedback">
+                                                <div *ngIf="sizeGroup.get(field.name)?.hasError('required')">
+                                                    {{ field.label }} is required
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Next 5 fields under Item Dimension -->
+                                        <div class="col" *ngFor="let field of sizeChartFields.slice(4, 9)">
+                                            <input type="text" [formControlName]="field.name"
+                                                class="form-control custom-input"
+                                                [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get(field.name)?.invalid}"
+                                                placeholder="">
+                                            <!-- Validation feedback -->
+                                            <div *ngIf="submittedStep1 && sizeGroup.get(field.name)?.invalid"
+                                                class="invalid-feedback">
+                                                <div *ngIf="sizeGroup.get(field.name)?.hasError('required')">
+                                                    {{ field.label }} is required
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Last 3 fields under Price -->
+                                        <div class="col" *ngFor="let field of sizeChartFields.slice(9)">
+                                            <input type="text" [formControlName]="field.name"
+                                                class="form-control custom-input"
+                                                [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get(field.name)?.invalid}"
+                                                placeholder="">
+                                            <!-- Validation feedback -->
+                                            <div *ngIf="submittedStep1 && sizeGroup.get(field.name)?.invalid"
+                                                class="invalid-feedback">
+                                                <div *ngIf="sizeGroup.get(field.name)?.hasError('required')">
+                                                    {{ field.label }} is required
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
 
 
                         </div>
+
+                        <!-- product dimention -->
+                        <div *ngIf="showFlag2" class="container m-0 p-2 border mt-2 pt-2 rounded"
+                            style="background-color: aliceblue;">
+                            <!-- Product Dimension Heading -->
+                            <h6 class="mb-2">Product Dimensions :</h6>
+                          
+                            <div formGroupName="productDimension" class="product-dimension">
+                              <div class="row">
+                                
+                                <!-- Length Field -->
+                                <div class="col-md-3">                                 
+                                    <label for="length">Length <span class="required">*</span> <small>(in cm)</small></label>
+                                    <input id="length" formControlName="length" class="form-control " type="text" placeholder="Enter length" />                                  
+                                </div>
+                          
+                                <!-- Width Field -->
+                                <div class="col-md-3">                                 
+                                    <label for="width">Width <span class="required">*</span><small>(in cm)</small></label>
+                                    <input id="width" formControlName="width" class="form-control" type="text" placeholder="Enter width" />                                 
+                                </div>
+                          
+                                <!-- Height Field -->
+                                <div class="col-md-3">                                 
+                                    <label for="height">Height<span class="required">*</span> <small>(in cm)</small></label>
+                                    <input id="height" formControlName="height" class="form-control" type="text" placeholder="Enter height" />                           
+                                </div>
+                          
+                                <!-- Weight Field -->
+                                <div class="col-md-3">                                  
+                                    <label for="weight">Weight<span class="required">*</span> <small>(in gm)</small></label>
+                                    <input id="weight" formControlName="weight" class="form-control" type="text" placeholder="Enter weight" />                              
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+
+
 
                         <div *ngIf="showFlag2" class="total-data">
                             <div class="row mt-2">
@@ -1028,21 +1189,27 @@
                             <button type="submit" class="btn submit-btn d-flex me-2" (click)="saveStepTwoData()">
                                 <i class="bi bi-plus"></i> Add New Color
                             </button>
-                            <button type="button" class="btn submit-btn d-flex" (click)="navigateOnProduct()" >
+                            <button type="button" class="btn submit-btn d-flex" (click)="navigateOnProduct()">
                                 Cancel
                             </button>
                         </div>
                         <div class="row img-details">
                             <h5>Image Upload Details</h5>
-                            <p><span>Size: </span> Images must be at least 1,000 pixels tall or wide, but ideally 1,600 pixels or larger on the longest side. The longest side can't exceed 2,000 pixels. </p>
-                            <p><span>File format: </span> Images must be in JPEG, PNG, or GIF format. JPEG is preferred. </p>
+                            <p><span>Size: </span> Images must be at least 1,000 pixels tall or wide, but ideally 1,600
+                                pixels or larger on the longest side. The longest side can't exceed 2,000 pixels. </p>
+                            <p><span>File format: </span> Images must be in JPEG, PNG, or GIF format. JPEG is preferred.
+                            </p>
                             <p><span>Resolution: </span> Images should have a minimum resolution of 72 dpi. </p>
                             <p><span>Compression: </span> Images should have minimal to no compression. </p>
                             <p><span>Product placement: </span> The product should fill at least 85% of the image. </p>
-                            <p><span>Editing: </span> Images should not be altered in any way, except for minor edits to improve the image quality. </p>                 
-                            <p><span>Content: </span> Images should not contain nudity, be sexually suggestive, or include Fashion Traders Hub logos or trademarks. </p>                 
-                            <p><span>Multiple products: </span> Images should only show one product, not a group of products. </p>                 
-                            <p><span>Packaging: </span> If the product comes in packaging, include images of the packaging and any product identifier codes.</p>                 
+                            <p><span>Editing: </span> Images should not be altered in any way, except for minor edits to
+                                improve the image quality. </p>
+                            <p><span>Content: </span> Images should not contain nudity, be sexually suggestive, or
+                                include Fashion Traders Hub logos or trademarks. </p>
+                            <p><span>Multiple products: </span> Images should only show one product, not a group of
+                                products. </p>
+                            <p><span>Packaging: </span> If the product comes in packaging, include images of the
+                                packaging and any product identifier codes.</p>
 
                         </div>
                     </div>
