@@ -7,6 +7,15 @@
         }
     }
 }
+.card{
+    position: relative;
+    .navigate{
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        padding: 0;
+    }
+}
 
 .submit-btn {
     padding-right: 3rem !important;

@@ -88,7 +88,7 @@ export class WlsListPoComponent {
     // Check if discount is defined and is an array
     if (Array.isArray(distributor.discounts) && distributor.discounts.length > 0) {
       const discountPercentage = Number(distributor.discounts[0].productDiscount.replace('%', '')) / 100;
-      distributor.discount = distributor.subTotal * discountPercentage;
+      distributor.discount = (distributor.subTotal * discountPercentage).toFixed(2);
     } else {
       distributor.discount = 0;
     }

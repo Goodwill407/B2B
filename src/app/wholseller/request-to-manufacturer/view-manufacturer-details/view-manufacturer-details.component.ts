@@ -1,8 +1,10 @@
-import { CommonModule, DatePipe, NgFor } from '@angular/common';
+import { CommonModule, DatePipe, NgFor, Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import { CustomDatePipe } from 'app/common/custom-pipe.pipe';
+import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.component';
 
 export interface Company {
   name: string;
@@ -48,9 +50,9 @@ export class ViewManufacturerDetailsComponent {
   userProfile: any;
   WholsellerData: any;
   allVisabilityData: any;
-  id: any
+  id: any;
 
-  constructor(private route: ActivatedRoute, private authService: AuthService, private communicationService: CommunicationService) {
+  constructor(private route: ActivatedRoute, public authService: AuthService, private communicationService: CommunicationService,  private dialog: MatDialog,  private location: Location) {
     this.cdnPath = authService.cdnPath
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
   }
@@ -199,7 +201,15 @@ export class ViewManufacturerDetailsComponent {
     })
   }
 
+  openImg(path:any,size:number){
+    const dialogRef = this.dialog.open(ImageDialogComponent, {
+      width: size+'px',
+      data: {path:path,width:size}  // Pass the current product data
+    });
+  }
 
-
+  navigateFun() {
+    this.location.back();
+  }
 }
 

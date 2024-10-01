@@ -23,6 +23,8 @@ export const APP_ROUTE: Route[] = [
       },
       {
         path: 'mnf',
+        canActivate:[AuthGuard],
+        data:{role:Role.Manufacture},
         loadChildren: () =>
           import('./manufacturer/manufacturer.routes').then((m) => m.M_Auth),
       },

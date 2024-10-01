@@ -27,7 +27,7 @@
                         <td>{{ data.rate }}</td>
                         <td>{{ data.taxableValue }}</td>
                         <td>{{ data.issue || 'No'}}</td>
-                        <td>{{ data.subReason ||'No' }}</td>
+                        <td>{{ data.subIssue ||'No' }}</td>
                         <td>
                             <input type="checkbox" class="form-check-input" [disabled]="data.status==='issue'"
                                 [(ngModel)]="data.doneChecked" (change)="doneProduct(data, $event)" id="">

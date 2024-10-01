@@ -1,47 +1,70 @@
-
 <section class="content">
     <div class="content-block">
         <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Product Stock Summary</h4>
         <div class="card-table2 p-3">
             <div class="table-header d-flex align-items-center">
-                <h5 class="mb-0">Distributor's List</h5>
-                <div class="ms-auto">
-                    <!-- Show the button only if more than one distributor is selected -->
-                    <button  class="btn " (click)="navigateFun()"><i class="bi bi-arrow-left-circle h4"></i></button>
+                <button class="btn " (click)="navigateFun()"><i class="bi bi-arrow-left-circle h4"></i></button>
+                <h5 class="mx-auto">Product Details</h5>
+            </div>
+            <hr class="mt-0">
+            <div class="product-details">
+                <div class="row">
+                    <div class="col-4">
+                        <p><strong>Design No :</strong> {{product?.designNumber}}</p>
+                        <p><strong>Brand :</strong> {{product?.brand}}</p>
+                        <p><strong>Title :</strong> {{product?.productTitle}}</p>
+                    </div>
+                    <!-- <div class="col-1 "><div class="vr"></div></div> -->
+                    <div class="col-7">
+                        <p><strong>Description :</strong> {{product?.productDescription}}</p>
+                    </div>
+                </div>                             
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="product-details">
+                        <p><strong>Product Type :</strong> {{product?.productType}}</p>
+                        <p><strong>Gender :</strong> {{product?.gender}}</p>
+                        <p><strong>Category :</strong> {{product?.clothing}}</p>
+                        <p><strong>Sub Category :</strong> {{product?.subCategory}}</p>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="product-details">
+                        <p><strong>Total Production :</strong> 0</p>
+                        <p><strong>Total Damage :</strong> 0</p>
+                        <p><strong>Total Sale :</strong> 0</p>
+                        <p><strong>Total Stock :</strong> {{product?.quantity}}</p>
+                    </div>
                 </div>
             </div>
-            <hr>
+
+            <hr class="mt-0">
+            <!-- <h5><u>Product Summary</u></h5> -->
             <div class="p-grid p-fluid">
                 <div class="p-col-12 text-center">
-                    <p-table [value]="product">
+                    <p-table [value]="product?.quantitySummary">
                         <ng-template pTemplate="header">
                             <tr>
-                                
-                                <th>Distributor's Name</th>
-                                <th>Company Name/ Firm Name</th>
-                                <th>Mobile Number</th>
-                                <th>Email</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                                <th>Sr No</th>
+                                <th>Production Date</th>
+                                <th>New Quantity</th>
                             </tr>
                         </ng-template>
-                        <ng-template pTemplate="body" let-distributor>
+                        <ng-template pTemplate="body" let-data let-ri="rowIndex">
                             <tr>
-                                <td class="text-center">{{distributor.fullName}}</td>
-                                <td class="text-center">{{distributor.companyName}}</td>
-                                <td class="text-center">{{distributor.mobileNumber}}</td>
-                                <td class="text-center">{{distributor.email}}</td>
-                                <td class="text-center text-danger fw-bold">Pending</td>
-                                <td class="text-center">
-                                    <!-- <button class="btn btn-outline-success" (click)="reInvite(distributor)">Re-Invite</button> -->
-                                </td>
+                                <td class="text-center">{{ri+1}}</td>
+                                <td class="text-center">{{data.updatedDate |date:'dd-MM-yyyy'}}</td>
+                                <td class="text-center">{{data.newQuantity}}</td>
                             </tr>
                         </ng-template>
                     </p-table>
                     <span *ngIf="!product || product.length == 0"
-                          class="data-not-found d-flex justify-content-center align-items-center"> </span>
+                        class="data-not-found d-flex justify-content-center align-items-center"> </span>
                 </div>
             </div>
+            <hr>
         </div>
     </div>
 </section>
