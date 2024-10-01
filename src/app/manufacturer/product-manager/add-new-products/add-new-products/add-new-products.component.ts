@@ -119,7 +119,7 @@ export class AddNewProductsComponent {
 
 
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: FormBuilder,    
     private authService: AuthService,
     private cd: ChangeDetectorRef,
     private communicationService: CommunicationService,
@@ -140,6 +140,13 @@ export class AddNewProductsComponent {
         subCategory: ['', Validators.required],        
 
         sizes: this.fb.array([]),
+
+        productDimension: this.fb.group({
+          length: ['', [Validators.required]], 
+          width: ['', [Validators.required]],
+          height: ['', [Validators.required]],
+          weight: ['', [Validators.required]]
+        }),     
 
         minimumOrderQty: ['', Validators.required],
         setOFnetWeight: ['', Validators.required],
@@ -226,21 +233,7 @@ export class AddNewProductsComponent {
       this.getProductDataById()
     }
 
-  }
-
-  disbledFields() {
-    if (this.foundSizeSet) {
-      this.stepOne.get('setOfManPrice')?.disable();
-      this.stepOne.get('setOFnetWeight')?.disable();
-      this.stepOne.get('setOfMRP')?.disable();
-    }
-    else {
-      this.stepOne.get('setOfManPrice')?.enable();
-      this.stepOne.get('setOFnetWeight')?.enable();
-      this.stepOne.get('setOfMRP')?.enable();
-    }
-
-  }
+  } 
 
   // stepOne vlidation
   get f() {
@@ -295,38 +288,41 @@ export class AddNewProductsComponent {
     if (this.foundSizeSet === 'Size Set') {
       this.sizeChartFields = []     
       this.sizeChartFields = [
-        { name: 'standardSize', label: 'Standard Size', required: false },
-        { name: 'brandSize', label: 'Brand Size', required: true },
-        { name: 'chestSize', label: 'Chest Size (in cm)', required: true },
-        { name: 'shoulderSize', label: 'Shoulder Size (in cm)', required: true },
-        { name: 'frontLength', label: 'Front Length (in cm)', required: true },
-        { name: 'neckSize', label: 'Neck Size (in cm)', required: false },
-        { name: 'length', label: 'Length (in cm)', required: false },
-        { name: 'width', label: 'Width (in cm)', required: false },
-        { name: 'height', label: 'Height (in cm)', required: true },
-        { name: 'weight', label: 'Weight (in gm)', required: true },
-        { name: 'wsPrice', label: 'W/S Price', required: true },
-        { name: 'rtlPrice', label: 'Rtl Price', required: true },
-        { name: 'mrp', label: 'MRP', required: true }
-      ];
+        { name: 'standardSize', label: 'Standard Size', required: false, type: 'Item_size' },
+        { name: 'brandSize', label: 'Brand Size', required: true, type: 'Item_size' },
+        { name: 'chestSize', label: 'Chest Size (in cm)', required: true, type: 'Item_size' },
+        { name: 'shoulderSize', label: 'Shoulder Size (in cm)', required: true, type: 'Item_size' },
+        { name: 'frontLength', label: 'Front Length (in cm)', required: true, type: 'Item_size' },
+        { name: 'neckSize', label: 'Neck Size (in cm)', required: false, type: 'Item_size' },
+        { name: 'length', label: 'Length (in cm)', required: false, type: 'item_dimention' },
+        { name: 'width', label: 'Width (in cm)', required: false, type: 'item_dimention' },
+        { name: 'height', label: 'Height (in cm)', required: true, type: 'item_dimention' },
+        { name: 'weight', label: 'Weight (in gm)', required: true, type: 'item_dimention' },
+        { name: 'manufacturerPrice', label: 'W/S Price', required: true, type: 'price' },
+        { name: 'RtlPrice', label: 'Rtl Price', required: true, type: 'price' },
+        { name: 'singleMRP', label: 'MRP', required: true, type: 'price' }
+    ];
+    
     }
     else if (this.foundSizeSet === "Waist Size Set") {
       this.sizeChartFields = []
       this.sizeChartFields = [
-        { name: 'standardSize', label: 'Standard Size', required: false },
-        { name: 'brandSize', label: 'Brand Size', required: true },
-        { name: 'waistSizeSetStandardSize', label: 'Waist Size Set', required: false },
-        { name: 'waist', label: 'Waist(in cm)', required: true },
-        { name: 'inseam', label: 'Inseam(in cm)', required: true },
-        { name: 'lengthIn', label: 'Length(in cm)', required: true },
-        { name: 'rise', label: 'Rise(in cm)', required: true },
-        { name: 'length', label: 'Length(in cm)', required: false },
-        { name: 'width', label: 'Width(in cm)', required: false },
-        { name: 'height', label: 'Height(in cm)', required: true },
-        { name: 'weight', label: 'Weight(in Gm)', required: true },
-        { name: 'manufacturerPrice', label: "Manufacturer's Price", required: true },
-        { name: 'singleMRP', label: 'MRP', required: true }
-      ];
+        { name: 'standardSize', label: 'Standard Size', required: false, type: 'Item_size' },
+        { name: 'brandSize', label: 'Brand Size', required: true, type: 'Item_size' },
+        { name: 'waistSizeSetStandardSize', label: 'Waist Size Set', required: false, type: 'Item_size' },
+        { name: 'waist', label: 'Waist(in cm)', required: true, type: 'Item_size' },
+        { name: 'inseam', label: 'Inseam(in cm)', required: true, type: 'Item_size' },
+        { name: 'lengthIn', label: 'Length(in cm)', required: true, type: 'Item_size' },
+        { name: 'rise', label: 'Rise(in cm)', required: true, type: 'Item_size' },
+        { name: 'length', label: 'Length(in cm)', required: false, type: 'item_dimention' },
+        { name: 'width', label: 'Width(in cm)', required: false, type: 'item_dimention' },
+        { name: 'height', label: 'Height(in cm)', required: true, type: 'item_dimention' },
+        { name: 'weight', label: 'Weight(in Gm)', required: true, type: 'item_dimention' },
+        { name: 'manufacturerPrice', label: 'W/S Price', required: true, type: 'price' },
+        { name: 'RtlPrice', label: 'Rtl Price', required: true, type: 'price' },
+        { name: 'singleMRP', label: 'MRP', required: true, type: 'price' }
+    ];
+    
     }
   }
 
@@ -356,11 +352,11 @@ export class AddNewProductsComponent {
       group.addControl(field.name, this.fb.control('', field.required ? Validators.required : null));
 
       // Subscribe to changes for manufacturerPrice, singleMRP, and weight to trigger updateTotals
-      if (['manufacturerPrice', 'singleMRP', 'weight'].includes(field.name)) {
-        group.get(field.name)?.valueChanges.subscribe(() => {
-          this.updateTotals();
-        });
-      }
+      // if (['manufacturerPrice', 'singleMRP', 'weight'].includes(field.name)) {
+      //   group.get(field.name)?.valueChanges.subscribe(() => {
+      //     // this.updateTotals();
+      //   });
+      // }
     });
 
     return group;
@@ -374,23 +370,23 @@ export class AddNewProductsComponent {
   }
 
   // get total value
-  updateTotals() {
-    const sizes = this.sizesArray.controls;
+  // updateTotals() {
+  //   const sizes = this.sizesArray.controls;
 
-    let totalManufacturerPrice = 0;
-    let totalMRP = 0;
-    let totalWeight = 0;
+  //   let totalManufacturerPrice = 0;
+  //   let totalMRP = 0;
+  //   let totalWeight = 0;
 
-    for (let sizeGroup of sizes) {
-      totalManufacturerPrice += +sizeGroup.get('manufacturerPrice')?.value || 0;
-      totalMRP += +sizeGroup.get('singleMRP')?.value || 0;
-      totalWeight += +sizeGroup.get('weight')?.value || 0;
-    }
+  //   for (let sizeGroup of sizes) {
+  //     totalManufacturerPrice += +sizeGroup.get('manufacturerPrice')?.value || 0;
+  //     totalMRP += +sizeGroup.get('singleMRP')?.value || 0;
+  //     totalWeight += +sizeGroup.get('weight')?.value || 0;
+  //   }
 
-    this.stepOne.get('setOfManPrice')?.setValue(totalManufacturerPrice, { emitEvent: false });
-    this.stepOne.get('setOfMRP')?.setValue(totalMRP, { emitEvent: false });
-    this.stepOne.get('setOFnetWeight')?.setValue(totalWeight, { emitEvent: false });
-  }
+  //   this.stepOne.get('setOfManPrice')?.setValue(totalManufacturerPrice, { emitEvent: false });
+  //   this.stepOne.get('setOfMRP')?.setValue(totalMRP, { emitEvent: false });
+  //   this.stepOne.get('setOFnetWeight')?.setValue(totalWeight, { emitEvent: false });
+  // }
 
 
 
@@ -519,13 +515,9 @@ export class AddNewProductsComponent {
       }
 
       if (this.foundSizeSet) {       
-        // Pass the found element to the function if either exists
-        this.disbledFields()
+        // Pass the found element to the function if either exists      
         this.getSizeSetForProducts(this.foundSizeSet);
-      }
-      else{
-        this.disbledFields()
-      }
+      }      
     } catch (error) {
       console.error('Error mapping data:', error);
     }
@@ -652,9 +644,9 @@ export class AddNewProductsComponent {
           // Show the popup after saving successfully       
   
           // Option 1: Close popup after 2 seconds and navigate to view-product page
-          setTimeout(() => {          
-            this.router.navigate([`mnf/manage-product`]);
-          }, 1500); 
+          // setTimeout(() => {          
+          //   this.router.navigate([`mnf/manage-product`]);
+          // }, 1500); 
   
           // Option 2: Alternatively, you can add a manual action (like a button click) to navigate
         }
@@ -815,6 +807,8 @@ export class AddNewProductsComponent {
     sizesArray.clear(); // Clear existing values
     this.selectedSizes = [];
 
+    if(this.foundSizeSet === 'Size Set'){
+
     sizes.forEach(size => {
       sizesArray.push(this.fb.group({
         standardSize: [size.standardSize],
@@ -822,15 +816,40 @@ export class AddNewProductsComponent {
         chestSize: [size.chestSize, Validators.required],
         shoulderSize: [size.shoulderSize, Validators.required],
         frontLength: [size.frontLength, Validators.required],
+        neckSize: [size.neckSize,Validators.required],
         length: [size.length],
         width: [size.width],
         height: [size.height],
         weight: [size.weight, Validators.required],
         manufacturerPrice: [size.manufacturerPrice, Validators.required],
+        RtlPrice:[size.RtlPrice, Validators.required],
         singleMRP: [size.singleMRP, Validators.required]
       }));
       this.selectedSizes.push(size.standardSize); // Keep track of selected sizes
     });
+  }
+  else{
+    sizes.forEach(size => {
+      sizesArray.push(this.fb.group({
+        standardSize: [size.standardSize],
+        brandSize: [size.brandSize, Validators.required],
+        waistSizeSetStandardSize: [size.waistSizeSetStandardSize, Validators.required],
+        waist: [size.waist, Validators.required],
+        inseam: [size.inseam, Validators.required],
+        lengthIn: [size.lengthIn, Validators.required],
+        rise: [size.rise, Validators.required],
+        length: [size.length],
+        width: [size.width],
+        height: [size.height],
+        weight: [size.weight, Validators.required],
+        manufacturerPrice: [size.manufacturerPrice, Validators.required],
+        RtlPrice:[size.RtlPrice, Validators.required],
+        singleMRP: [size.singleMRP, Validators.required]
+      }));
+      this.selectedSizes.push(size.standardSize); // Keep track of selected sizes
+    });
+  }
+    
   }
 
   // update step one data
@@ -1462,5 +1481,7 @@ error => {
 //     console.log('error');
 // });
 // }
+
+
 
 }
