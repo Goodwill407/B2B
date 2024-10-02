@@ -39,12 +39,12 @@
             <div class="color-options mt-0">
               <button *ngFor="let color of product.colors"
                       [ngStyle]="{'background-color': color, 'border': color === '#FFFFFF' ? '1px solid #000' : 'none'}"
-                      [class.active]="product.selectedColor === color"
+                      [class.active]="product.selectedColor === color" [disabled]="disableImage(product,color)"
                       (click)="changeProductImage(product, color)">
               </button>
             </div>
             <h6 class="title" [routerLink]="['/wholesaler/product/view-product',{id: product.id}]">{{product.title}}</h6>
-            <p>{{product.description}}</p>
+            <p class="truncate-text">{{ product.description }}</p>
             <div class="availability">
               <span *ngIf="product.stock > 0" class="in-stock">In stock - Qty {{product.stock}}</span>
               <span *ngIf="product.stock === 0" class="out-of-stock">Out of stock</span>

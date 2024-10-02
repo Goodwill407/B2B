@@ -77,6 +77,7 @@ export class ViewProductComponent {
           setOfMRP: res.setOfMRP,
           setOFnetWeight: res.setOFnetWeight,
           minimumOrderQty: res.minimumOrderQty,
+          dimensions: res.productDimension,
           dateAvailable: res.dateOfListing ? new Date(res.dateOfListing).toLocaleDateString() : 'N/A',
           availability: res.quantity > 0 ? `${res.quantity}` : 'Out of Stock',
           id: res.id,

@@ -157,18 +157,23 @@
 
       <hr>
       <div class="row mt-2">
-        <div class="col-4">
-          <label for="setOFnetWeight"><small>Total Weight (In grams)</small></label>
-          {{product?.setOFnetWeight}}
+        <div class="col-3">
+          <label for="setOFnetWeight"><small>Total Weight (In grams)</small></label><br>
+          {{product?.dimensions?.weight}}
+        </div>
+        
+        <div class="col-3">
+          <label for="setOFnetWeight"><small>Dimensions (L x W x H ) in cm.</small></label><br>
+          {{ product?.dimensions?.length }} x {{ product?.dimensions?.width }} x {{ product?.dimensions?.height }}
         </div>
 
-        <div class="col-4">
-          <label for="MRP"><small>Total Manufacturer's Price (INR)</small></label>
+        <div class="col-3">
+          <label for="MRP"><small>Total Manufacturer's Price (INR)</small></label><br>
           {{product?.setOfManPrice}}
         </div>
 
-        <div class="col-4">
-          <label for="MRP"><small>Total MRP (INR)</small></label>
+        <div class="col-3">
+          <label for="MRP"><small>Total MRP (INR)</small></label><br>
           {{product?.setOfMRP}}
         </div>
       </div>

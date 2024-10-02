@@ -95,29 +95,15 @@
                             <td>{{ product.taxableValue }}</td>
                             <td>{{ product.issue }}</td>
                             <td>{{ product.subIssue }}</td>
-                            <!-- <td>{{ product.gst }}</td>
-                            <td>{{ product.total }}</td> -->
                         </tr>
                     </tbody>
-                    <!-- <tfoot>
-                        <tr>
-                            <th colspan="5" class="text-end">Total Amount</th>
-                            <th>{{ challan.totalRate }}</th>
-                            <th>{{ challan.totalGST }}</th>
-                            <th>{{ challan.totalAmount }}</th>
-                        </tr>
-                    </tfoot> -->
                 </table>
             </section>
 
             <section class="totals d-flex justify-content-between">
                 <div class="total-amount">
                     <p><strong>Sub Total : </strong> <span>{{ challan.totalRate }}</span></p>
-                    <!-- <p><strong>Discount Amount : </strong> <span>{{ challan.discount }}</span></p> -->
-                    <!-- <p><strong>Total : </strong> <span>{{ challan.totalRate - challan.discount }}</span></p> -->
                     <p><strong>Total : </strong> <span>{{ challan.totalRate }}</span></p>
-                    <!-- <p><strong>Total GST : </strong> <span>{{ challan.totalGST }}</span></p> -->
-                    <!-- <p><strong>Total Amount After Tax : </strong> <span>{{ challan.totalAmount }}</span></p> -->
                 </div>
                 <div class="total-amount">
                     <p><strong>Roundoff Total Amount : </strong> <span class="fw-bold ">{{ challan.roundedOffTotal
@@ -127,9 +113,6 @@
                 </div>
             </section>
 
-        </div>
-        <div class="text-center my-3">
-            <button class="btn btn-success" (click)="generateDC(challan)">Generate Return Order</button>
         </div>
     </div>
 </section>
