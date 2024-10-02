@@ -132,7 +132,16 @@ export class ManufacturesProductComponent {
       this.changeProductImage(product, product.selectedColor);
     };
   }
-  
+    
+  disableImage(product: any,color:string): boolean {
+    const selectedColor = product.colourCollections.find((c: any) => c.colour === color);
+    if (selectedColor.productImages.length > 0) {
+      return false;
+    }else{
+      return true;
+    }
+  }
+
   navigateToImage(product: any, index: number): void {
     product.hoverIndex = index;
     product.selectedImageUrl = product.selectedImageUrls[index];

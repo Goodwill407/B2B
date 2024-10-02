@@ -94,12 +94,7 @@ export class SigninComponent
                 } else {
                   this.router.navigate(['/authentication/signin']);
                 }
-                this.communicationService.showNotification(
-                  'snackbar-success',
-                  `Login Successfully...!!!`,
-                  'bottom',
-                  'center'
-                );
+                this.communicationService.customSuccess(`Login Successfully...!!!`);
                 this.loading = false;
               }, 500);
             } else {

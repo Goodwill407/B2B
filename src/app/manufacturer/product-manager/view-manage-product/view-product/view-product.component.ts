@@ -72,7 +72,7 @@ export class ViewProductComponent {
             video: colour.productVideo
           })),
           setOFnetWeight: res.setOFnetWeight,
-          dimensions: res.ProductDeimension.map((dim: any) => `L: ${dim.length}, W: ${dim.width}, H: ${dim.height}`).join(' | '),
+          dimensions: res.productDimension,
           dateAvailable: res.dateOfListing ? new Date(res.dateOfListing).toLocaleDateString() : 'N/A',
           availability: res.quantity > 0 ? `${res.quantity} (In Stock)` : 'Out of Stock'
         };

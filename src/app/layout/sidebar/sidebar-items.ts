@@ -324,7 +324,7 @@ export const ROUTES: RouteInfo[] = [
     role: ['manufacture'],
     submenu: [
       {
-        path: '/users/trainer',
+        path: '/mnf/return-mng/order-return',
         title: 'Order Return',
         iconType: '',
         icon: '',

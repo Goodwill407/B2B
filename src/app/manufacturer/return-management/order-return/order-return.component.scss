@@ -1,0 +1,24 @@
+.card {
+    // height: 80vh;
+    min-height: 80vh;
+    padding: 1em;
+  
+    .form-control {
+        border: 1px solid !important;
+        border-color: #d2d4d8 !important;
+    }
+  
+    .btn-success {
+        height: 44px !important;
+    }
+  }
+  
+  .header-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 250px;
+    align-items: center;
+    :last-child{
+       align-items: end;
+    }
+  }

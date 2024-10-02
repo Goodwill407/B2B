@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
@@ -15,20 +15,13 @@ import jsPDF from 'jspdf';
   styleUrl: './return-challan.component.scss'
 })
 export class ReturnChallanComponent implements OnInit {
-  challan: any = { };
+  challan: any = {};
   email: any;
   product: any;
 
-  constructor(private authService: AuthService, private route: ActivatedRoute, private communicationService: CommunicationService) { }
+  constructor(private authService: AuthService, private route: ActivatedRoute, private communicationService: CommunicationService, private location: Location) { }
   ngOnInit(): void {
-    // this.authService.get('dilevery-order/get/challan/number?email=' + this.authService.currentUserValue.email).subscribe((res: any) => {
-    //   this.challan.logoUrl = res.profileImg ? this.authService.cdnPath + res.profileImg : 'assets/images/user/person.png';
-    //   this.challan.challanNo = res.challanNo;
-    // }, (err: any) => {
-    //   this.communicationService.customError(err.error.message);
-    // });
     this.route.queryParamMap.subscribe(params => {
-      // this.email = params.get('email');
       const productString = params.get('product');
       if (productString) {
         this.product = JSON.parse(productString); // Deserialize the product string back to an object
@@ -170,11 +163,14 @@ export class ReturnChallanComponent implements OnInit {
     }
   }
 
-
+  navigateFun() {
+    this.location.back();
+  }
 
   generateDC(obj: any): void {
     this.authService.post('return-order', obj).subscribe((res: any) => {
       this.communicationService.customSuccess('Return Ordered Generated Successfully');
+      setTimeout(()=>{this.navigateFun()},2000);
     }, (error: any) => {
       this.communicationService.customError(error.error.message);
     });
