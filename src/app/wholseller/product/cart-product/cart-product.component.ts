@@ -77,7 +77,7 @@ export class CartProductComponent implements OnInit {
   updateTotals(distributor: any): void {
     distributor.subTotal = distributor.products.reduce((sum: number, product: any) => sum + (product.quantity * product.productId.setOfManPrice), 0);
     distributor.gst = (distributor.subTotal * 0.18).toFixed(2);
-    distributor.grandTotal = (distributor.subTotal) + Number(distributor.gst);
+    distributor.grandTotal = ((distributor.subTotal) + Number(distributor.gst)).toFixed(2);
   }
 
   placeOrder(distributor:any){

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
@@ -17,7 +17,7 @@ import jsPDF from 'jspdf';
 export class ViewChallanComponent {
   challan: any;
 
-  constructor(private authService: AuthService, private route: ActivatedRoute, private communicationService: CommunicationService) { }
+  constructor(private authService: AuthService, private route: ActivatedRoute, private communicationService: CommunicationService,private location: Location) { }
 
   ngOnInit() {
     this.route.queryParamMap.subscribe(params => {
@@ -63,4 +63,7 @@ export class ViewChallanComponent {
     }
   }
 
+  navigateFun() {
+    this.location.back();
+  }
 }

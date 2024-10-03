@@ -13,4 +13,5 @@ export class User {
   cluster!: string;
   name!: string;
   asssignedTo!: string;
+  userCategory!: string;
 }

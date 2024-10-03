@@ -21,7 +21,7 @@
               [src]="authService.cdnPath + selectedMedia" controls></video>
           </div>
           <div class="thumbnail-images">
-            <div class="thumbnail" *ngFor="let media of product.media" (click)="changeMainMedia(media)"
+            <div class="thumbnail" *ngFor="let media of product?.media" (click)="changeMainMedia(media)"
               [class.active]="media.src === selectedMedia">
               <img *ngIf="media.type === 'image'" [src]="authService.cdnPath + media.src" alt="Product Thumbnail">
               <div *ngIf="media.type === 'video'" class="video-thumbnail">
@@ -35,12 +35,12 @@
 
         <div class="product-info">
           <div class="">
-            <h6 class="mb-0">Brand : {{product.brand}}</h6>
+            <h6 class="mb-0">Brand : {{product?.brand}}</h6>
             <div class="d-flex justify-content-between">
-              <p><small>Design No. </small> <br> {{ product.designNumber }}</p>
-              <p><small>Clothing</small> <br> {{ product.clothingType }}</p>
-              <p><small>Sub Category</small> <br>{{ product.subCategory }}</p>
-              <p><small>Gender</small> <br>{{ product.gender }}</p>
+              <p><small>Design No. </small> <br> {{ product?.designNumber }}</p>
+              <p><small>Clothing</small> <br> {{ product?.clothingType }}</p>
+              <p><small>Sub Category</small> <br>{{ product?.subCategory }}</p>
+              <p><small>Gender</small> <br>{{ product?.gender }}</p>
               <p><small>FSIN</small> <br>{{ product?.FSIN }}</p>
             </div>
             <hr class="m-0">
@@ -48,40 +48,40 @@
 
           <div class="product-info-section">
             <p><small>Title:</small></p>
-            <p>{{ product.title }}</p>
+            <p>{{ product?.title }}</p>
           </div>
 
           <div class="product-info-section">
             <p><small>Description:</small></p>
-            <p>{{ product.description }}</p>
+            <p>{{ product?.description }}</p>
           </div>
           <hr>
           <div class="row">
-            <p class="col-md-4 col-sm-6"><small>Material</small> <br> {{ product.material }}</p>
-            <p class="col-md-4 col-sm-6"><small>Material Variety</small> <br> {{ product.materialVariety }}</p>
-            <p class="col-md-4 col-sm-6"><small>Pattern</small> <br> {{ product.pattern }}</p>
+            <p class="col-md-4 col-sm-6"><small>Material</small> <br> {{ product?.material }}</p>
+            <p class="col-md-4 col-sm-6"><small>Material Variety</small> <br> {{ product?.materialVariety }}</p>
+            <p class="col-md-4 col-sm-6"><small>Pattern</small> <br> {{ product?.pattern }}</p>
           </div>
           <div class="row">
-            <p class="col-md-4 col-sm-6"><small>Fit Type</small> <br> {{ product.fitType }}</p>
-            <p class="col-md-4 col-sm-6"><small>Occasion</small> <br> {{ product.occasion }}</p>
-            <p class="col-md-4 col-sm-6"><small>Lifestyle</small> <br> {{ product.lifestyle }}</p>
+            <p class="col-md-4 col-sm-6"><small>Fit Type</small> <br> {{ product?.fitType }}</p>
+            <p class="col-md-4 col-sm-6"><small>Occasion</small> <br> {{ product?.occasion }}</p>
+            <p class="col-md-4 col-sm-6"><small>Lifestyle</small> <br> {{ product?.lifestyle }}</p>
           </div>
 
           <div class="row">
-            <p class="col-md-4 col-sm-6"><small>Closure Type</small><br> {{ product.closureType }}</p>
-            <p class="col-md-4 col-sm-6"><small>Pocket Description</small><br> {{ product.pocketDescription }}</p>
-            <p class="col-md-4 col-sm-6"><small>Sleeve Cuff Style</small><br> {{ product.sleeveCuffStyle }}</p>
+            <p class="col-md-4 col-sm-6"><small>Closure Type</small><br> {{ product?.closureType }}</p>
+            <p class="col-md-4 col-sm-6"><small>Pocket Description</small><br> {{ product?.pocketDescription }}</p>
+            <p class="col-md-4 col-sm-6"><small>Sleeve Cuff Style</small><br> {{ product?.sleeveCuffStyle }}</p>
           </div>
           <div class="row">
-            <p class="col-md-4 col-sm-6"><small>Neck / Collar Style</small><br> {{ product.neckCollarStyle }}</p>
-            <p class="col-md-4 col-sm-6"><small>Special Features</small><br> {{ product.specialFeatures }}</p>
-            <p class="col-md-4 col-sm-6"><small>Care Instructions</small><br> {{ product.careInstructions }}</p>
+            <p class="col-md-4 col-sm-6"><small>Neck / Collar Style</small><br> {{ product?.neckCollarStyle }}</p>
+            <p class="col-md-4 col-sm-6"><small>Special Features</small><br> {{ product?.specialFeatures }}</p>
+            <p class="col-md-4 col-sm-6"><small>Care Instructions</small><br> {{ product?.careInstructions }}</p>
           </div>
 
           <!-- <hr>
 
           <div class="">
-            <p><small>Sizes in Each Set</small> <br> {{ product.sizes }}</p>
+            <p><small>Sizes in Each Set</small> <br> {{ product?.sizes }}</p>
           </div> -->
 
           <hr>
@@ -89,7 +89,7 @@
           <div class="">
             <p class="mb-0"><small>Colours / Designs :</small> {{selectedColourName}} </p>
             <div class="d-flex">
-              <span *ngFor="let colour of product.colours" [ngClass]="{'disabled': !(colour?.images?.length > 0)}"
+              <span *ngFor="let colour of product?.colours" [ngClass]="{'disabled': !(colour?.images?.length > 0)}"
                 (click)="selectColourCollection(colour)" (mouseenter)="onHoverColour(colour)"
                 (mouseleave)="onLeaveColour()" style="cursor: pointer; display: flex;">
                 <div class="colour-info">
@@ -116,7 +116,7 @@
           <small>
             <span>1 Set = {{ product?.sizes?.length }} Pieces</span> ( 1 each of Size:
             <span *ngFor="let size of product?.sizes; let i = index">
-              {{ size.standardSize }}<span *ngIf="i < product.sizes.length - 1">,</span>
+              {{ size.standardSize }}<span *ngIf="i < product?.sizes.length - 1">,</span>
             </span> )
           </small>
 
@@ -137,7 +137,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let size of product.sizes; let i = index">
+              <tr *ngFor="let size of product?.sizes; let i = index">
                 <td><b>{{ size.standardSize }}</b></td>
                 <td>{{ size.brandSize }}</td>
                 <td>{{ size.chestSize }}</td>
@@ -161,10 +161,16 @@
           <label for="setOFnetWeight"><small>Total Weight (In grams)</small></label><br>
           {{product?.dimensions?.weight}}
         </div>
-        
+
         <div class="col-3">
           <label for="setOFnetWeight"><small>Dimensions (L x W x H ) in cm.</small></label><br>
-          {{ product?.dimensions?.length }} x {{ product?.dimensions?.width }} x {{ product?.dimensions?.height }}
+          <ng-container *ngIf="product?.dimensions?.length || product?.dimensions?.width || product?.dimensions?.height">
+            {{ product?.dimensions?.length }} 
+            <span *ngIf="product?.dimensions?.length && product?.dimensions?.width">x</span> 
+            {{ product?.dimensions?.width }} 
+            <span *ngIf="product?.dimensions?.width && product?.dimensions?.height">x</span> 
+            {{ product?.dimensions?.height }}
+          </ng-container>
         </div>
 
         <div class="col-3">
@@ -179,8 +185,8 @@
       </div>
       <hr>
       <div class="add-to-card">
-        <p class="col-md-3 col-sm-4 mb-0"><small>Date Available</small> <br> {{ product.dateAvailable }}</p>
-        <p class="col-md-3 col-sm-4 mb-0"><small>Availability</small> <br> {{ product.availability }}</p>
+        <p class="col-md-3 col-sm-4 mb-0"><small>Date Available</small> <br> {{ product?.dateAvailable }}</p>
+        <p class="col-md-3 col-sm-4 mb-0"><small>Availability</small> <br> {{ product?.availability }}</p>
         <button type="button" class="btn" [disabled]="wishlist" [ngClass]="wishlist?'btn-wishlist-true':'btn-wishlist'"
           (click)="WishlistAdd()"><i class="bi bi-heart"></i>&nbsp; WISHLIST</button>
         <div class="d-flex ">

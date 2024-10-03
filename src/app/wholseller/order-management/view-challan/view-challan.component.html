@@ -1,8 +1,12 @@
 <section class="content">
     <div class="content-block">
-        <div class="text-end mt-4">
-            <button class="btn btn-success" (click)="printChallan()">Download</button>
+        <div class="mt-4 p-0 d-flex align-items-center">
+            <button class="btn text-start" (click)="navigateFun()">
+                <i class="bi bi-arrow-left-circle h4"></i>
+            </button>
+            <button class="btn btn-success ms-auto" (click)="printChallan()">Download</button>
         </div>
+
         <div id="challan" class="challan-container card my-2">
             <div class="header">
                 <div class="logo">
@@ -39,7 +43,7 @@
                     <p><strong>PO No :</strong> <span>{{ challan.pONumber }}</span></p>
                     <p><strong>Date :</strong> <span>{{ challan.challanDate| date:'dd/MM/yyyy' }}</span></p>
                     <p><strong>E-Way Bill No :</strong> <span>{{ challan.eWayNo }}</span></p>
-                    <p><strong>Transport Type  :</strong> <span>{{ challan.transportType }}</span></p>
+                    <p><strong>Transport Type :</strong> <span>{{ challan.transportType }}</span></p>
                     <span *ngIf="challan.transportType == 'By Road'">
                         <p><strong>Lorry Receipt No :</strong> <span>{{ challan.lrNo }}</span></p>
                         <p><strong>Transport :</strong> <span>{{ challan.transport }}</span></p>
@@ -107,11 +111,13 @@
                     <p><strong>Total Amount After Tax : </strong> <span>{{ challan.totalAmount }}</span></p>
                 </div>
                 <div class="total-amount">
-                    <p><strong>Roundoff Total Amount : </strong> <span class="fw-bold ">{{ challan.roundedOffTotal }}</span></p>
-                    <p><strong>Total Amount in Words : </strong> <span class="fw-bold "><u>{{ challan.totalInWords }}</u></span></p>
+                    <p><strong>Roundoff Total Amount : </strong> <span class="fw-bold ">{{ challan.roundedOffTotal
+                            }}</span></p>
+                    <p><strong>Total Amount in Words : </strong> <span class="fw-bold "><u>{{ challan.totalInWords
+                                }}</u></span></p>
                 </div>
             </section>
 
-        </div>        
+        </div>
     </div>
 </section>

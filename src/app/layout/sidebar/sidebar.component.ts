@@ -10,7 +10,7 @@ import {
   HostListener,
   OnDestroy,
 } from '@angular/core';
-import { ROUTES } from './sidebar-items';
+import { ROUTES, ROUTES2 } from './sidebar-items';
 import { AuthService, Role } from '@core';
 import { RouteInfo } from './sidebar.metadata';
 import { TranslateModule } from '@ngx-translate/core';
@@ -90,10 +90,15 @@ export class SidebarComponent extends UnsubscribeOnDestroyAdapter implements OnI
       },(error)=>{
         this.userImg = 'assets/images/user/person.png';
       });
-        
-      this.sidebarItems = ROUTES.filter(
-        (x) => x.role.indexOf(userRole) !== -1 || x.role.indexOf('All') !== -1
-      );
+        if(this.authService.currentUserValue.userCategory == 'type1'){
+          this.sidebarItems = ROUTES.filter(
+            (x) => x.role.indexOf(userRole) !== -1 || x.role.indexOf('All') !== -1
+          );
+        }else{
+          this.sidebarItems = ROUTES2.filter(
+            (x) => x.role.indexOf(userRole) !== -1 || x.role.indexOf('All') !== -1
+          );
+        }
       // this.userFullName = this.authService.currentUserValue.username;
       if (userRole === Role.Superadmin) {
         this.userType = "Admin";
