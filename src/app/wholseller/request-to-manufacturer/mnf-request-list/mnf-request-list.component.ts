@@ -47,13 +47,13 @@ export class MnfRequestListComponent {
 
   getAllMnf(): void {
     // Construct the API endpoint URL dynamically
-    const endpoint = `request?requestByEmail=${this.user.email}&page=${this.page}&limit=${this.limit}`;
+    const endpoint = `request?requestByEmail=${this.user.email}&page=${this.page}&limit=${this.limit}&status=pending`;
     
     // Call the API using the authService
     this.authService.get(endpoint).subscribe({
       next: (res: any) => {
         // Handle the successful response
-        this.allMnf = res.results           // Assign the data to the local variable
+        this.allMnf = res.results       // Assign the data to the local variable
         this.totalResults = res.totalResults; // Store the total count of documents
       },
       error: (err: any) => {

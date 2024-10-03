@@ -51,13 +51,13 @@ export class RejectedRetailersListComponent {
   getAllRejectedRetailersList(): void {
     const status='rejected'
     // Construct the API endpoint URL dynamically
-    const endpoint = `request/filterdata/status?status=${status}&email=${this.user.email}&page=${this.page}&limit=${this.limit}`;
+    const endpoint = `request/filterdata/status?status=${status}&email=${this.user.email}&page=${this.page}&limit=${this.limit}&status=rejected`;
     
     // Call the API using the authService
     this.authService.get(endpoint).subscribe({
       next: (res: any) => {
         // Filter the results where status is "pending"
-        this.allRequestedList = res.results.filter((item: any) => item.status === "rejected"); 
+        this.allRequestedList = res.results;
         
         // Store the total count of documents
         this.totalResults = res.totalResults;
