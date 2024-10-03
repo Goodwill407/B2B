@@ -6,6 +6,7 @@ import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-
 import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-manufacturer-list',
@@ -38,7 +39,7 @@ export class ManufacturerListComponent {
   ];
 
   bottomAdImage: string = 'https://5.imimg.com/data5/QE/UV/YB/SELLER-56975382/i-will-create-10-sizes-html5-creative-banner-ads.jpg';
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router,private location: Location) { }
 
   ngOnInit() {
     this.user = this.authService.currentUserValue;
@@ -61,5 +62,9 @@ export class ManufacturerListComponent {
 
   navigateToProduct(email: string) {
     this.router.navigate(['/wholesaler/product/mnf-product'], {queryParams:{ email: email }});
+  }
+
+  navigateFun() {
+    this.location.back();
   }
 }
