@@ -20,6 +20,7 @@ import { CustomiseProfileComponent } from "./profile/customise-profile/customise
 import { InventryStockComponent } from "./product-manager/inventry-stock/inventry-stock.component";
 import { PreviewProfileComponent } from "./profile/customise-profile/preview-profile/preview-profile.component";
 import { ProductSummaryComponent } from "./product-manager/inventry-stock/product-summary/product-summary.component";
+import { AddNewProduct2Component } from "./product-manager/add-new-product2/add-new-product2.component";
 
 
 export const M_Auth: Route[] = [
@@ -28,6 +29,7 @@ export const M_Auth: Route[] = [
     { path: 'profile', component: ProfileComponent },
     { path: 'brand', component: BrandComponent },
     { path: 'add-new-product', component: AddNewProductsComponent },
+    { path: 'add-new-product2', component: AddNewProduct2Component },
     { path: 'new-distributor', component: AddDistributorComponent },
     { path: 'bulk-invite', component: BulkInviteSingleComponent },
     { path: 'bulk-upload', component: BulkInviteComponent },
