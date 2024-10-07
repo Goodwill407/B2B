@@ -1,4 +1,4 @@
-import { NgClass, NgFor, NgIf } from '@angular/common';
+import { CommonModule, NgClass, NgFor, NgIf } from '@angular/common';
 import { Component, ElementRef, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -13,10 +13,8 @@ import { AuthServiceService } from 'auth-service.service';
   imports: [
     RightSideAdvertiseComponent,
     BottomSideAdvertiseComponent,
-    NgFor,
     FormsModule,
-    NgIf,
-    NgClass
+    CommonModule
   ],
   templateUrl: './request-to-manufacturer.component.html',
   styleUrl: './request-to-manufacturer.component.scss'

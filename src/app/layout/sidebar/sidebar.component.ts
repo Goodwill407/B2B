@@ -84,36 +84,36 @@ export class SidebarComponent extends UnsubscribeOnDestroyAdapter implements OnI
     if (this.authService.currentUserValue) {
       const userRole = this.authService.currentUserValue.role;
       // const userRole = 'Admin'
-      this.authService.get('users/'+this.authService.currentUserValue.id).subscribe((res:any) =>{
-        this.userImg = res.profile?this.authService.cdnPath+ res.profile: 'assets/images/user/person.png';
+      this.authService.get('users/' + this.authService.currentUserValue.id).subscribe((res: any) => {
+        this.userImg = res.profile ? this.authService.cdnPath + res.profile : 'assets/images/user/person.png';
         this.userFullName = res.fullName;
-      },(error)=>{
+      }, (error) => {
         this.userImg = 'assets/images/user/person.png';
       });
-        if(this.authService.currentUserValue.userCategory == 'type1'){
-          this.sidebarItems = ROUTES.filter(
-            (x) => x.role.indexOf(userRole) !== -1 || x.role.indexOf('All') !== -1
-          );
-        }else{
-          this.sidebarItems = ROUTES2.filter(
-            (x) => x.role.indexOf(userRole) !== -1 || x.role.indexOf('All') !== -1
-          );
-        }
+      if (this.authService.currentUserValue.userCategory == 'setWise') {
+        this.sidebarItems = ROUTES.filter(
+          (x) => x.role.indexOf(userRole) !== -1 || x.role.indexOf('All') !== -1
+        );
+      } else {
+        this.sidebarItems = ROUTES2.filter(
+          (x) => x.role.indexOf(userRole) !== -1 || x.role.indexOf('All') !== -1
+        );
+      }
       // this.userFullName = this.authService.currentUserValue.username;
       if (userRole === Role.Superadmin) {
         this.userType = "Admin";
-      } else if(userRole === Role.Wholesaler){
+      } else if (userRole === Role.Wholesaler) {
         this.userType = 'Wholesaler'
       } else if (userRole === Role.Retailer) {
         this.userType = 'Retailer';
       }
-       else if (userRole === Role.skillCounsellor) {
+      else if (userRole === Role.skillCounsellor) {
         this.userType = 'Life Skill Trainer';
       }
-       else if (userRole === Role.cluster) {
+      else if (userRole === Role.cluster) {
         this.userType = this.authService.currentUserValue.cluster;
       }
-       else {
+      else {
         this.userType = "Manufacturer";
       }
     }
@@ -165,7 +165,7 @@ export class SidebarComponent extends UnsubscribeOnDestroyAdapter implements OnI
       }
     });
   }
-  showFlagFun(){
+  showFlagFun() {
     this.showFlag = !this.showFlag;
   }
 }
