@@ -1,0 +1,543 @@
+.form-control {
+    margin-bottom: 1rem !important;
+    /* Adjust the value as needed */
+    color: #6b7280
+  }
+  
+  .form-select {
+    margin-bottom: 1rem !important;
+    /* Adjust the value as needed */
+    color: #6b7280 !important;
+  }
+  
+  .submit-btn {
+  
+    background-color: #f0ad4e;
+    color: #fff;
+  }
+  
+  
+  // for disbled
+  // for disbled feilds
+  input:disabled,
+  select:disabled {
+    background-color: #f0f0f0;
+    /* Light gray background */
+    color: #666;
+    /* Gray text color */
+    border-color: #ddd;
+    /* Light gray border color */
+  }
+  
+  ::ng-deep .p-multiselect {
+    width: 100%;
+    height: 35px;
+  
+    .p-multiselect-label {
+      padding: 0.375rem 0.75rem;
+      font-size: 14px;
+    }
+  
+    .p-multiselect-panel {
+      .p-multiselect-items {
+        .p-multiselect-item {
+          padding: 0.375rem 0.75rem;
+        }
+      }
+    }
+  
+    .p-multiselect-trigger {
+      padding: 0.375rem;
+      display: flex;
+      align-items: center;
+  
+      .p-multiselect-trigger-icon {
+        font-size: 10px !important;
+        width: 12px;
+        color: #333;
+        /* Change the color to your desired value */
+        // transition: transform 0.3s ease;
+      }
+  
+  
+    }
+  
+  }
+  
+  // for standerd size
+  .size-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  
+    label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 16px;
+      margin: 5px 0;
+      cursor: pointer;
+  
+      input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        margin-right: 10px;
+        accent-color: #000;
+        /* Customize the checkbox color */
+      }
+    }
+  }
+  
+  //   // step 2 design
+  //   .form-container {
+  //     padding: 20px;
+  //     background-color: aliceblue;
+  //     border-radius: 5px;
+  //     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  // }
+  
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+  }
+  
+  .col-2,
+  .col-3 {
+    flex: 1;
+    margin-right: 10px;
+  }
+  
+  .col-2:last-child,
+  .col-3:last-child {
+    margin-right: 0;
+  }
+  
+  
+  .color-input {
+    padding: 10px;
+    height: 34px;
+  }
+  
+  .text-danger {
+    color: red;
+    font-size: 12px;
+    margin-top: -12px;
+  }
+  
+  .d-flex {
+    display: flex;
+  }
+  
+  .flex-wrap {
+    flex-wrap: wrap;
+  }
+  
+  // for product image
+  
+  .product-box {
+    border: 1px solid gainsboro;
+    background-color: #ffff;
+    padding: 7px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .image-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
+  }
+  
+  .image-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .cancel-button {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .add-image-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    border: 1px dashed #ccc;
+    background: #f8f9fa;
+    cursor: pointer;
+    font-size: 24px;
+    color: #888;
+    border-radius: 4px;
+    transition: background 0.3s;
+  }
+  
+  .add-image-button:hover {
+    background: #e2e6ea;
+  }
+  
+  
+  /* color-collections.component.css */
+  /* color-collections.component.css */
+  /* General Styles */
+  .table-container {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  
+  }
+  
+  thead {
+    background-color: #e9eef4;
+    color: rgb(10, 6, 6);
+  }
+  
+  th,
+  td {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  th {
+    text-transform: uppercase;
+    // font-weight: 600;
+    color: #6b7280;
+    padding: 5px 15px;
+  }
+  
+  img,
+  video {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+  }
+  
+  .product-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  
+  .product-images img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  
+  // for validation
+  .invalid-feedback {
+    margin-top: -12px;
+  }
+  
+  // for multiselect dropdown
+  ::ng-deep .custom-multiSelect .p-multiselect-panel .p-multiselect-filter-container {
+    display: none !important;
+    /* Hide the search bar */
+  }
+  
+  ::ng-deep .custom-multiSelect .p-multiselect-header .p-multiselect-close {
+    display: none !important;
+    /* Hide the cancel (close) button */
+  }
+  
+  ::ng-deep .custom-multiSelect .p-multiselect-header .p-checkbox {
+    display: none !important;
+    /* Hide the 'select all' checkbox */
+  }
+  
+  ::ng-deep.p-multiselect .p-multiselect-label {
+    color: #6b7280;
+  }
+  
+  
+  // for currency
+  ::ng-deep .p-dropdown {
+    height: 35px !important;
+    align-items: center !important;
+    background-color: aliceblue;
+  }
+  
+  ::ng-deep .p-dropdown .p-dropdown-label {
+    overflow: visible;
+    /* Removed !important and fixed typo */
+  }
+  
+  .required {
+    color: red
+  }
+  
+  textarea.form-control {
+    min-height: calc(4.5em + 0.75rem + calc(var(--bs-border-width)* 2));
+  }
+  
+  // for size set
+  .custom-label {
+    text-align: center;
+    font-size: 12px; /* Smaller font size for labels */
+    font-weight: 500; /* Optional: Adjust font weight for better readability */
+    margin-bottom: 5px; /* Space between label and input */
+    display: block; /* Ensures label is on its own line above the input */
+  }
+  
+  .custom-input {
+    height: 35px; /* Adjust input height for consistency */
+    padding: 5px 10px; /* Padding for input fields */
+    font-size: 14px; /* Slightly smaller font size for inputs */
+  }
+  
+  .required {
+    color: red; /* Style the required asterisk */
+  }
+  
+  .is-invalid {
+    border-color: red; /* Red border for invalid inputs */
+  }
+  
+  .invalid-feedback {
+    font-size: 11px; /* Small font for error messages */
+    color: red;
+  }
+  .colour-hex {
+    width: 50px;
+    height: 50px;
+    display: inline-block;
+    margin-left: 10px;
+    border: 1px solid #000;
+  }
+  
+  .img-details{
+    color: #5c5757;
+    h5{
+      text-decoration: underline;
+    }
+    p{
+      padding-left: 0px !important;
+      display: list-item;
+      margin-left : 1em;
+      span{
+        font-weight: 410;
+      }
+      margin-bottom: -1px !important;
+    }
+  }
+  
+  // for heading Part 
+  .item-price{
+    align-items: center;
+    width: 23%;
+  }
+  .item-dimention{
+    align-items: center;
+    width: 31%;
+  }
+  .item-size{
+    
+    align-items: center;
+    width: 46%;
+  } 
+  
+//  for Step-Threee
+/* General Styling */
+form {
+  margin: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.inventory-container3 {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  width: 100%;
+  max-width:100%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Flex container for header and size inputs */
+.header3 {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.size-label3 {
+  font-weight: bold;
+  font-size: 16px;
+  white-space: nowrap; /* Prevent label from wrapping */
+}
+
+.size-headers3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* Adjust input size dynamically */
+  gap: 10px;
+  justify-items: center;
+}
+
+.size-header3 {
+  text-align: center;
+  padding: 5px;
+  // background-color: #f0f0f0;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.color-row3 {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.color-box-container3 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.color-box3 {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.color-image3 {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  object-fit: cover; /* Ensures image fits within the box */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.size-inputs3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* Dynamically adjust based on available space */
+  gap: 10px;
+  justify-items: center;
+}
+
+.size-input3 {
+  display: flex;
+  justify-content: center;
+}
+
+.size-input3 input[type="number"] {
+  width: 100%;
+  max-width: 60px; /* Reduce max-width of input boxes */
+  padding: 6px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  text-align: center;
+  font-size: 12px;
+  background-color: #fff;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.size-input3 input[type="number"]::placeholder {
+  color: #bbb;
+}
+
+.submit-btn3 {
+  margin-top: 20px;
+  padding: 12px 24px;
+  background-color: #008CBA;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn3:hover {
+  background-color: #005f73;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .header3, .color-row3 {
+    grid-template-columns: 100px 1fr;
+  }
+
+  .size-headers3, .size-inputs3 {
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* Decrease size for smaller screens */
+  }
+
+  .size-header3, .size-input3 input[type="number"] {
+    font-size: 12px;
+    padding: 5px;
+    max-width: 50px;
+  }
+
+  .color-box3 {
+    width: 40px;
+    height: 40px;
+  }
+  .color-image3 {
+    width: 40px;
+    height: 40px;    
+  }
+}
+
+@media (max-width: 600px) {
+  .header3, .color-row3 {
+    grid-template-columns: 80px 1fr;
+  }
+
+  .size-headers3, .size-inputs3 {
+    grid-template-columns: repeat(auto-fit, minmax(40px, 1fr)); /* Adjust input sizes for very small screens */
+  }
+
+  .size-header3, .size-input3 input[type="number"] {
+    font-size: 10px;
+    padding: 4px;
+    max-width: 40px;
+  }
+
+  .color-box3 {
+    width: 35px;
+    height: 35px;
+  }  
+  .color-image3 {
+    width: 35px;
+    height: 35px;   
+  }
+}
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  

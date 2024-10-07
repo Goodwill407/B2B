@@ -1,0 +1,1153 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="default" color="#fff" type="square-jelly-box" [fullScreen]="true">
+    <p style="color: rgb(242, 94, 94)"> Loading... </p>
+</ngx-spinner>
+<section class="content">
+    <div class="content-block">
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Add New Product</h4>
+
+        <!-- main Part -->
+        <div class="card p-4">
+
+            <form [formGroup]="addProductForm">
+                <!-- Step 1 -->
+                <div *ngIf="currentStep === 1" [formGroup]="stepOne">
+                    <div class="row">
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="designNumber">Design No.<span
+                                    class="required">*</span></label>
+                            <input type="text" id="designNumber" formControlName="designNumber" class="form-control"
+                                [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('designNumber')?.invalid}">
+                            <div *ngIf="submittedStep1 && stepOne.get('designNumber')?.invalid"
+                                class="invalid-feedback">
+                                <div *ngIf="stepOne.get('designNumber')?.hasError('required')">
+                                    Design No. is required
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input" for="brand">Brand<span class="required">*</span></label>
+                            <select name="brand" id="brand" class="form-select" formControlName="brand"
+                                [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('brand')?.invalid}">
+                                <option value="" disabled>Select</option>
+                                <option *ngFor="let type of allBrands" [value]="type">
+                                    {{ type }}
+                                </option>
+                            </select>
+                            <!-- Validation feedback for the Brand field -->
+                            <div *ngIf="submittedStep1 && stepOne.get('brand')?.invalid" class="invalid-feedback">
+                                <div *ngIf="stepOne.get('brand')?.hasError('required')">
+                                    Brand is required
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+                            <label class="label-input" for="productTitle">Product Title<span
+                                    class="required">*</span></label>
+                            <input type="text" id="productTitle" formControlName="productTitle" class="form-control"
+                                [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('productTitle')?.invalid}">
+                            <div *ngIf="submittedStep1 && stepOne.get('productTitle')?.invalid"
+                                class="invalid-feedback">
+                                <div *ngIf="stepOne.get('productTitle')?.hasError('required')">
+                                    Product Title is required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+                            <label class="label-input" for="productDescription">Product Description<span
+                                    class="required">*</span></label>
+                            <textarea name="productDescription" id="productDescription" class="form-control"
+                                formControlName="productDescription"
+                                [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('productDescription')?.invalid}"></textarea>
+                            <div *ngIf="submittedStep1 && stepOne.get('productDescription')?.invalid"
+                                class="invalid-feedback">
+                                <div *ngIf="stepOne.get('productDescription')?.hasError('required')">
+                                    Product Description is required
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h5 class="mb-2 ps-0">Product Details</h5>
+                    <div class="card p-2">
+                        <div class="row mt-2">
+                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="productType">Product Type<span
+                                        class="required">*</span></label>
+                                <select name="productType" id="productType" class="form-select"
+                                    formControlName="productType"
+                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('productType')?.invalid}">
+                                    <option value="" disabled selected>Select</option>
+                                    <option *ngFor="let type of allProductType" [value]="type.name">{{ type.name }}
+                                    </option>
+                                </select>
+                                <!-- Validation feedback -->
+                                <div *ngIf="submittedStep1 && stepOne.get('productType')?.invalid"
+                                    class="invalid-feedback">
+                                    <div *ngIf="stepOne.get('productType')?.hasError('required')">
+                                        Product Type is required
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="gender">Gender<span class="required">*</span></label>
+                                <select name="gender" id="gender" class="form-select" formControlName="gender"
+                                    (change)="getCategoryByProductTypeAndGender()"
+                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('gender')?.invalid}">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="gender" *ngFor="let gender of allGender">{{gender}}</option>
+                                </select>
+                                <!-- Validation feedback -->
+                                <div *ngIf="submittedStep1 && stepOne.get('gender')?.invalid" class="invalid-feedback">
+                                    <div *ngIf="stepOne.get('gender')?.hasError('required')">
+                                        Gender is required
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="clothing">Category<span
+                                        class="required">*</span></label>
+                                <select name="clothing" id="clothing" class="form-select" formControlName="clothing"
+                                    (change)="getSubCategoryBYProductType_Gender_and_Category()"
+                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('clothing')?.invalid}">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="clothing" *ngFor="let clothing of allClothingType">
+                                        {{clothing}}
+                                    </option>
+                                </select>
+                                <!-- Validation feedback -->
+                                <div *ngIf="submittedStep1 && stepOne.get('clothing')?.invalid"
+                                    class="invalid-feedback">
+                                    <div *ngIf="stepOne.get('clothing')?.hasError('required')">
+                                        Clothing is required
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="subCategory">Sub Category<span
+                                        class="required">*</span></label>
+                                <select name="subCategory" id="subCategory" class="form-select"
+                                    formControlName="subCategory" (change)="checkAllFieldsSelected()"
+                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('subCategory')?.invalid}">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="subCategory" *ngFor="let subCategory of allSubCategory">
+                                        {{subCategory}}
+                                    </option>
+                                </select>
+                                <!-- Validation feedback -->
+                                <div *ngIf="submittedStep1 && stepOne.get('subCategory')?.invalid"
+                                    class="invalid-feedback">
+                                    <div *ngIf="stepOne.get('subCategory')?.hasError('required')">
+                                        Sub Category is required
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @if(showFlag){ -->
+                        <div class="row mt-2">
+                            <div *ngIf="visibleFields.includes('material')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="material">Material<span
+                                        class="required">*</span></label>
+                                <select name="material" id="material" class="form-select" formControlName="material"
+                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('material')?.invalid}">
+                                    <option value="" disabled>Select</option>
+                                    <option *ngFor="let type of allMaterialType" [value]="type.name">
+                                        {{type.name}}
+                                    </option>
+                                </select>
+                                <!-- Validation feedback for the Material field -->
+                                <div *ngIf="submittedStep1 && stepOne.get('material')?.invalid"
+                                    class="invalid-feedback">
+                                    <div *ngIf="stepOne.get('material')?.hasError('required')">
+                                        Material is required
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div *ngIf="visibleFields.includes('materialvariety')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="materialvariety">Material Variety of any</label>
+                                <input type="text" id="materialvariety" formControlName="materialvariety"
+                                    class="form-control">
+                            </div>
+
+
+                            <div *ngIf="visibleFields.includes('fabricPattern')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="fabricPattern">Fabric Pattern<span
+                                        class="required">*</span></label>
+                                <select name="fabricPattern" id="fabricPattern" class="form-select"
+                                    formControlName="fabricPattern"
+                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('fabricPattern')?.invalid}">
+                                    <option value="" disabled selected>Select</option>
+                                    <option *ngFor="let type of allFabricPattern" [value]="type.name">
+                                        {{type.name}}
+                                    </option>
+                                </select>
+                                <!-- Validation feedback for the Fabric Pattern field -->
+                                <div *ngIf="submittedStep1 && stepOne.get('fabricPattern')?.invalid"
+                                    class="invalid-feedback">
+                                    <div *ngIf="stepOne.get('fabricPattern')?.hasError('required')">
+                                        Fabric Pattern is required
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div *ngIf="visibleFields.includes('selectedOccasion')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="fitStyle">Occasion</label>
+                                <p-multiSelect [options]="allOccasionType" placeholder="Select Occasion" optionLabel=""
+                                    formControlName="selectedOccasion" class="custom-multiSelect"></p-multiSelect>
+                            </div>
+
+                            <div *ngIf="visibleFields.includes('selectedlifeStyle')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="lifeStyle">Life Style</label>
+                                <p-multiSelect [options]="allLifeStyle" placeholder="Select Style" optionLabel=""
+                                    formControlName="selectedlifeStyle" class="custom-multiSelect"></p-multiSelect>
+                            </div>
+
+                            <div *ngIf="visibleFields.includes('fitStyle')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="fitStyle">Fit Style<span
+                                        class="required">*</span></label>
+                                <select name="fitStyle" id="fitStyle" class="form-select" formControlName="fitStyle"
+                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('fitStyle')?.invalid}">
+                                    <option value="" disabled selected>Select</option>
+                                    <option *ngFor="let type of allFitStyle" [value]="type.name">
+                                        {{type.name}}
+                                    </option>
+                                </select>
+                                <!-- Validation feedback for the Fit Style field -->
+                                <div *ngIf="submittedStep1 && stepOne.get('fitStyle')?.invalid"
+                                    class="invalid-feedback">
+                                    <div *ngIf="stepOne.get('fitStyle')?.hasError('required')">
+                                        Fit Style is required
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div *ngIf="visibleFields.includes('neckStyle')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="neckStyle">Neck Style<span
+                                        class="required">*</span></label>
+                                <select name="neckStyle" id="neckStyle" class="form-select" formControlName="neckStyle"
+                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('neckStyle')?.invalid}">
+                                    <option value="" disabled selected>Select</option>
+                                    <option *ngFor="let type of allNeckStyle" [value]="type.name">
+                                        {{type.name}}
+                                    </option>
+                                </select>
+                                <div *ngIf="submittedStep1 && stepOne.get('neckStyle')?.invalid"
+                                    class="invalid-feedback">
+                                    <div *ngIf="stepOne.get('neckStyle')?.hasError('required')">
+                                        Neck Style is required
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div *ngIf="visibleFields.includes('closureType')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="closureType">Closure Type<span
+                                        class="required">*</span></label>
+                                <select name="closureType" id="closureType" class="form-select"
+                                    formControlName="closureType"
+                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('closureType')?.invalid}">
+                                    <option value="" disabled selected>Select</option>
+                                    <option *ngFor="let type of allClosureType" [value]="type.name">
+                                        {{type.name}}
+                                    </option>
+                                </select>
+                                <div *ngIf="submittedStep1 && stepOne.get('closureType')?.invalid"
+                                    class="invalid-feedback">
+                                    <div *ngIf="stepOne.get('closureType')?.hasError('required')">
+                                        Closure Type is required
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div *ngIf="visibleFields.includes('pocketDescription')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="pocketDescription">Pocket Description<span
+                                        class="required">*</span></label>
+                                <select name="pocketDescription" id="pocketDescription" class="form-select"
+                                    formControlName="pocketDescription"
+                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('pocketDescription')?.invalid}">
+                                    <option value="" disabled selected>Select</option>
+                                    <option *ngFor="let type of allPocketDiscription" [value]="type.name">
+                                        {{type.name}}
+                                    </option>
+                                </select>
+                                <div *ngIf="submittedStep1 && stepOne.get('pocketDescription')?.invalid"
+                                    class="invalid-feedback">
+                                    <div *ngIf="stepOne.get('pocketDescription')?.hasError('required')">
+                                        Pocket Description is required
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div *ngIf="visibleFields.includes('sleeveCuffStyle')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="sleeveCuffStyle">Sleeve Cuff Style<span
+                                        class="required">*</span></label>
+                                <select name="sleeveCuffStyle" id="sleeveCuffStyle" class="form-select"
+                                    formControlName="sleeveCuffStyle"
+                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('sleeveCuffStyle')?.invalid}">
+                                    <option value="" disabled selected>Select</option>
+                                    <option *ngFor="let type of allSleeveCutStyle" [value]="type.name">
+                                        {{type.name}}
+                                    </option>
+                                </select>
+                                <div *ngIf="submittedStep1 && stepOne.get('sleeveCuffStyle')?.invalid"
+                                    class="invalid-feedback">
+                                    <div *ngIf="stepOne.get('sleeveCuffStyle')?.hasError('required')">
+                                        Sleeve Cuff Style is required
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div *ngIf="visibleFields.includes('sleeveLength')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="sleeveLength">Sleeve Length<span
+                                        class="required">*</span></label>
+                                <select name="sleeveLength" id="sleeveLength" class="form-select"
+                                    formControlName="sleeveLength"
+                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('sleeveLength')?.invalid}">
+                                    <option value="" disabled selected>Select</option>
+                                    <option *ngFor="let type of allSleeveLength" [value]="type.name">
+                                        {{type.name}}
+                                    </option>
+                                </select>
+                                <div *ngIf="submittedStep1 && stepOne.get('sleeveLength')?.invalid"
+                                    class="invalid-feedback">
+                                    <div *ngIf="stepOne.get('sleeveLength')?.hasError('required')">
+                                        Sleeve Length is required
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="visibleFields.includes('specialFeature')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="specialFeature">Special Feature</label>
+                                <p-multiSelect [options]="allSpecialFeature" placeholder="Select" optionLabel=""
+                                    formControlName="specialFeature" class="custom-multiSelect"></p-multiSelect>
+                            </div>
+                            <div *ngIf="visibleFields.includes('careInstructions')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="careInstructions">Care Instructions</label>
+                                <select name="careInstructions" id="careInstructions" class="form-select"
+                                    formControlName="careInstructions">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of allCareInstruction">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+                            <!-- new fields -->
+                            <div *ngIf="visibleFields.includes('seasons')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="seasons">Seasons</label>
+                                <select name="seasons" id="seasons" class="form-select" formControlName="seasons">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of allCareInstruction">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div *ngIf="visibleFields.includes('noOfPockets')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="noOfPockets">No Of Pockets</label>
+                                <select name="noOfPockets" id="noOfPockets" class="form-select"
+                                    formControlName="noOfPockets">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of allCareInstruction">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div *ngIf="visibleFields.includes('scoksStyle')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="scoksStyle">Scoks Style</label>
+                                <select name="scoksStyle" id="scoksStyle" class="form-select"
+                                    formControlName="scoksStyle">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of Allsocksstyle">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div *ngIf="visibleFields.includes('troursePocketDescription')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="troursePocketDescription">Trourse Pocket Description
+                                </label>
+                                <select name="troursePocketDescription" id="troursePocketDescription"
+                                    class="form-select" formControlName="troursePocketDescription">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div *ngIf="visibleFields.includes('layerCompression')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="acb">Layer Compression </label>
+                                <select name="layerCompression" id="layerCompression" class="form-select"
+                                    formControlName="layerCompression">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div *ngIf="visibleFields.includes('Waistband')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="acb">Waistband </label>
+                                <select name="Waistband" id="Waistband" class="form-select" formControlName="Waistband">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div *ngIf="visibleFields.includes('includedComponents')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="acb">Included Components</label>
+                                <select name="includedComponents" id="includedComponents" class="form-select"
+                                    formControlName="includedComponents">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of allIncludedComponent">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div *ngIf="visibleFields.includes('riseStyle')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="acb">Rise Style </label>
+                                <select name="riseStyle" id="riseStyle" class="form-select" formControlName="riseStyle">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of allRisestyle">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div *ngIf="visibleFields.includes('trouserFitType')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="acb">Trouser Fit Type </label>
+                                <select name="trouserFitType" id="trouserFitType" class="form-select"
+                                    formControlName="trouserFitType">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of allTrouserfittype">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div *ngIf="visibleFields.includes('troursePocket')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="acb">Trourse Pocket</label>
+                                <select name="troursePocket" id="troursePocket" class="form-select"
+                                    formControlName="troursePocket">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of allTrourserPocket">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div *ngIf="visibleFields.includes('trourseRiseStyle')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="acb">Trourse Rise Style </label>
+                                <select name="trourseRiseStyle" id="trourseRiseStyle" class="form-select"
+                                    formControlName="trourseRiseStyle">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div *ngIf="visibleFields.includes('trourseStyle')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="acb">Select Trourse Style </label>
+                                <select name="trourseStyle" id="trourseStyle" class="form-select"
+                                    formControlName="trourseStyle">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of allTrouserstyle">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div *ngIf="visibleFields.includes('trourseLength')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="trourseLength"> Trourse Length <span
+                                        class="required">*</span>
+                                    (in Sets)</label>
+                                <input type="text" id="trourseLength" formControlName="trourseLength"
+                                    class="form-control"
+                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('trourseLength')?.invalid}">
+                                <div *ngIf="submittedStep1 && stepOne.get('trourseLength')?.invalid"
+                                    class="invalid-feedback">
+                                    <div *ngIf="stepOne.get('trourseLength')?.hasError('required')">
+                                        trourseLength is required
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div *ngIf="visibleFields.includes('coinPocket')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="acb">Coin Pocket</label>
+                                <select name="coinPocket" id="coinPocket" class="form-select"
+                                    formControlName="coinPocket">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of allCoinpocket">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- for womens new dropdown -->
+                            <!-- Women Sleeve Type Dropdown -->
+                            <div *ngIf="visibleFields.includes('womenSleeveType')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="womenSleeveType">Select Women Sleeve Type</label>
+                                <select name="womenSleeveType" id="womenSleeveType" class="form-select"
+                                    formControlName="womenSleeveType">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of allWomensleevetype">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Fit Type Dropdown -->
+                            <div *ngIf="visibleFields.includes('fitType')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="fitType">Select Fit Type</label>
+                                <select name="fitType" id="fitType" class="form-select" formControlName="fitType">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of allFitStyle">{{type.name}}</option>
+                                </select>
+                            </div>
+
+                            <!-- Neckline Dropdown -->
+                            <div *ngIf="visibleFields.includes('neckline')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="neckline">Select Neck Line</label>
+                                <select name="neckline" id="neckline" class="form-select" formControlName="neckline">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of allNeckStyle">{{type.name}}</option>
+                                </select>
+                            </div>
+
+                            <!-- Elasticity Dropdown -->
+                            <div *ngIf="visibleFields.includes('elasticity')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="elasticity">Select Elasticity</label>
+                                <select name="elasticity" id="elasticity" class="form-select"
+                                    formControlName="elasticity">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of Allelasticity">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Top Style Dropdown -->
+                            <div *ngIf="visibleFields.includes('topStyle')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="topStyle">Top Style</label>
+                                <select name="topStyle" id="topStyle" class="form-select" formControlName="topStyle">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of allTopstyle">{{type.name}}</option>
+                                </select>
+                            </div>
+
+                            <!-- Work Type Dropdown -->
+                            <div *ngIf="visibleFields.includes('workType')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="workType">Work Type</label>
+                                <select name="workType" id="workType" class="form-select" formControlName="workType">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of AllworkType">{{type.name}}</option>
+                                </select>
+                            </div>
+
+                            <!-- Collar Style Dropdown -->
+                            <div *ngIf="visibleFields.includes('collarstyle')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="collarstyle">Collar Style</label>
+                                <select name="collarstyle" id="collarstyle" class="form-select"
+                                    formControlName="collarstyle">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of Allcollarstyle">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Item Length Dropdown -->
+                            <div *ngIf="visibleFields.includes('itemLength')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="itemLength">Length</label>
+                                <select name="itemLength" id="itemLength" class="form-select"
+                                    formControlName="itemLength">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of allItemLength">
+                                        {{type.name}}</option>
+                                </select>
+                            </div>
+
+                            <!-- Embellishment Feature Dropdown -->
+                            <div *ngIf="visibleFields.includes('embellishmentFeature')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="embellishmentFeature">Embellishment Feature</label>
+                                <select name="embellishmentFeature" id="embellishmentFeature" class="form-select"
+                                    formControlName="embellishmentFeature">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of allEmbellishmentfeature">
+                                        {{type.name}}</option>
+                                </select>
+                            </div>
+
+                            <!-- Item Style Dropdown -->
+                            <div *ngIf="visibleFields.includes('itemStyle')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="itemStyle">Select Style</label>
+                                <select name="itemStyle" id="itemStyle" class="form-select" formControlName="itemStyle">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of AllwomenStyle">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Waist Type Dropdown -->
+                            <div *ngIf="visibleFields.includes('waistType')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="waistType">Select Waist Type</label>
+                                <select name="waistType" id="waistType" class="form-select" formControlName="waistType">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of AllwaistType">{{type.name}}</option>
+                                </select>
+                            </div>
+
+                            <!-- Waist Rise Dropdown -->
+                            <div *ngIf="visibleFields.includes('waistRise')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="waistRise">Select Waist Rise</label>
+                                <select name="waistRise" id="waistRise" class="form-select" formControlName="waistRise">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of allRisestyle">{{type.name}}</option>
+                                </select>
+                            </div>
+
+                            <!-- Weave Type Dropdown -->
+                            <div *ngIf="visibleFields.includes('weaveType')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="weaveType">Select Weave Type</label>
+                                <select name="weaveType" id="weaveType" class="form-select" formControlName="weaveType">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of AllweaveType">{{type.name}}</option>
+                                </select>
+                            </div>
+
+                            <!-- Ethnic Design Dropdown -->
+                            <div *ngIf="visibleFields.includes('ethnicDesign')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="ethnicDesign">Select Ethnic Design</label>
+                                <select name="ethnicDesign" id="ethnicDesign" class="form-select"
+                                    formControlName="ethnicDesign">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of AllethnicDesign">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Saree Style Dropdown -->
+                            <div *ngIf="visibleFields.includes('sareeStyle')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="sareeStyle">Select Saree Style</label>
+                                <select name="sareeStyle" id="sareeStyle" class="form-select"
+                                    formControlName="sareeStyle">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of AllsareeStyle">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Apparel Silhouette Dropdown -->
+                            <div *ngIf="visibleFields.includes('apparelSilhouette')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="apparelSilhouette">Select Apparel Silhouette</label>
+                                <select name="apparelSilhouette" id="apparelSilhouette" class="form-select"
+                                    formControlName="apparelSilhouette">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of AllapparelSilhouette">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Bottom Included Dropdown -->
+                            <div *ngIf="visibleFields.includes('bottomIncluded')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="bottomIncluded">Bottom Included</label>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="bottomIncludedYes"
+                                        name="bottomIncluded" value="yes" formControlName="bottomIncluded">
+                                    <label class="form-check-label" for="bottomIncludedYes">Yes</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="bottomIncludedNo"
+                                        name="bottomIncluded" value="no" formControlName="bottomIncluded">
+                                    <label class="form-check-label" for="bottomIncludedNo">No</label>
+                                </div>
+                            </div>
+
+
+                            <!-- Ethnic Bottoms Style Dropdown -->
+                            <div *ngIf="visibleFields.includes('ethnicBottomsStyle')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="ethnicBottomsStyle">Ethnic Bottoms Style</label>
+                                <select name="ethnicBottomsStyle" id="ethnicBottomsStyle" class="form-select"
+                                    formControlName="ethnicBottomsStyle">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of AllethnicBottomsStyle">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Women Style Dropdown -->
+                            <div *ngIf="visibleFields.includes('womenStyle')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="womenStyle">Women Style</label>
+                                <select name="womenStyle" id="womenStyle" class="form-select"
+                                    formControlName="womenStyle">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of AllwomenStyle">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Ghera In MTR Dropdown -->
+                            <div *ngIf="visibleFields.includes('gheraInMTR')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="gheraInMTR"> Ghera (InMTR) <span
+                                        class="required">*</span></label>
+                                <input type="text" id="gheraInMTR" formControlName="gheraInMTR" class="form-control"
+                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('gheraInMTR')?.invalid}">
+                                <div *ngIf="submittedStep1 && stepOne.get('gheraInMTR')?.invalid"
+                                    class="invalid-feedback">
+                                    <div *ngIf="stepOne.get('gheraInMTR')?.hasError('required')">
+                                        Ghera(InMTR) is required
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Finish Type Dropdown -->
+                            <div *ngIf="visibleFields.includes('finishType')"
+                                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="finishType">Select Finish Type</label>
+                                <select name="finishType" id="finishType" class="form-select"
+                                    formControlName="finishType">
+                                    <option value="" disabled selected>Select</option>
+                                    <option [value]="type.name" *ngFor="let type of AllfinishType">{{type.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+
+                        </div>
+                        <!-- =====================for form array-->
+
+                        <div *ngIf="sizeSet?.length" class="m-0 p-4 border mt-2 pt-2 rounded"
+                            style="background-color: aliceblue;">
+                            <div class="row">
+                                <h5 class="mb-2 ps-0">Standard Size Set<span class="required">*</span></h5>
+                                <div class="size-checkboxes">
+                                    <label class="me-4" *ngFor="let size of sizeSet">
+                                        <input type="checkbox" [value]="size.size"
+                                            (change)="onSizeChange($event, size.size)"
+                                            [checked]="selectedSizes.includes(size.size)" />
+                                        {{ size.size }}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- <div *ngIf="sizesArray.controls.length > 0" class="row mt-2" formArrayName="sizes">
+                            <h5 class="mt-4">{{foundSizeSet}} :</h5>
+                            <hr>
+                            <div class="col-12">
+                                <div class="row mb-2">
+                                    <div class="col" *ngFor="let field of sizeChartFields">
+                                        <label class="custom-label">{{ field.label }}<span *ngIf="field.required"
+                                                class="required">*</span></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12" *ngFor="let sizeGroup of sizesArray.controls; let i = index"
+                                [formGroupName]="i">
+                                <div class="row">
+                                    <div class="col" *ngFor="let field of sizeChartFields">
+                                        <input type="text" [formControlName]="field.name"
+                                            class="form-control custom-input"
+                                            [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get(field.name)?.invalid}"
+                                            placeholder="">
+
+                                       
+                                        <div *ngIf="submittedStep1 && sizeGroup.get(field.name)?.invalid"
+                                            class="invalid-feedback">
+                                            <div *ngIf="sizeGroup.get(field.name)?.hasError('required')">
+                                                {{ field.label }} is required
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>                -->
+
+                            <div *ngIf="sizesArray.controls.length > 0" class="row mt-2" formArrayName="sizes">
+                                <h5 class="mt-4">{{ foundSizeSet }} :</h5>
+                                <hr>
+
+                                <!-- Labels Row: -->
+                                <div class="col-12">
+                                    <div class="row text-center">
+                                        <!-- First 4 columns under Size -->
+                                        <div class="col" *ngFor="let field of sizeChartFields.slice(0, 4)">
+                                            <label class="custom-label">
+                                                {{ field.label.split('(')[0] }}<span *ngIf="field.required"
+                                                    class="required"></span>
+                                                <br>
+                                                <small
+                                                    *ngIf="field.label.includes('(in cm)') || field.label.includes('(in gm)' )">
+                                                    ({{ field.label.split('(')[1] }})
+                                                </small>
+                                            </label>
+                                        </div>
+
+                                        <!-- Next 5 columns under Item Dimension -->
+                                        <div class="col" *ngFor="let field of sizeChartFields.slice(4, 9)">
+                                            <label class="custom-label">
+                                                {{ field.label.split('(')[0] }}<span *ngIf="field.required"
+                                                    class="required"></span>
+                                                <br>
+                                                <small
+                                                    *ngIf="field.label.includes('(in cm)') || field.label.includes('(in gm)' )">
+                                                    ({{ field.label.split('(')[1] }})
+                                                </small>
+                                            </label>
+                                        </div>
+
+                                        <!-- Last 3 columns under Price -->
+                                        <div class="col" *ngFor="let field of sizeChartFields.slice(9)">
+                                            <label class="custom-label">
+                                                {{ field.label.split('(')[0] }}<span *ngIf="field.required"
+                                                    class="required"></span>
+                                                <br>
+                                                <small
+                                                    *ngIf="field.label.includes('(in cm)') || field.label.includes('(in gm)' )">
+                                                    ({{ field.label.split('(')[1] }})
+                                                </small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Form Fields Row: -->
+                                <div class="col-12" *ngFor="let sizeGroup of sizesArray.controls; let i = index"
+                                    [formGroupName]="i">
+                                    <div class="row">
+                                        <!-- First 4 fields under Size -->
+                                        <div class="col" *ngFor="let field of sizeChartFields.slice(0, 4)">
+                                            <input type="text" [formControlName]="field.name"
+                                                class="form-control custom-input"
+                                                [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get(field.name)?.invalid}"
+                                                placeholder="">
+                                            <!-- Validation feedback -->
+                                            <div *ngIf="submittedStep1 && sizeGroup.get(field.name)?.invalid"
+                                                class="invalid-feedback">
+                                                <div *ngIf="sizeGroup.get(field.name)?.hasError('required')">
+                                                    {{ field.label }} is required
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Next 5 fields under Item Dimension -->
+                                        <div class="col" *ngFor="let field of sizeChartFields.slice(4, 9)">
+                                            <input type="text" [formControlName]="field.name"
+                                                class="form-control custom-input"
+                                                [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get(field.name)?.invalid}"
+                                                placeholder="">
+                                            <!-- Validation feedback -->
+                                            <div *ngIf="submittedStep1 && sizeGroup.get(field.name)?.invalid"
+                                                class="invalid-feedback">
+                                                <div *ngIf="sizeGroup.get(field.name)?.hasError('required')">
+                                                    {{ field.label }} is required
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Last 3 fields under Price -->
+                                        <div class="col" *ngFor="let field of sizeChartFields.slice(9)">
+                                            <input type="text" [formControlName]="field.name"
+                                                class="form-control custom-input"
+                                                [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get(field.name)?.invalid}"
+                                                placeholder="">
+                                            <!-- Validation feedback -->
+                                            <div *ngIf="submittedStep1 && sizeGroup.get(field.name)?.invalid"
+                                                class="invalid-feedback">
+                                                <div *ngIf="sizeGroup.get(field.name)?.hasError('required')">
+                                                    {{ field.label }} is required
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+<!-- new filds for date -->
+                        <div *ngIf="showFlag2" class="row mt-2">
+                            <div *ngIf="!ProductId" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="productTitle">Date Of Manufacture<span
+                                        class="required">*</span></label>
+                                <input type="date" id="dateOfManufacture" formControlName="dateOfManufacture"
+                                    class="form-control"
+                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('dateOfManufacture')?.invalid}">
+
+                                <div *ngIf="submittedStep1 && stepOne.get('dateOfManufacture')?.invalid"
+                                    class="invalid-feedback">
+                                    <div *ngIf="stepOne.get('dateOfManufacture')?.hasError('required')">
+                                        Date Of Manufacture is required
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="!ProductId" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                                <label class="label-input" for="dateOfListing">Date Of Listing<span
+                                        class="required">*</span></label>
+                                <input type="date" id="dateOfListing" formControlName="dateOfListing"
+                                    class="form-control"
+                                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('dateOfListing')?.invalid}">
+                                <!-- Validation feedback for the Product Title field -->
+                                <div *ngIf="submittedStep1 && stepOne.get('dateOfListing')?.invalid"
+                                    class="invalid-feedback">
+                                    <div *ngIf="stepOne.get('dateOfListing')?.hasError('required')">
+                                        Date Of Listing is required
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex justify-content-center  mt-4">
+                        <button type="button" class="btn submit-btn me-2" (click)="nextStep()">Save and Next >></button>
+                    </div>
+
+                </div>
+
+                <div *ngIf="currentStep === 2" class="">
+                    <div [formGroup]="stepTwo" class="border p-4 rounded" style="background-color: aliceblue;">
+                        <h5>Add Color Collection:</h5>
+                        <div class="row">
+                            <!-- Color Code -->
+                            <div class="col-2">
+                                <label for="colorCode">Color Code<span *ngIf="colourCollections.length > 0"
+                                        class="required">*</span></label>
+                                <input type="color" id="colorCode" formControlName="colour"
+                                    class="form-control color-input">
+                                <div *ngIf="submittedStep2 && stepTwo.get('colour')?.invalid" class="text-danger">
+                                    Color Code is required
+                                </div>
+                            </div>
+
+                            <!-- Color Name -->
+                            <div class="col-2">
+                                <label for="colorName">Color Name<span class="required">*</span></label>
+                                <input type="text" id="colorName" formControlName="colourName" class="form-control"
+                                    placeholder="Color Name">
+                                <div *ngIf="submittedStep2 && stepTwo.get('colourName')?.invalid" class="text-danger">
+                                    Color Name is required
+                                </div>
+                            </div>
+
+                            <!-- Color Image -->
+                            <div class="col-2">
+                                <label for="colourImage">Product Icon<span *ngIf="colourCollections.length === 0"
+                                        class="required">*</span></label>
+                                <input type="file" id="colourImage" (change)="onFileChange($event, 'colourImage')"
+                                    class="form-control file-input">
+                                <div *ngIf="submittedStep2 && stepTwo.get('colourImage')?.invalid" class="text-danger">
+                                    Product Icon is required
+                                </div>
+                            </div>
+
+                            <!-- Product Video -->
+                            <div class="col-3">
+                                <label for="videoUpload">Product Video</label>
+                                <input type="file" id="videoUpload" class="form-control file-input"
+                                    (change)="onFileChange($event, 'productVideo')" accept="video/*">
+                                <div *ngIf="submittedStep2 && stepTwo.get('productVideo')?.invalid" class="text-danger">
+                                    Product Video is required
+                                </div>
+                                <div *ngIf="videoSizeError" class="text-danger">
+                                    {{ videoSizeError }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- For Product Images -->
+                        <div class="row">
+                            <div class="col-12">
+                                <label for="">Add Product Images<span *ngIf="colourCollections.length === 0"
+                                        class="required">*</span> &nbsp;<small style="color: brown;">(max 5 images
+                                        add)</small></label>
+                                <div class="d-flex flex-wrap align-items-center product-box">
+                                    <div *ngFor="let image of productImages.controls; let i = index"
+                                        class="position-relative m-1 image-container">
+                                        <img [src]="image.value ? createObjectURL(image.value) : ''" alt="Product Image"
+                                            class="image-preview">
+                                        <button type="button" class="cancel-button"
+                                            (click)="removeProductImage(i)">X</button>
+                                    </div>
+                                    <button *ngIf="productImages.length < 5" type="button" class="add-image-button"
+                                        (click)="triggerFileInput()">
+                                        <i class="bi bi-plus-square-dotted"></i>
+                                    </button>
+                                    <input type="file" id="productImageInput" (change)="onProductImageChange($event)"
+                                        hidden>
+                                </div>
+                                <div *ngIf="colourCollections.length === 0 && productImages.length === 0 && submittedStep2"
+                                    class="text-danger mt-2">
+                                    At least one product image is required
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-center mt-3">
+                            <button type="submit" class="btn submit-btn d-flex me-2" (click)="saveStepTwoData()">
+                                <i class="bi bi-plus"></i> Add New Color
+                            </button>
+                            <button type="button" class="btn submit-btn d-flex me-2" (click)="nextStep()">
+                                 Save & Next
+                            </button>
+                            <!-- <button type="button" class="btn submit-btn d-flex" (click)="navigateOnProduct()">
+                                Cancel
+                            </button> -->
+                        </div>
+                        <div class="row img-details">
+                            <h5>Image Upload Details</h5>
+                            <p><span>Size: </span> Images must be at least 1,000 pixels tall or wide, but ideally 1,600
+                                pixels or larger on the longest side. The longest side can't exceed 2,000 pixels. </p>
+                            <p><span>File format: </span> Images must be in JPEG, PNG, or GIF format. JPEG is preferred.
+                            </p>
+                            <p><span>Resolution: </span> Images should have a minimum resolution of 72 dpi. </p>
+                            <p><span>Compression: </span> Images should have minimal to no compression. </p>
+                            <p><span>Product placement: </span> The product should fill at least 85% of the image. </p>
+                            <p><span>Editing: </span> Images should not be altered in any way, except for minor edits to
+                                improve the image quality. </p>
+                            <p><span>Content: </span> Images should not contain nudity, be sexually suggestive, or
+                                include Fashion Traders Hub logos or trademarks. </p>
+                            <p><span>Multiple products: </span> Images should only show one product, not a group of
+                                products. </p>
+                            <p><span>Packaging: </span> If the product comes in packaging, include images of the
+                                packaging and any product identifier codes.</p>
+
+                        </div>
+                    </div>
+
+                    <!-- show added color collection -->
+                    <div class="border p-4 rounded mt-4" [ngClass]="colourCollections?.length > 0 ? '' :'d-none'">
+                        <h5>Added Colour-Collection</h5>
+                        <div class="table-container rounded">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Sr. NO.</th>
+                                        <th>Colour Name</th>
+                                        <th>Icon Image</th>
+                                        <th>Product Video</th>
+                                        <th>Product Images</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let collection of colourCollections; let i = index">
+                                        <td>{{ i + 1 }}</td>
+                                        <td>{{ collection.colourName | titlecase }}</td>
+                                        <td>
+                                            <ng-container *ngIf="collection.colourImage; else colorImageFallback">
+                                                <img [src]="getColorIconPath(collection.colourImage)" alt="Color Icon">
+                                            </ng-container>
+                                            <ng-template #colorImageFallback>
+                                                <span [style.background]="collection.colour" class="colour-hex"></span>
+                                            </ng-template>
+                                        </td>
+                                        <td>
+                                            <ng-container *ngIf="collection.productVideo; else noVideo">
+                                                <video controls [src]="getVideoPath(collection.productVideo)"></video>
+                                            </ng-container>
+                                            <ng-template #noVideo>
+                                                Not Video
+                                            </ng-template>
+
+                                        </td>
+                                        <td>
+                                            <div class="product-images">
+                                                <ng-container *ngIf="collection.productImages.length; else noImages">
+                                                    <img *ngFor="let image of collection.productImages"
+                                                        [src]="getProductImagePath(image)" alt="Product Image">
+                                                </ng-container>
+                                                <ng-template #noImages>
+                                                    No Images Available
+                                                </ng-template>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-icon p-2" pTooltip="Edit"
+                                                (click)="deleteColorCOllection(collection)" tooltipPosition="top">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+               
+                <div *ngIf="currentStep === 3">                  
+                    <form [formGroup]="stepThree" (ngSubmit)="saveStepThree()">
+                        <div class="inventory-container3">
+                          <div class="header3">
+                            <div class="size-label3">Size Set:</div>
+                            <div class="size-headers3">
+                              <div *ngFor="let size of selectedSizes" class="size-header3">{{ size }}</div>
+                            </div>
+                          </div>
+                      
+                          <div *ngFor="let color of colourCollections" class="color-row3">
+                            <div class="color-box-container3">
+                              <!-- Check if 'colourImage' is available. If true, display the image; otherwise, display the color box. -->
+                              <div *ngIf="color.colourImage; else noImage">
+                                <img [src]="CloudPath+color.colourImage" alt="{{ color.colourName }}" class="color-image3" title="{{ color.colourName }}" />
+                              </div>
+                              <!-- Fallback to color box if 'colourImage' is not available -->
+                              <ng-template #noImage>
+                                <div class="color-box3" [ngStyle]="{'background-color': color.colourName}" title="{{ color.colourName }}"></div>
+                              </ng-template>
+                            </div>
+                            
+                            <div class="size-inputs3">
+                              <div *ngFor="let size of selectedSizes" class="size-input3">
+                                <input
+                                  type="number"
+                                  formControlName="{{ color.colourName + '_' + size }}"
+                                  placeholder="Qty"
+                                  min="0"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                          <button type="submit" class="btn submit-btn mt-2">Final Save</button>
+                        </div>
+                      </form>
+                      
+                </div>
+            </form>
+
+        </div>
+
+
+    </div>
+</section>
