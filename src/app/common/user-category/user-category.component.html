@@ -1,0 +1,26 @@
+<section class="content">
+    <div class="content-block">
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> User Category</h4>       
+        <div class="card mt-4">
+            <form [formGroup]="userForm" class="m-4">
+                @if(!authService.currentUserValue.userCategory){
+                    <h5 class="text-danger">Note : Please Select any one. if select any one your not able to modify it so select carefully.</h5>
+                }
+                <div  [ngClass]="{'disabled-border': userForm.disabled}" class="border1" class="border1">
+                    <input type="radio" formControlName="userCategory" (change)="submitData()" value="setwise" id="email"
+                        class="form-check-input mt-1">
+                    <label class="ps-2" for="email"><b>Set Wise Category</b> </label><br>
+                    <label for="email"> <img src="../../../assets/images/sizeSet.png" loading="lazy" alt="Set Wise"></label>
+                </div>
+                
+                <div  [ngClass]="{'disabled-border': userForm.disabled}" class="border1" class="border1">
+                    <input type="radio" formControlName="userCategory" (change)="submitData()" value="orderwise" id="mobile"
+                    class="form-check-input mt-1">
+                    <label class="ps-2" for="mobile"><b>Order Wise Category</b> </label><br>
+                    <label for="mobile"> <img src="../../../assets/images/orderSize.jpeg" loading="lazy" alt="Set Wise"></label>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</section>
