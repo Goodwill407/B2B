@@ -1,1 +1,23 @@
-<p>add-product2 works!</p>
+
+<section class="content">
+    <div class="content-block">
+
+     <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Add New Product</h4>
+    <div *ngIf="currentStep === 1">
+      <app-step-one (next)="goToNextStep()"></app-step-one>
+    </div>
+  
+    <div *ngIf="currentStep === 2">
+      <app-step-two (next)="goToNextStep()"></app-step-two>
+    </div>
+  
+    <div *ngIf="currentStep === 3">
+      <app-step-three (next)="goToNextStep()"></app-step-three>
+    </div>
+  
+    <div class="button-container">
+      <button (click)="goToPreviousStep()" [disabled]="currentStep === 1">Previous</button>
+    </div>
+
+  </div>
+  </section>
