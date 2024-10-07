@@ -1,0 +1,161 @@
+.product-details {
+  padding: 20px;
+}
+
+.product-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.product-details-content {
+  display: flex;
+}
+
+.product-images {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.zoom-container {
+  position: relative;
+  overflow: hidden;
+  /* Hide the overflow when the image is zoomed */
+  width: 380px !important;
+  height: 495px !important;
+}
+
+.zoom-image {
+  transition: transform 0.2s ease;
+  /* Smooth zoom transition */
+  width: 100%;
+  height: 100%;
+}
+
+/* Zoom effect class */
+.zoomed {
+  transform: scale(2);
+  /* Adjust the scale to your preference */
+}
+
+.thumbnail-images {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.thumbnail {
+  cursor: pointer;
+}
+
+.thumbnail img {
+  width: 55px;
+  height: 75px;
+  object-fit: cover;
+}
+
+.thumbnail.active img {
+  border: 2px solid #000;
+}
+
+.product-info {
+  flex: 2;
+}
+
+.product-info-section {
+  margin-bottom: 20px;
+}
+
+.product-info-section h3 {
+  margin-bottom: 5px;
+}
+
+.product-info-section p {
+  margin: 5px 0;
+}
+
+.back-button {
+  text-decoration: none;
+  color: #000;
+  font-weight: bold;
+}
+
+.video-thumbnail {
+  position: relative;
+}
+
+.video-thumbnail i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  color: white;
+  opacity: 0.8;
+}
+
+.colour-info {
+  display: flex;
+  align-items: center;
+}
+
+.colour-hex {
+  width: 50px;
+  height: 50px;
+  display: inline-block;
+  margin-left: 10px;
+  border: 1px solid #000;
+}
+
+.colour-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  margin-left: 10px;
+}
+
+small {
+  color: #767474;
+  font-size: 13px;
+}
+
+.add-to-card {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-around !important;
+}
+
+.btn-wishlist {
+  border: #767474 2px solid;
+  box-shadow: #504e4e 2px 1px;
+  font-size: 14px !important;
+  padding-left: 25px;
+  padding-right: 25px;
+  color: #767474;
+}
+
+.disabled {
+  pointer-events: none;
+}
+
+.action-button {
+  position: absolute; /* Position the button relative to the wrapper */
+  bottom: 10px; /* Position from the bottom */
+  right: 10px; /* Position from the right */
+  // background-color: #c3ddf9; /* Button background color */
+  color: rgb(6, 6, 6); /* Button text color */
+  border: none; /* Remove default border */
+  padding: 10px 15px; /* Add some padding */
+  cursor: pointer; /* Pointer cursor on hover */
+  border-radius: 8px; /* Rounded corners */
+  transition: background-color 0.3s; /* Smooth background change on hover */
+  z-index: 10; /* Ensure button is above the image */
+}
+
+.action-button:hover {
+  color: #fff;
+  /* Darken button on hover */
+  background-color: #757474;
+  /* Darken button on hover */
+}

@@ -1,0 +1,146 @@
+<section class="content">
+  <div class="content-block">
+    <h4 class="mt-3 flex-grow-1">
+      <div class="m-0 p-0 d-flex align-items-center">
+        <button class="btn text-start" (click)="navigateFun()">
+          <i class="bi bi-arrow-left-circle h4"></i>
+        </button>
+        <!-- <span class="text-center" style="margin-left: 474px;">Product Details</span> -->
+        <button type="button" class="btn btn-success ms-auto" (click)="editProduct()">Edit</button>
+      </div>
+    </h4>
+    <div class="card p-4 pt-2">
+      <h5 class="text-center mb">Product Details</h5>
+      <hr class="mt-0">
+      <div class="product-details-content">
+        <div class="product-images">
+          <div class="zoom-container">
+            <img #mainImage *ngIf="selectedMediaType === 'image'" [src]="authService.cdnPath + selectedMedia"
+              (mousemove)="zoomImage($event)" (mouseleave)="resetZoom($event)" alt="Main Product Image"
+              class="zoom-image">
+
+            <video *ngIf="selectedMediaType === 'video'" style="width: 380px; height: 495px;"
+              [src]="authService.cdnPath + selectedMedia" controls>
+            </video>
+            <button *ngIf="selectedMediaType === 'image'" (click)="openImg(authService.cdnPath + selectedMedia,1400)"
+              class="action-button"><i class="bi bi-zoom-in"></i></button>
+          </div>
+          <div class="thumbnail-images">
+            <div class="thumbnail" *ngFor="let media of product?.media" (click)="changeMainMedia(media)"
+              [class.active]="media.src === selectedMedia">
+              <img *ngIf="media.type === 'image'" [src]="authService.cdnPath + media.src" alt="Product Thumbnail">
+              <div *ngIf="media.type === 'video'" class="video-thumbnail">
+                <i class="bi bi-play-circle-fill"></i>
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgcAFN3D0j48KEiZtXy9H8Z-brml1fSzLUAQ&s"
+                  style="width: 55px; height: 75px;" alt="Product Thumbnail">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="product-info">
+          <div class="">
+            <h6 class="mb-0">Brand : {{product?.brand}}</h6>
+            <div class="d-flex justify-content-between">
+              <p><small>Design No. </small> <br> {{ product?.designNumber }}</p>
+              <p><small>Clothing</small> <br> {{ product?.clothingType }}</p>
+              <p><small>Sub Category</small> <br>{{ product?.subCategory }}</p>
+              <p><small>Gender</small> <br>{{ product?.gender }}</p>
+              <p><small>FSIN</small> <br>{{ product?.FSIN }}</p>
+            </div>
+            <hr class="m-0">
+          </div>
+
+          <div class="product-info-section">
+            <p><small>Title:</small></p>
+            <p>{{ product?.title }}</p>
+          </div>
+
+          <div class="product-info-section">
+            <p><small>Description:</small></p>
+            <p>{{ product?.description }}</p>
+          </div>
+          <hr>
+          <div class="row">
+            <p class="col-md-4 col-sm-6"><small>Material</small> <br> {{ product?.material }}</p>
+            <p class="col-md-4 col-sm-6"><small>Material Variety</small> <br> {{ product?.materialVariety }}</p>
+            <p class="col-md-4 col-sm-6"><small>Pattern</small> <br> {{ product?.pattern }}</p>
+          </div>
+          <div class="row">
+            <p class="col-md-4 col-sm-6"><small>Fit Type</small> <br> {{ product?.fitType }}</p>
+            <p class="col-md-4 col-sm-6"><small>Occasion</small> <br> {{ product?.occasion }}</p>
+            <p class="col-md-4 col-sm-6"><small>Lifestyle</small> <br> {{ product?.lifestyle }}</p>
+          </div>
+
+          <div class="row">
+            <p class="col-md-4 col-sm-6"><small>Closure Type</small><br> {{ product?.closureType }}</p>
+            <p class="col-md-4 col-sm-6"><small>Pocket Description</small><br> {{ product?.pocketDescription }}</p>
+            <p class="col-md-4 col-sm-6"><small>Sleeve Cuff Style</small><br> {{ product?.sleeveCuffStyle }}</p>
+          </div>
+          <div class="row">
+            <p class="col-md-4 col-sm-6"><small>Neck / Collar Style</small><br> {{ product?.neckCollarStyle }}</p>
+            <p class="col-md-4 col-sm-6"><small>Special Features</small><br> {{ product?.specialFeatures }}</p>
+            <p class="col-md-4 col-sm-6"><small>Care Instructions</small><br> {{ product?.careInstructions }}</p>
+          </div>
+
+          <hr>
+
+          <div class="row">
+            <p class="col-md-4 col-sm-6"><small>Sizes in Each Set</small> <br> {{ product?.sizes }}</p>
+            <p class="col-md-4 col-sm-6"><small>Item Weight (in gm)</small> <br> {{ product?.dimensions?.weight }}</p>
+            <p class="col-md-4 col-sm-6"><small>Dimensions (L x W x H ) in cm.</small> <br>
+              <ng-container *ngIf="product?.dimensions?.length || product?.dimensions?.width || product?.dimensions?.height">
+                {{ product?.dimensions?.length }} 
+                <span *ngIf="product?.dimensions?.length && product?.dimensions?.width">x</span> 
+                {{ product?.dimensions?.width }} 
+                <span *ngIf="product?.dimensions?.width && product?.dimensions?.height">x</span> 
+                {{ product?.dimensions?.height }}
+              </ng-container>
+              </p>
+          </div>
+
+          <hr>
+
+          <div class="">
+            <p class="mb-0"><small>Colours / Designs :</small> {{selectedColourName}} </p>
+            <div class="d-flex">
+              <span *ngFor="let colour of product?.colours" [ngClass]="{'disabled': !(colour?.images?.length > 0)}"
+                (click)="selectColourCollection(colour)" (mouseenter)="onHoverColour(colour)"
+                (mouseleave)="onLeaveColour()" style="cursor: pointer; display: flex;">
+                <div class="colour-info">
+                  <span *ngIf="colour.image; else colourBox">
+                    <img [src]="authService.cdnPath + colour.image" alt="Colour Image" class="colour-image">
+                  </span>
+                  <ng-template #colourBox>
+                    <span [style.background]="colour.hex" class="colour-hex"></span>
+                  </ng-template>
+                </div>
+              </span>
+            </div>
+
+
+            <!-- <p><small>Selected Colour: </small><br>{{ selectedColourName }}</p> -->
+          </div>
+
+          <!-- <div class="row">
+            
+          </div> -->
+
+          <div class="row">
+            <p class="col-md-4 col-sm-6"><small>Date Available</small> <br> {{ product?.dateAvailable }}</p>
+            <p class="col-md-4 col-sm-6"><small>Availability</small> <br> {{ product?.availability }}</p>
+          </div>
+        </div>
+      </div>
+      <!-- <hr>
+      <div class="add-to-card">
+        <button type="button" class="btn btn-wishlist" ><i class="bi bi-heart"></i>&nbsp; WISHLIST</button>
+        <div class="d-flex align-items-center">
+          <label for="">Quantity</label> &nbsp;
+          <input type="text" class="form-control w-50">
+        </div>
+        <button type="button" class="btn btn-wishlist">ADD TO CART</button>
+      </div> -->
+    </div>
+  </div>
+</section>

@@ -24,6 +24,7 @@ import { AddNewProduct2Component } from "./product-manager/add-new-product2/add-
 
 
 export const M_Auth: Route[] = [
+    { path: 'new', loadChildren:()=> import('./new-flow/new_flow.route').then((m)=>m.NewFlow)},
     { path: 'return-mng', loadChildren: () => import('./return-management/return-mng.route').then((m) => m.Return_Mng) },
     { path: 'dashboard', component: DashboardComponent },
     { path: 'profile', component: ProfileComponent },

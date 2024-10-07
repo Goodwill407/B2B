@@ -1,0 +1,80 @@
+<section class="content">
+  <div class="content-block">
+    <h4 class="mt-4">View Products</h4>
+    <div class="card p-4">
+      <div class="search-bar">
+        <!-- brand -->
+        <select name="" class="form-select" [(ngModel)]="filters.brand">
+          <option value="">Select Brand</option>
+          <option *ngFor="let brand of allBrand" [value]="brand.brandName">{{brand.brandName}}</option>
+        </select>
+
+        <!-- Product Type -->
+        <select name="" class="form-select" [(ngModel)]="filters.productType">
+          <option value="">Select Product Type</option>
+          <option *ngFor="let type of allProductType" [value]="type">{{type}}</option>
+        </select>
+        <!-- Gender -->
+        <select name="" class="form-select" [(ngModel)]="filters.gender" (change)="getCategoryByProductTypeAndGender()">
+          <option value="">Select Gender</option>
+          <option *ngFor="let gender of allGender" [value]="gender">{{gender}}</option>
+        </select>
+        <!-- category -->
+        <select name="" class="form-select" [(ngModel)]="filters.category" (change)="getSubCategoryBYProductType_Gender_and_Category()">
+          <option value="">Select Category</option>
+          <option *ngFor="let category of allcategory" [value]="category">{{category}}</option>
+        </select>
+        <!-- sub Category -->
+        <select name="" class="form-select" [(ngModel)]="filters.subCategory">
+          <option value="">Select Sub-Category</option>
+          <option *ngFor="let subCategory of allSubCategory" [value]="subCategory">{{subCategory}}</option>
+        </select>
+        <button class="btn btn-info" (click)="getAllProducts()">Display</button>
+      </div>
+      <hr>
+      <div class="cards-container">
+        <div *ngFor="let product of products" class="product-card" (mouseenter)="onMouseEnter(product)" (mouseleave)="onMouseLeave(product)">
+          <div class="design-no">Design No : {{product.designNo}}</div>
+          <div class="image-carousel">
+            <img class="main-img" [src]="authService.cdnPath + product.selectedImageUrl" alt="{{product.title}}" [routerLink]="['/mnf/view-product',{id: product.id}]">
+            <div class="carousel-dots">
+              <span *ngFor="let img of product.selectedImageUrls; let i = index" [class.active]="i === product.hoverIndex" (click)="navigateToImage(product, i)"></span>
+            </div>
+          </div>
+          <div class="product-details">
+            <div class="color-options mt-0">            
+              <button *ngFor="let color of product.colors"
+                      [ngStyle]="{'background-color': color, 'border': color === '#FFFFFF' ? '1px solid #000' : 'none'}"
+                      [class.active]="product.selectedColor === color" [disabled]="disableImage(product,color)"                 
+                      (click)="changeProductImage(product, color)">
+              </button>
+            </div>
+            <h6 class="title" [routerLink]="['/mnf/view-product',{id: product.id}]">{{product.title}}</h6>
+            <p class="truncate-text">{{ product.description }}</p>
+            <div class="availability">
+              <span *ngIf="product.stock > 0" class="in-stock">In stock - Qty {{product.stock}}</span>
+              <span *ngIf="product.stock === 0" class="out-of-stock">Out of stock</span>
+            </div>
+            <!-- Social Media Share Buttons -->
+            <!-- <div class="share-options">
+              <a  (click)="shareOnFacebook(product)" class="share-icon facebook">
+                <i class="fab fa-facebook"></i>
+              </a>
+             
+              <a (click)="shareOnWhatsApp(product)" class="share-icon whatsapp">
+                <i class="fab fa-whatsapp"></i>
+              </a>
+             
+              <a  (click)="shareOnTwitter(product)" class="share-icon twitter">
+                <i class="fab fa-twitter"></i>
+              </a>
+            </div> -->
+          </div>
+        </div>
+      </div>
+      <p-paginator *ngIf="products && products.length > 0" (onPageChange)="onPageChange($event)"
+        [first]="first" [rows]="rows" [totalRecords]="totalResults"
+        [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
+    </div>
+  </div>
+</section>
