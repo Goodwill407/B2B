@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule, DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
+import { CommonModule, DatePipe, NgClass, NgFor, NgIf, UpperCasePipe } from '@angular/common';
 import { ChangeDetectorRef,ElementRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -50,7 +50,7 @@ export class AddNewProduct2Component {
   productDetails: any
 
   // form step
-  currentStep = 2;
+  currentStep = 1;
 
   selectedSizes: any = []
   colourCollections: any = []
@@ -115,13 +115,13 @@ export class AddNewProduct2Component {
   allItemLength:any=[];
 
   
-  // sizeSet2 = ['5XS', '4XS', '3XS', '2XS', 'XS', 'S/36', 'M/38', 'L/40', 'XL/42', '2XL/44', '3XL/46', '4XL/48',]
+  // sizeSet2 = ['5XS', '4XS', '3XS', '2XS', 'XS', 'S/36', 'M/38', 'L/40', 'XL/42', '2XL/44', 'XS', 'S/36', 'M/38', 'L/40', 'XL/42', '2XL/44']
 
-  // colourCollections = [
-  //   { colorName: 'Red', colorCode: '#FF0000' },
-  //   { colorName: 'Pink', colorCode: '#FFC0CB' },
-  //   { colorName: 'Yellow', colorCode: '#FFFF00' },
-  //   { colorName: 'Green', colorCode: '#008000' },
+  // colors = [
+  //   { colourName: 'Red', colorCode: '#FF0000' },
+  //   { colourName: 'Pink', colorCode: '#FFC0CB' },
+  //   { colourName: 'Yellow', colorCode: '#FFFF00' },
+  //   { colourName: 'Green', colorCode: '#008000' },
   // ];
 
 
@@ -549,7 +549,7 @@ export class AddNewProduct2Component {
       this.authService.post('type2-products', stepOneData).subscribe(res => {
         if (res) {
           this.spinner.hide();
-          this.ProductId = res.id  
+          this.ProductId = res.id 
           // updated deatilas
           this.productDetails=res;        
           this.communicationService.showNotification(
@@ -614,7 +614,7 @@ export class AddNewProduct2Component {
     this.stepTwo.markAllAsTouched();
   
     // Check if colourCollections is empty and type is "add_go_next"
-    if (type === 'add_go_next' && this.colourCollections.length === 0) {
+    if (type === 'add_go_next' && this.productDetails.colourCollections.length === 0) {
       this.communicationService.showNotification(
         'snackbar-error',
         'First add any collection then go to the next page',
@@ -634,6 +634,7 @@ export class AddNewProduct2Component {
         if (response) {
           this.spinner.hide();
           this.resetForm();
+          this.productDetails=response;
           this.colourCollections = response.colourCollections;
           this.communicationService.showNotification(
             'snackbar-success',
@@ -642,6 +643,8 @@ export class AddNewProduct2Component {
             'center'
           );
           this.updateValidators();
+          // for third step
+          this.createFormControls2()
           if (type === 'add_go_next') {
             setTimeout(() => {
               this.currentStep++;
@@ -916,8 +919,9 @@ export class AddNewProduct2Component {
     });
   }
 
+
   
-  async saveStepThree(type: any = '') {
+  async saveStepThree(type: any = '') {    
     this.submittedStep2 = true;
   
     if (this.stepThree.valid) {
@@ -938,10 +942,15 @@ export class AddNewProduct2Component {
           }
         });
       });
+          
+      const object:any={
+        inventory:result
+      }   
+      object.id=this.ProductId; 
   
       try {
         this.spinner.show();
-        const res: any = await this.authService.patch(`type2-products/${this.ProductId}`, result).toPromise();
+        const res: any = await this.authService.patch(`type2-products`, object).toPromise();
         if (res) {
           this.spinner.hide();
           // this.resetForm();

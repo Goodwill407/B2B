@@ -358,116 +358,180 @@
     
     align-items: center;
     width: 46%;
-  }
-  
-  // for dimention
-  
+  } 
   
 //  for Step-Threee
 /* General Styling */
-
-
-/* General Styling */
 form {
   margin: 20px;
+  font-family: Arial, sans-serif;
 }
 
-.inventory-container {
-  background-color: #f9f9f9;
+.inventory-container3 {
+  background-color: #ffffff;
   border: 1px solid #ddd;
   border-radius: 10px;
   padding: 20px;
   width: 100%;
+  max-width:100%;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
+/* Flex container for header and size inputs */
+.header3 {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.size-label3 {
+  font-weight: bold;
+  font-size: 16px;
+  white-space: nowrap; /* Prevent label from wrapping */
+}
+
+.size-headers3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* Adjust input size dynamically */
+  gap: 10px;
+  justify-items: center;
+}
+
+.size-header3 {
+  text-align: center;
+  padding: 5px;
+  // background-color: #f0f0f0;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.color-row3 {
+  display: grid;
+  grid-template-columns: 120px 1fr;
   align-items: center;
   margin-bottom: 15px;
-  font-weight: bold;
 }
 
-.size-label {
-  width: 100px;
-}
-
-.size-header {
-  flex: 1;
-  text-align: center;
-  padding: 10px;
-  background-color: #f0f0f0;
-  border-radius: 5px;
-  margin: 0 5px;
-}
-
-.color-row {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.color-box-container {
-  width: 100px;
+.color-box-container3 {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.color-box {
+.color-box3 {
   width: 50px;
   height: 50px;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.size-inputs-container {
+.color-image3 {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  object-fit: cover; /* Ensures image fits within the box */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.size-inputs3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* Dynamically adjust based on available space */
+  gap: 10px;
+  justify-items: center;
+}
+
+.size-input3 {
   display: flex;
-  flex: 1;
-  justify-content: space-between;
+  justify-content: center;
 }
 
-.size-input-container {
-  flex: 1;
-  margin: 0 5px;
-}
-
-input[type="number"] {
+.size-input3 input[type="number"] {
   width: 100%;
-  padding: 8px;
+  max-width: 60px; /* Reduce max-width of input boxes */
+  padding: 6px;
   border-radius: 5px;
   border: 1px solid #ccc;
   text-align: center;
-  font-size: 14px;
+  font-size: 12px;
   background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-input[type="number"]::placeholder {
+.size-input3 input[type="number"]::placeholder {
   color: #bbb;
 }
 
+.submit-btn3 {
+  margin-top: 20px;
+  padding: 12px 24px;
+  background-color: #008CBA;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn3:hover {
+  background-color: #005f73;
+}
+
 /* Responsive Design */
-@media (max-width: 768px) {
-  .header, .color-row {
-    flex-direction: column;
-    align-items: flex-start;
+@media (max-width: 992px) {
+  .header3, .color-row3 {
+    grid-template-columns: 100px 1fr;
   }
 
-  .size-header, .size-input-container {
-    margin-bottom: 10px;
+  .size-headers3, .size-inputs3 {
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* Decrease size for smaller screens */
   }
 
-  .size-header {
-    width: 100%;
-    text-align: left;
+  .size-header3, .size-input3 input[type="number"] {
+    font-size: 12px;
+    padding: 5px;
+    max-width: 50px;
   }
 
-  .size-inputs-container {
-    flex-direction: column;
+  .color-box3 {
+    width: 40px;
+    height: 40px;
+  }
+  .color-image3 {
+    width: 40px;
+    height: 40px;    
   }
 }
+
+@media (max-width: 600px) {
+  .header3, .color-row3 {
+    grid-template-columns: 80px 1fr;
+  }
+
+  .size-headers3, .size-inputs3 {
+    grid-template-columns: repeat(auto-fit, minmax(40px, 1fr)); /* Adjust input sizes for very small screens */
+  }
+
+  .size-header3, .size-input3 input[type="number"] {
+    font-size: 10px;
+    padding: 4px;
+    max-width: 40px;
+  }
+
+  .color-box3 {
+    width: 35px;
+    height: 35px;
+  }  
+  .color-image3 {
+    width: 35px;
+    height: 35px;   
+  }
+}
+
+
+
 
 
 

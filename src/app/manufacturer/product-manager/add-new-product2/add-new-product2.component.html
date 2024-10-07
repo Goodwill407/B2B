@@ -1104,30 +1104,45 @@
 
                 <!-- Step 3 -->
                
-                <div *ngIf="currentStep === 3">
-                    <!-- Step Three -->
+                <div *ngIf="currentStep === 3">                  
                     <form [formGroup]="stepThree" (ngSubmit)="saveStepThree()">
-                        <div class="inventory-container">
-                          <div class="header">
-                            <div class="size-label">Size Set:</div>
-                            <div *ngFor="let size of selectedSizes" class="size-header">{{ size }}</div>
-                          </div>
-                          
-                          <div *ngFor="let color of colourCollections" class="color-row">
-                            <div class="color-box-container">
-                              <div class="color-box" [ngStyle]="{'background-color': color.color}"></div>
+                        <div class="inventory-container3">
+                          <div class="header3">
+                            <div class="size-label3">Size Set:</div>
+                            <div class="size-headers3">
+                              <div *ngFor="let size of selectedSizes" class="size-header3">{{ size }}</div>
                             </div>
-                            <div class="size-inputs-container">
-                              <div *ngFor="let size of selectedSizes" class="size-input-container">
-                                <input type="text" formControlName="{{ color.colourName + '_' + size }}" placeholder="" />
+                          </div>
+                      
+                          <div *ngFor="let color of colourCollections" class="color-row3">
+                            <div class="color-box-container3">
+                              <!-- Check if 'colourImage' is available. If true, display the image; otherwise, display the color box. -->
+                              <div *ngIf="color.colourImage; else noImage">
+                                <img [src]="CloudPath+color.colourImage" alt="{{ color.colourName }}" class="color-image3" title="{{ color.colourName }}" />
+                              </div>
+                              <!-- Fallback to color box if 'colourImage' is not available -->
+                              <ng-template #noImage>
+                                <div class="color-box3" [ngStyle]="{'background-color': color.colourName}" title="{{ color.colourName }}"></div>
+                              </ng-template>
+                            </div>
+                            
+                            <div class="size-inputs3">
+                              <div *ngFor="let size of selectedSizes" class="size-input3">
+                                <input
+                                  type="number"
+                                  formControlName="{{ color.colourName + '_' + size }}"
+                                  placeholder="Qty"
+                                  min="0"
+                                />
                               </div>
                             </div>
                           </div>
                         </div>
                         <div class="d-flex justify-content-center">
-                        <button type="submit" class="btn btn-primary mt-2">Final Save</button>
-                       </div>
-                      </form>                   
+                          <button type="submit" class="btn submit-btn mt-2">Final Save</button>
+                        </div>
+                      </form>
+                      
                 </div>
             </form>
 
