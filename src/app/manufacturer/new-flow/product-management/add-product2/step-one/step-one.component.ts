@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
-import { CommonModule, DatePipe, NgClass, NgFor, NgIf, UpperCasePipe } from '@angular/common';
-import { ChangeDetectorRef,ElementRef, ViewChild } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule, DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, CommunicationService, DirectionService } from '@core';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
@@ -10,10 +10,9 @@ import { DropdownModule } from 'primeng/dropdown';
 import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
-  selector: 'app-add-new-product2',
+  selector: 'app-step-one',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
+  imports: [ReactiveFormsModule,
     NgFor,
     NgIf,
     MultiSelectModule,
@@ -22,14 +21,16 @@ import { MultiSelectModule } from 'primeng/multiselect';
     NgClass,
     CommonModule,
     NgxSpinnerModule,
-    DropdownModule
-  ],
-  templateUrl: './add-new-product2.component.html',
-  styleUrl: './add-new-product2.component.scss',
+    DropdownModule,
+    CommonModule],
+  templateUrl: './step-one.component.html',
+  styleUrl: './step-one.component.scss',
   providers: [DatePipe]
 })
-export class AddNewProduct2Component {
-  addProductForm: any = FormGroup;
+export class StepOneComponent {
+  @Output() next = new EventEmitter<string>(); 
+
+  stepOne:FormGroup;
   submittedStep2: boolean = false;
   submittedStep1 = false;
   displayProductImageDialog: boolean = false;
@@ -113,19 +114,6 @@ export class AddNewProduct2Component {
   allTrourserPocket:any=[];
   allIncludedComponent:any=[];  
   allItemLength:any=[];
-
-  
-  // sizeSet2 = ['5XS', '4XS', '3XS', '2XS', 'XS', 'S/36', 'M/38', 'L/40', 'XL/42', '2XL/44', 'XS', 'S/36', 'M/38', 'L/40', 'XL/42', '2XL/44']
-
-  // colors = [
-  //   { colourName: 'Red', colorCode: '#FF0000' },
-  //   { colourName: 'Pink', colorCode: '#FFC0CB' },
-  //   { colourName: 'Yellow', colorCode: '#FFFF00' },
-  //   { colourName: 'Green', colorCode: '#008000' },
-  // ];
-
-
-
   constructor(private fb: FormBuilder,    
     private authService: AuthService,
     private cd: ChangeDetectorRef,
@@ -135,8 +123,8 @@ export class AddNewProduct2Component {
     private datePipe: DatePipe,
     private direction: DirectionService,
     private router:Router) {
-    this.addProductForm = this.fb.group({
-      stepOne: this.fb.group({
+    this.stepOne = this.fb.group({
+      
         designNumber: ['', Validators.required],
         brand: ['', Validators.required],
         productTitle: ['', Validators.required],
@@ -144,35 +132,13 @@ export class AddNewProduct2Component {
         productType: ['', Validators.required],
         gender: ['', Validators.required],
         clothing: ['', Validators.required],
-        subCategory: ['', Validators.required],        
+        subCategory: ['', Validators.required],       
 
-        sizes: this.fb.array([]),
+        sizes: this.fb.array([]),        
 
-        // minimumOrderQty: ['', Validators.required],
-        // setOFnetWeight: ['', Validators.required],
-        // setOfMRP: ['', [Validators.required]],
-        // setOfManPrice: ['', [Validators.required]],
-        // quantity: ['', [Validators.required]],       
-        // forUpdate form
-        // newQuantity:[''],
-        // updatedDate: [''],
-        // alertStock: ['', [Validators.required]]
         dateOfManufacture: ['', [Validators.required]],
         dateOfListing: ['', [Validators.required]],
       }),
-      stepTwo: this.fb.group({
-        colour: [''],
-        colourName: ['', Validators.required],
-        colourImage: [null, Validators.required],
-        productVideo: [null],
-        productImages: this.fb.array([], Validators.required)
-      }),
-      //  step three
-       stepThree: this.fb.group({ })     
-    });
-
-    this.createFormControls2()
-    
 
     // set cdn path
     this.CloudPath = this.authService.cdnPath
@@ -202,7 +168,7 @@ export class AddNewProduct2Component {
     this.getAllLifeStyle()
     this.getAllBrands()
     this.getAllCurrencyCode()
-    this.updateValidators()
+    // this.updateValidators()
     // this.disbledFields()
     this.getProfileData();
     this.getProductType();
@@ -240,10 +206,8 @@ export class AddNewProduct2Component {
   } 
   // stepOne vlidation
   get f() {
-    return this.addProductForm.get('stepOne') as FormGroup;
+    return this.stepOne.controls
   }
-
- 
 
   createFormControls(fields: string[]): void {
     fields.forEach(field => {
@@ -261,35 +225,6 @@ export class AddNewProduct2Component {
     });
   }
 
-  // Form step functions
-  nextStep() {
-    if (this.currentStep === 1) {
-      if (this.ProductId) {
-        this.UpdateStepOne()
-      }
-      else {
-        this.saveStepOneData();
-      }
-    } else if (this.currentStep === 2) {     
-      this.saveStepTwoData('add_go_next');
-    }        
-  }
-
-
-  get stepOne() {
-    return this.addProductForm.get('stepOne') as FormGroup;
-  }
-
-  get stepTwo() {
-    return this.addProductForm.get('stepTwo') as FormGroup;
-  }
-  get stepThree() {
-    return this.addProductForm.get('stepThree') as FormGroup;
-  }
-  
-
-  // for size form array
-  // Mock function to simulate fetching dynamic fields from the backend
   getSizeChartFields() {
 
     if (this.foundSizeSet === 'Size Set') {
@@ -431,7 +366,7 @@ export class AddNewProduct2Component {
     try {
       const res: any = await this.authService.post(`sub-category/filter`, object).toPromise();
       if (res) {
-        (this.addProductForm.get('stepOne.sizes') as FormArray).clear();
+        (this.stepOne.get('sizes') as FormArray).clear();
         this.allSubCategory = [];
         if (!this.ProductId) {
           this.stepOne.get('subCategory')?.patchValue('');
@@ -472,7 +407,7 @@ export class AddNewProduct2Component {
       const res: any = await this.authService.post(`mapping/filter-subcategory`, object).toPromise();
 
       // Clear data
-      (this.addProductForm.get('stepOne.sizes') as FormArray).clear();
+      (this.stepOne.get('sizes') as FormArray).clear();
       this.visibleFields = [];
       this.showFlag2 = false;
       this.selectedSizes = [];
@@ -558,9 +493,7 @@ export class AddNewProduct2Component {
             'bottom',
             'center'
           );
-          setTimeout(() => {
-            this.currentStep++;
-          }, 1500);
+          this.next.emit(this.ProductId);
 
         }
       },
@@ -570,187 +503,6 @@ export class AddNewProduct2Component {
         })
     }
   }
-
-  // for Step two  =============================================================
-  get productImages(): FormArray {
-    return this.stepTwo.get('productImages') as FormArray;
-  }
-
-  onFileChange(event: any, controlName: string) {
-    const file = event.target.files[0];
-    if (file) {
-      if (controlName === 'productVideo' && file.size > 50 * 1024 * 1024) { // 50 MB in bytes
-        this.videoSizeError = 'Product video must be less than 50 MB';
-        this.stepTwo.get(controlName)?.reset();
-      } else {
-        this.videoSizeError = '';
-        this.stepTwo.get(controlName)?.setValue(file);
-      }
-      this.cd.detectChanges();
-    }
-  }
-
-  onProductImageChange(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      this.productImages.push(this.fb.control(file));
-      this.cd.detectChanges();
-    }
-  }
-
-  removeProductImage(index: number) {
-    this.productImages.removeAt(index);
-    this.cd.detectChanges();
-  }
-
-  triggerFileInput() {
-    const fileInput: HTMLElement = document.getElementById('productImageInput') as HTMLElement;
-    fileInput.click();
-  }
-
- 
-  async saveStepTwoData(type: any = '') {
-    this.submittedStep2 = true;
-    this.stepTwo.markAllAsTouched();
-  
-    // Check if colourCollections is empty and type is "add_go_next"
-    if (type === 'add_go_next' && this.productDetails.colourCollections.length === 0) {
-      this.communicationService.showNotification(
-        'snackbar-error',
-        'First add any collection then go to the next page',
-        'bottom',
-        'center'
-      );
-      return; // Stop the function execution if condition is met
-    }
-  
-    if (this.stepTwo.valid && !this.videoSizeError) {
-      try {
-        const formData = await this.createFormData(); // Wait for createFormData to complete
-        this.spinner.show();
-        const response = await this.authService
-          .post(`type2-products/upload/colour-collection/${this.ProductId}`, formData)
-          .toPromise();
-        if (response) {
-          this.spinner.hide();
-          this.resetForm();
-          this.productDetails=response;
-          this.colourCollections = response.colourCollections;
-          this.communicationService.showNotification(
-            'snackbar-success',
-            'Saved Successfully...!!!',
-            'bottom',
-            'center'
-          );
-          this.updateValidators();
-          // for third step
-          this.createFormControls2()
-          if (type === 'add_go_next') {
-            setTimeout(() => {
-              this.currentStep++;
-            }, 1500);
-          }
-        }
-      } catch (error) {
-        console.log('Error', error);
-        this.spinner.hide();
-      }
-    } else {
-      console.log('Form is invalid');
-      this.spinner.hide();
-    }
-  }
-  
-
-  navigateOnProduct(){
-    this.router.navigateByUrl('mnf/manage-product')
-  }
-
-
-  createFormData(): Promise<FormData> {
-    return new Promise((resolve, reject) => {
-      try {
-        const formData = new FormData();
-        formData.append('colour', this.stepTwo.get('colour')?.value);
-        formData.append('colourName', this.stepTwo.get('colourName')?.value);
-        const colourImage = this.stepTwo.get('colourImage')?.value;
-        if (colourImage !== null) {
-          formData.append('colourImage', colourImage);
-        }
-        const productVideo = this.stepTwo.get('productVideo')?.value;
-        if (productVideo !== null) {
-          formData.append('productVideo', productVideo);
-        }
-        const productImages = this.stepTwo.get('productImages') as FormArray;
-        if (productImages && productImages.length > 0) {
-          productImages.controls.forEach((control, index) => {
-            const file = control.value;
-            if (file) {
-              formData.append('productImages', file);
-            }
-          });
-        }
-        resolve(formData); // Resolve with formData
-      } catch (error) {
-        reject(error); // Reject in case of any error
-      }
-    });
-  }
-
-  // for reset all form
-  resetForm() {
-    this.stepTwo.reset();
-    this.productImages.clear();
-    (document.getElementById('colourImage') as HTMLInputElement).value = '';
-    (document.getElementById('videoUpload') as HTMLInputElement).value = '';
-    this.submittedStep2 = false;
-  }
-
-  createObjectURL(file: File): string {
-    return window.URL.createObjectURL(file);
-  }
-
-  setValidators(controlNames: string[]) {
-    controlNames.forEach(controlName => {
-      const control = this.stepTwo.get(controlName);
-      if (control) {
-        control.setValidators(Validators.required);
-        control.updateValueAndValidity();
-      }
-    });
-  }
-
-  clearValidators(controlNames: string[]) {
-    controlNames.forEach(controlName => {
-      const control = this.stepTwo.get(controlName);
-      if (control) {
-        control.clearValidators();
-        control.updateValueAndValidity();
-      }
-    });
-  }
-
-  updateValidators() {
-    if (this.colourCollections.length === 0) {
-      this.setValidators(['colourName', 'colourImage', 'productImages']);
-    } else {
-      this.clearValidators(['colourImage', 'productImages']);
-      this.setValidators(['colourName', 'colour']);
-    }
-  }
-
-  getProductImagePath(Image: any) {
-    return this.CloudPath + Image;
-  }
-
-  getColorIconPath(Image: any) {
-    return this.CloudPath + Image;
-  }
-  getVideoPath(video: any) {
-    return this.CloudPath + video;
-  }
-
-
 
   async getProductDataById() {
     this.spinner.show();
@@ -805,7 +557,7 @@ export class AddNewProduct2Component {
   }
 
   patchSizesArray(sizes: any[]) {
-    const sizesArray = this.addProductForm.get('stepOne.sizes') as FormArray;
+    const sizesArray = this.stepOne.get('sizes') as FormArray;
     sizesArray.clear(); // Clear existing values
     this.selectedSizes = [];
 
@@ -856,8 +608,7 @@ export class AddNewProduct2Component {
 
   // update step one data
   UpdateStepOne() {  
-    this.submittedStep1 = true;     
-    this.addProductForm.get('stepOne')?.removeControl('quantity');
+    this.submittedStep1 = true;       
     
     if (this.stepOne.invalid) {
       return;
@@ -868,7 +619,7 @@ export class AddNewProduct2Component {
       this.authService.patchWithEmail(`products/${this.ProductId}`, formData).subscribe(res => {
         if (res) {
           this.colourCollections = res.colourCollections
-          this.updateValidators()
+          // this.updateValidators()
           this.spinner.hide()
 
           this.communicationService.showNotification(
@@ -889,96 +640,8 @@ export class AddNewProduct2Component {
     }
   }
 
-  deleteColorCOllection(CollectionData: any) {
-    const id = `?&id=${this.ProductId}&collectionId=${CollectionData._id}`
-    this.spinner.show()
-    this.authService.delete(`products/delete/colour-collection`, id).subscribe(res => {
-      this.getProductDataById()
-      this.spinner.hide()
-      this.communicationService.showNotification('snackbar-success', `Deleted Successfully...!!!`, 'bottom', 'center');
-    }, error => {
-      this.spinner.hide()
-    });
-  }
 
-  changeCurrency(event: any) {
-    const object = event.value
-    const symbol = event.value.name.symbol || '';
-    const valueWithDash = `${symbol} -`;
-    this.stepOne.get('MRP')?.setValue(valueWithDash, { emitEvent: false });
-    console.log('Selected currency:', this.selectedCurrency);
-  }
-
-  // step Three
- 
-  createFormControls2() {
-    this.colourCollections.forEach((color:any) => {
-      this.selectedSizes.forEach((size:any) => {
-        this.stepThree.addControl(`${color.colourName}_${size}`, new FormControl(''));
-      });
-    });
-  }
-
-
-  
-  async saveStepThree(type: any = '') {    
-    this.submittedStep2 = true;
-  
-    if (this.stepThree.valid) {
-      const formData = this.stepThree.value;
-      const result: any = [];
-  
-      this.colourCollections.forEach((color:any) => {
-        this.selectedSizes.forEach((size:any) => {
-          const quantity = formData[`${color.colourName}_${size}`];
-          if (quantity) {
-            result.push({
-              colourName: color.colourName,
-              colourImage: color.colourImage,
-              colour: color.colour,
-              quantity: quantity,
-              size: size,
-            });
-          }
-        });
-      });
-          
-      const object:any={
-        inventory:result
-      }   
-      object.id=this.ProductId; 
-  
-      try {
-        this.spinner.show();
-        const res: any = await this.authService.patch(`type2-products`, object).toPromise();
-        if (res) {
-          this.spinner.hide();
-          // this.resetForm();
-          this.communicationService.showNotification(
-            'snackbar-success',
-            `Saved Successfully...!!!`,
-            'bottom',
-            'center'
-          );
-          this.updateValidators();
-          setTimeout(() => {
-            this.router.navigate([`mnf/manage-product`]);
-          }, 1500);
-        }
-      } catch (error) {
-        this.spinner.hide();
-        // Handle error, e.g., show notification or log error
-        this.communicationService.showNotification(
-          'snackbar-error',
-          `Error occurred while saving...!!!`,
-          'bottom',
-          'center'
-        );
-      }
-    }
-  }  
-
-
+  // all Masters
 
   // all Masters data======================
 
@@ -1550,4 +1213,8 @@ error => {
 //     console.log('error');
 // });
 // }
+
+ 
+
+  
 }
