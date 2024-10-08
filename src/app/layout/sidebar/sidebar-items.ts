@@ -1246,7 +1246,7 @@ export const ROUTES2: RouteInfo[] = [
     role: ['manufacture'],
     submenu: [
       {
-        path: '/mnf/new/manage-product',
+        path: '/mnf/new/add-product2',
         title: 'Add new Product',
         iconType: '',
         icon: '',

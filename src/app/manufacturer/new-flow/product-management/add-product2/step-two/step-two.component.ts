@@ -29,8 +29,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
   providers:[DatePipe]
 })
 export class StepTwoComponent {
-  @Input() productId!: string; // Receive the product ID as input
-  @Output() next = new EventEmitter<string>(); 
+  @Input() productId: any  // Allow nullable type
+  @Output() next = new EventEmitter<any>(); 
   stepTwo:FormGroup; 
  
   submittedStep2: boolean = false;
@@ -89,7 +89,7 @@ export class StepTwoComponent {
   async getProductDataById() {
     this.spinner.show();
     try {
-      const res = await this.authService.getById('products', this.productId).toPromise();
+      const res = await this.authService.getById('type2-products', this.productId).toPromise();
       this.productDetails = res;
 
       if (this.productDetails) {
@@ -184,6 +184,21 @@ export class StepTwoComponent {
       console.log('Form is invalid');
       this.spinner.hide();
     }
+  }
+
+  goToNextStep(){
+    if(this.colourCollections.length >0){
+      this.next.emit(this.productId)
+    }
+    else{
+      this.communicationService.showNotification(
+        'snackbar-error',
+        'First add any collection then go to the next page',
+        'bottom',
+        'center'
+      );
+    }
+   
   }
   
 
@@ -287,5 +302,8 @@ export class StepTwoComponent {
     });
   }
 
+  goToNextPage(){
+    this.next.emit( this.productId);
+  }
 
 }
