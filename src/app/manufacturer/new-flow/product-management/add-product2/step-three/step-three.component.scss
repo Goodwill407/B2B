@@ -101,20 +101,24 @@ form {
     color: #bbb;
   }
   
-  .submit-btn3 {
-    margin-top: 20px;
-    padding: 12px 24px;
-    background-color: #008CBA;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-  }
+  // .submit-btn3 {
+  //   margin-top: 20px;
+  //   padding: 12px 24px;
+  //   background-color: #008CBA;
+  //   color: white;
+  //   border: none;
+  //   border-radius: 6px;
+  //   cursor: pointer;
+  //   font-size: 16px;
+  //   transition: background-color 0.3s ease;
+  // }
   
-  .submit-btn3:hover {
-    background-color: #005f73;
+  // .submit-btn3:hover {
+  //   background-color: #005f73;
+  // }
+  .submit-btn {  
+    background-color: #f0ad4e;
+    color: #fff;
   }
   
   /* Responsive Design */
