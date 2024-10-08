@@ -1,6 +1,6 @@
 import { CommonModule, DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, CommunicationService, DirectionService } from '@core';
@@ -12,13 +12,11 @@ import { MultiSelectModule } from 'primeng/multiselect';
 @Component({
   selector: 'app-step-one',
   standalone: true,
-  imports: [ReactiveFormsModule,
-    NgFor,
-    NgIf,
+  imports: [
+    ReactiveFormsModule,   
     MultiSelectModule,
     FormsModule,
-    DialogModule,
-    NgClass,
+    DialogModule,  
     CommonModule,
     NgxSpinnerModule,
     DropdownModule,
@@ -28,7 +26,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
   providers: [DatePipe]
 })
 export class StepOneComponent {
-  @Output() next = new EventEmitter<string>(); 
+  @Input() productId: any  // Allow nullable type
+  @Output() next = new EventEmitter<any>(); 
 
   stepOne:FormGroup;
   submittedStep2: boolean = false;
@@ -132,7 +131,7 @@ export class StepOneComponent {
         productType: ['', Validators.required],
         gender: ['', Validators.required],
         clothing: ['', Validators.required],
-        subCategory: ['', Validators.required],       
+        subCategory: ['', Validators.required],      
 
         sizes: this.fb.array([]),        
 
@@ -207,6 +206,16 @@ export class StepOneComponent {
   // stepOne vlidation
   get f() {
     return this.stepOne.controls
+  }
+
+  submit(){
+    if(this.productId){
+      this.UpdateStepOne()
+    }
+    else{
+      this.saveStepOneData()
+    }
+
   }
 
   createFormControls(fields: string[]): void {
@@ -463,10 +472,7 @@ export class StepOneComponent {
   // save Forms step One
   saveStepOneData() {
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
-    this.submittedStep1 = true
-    // removeFormControl
-    // this.addProductForm.get('stepOne')?.removeControl('newQuantity');
-    // this.addProductForm.get('stepOne')?.removeControl('updatedDate');   
+    this.submittedStep1 = true   
 
     if (this.stepOne.valid) {
       const productBy = this.userProfile.email
@@ -507,16 +513,15 @@ export class StepOneComponent {
   async getProductDataById() {
     this.spinner.show();
     try {
-      const res = await this.authService.getById('products', this.ProductId).toPromise();
-      this.productDetails = res;
+      const res = await this.authService.getById('type2-products', this.ProductId).toPromise();
+      this.productDetails = res;      
 
       if (this.productDetails) {
+       
         if (this.currentStep === 2) {
-          this.colourCollections = this.productDetails.colourCollections;
+          this.colourCollections = this.productDetails.colourCollections;          
         } else {
           this.stepOne.patchValue(this.productDetails);
-         
-
 
           // Fetch categories and subcategories
           await this.getCategoryByProductTypeAndGender(this.productDetails.productType, this.productDetails.gender);
@@ -616,7 +621,7 @@ export class StepOneComponent {
     else {
       this.spinner.show()
       const formData = this.stepOne.getRawValue();
-      this.authService.patchWithEmail(`products/${this.ProductId}`, formData).subscribe(res => {
+      this.authService.patchWithEmail(`type2-products/${this.ProductId}`, formData).subscribe(res => {
         if (res) {
           this.colourCollections = res.colourCollections
           // this.updateValidators()
@@ -628,9 +633,10 @@ export class StepOneComponent {
             'bottom',
             'center'
           );
-          setTimeout(() => {
-            this.currentStep++;
-          }, 1500);
+          // setTimeout(() => {
+          //   this.currentStep++;
+          // }, 1500);
+          this.next.emit(this.ProductId);
         }
 
       },

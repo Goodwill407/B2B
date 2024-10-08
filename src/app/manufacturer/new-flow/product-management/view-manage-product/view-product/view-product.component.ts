@@ -91,7 +91,7 @@ export class ViewProductComponent {
   }
 
   editProduct() {
-    this.router.navigate(['mnf/add-new-product'], { queryParams: { id: this.ProductId } });
+    this.router.navigate(['mnf/new/add-product2'], { queryParams: { id: this.ProductId } });
   }
 
   selectColourCollection(colour: any) {
