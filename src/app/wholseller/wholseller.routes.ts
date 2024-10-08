@@ -15,29 +15,33 @@ import { RetailersRequestsListComponent } from "./retailers-requests-list/retail
 import { RejectedRetailersListComponent } from "./retailers-requests-list/rejected-retailers-list/rejected-retailers-list.component";
 import { ViewRetailersDetailsComponent } from "./retailers-requests-list/view-retailers-details/view-retailers-details.component";
 
-export const R_Auth:Route[] = [
-    {path: 'order-mng',
-        loadChildren:() => import('./order-management/order-management.route').then((mod)=>mod.Order_Management_Route)
+export const R_Auth: Route[] = [
+    { path: 'new', loadChildren: () => import('./new-flow/new_flow.route').then((m) => m.NewFlow) },
+    {
+        path: 'order-mng',
+        loadChildren: () => import('./order-management/order-management.route').then((mod) => mod.Order_Management_Route)
     },
-    {path: 'return-mng',
-        loadChildren:() => import('./returnManagement/return-mng.route').then((mod)=>mod.returnMng)
+    {
+        path: 'return-mng',
+        loadChildren: () => import('./returnManagement/return-mng.route').then((mod) => mod.returnMng)
     },
-    {path: 'product',
-        loadChildren:() => import('./product/product.route').then((mod)=>mod.Product_Route)
+    {
+        path: 'product',
+        loadChildren: () => import('./product/product.route').then((mod) => mod.Product_Route)
     },
-    {path: 'dashboard', component: DashboardComponent},
-    {path: 'profile', component: WholesalerProfileComponent},
-    {path: 'new-retailer', component: AddRetailerComponent},
-    {path: 'bulk-invite', component: RetailerBulkInviteComponent},
-    {path: 'bulk-upload', component: RetailerBulkUploadComponent},
-    {path: 'invite-status', component: RetailerInviteStatusComponent},
-    {path: 'manage-retailer', component: ManageRetailerComponent},    
-    {path: 'request-to-mnf', component: RequestToManufacturerComponent},
-    {path:'mnf-details', component:ViewManufacturerDetailsComponent},
-    {path:'requested-mnf_list', component:MnfRequestListComponent},
-    {path:'view-challan', component:ViewChallanComponent},
-    {path:'mnf-list-challan', component:MnfListChallanComponent},
-    {path:'retailers-requests-list', component:RetailersRequestsListComponent},
-    {path:'rejected-retailsers-list', component:RejectedRetailersListComponent},
-    {path:'view-retailser-Details', component:ViewRetailersDetailsComponent},
+    { path: 'dashboard', component: DashboardComponent },
+    { path: 'profile', component: WholesalerProfileComponent },
+    { path: 'new-retailer', component: AddRetailerComponent },
+    { path: 'bulk-invite', component: RetailerBulkInviteComponent },
+    { path: 'bulk-upload', component: RetailerBulkUploadComponent },
+    { path: 'invite-status', component: RetailerInviteStatusComponent },
+    { path: 'manage-retailer', component: ManageRetailerComponent },
+    { path: 'request-to-mnf', component: RequestToManufacturerComponent },
+    { path: 'mnf-details', component: ViewManufacturerDetailsComponent },
+    { path: 'requested-mnf_list', component: MnfRequestListComponent },
+    { path: 'view-challan', component: ViewChallanComponent },
+    { path: 'mnf-list-challan', component: MnfListChallanComponent },
+    { path: 'retailers-requests-list', component: RetailersRequestsListComponent },
+    { path: 'rejected-retailsers-list', component: RejectedRetailersListComponent },
+    { path: 'view-retailser-Details', component: ViewRetailersDetailsComponent },
 ]

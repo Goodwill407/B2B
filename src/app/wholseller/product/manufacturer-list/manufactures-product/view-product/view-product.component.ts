@@ -10,7 +10,6 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [
     CommonModule,
-    NgIf, NgFor,
     FormsModule
   ],
   templateUrl: './view-product.component.html',

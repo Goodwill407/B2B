@@ -1902,7 +1902,7 @@ export const ROUTES2: RouteInfo[] = [
     role: ['wholesaler'],
     submenu: [
       {
-        path: '/wholesaler/product/mnf-list',
+        path: '/wholesaler/new/product/mnf-list',
         title: `Manufacturer's Products`,
         iconType: '',
         icon: '',
@@ -1914,7 +1914,7 @@ export const ROUTES2: RouteInfo[] = [
         submenu: [],
       },
       {
-        path: '/wholesaler/product/ordered-products',
+        path: '/wholesaler/new/product/ordered-products',
         title: `Products`,
         iconType: '',
         icon: '',
@@ -1926,7 +1926,7 @@ export const ROUTES2: RouteInfo[] = [
         submenu: [],
       },
       {
-        path: '/wholesaler/product/wishlist-product',
+        path: '/wholesaler/new/product/wishlist-product',
         title: 'Wishlist',
         iconType: '',
         icon: '',
@@ -1938,7 +1938,7 @@ export const ROUTES2: RouteInfo[] = [
         submenu: [],
       },      
       {
-        path: '/wholesaler/product/add-to-cart',
+        path: '/wholesaler/new/product/add-to-cart',
         title: 'Cart Product',
         iconType: '',
         icon: '',
