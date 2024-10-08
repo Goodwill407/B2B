@@ -86,17 +86,7 @@
           <hr>
 
           <div class="row">
-            <p class="col-md-4 col-sm-6"><small>Sizes in Each Set</small> <br> {{ product?.sizes }}</p>
-            <p class="col-md-4 col-sm-6"><small>Item Weight (in gm)</small> <br> {{ product?.dimensions?.weight }}</p>
-            <p class="col-md-4 col-sm-6"><small>Dimensions (L x W x H ) in cm.</small> <br>
-              <ng-container *ngIf="product?.dimensions?.length || product?.dimensions?.width || product?.dimensions?.height">
-                {{ product?.dimensions?.length }} 
-                <span *ngIf="product?.dimensions?.length && product?.dimensions?.width">x</span> 
-                {{ product?.dimensions?.width }} 
-                <span *ngIf="product?.dimensions?.width && product?.dimensions?.height">x</span> 
-                {{ product?.dimensions?.height }}
-              </ng-container>
-              </p>
+            <p class="col-md-4 col-sm-6"><small>Sizes Available</small> <br> {{ product?.sizes }}</p>            
           </div>
 
           <hr>
@@ -126,10 +116,10 @@
             
           </div> -->
 
-          <div class="row">
+          <!-- <div class="row">
             <p class="col-md-4 col-sm-6"><small>Date Available</small> <br> {{ product?.dateAvailable }}</p>
             <p class="col-md-4 col-sm-6"><small>Availability</small> <br> {{ product?.availability }}</p>
-          </div>
+          </div> -->
         </div>
       </div>
       <!-- <hr>

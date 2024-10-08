@@ -40,7 +40,7 @@ export class ViewProductComponent {
   }
 
   getProductDetails(id: any) {
-    this.authService.get('products/' + id).subscribe((res: any) => {
+    this.authService.get('type2-products/' + id).subscribe((res: any) => {
       if (res) {
         this.product = {
           brand: res.brand,

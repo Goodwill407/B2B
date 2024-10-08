@@ -36,7 +36,7 @@
         <div *ngFor="let product of products" class="product-card" (mouseenter)="onMouseEnter(product)" (mouseleave)="onMouseLeave(product)">
           <div class="design-no">Design No : {{product.designNo}}</div>
           <div class="image-carousel">
-            <img class="main-img" [src]="authService.cdnPath + product.selectedImageUrl" alt="{{product.title}}" [routerLink]="['/mnf/view-product',{id: product.id}]">
+            <img class="main-img" [src]="authService.cdnPath + product.selectedImageUrl" alt="{{product.title}}" [routerLink]="['/mnf/new/view-product',{id: product.id}]">
             <div class="carousel-dots">
               <span *ngFor="let img of product.selectedImageUrls; let i = index" [class.active]="i === product.hoverIndex" (click)="navigateToImage(product, i)"></span>
             </div>
@@ -49,14 +49,11 @@
                       (click)="changeProductImage(product, color)">
               </button>
             </div>
-            <h6 class="title" [routerLink]="['/mnf/view-product',{id: product.id}]">{{product.title}}</h6>
+            <h6 class="title" [routerLink]="['/mnf/new/view-product',{id: product.id}]">{{product.title}}</h6>
             <p class="truncate-text">{{ product.description }}</p>
-            <div class="availability">
-              <span *ngIf="product.stock > 0" class="in-stock">In stock - Qty {{product.stock}}</span>
-              <span *ngIf="product.stock === 0" class="out-of-stock">Out of stock</span>
-            </div>
+            
             <!-- Social Media Share Buttons -->
-            <!-- <div class="share-options">
+            <div class="share-options">
               <a  (click)="shareOnFacebook(product)" class="share-icon facebook">
                 <i class="fab fa-facebook"></i>
               </a>
@@ -68,7 +65,7 @@
               <a  (click)="shareOnTwitter(product)" class="share-icon twitter">
                 <i class="fab fa-twitter"></i>
               </a>
-            </div> -->
+            </div>
           </div>
         </div>
       </div>
