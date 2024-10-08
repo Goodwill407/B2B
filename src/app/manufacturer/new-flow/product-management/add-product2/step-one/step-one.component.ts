@@ -1,6 +1,6 @@
 import { CommonModule, DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, CommunicationService, DirectionService } from '@core';
@@ -28,7 +28,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
   providers: [DatePipe]
 })
 export class StepOneComponent {
-  @Output() next = new EventEmitter<string>(); 
+  @Input() productId: any  // Allow nullable type
+  @Output() next = new EventEmitter<any>(); 
 
   stepOne:FormGroup;
   submittedStep2: boolean = false;
@@ -507,7 +508,7 @@ export class StepOneComponent {
   async getProductDataById() {
     this.spinner.show();
     try {
-      const res = await this.authService.getById('products', this.ProductId).toPromise();
+      const res = await this.authService.getById('type2-products', this.ProductId).toPromise();
       this.productDetails = res;
 
       if (this.productDetails) {

@@ -19,7 +19,7 @@ import { CommonModule } from '@angular/common';
 })
 export class AddProduct2Component {
 
-  currentStep = 2;
+  currentStep = 1;
   productId: string | null = null;
 
   goToNextStep(productId?: string) {
