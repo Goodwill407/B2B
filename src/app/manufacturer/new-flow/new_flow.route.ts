@@ -8,6 +8,7 @@ import { AddProduct2Component } from "./product-management/add-product2/add-prod
 
 export const NewFlow:Route[]=[
     {path:'manage-product',component:AddProduct2Component},
+    {path:'manage-product2',component:ViewManageProductComponent},
     {path:'step-one',component:StepOneComponent},
     {path:'step-two',component:StepTwoComponent},
     {path:'step-three',component:StepThreeComponent},

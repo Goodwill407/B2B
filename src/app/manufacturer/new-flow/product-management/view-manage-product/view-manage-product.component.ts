@@ -105,7 +105,7 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
   }
   
   getAllProducts() {
-    let url = `products/filter-products?limit=${this.limit}&page=${this.page}`;
+    let url = `type2-products/filter-products?limit=${this.limit}&page=${this.page}`;
    
     const Object={
       "productBy": this.userProfile.email,
@@ -130,7 +130,7 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
           selectedColor: product.colourCollections[0]?.colour || '',
           colors: product.colourCollections.map((c: any) => c.colour),
           colourCollections: product.colourCollections,
-          stock: product.quantity || 2000, // Replace with actual stock value if available
+          // stock: product.quantity || 2000, // Replace with actual stock value if available
           id: product.id,
           hoverIndex: 0
         }));
