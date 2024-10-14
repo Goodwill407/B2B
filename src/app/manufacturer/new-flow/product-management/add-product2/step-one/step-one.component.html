@@ -2,7 +2,7 @@
     <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="default" color="#fff" type="square-jelly-box" [fullScreen]="true">
         <p style="color: rgb(242, 94, 94)"> Loading... </p>
     </ngx-spinner>
-    
+
     <div class="card p-4">
     <form  [formGroup]="stepOne" (ngSubmit)="submit()">
     <div class="row">
@@ -67,12 +67,12 @@
         </div>
     </div>
     <h5 class="mb-2 ps-0">Product Details</h5>
-    <div class="card p-2">
-        <div class="row mt-2">
+    <div class="card p-3">
+        <div class="row p-2" style="background-color: aliceblue;border-radius:10px;">
             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                 <label class="label-input" for="productType">Product Type<span
                         class="required">*</span></label>
-                <select name="productType" id="productType" class="form-select"
+                <select name="productType" id="productType" class="form-select" (change)="OnProductTypeChange()"
                     formControlName="productType"
                     [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('productType')?.invalid}">
                     <option value="" disabled selected>Select</option>

@@ -35,8 +35,7 @@ export class StepOneComponent {
   displayProductImageDialog: boolean = false;
   selectedColorGroupIndex: number | null = null;
   @ViewChild('fileInput') fileInput!: ElementRef;
-  CloudPath: string = ''
-  ProductId: any;
+  CloudPath: string = '' 
   sizeSet: any
   sizeChart: any;
   sizeChartdata:any[]=[]
@@ -144,7 +143,7 @@ export class StepOneComponent {
 
     // get product id from view
     this.route.queryParamMap.subscribe(params => {
-      this.ProductId = params.get('id');
+      this.productId = params.get('id');
     }); 
 
   }
@@ -198,7 +197,7 @@ export class StepOneComponent {
     this.getallItemLength()
     this.getAllWorkType()
     this.getAllelasticity()
-    if (this.ProductId) {
+    if (this.productId) {
       this.getProductDataById()
     }
 
@@ -333,6 +332,17 @@ export class StepOneComponent {
     });
   }
 
+  OnProductTypeChange(){
+    // Clear data
+    (this.stepOne.get('sizes') as FormArray).clear();
+    this.visibleFields = [];
+    this.showFlag2 = false;
+    this.selectedSizes = [];
+    this.sizeChartFields = [];
+    this.sizeSet = [];
+    
+  }
+
   async getCategoryByProductTypeAndGender(productType?: any, gender?: any) {
     const ProductType = this.stepOne.get('productType')?.value || productType;
     const Gender = this.stepOne.get('gender')?.value || gender;
@@ -341,9 +351,16 @@ export class StepOneComponent {
       try {
         const res: any = await this.authService.get(`sub-category/get-category/by-gender?productType=${ProductType}&gender=${Gender}`).toPromise();
         if (res && res.results) {
-          // for clear
+          // for clear          
           this.allSubCategory = [];
-          if (!this.ProductId) {
+          // Clear data
+         (this.stepOne.get('sizes') as FormArray).clear();
+         this.visibleFields = [];
+         this.showFlag2 = false;
+         this.selectedSizes = [];
+         this.sizeChartFields = [];
+         this.sizeSet = [];
+          if (!this.productId) {
             this.stepOne.get('subCategory')?.patchValue('');
             this.stepOne.get('clothing')?.patchValue('');
           }
@@ -377,13 +394,16 @@ export class StepOneComponent {
       if (res) {
         (this.stepOne.get('sizes') as FormArray).clear();
         this.allSubCategory = [];
-        if (!this.ProductId) {
+        if (!this.productId) {
           this.stepOne.get('subCategory')?.patchValue('');
-        }
-        this.showFlag2 = false;
-        this.selectedSizes = [];
-        this.sizeChartFields = [];
-        this.sizeSet = [];
+        }            
+        // Clear data
+      (this.stepOne.get('sizes') as FormArray).clear();
+      this.visibleFields = [];
+      this.showFlag2 = false;
+      this.selectedSizes = [];
+      this.sizeChartFields = [];
+      this.sizeSet = [];
       }
       this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
     } catch (error) {
@@ -427,14 +447,14 @@ export class StepOneComponent {
       this.visibleFields = res[0].inputs;
       this.createFormControls(this.visibleFields);
 
-      if (this.ProductId) {
+      if (this.productId) {
         this.stepOne.patchValue(this.productDetails);
       }
 
       // Check if "Size Set" or "Waist Size Set" is available
       this.foundSizeSet = this.visibleFields.find((field: any) => field === "Size Set" || field === "Waist Size Set");
       this.showFlag2 = true;
-      if (this.ProductId) {
+      if (this.productId) {
         // Format and patch dates
         const formattedDate1 = this.datePipe.transform(this.productDetails.dateOfManufacture, 'yyyy-MM-dd');
         const formattedDate2 = this.datePipe.transform(this.productDetails.dateOfListing, 'yyyy-MM-dd');
@@ -462,7 +482,7 @@ export class StepOneComponent {
       this.sizeSet = data.Sizes;
       this.sizeChartdata=data.sizeChart
       // for patch size array
-      if (this.ProductId) {
+      if (this.productId) {
         this.patchSizesArray(this.productDetails.sizes);
       }
       this.getSizeChartFields()
@@ -490,7 +510,7 @@ export class StepOneComponent {
       this.authService.post('type2-products', stepOneData).subscribe(res => {
         if (res) {
           this.spinner.hide();
-          this.ProductId = res.id 
+          this.productId = res.id 
           // updated deatilas
           this.productDetails=res;        
           this.communicationService.showNotification(
@@ -499,7 +519,7 @@ export class StepOneComponent {
             'bottom',
             'center'
           );
-          this.next.emit(this.ProductId);
+          this.next.emit(this.productId);
 
         }
       },
@@ -513,7 +533,7 @@ export class StepOneComponent {
   async getProductDataById() {
     this.spinner.show();
     try {
-      const res = await this.authService.getById('type2-products', this.ProductId).toPromise();
+      const res = await this.authService.getById('type2-products', this.productId).toPromise();
       this.productDetails = res;      
 
       if (this.productDetails) {
@@ -621,7 +641,7 @@ export class StepOneComponent {
     else {
       this.spinner.show()
       const formData = this.stepOne.getRawValue();
-      this.authService.patchWithEmail(`type2-products/${this.ProductId}`, formData).subscribe(res => {
+      this.authService.patchWithEmail(`type2-products/${this.productId}`, formData).subscribe(res => {
         if (res) {
           this.colourCollections = res.colourCollections
           // this.updateValidators()
@@ -636,7 +656,7 @@ export class StepOneComponent {
           // setTimeout(() => {
           //   this.currentStep++;
           // }, 1500);
-          this.next.emit(this.ProductId);
+          this.next.emit(this.productId);
         }
 
       },
