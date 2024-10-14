@@ -1,6 +1,6 @@
 import { CommonModule,Location } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 
@@ -9,7 +9,8 @@ import { AuthService, CommunicationService } from '@core';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   templateUrl: './view-product2.component.html',
   styleUrl: './view-product2.component.scss'
@@ -19,7 +20,7 @@ export class ViewProduct2Component {
   wishlist: boolean = false;
   quantity: any;
   hoveredColourName: string = '';
-  constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService, private router: Router, private communicationService: CommunicationService) { }
+  constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService, private fb: FormBuilder, private communicationService: CommunicationService) { }
 
   product: any;
   selectedMedia: any;
@@ -27,8 +28,12 @@ export class ViewProduct2Component {
   ProductId: any = '';
   selectedColourCollection: any = null;
   selectedColourName: string = '';
+  stepThree!: FormGroup;
+  selectedSizes: any[] = [];
+  colourCollections: any[] = [];
 
   ngOnInit(): void {
+    this.stepThree = this.fb.group({});
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
     this.route.params.subscribe(params => {
       const id = params['id'];
@@ -80,7 +85,15 @@ export class ViewProduct2Component {
           availability: res.quantity > 0 ? `${res.quantity}` : 'Out of Stock',
           id: res.id,
           productBy: res.productBy,
+          inventory: res.inventory,
         };
+        this.colourCollections = this.product.colours;
+        this.selectedSizes = this.product.sizes.map((item: any) => {
+         return {
+          size:item.standardSize,
+          price:item.manufacturerPrice}
+        });
+        this.createFormControls2();
         this.selectColourCollection(this.product.colours[0]);
         this.quantity = this.product.minimumOrderQty;
       }
@@ -91,13 +104,85 @@ export class ViewProduct2Component {
     this.location.back();
   }
 
+  getControlName(colourName: string, size: string): string {
+    return `${this.sanitizeControlName(colourName)}_${size}`;
+  }
+
+  sanitizeControlName(colourName: string): string {
+    return colourName.replace(/\s+/g, '_').toLowerCase();
+  }
+
+  createFormControls2() {
+    this.colourCollections.forEach((color: any) => {
+      const sanitizedColorName = this.sanitizeControlName(color.name); // Ensure control name compatibility
+      this.selectedSizes.forEach((size: any) => {
+        const controlName = `${sanitizedColorName}_${size.size}`;
+        this.stepThree.addControl(controlName, new FormControl(''));
+      });
+    });
+  }
+
+  updateRowTotal(colorName: string, sizeName: string) {
+    // Optional: You can add logic here to do something when the input changes
+  }
+  
+  getRowTotal(colorName: string): number {
+    let total = 0;
+  
+    this.selectedSizes.forEach(size => {
+      const controlName = this.getControlName(colorName, size.size);
+      const quantity = this.stepThree.get(controlName)?.value || 0; // Get the quantity for the control
+      total += quantity * size.price; // Calculate total for this size
+    });
+  
+    return total; // Return the total for this color
+  }
+  
+  async saveStepThree() {    
+
+    if (this.stepThree.valid) {
+      const formData = this.stepThree.value;
+      const result: any[] = [];
+
+      this.colourCollections.forEach((color: any) => {
+        const sanitizedColorName = this.sanitizeControlName(color.name);
+        this.selectedSizes.forEach((size: any) => {
+          const quantity = formData[`${sanitizedColorName}_${size.size}`];
+          if (quantity) {
+            result.push({
+              colourName: color.name,
+              colourImage: color.image,
+              colour: color.hex,
+              quantity,
+              ...size,
+            });
+          }
+        });
+      });
+
+      const payload = {
+        set: result,
+        productId: this.product.id,
+        email: this.authService.currentUserValue.email,
+        productBy: this.product.productBy
+      };
+
+      try {
+        const res = await this.authService.post('type2-cart', payload).toPromise();
+        if (res) {
+          this.communicationService.customSuccess1('Saved Successfully...!!!');
+        }
+      } catch (error) {
+        this.communicationService.customError1('Error occurred while saving...!!!');
+      } finally {
+       
+      }
+    }
+  }
+
   changeMainMedia(media: any) {
     this.selectedMedia = media.src;
     this.selectedMediaType = media.type;
-  }
-
-  editProduct() {
-    this.router.navigate(['mnf/add-new-product'], { queryParams: { id: this.ProductId } });
   }
 
   selectColourCollection(colour: any) {

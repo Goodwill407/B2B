@@ -36,12 +36,8 @@ export class StepThreeComponent {
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
-    private cd: ChangeDetectorRef,
     private communicationService: CommunicationService,
     private spinner: NgxSpinnerService,
-    private route: ActivatedRoute,
-    private datePipe: DatePipe,
-    private direction: DirectionService,
     private router: Router
   ) {
     this.stepThree = this.fb.group({});
