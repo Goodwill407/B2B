@@ -1,0 +1,51 @@
+.content {
+    .content-block {
+        h4 {
+            display: flex;
+            align-items: center;
+        }
+
+        .card {
+            padding: 20px;
+        }
+
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+    }
+}
+
+::ng-deep .p-datatable {
+    font-size: 12px;
+    // height: 60vh;
+    /* Set your desired font size */
+}
+
+::ng-deep .p-datatable-header,
+.p-datatable-thead>tr>th,
+.p-datatable-tbody>tr>td {
+    text-align: center;
+    /* Center align text in table headers and cells */
+}
+
+::ng-deep .p-accordion .p-accordion-content {
+    padding: 1.25rem 0.5rem;
+    border: 1px solid #e5e7eb;
+}
+
+input,
+.totals {
+    font-size: 12px;
+    padding: 5px;
+    font-family: inherit;
+}
+
+input {
+    font-size: 12px !important;
+    border: none !important;
+    width: 100px;
+    color: inherit !important;
+}

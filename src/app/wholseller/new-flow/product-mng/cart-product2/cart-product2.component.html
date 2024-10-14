@@ -1,1 +1,39 @@
-<p>cart-product2 works!</p>
+<section class="content">
+    <div class="content-block">
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i>&nbsp; Add To Cart Products</h4>
+
+        <p-accordion [activeIndex]="0" class="card" *ngIf="products && products.length > 0">
+            <ng-container *ngFor="let prod of products; let distIndex = index">
+                <p-accordionTab class="px-0" [header]="prod.cartAddedDate ? 'Date : ' + (prod.cartAddedDate | date:'dd-MM-yyyy') : 'No Date'">
+                    <p-table [value]="products" class="table table-bordered">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                
+                            </tr>
+                        </ng-template>
+                    
+                        <ng-template pTemplate="body" let-product let-rowIndex="rowIndex">
+                            
+                        </ng-template>
+                    </p-table>
+                    
+                    <hr>
+                    <div class="d-flex align-items-center">
+                        <div class="totals">
+                            <p class="mb-1 fw-bold">Sub Total : {{ prod.subTotal | currency: 'INR' }}</p>
+                            <p class="mb-1 fw-bold">GST (18%) : {{ prod.gst | currency: 'INR' }}</p>
+                            <p class="mb-1 fw-bold">Grand Total : {{ prod.grandTotal | currency: 'INR' }}</p>
+                        </div>
+                        <button class="btn btn-success mx-auto" (click)="placeOrder(prod)">
+                            <i class="bi bi-cart-check"></i> Purchase Order
+                        </button>
+                    </div>
+                </p-accordionTab>
+            </ng-container>
+        </p-accordion>
+
+        <div *ngIf="!products || products.length === 0" class="text-danger m-5 fw-6">
+            No products found for this Wholesaler.
+        </div>
+    </div>
+</section>
