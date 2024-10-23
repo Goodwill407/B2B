@@ -6,6 +6,7 @@ import { AuthService, CommunicationService } from '@core';
 import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
 import { AuthServiceService } from 'auth-service.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-request-to-manufacturer',
@@ -48,6 +49,8 @@ export class RequestToManufacturerComponent {
   dataType:any;
   productTypeWise: any[] = [];
 
+  
+
    // for ads
    rightAdImages: string[] = [
     'https://en.pimg.jp/081/115/951/1/81115951.jpg',
@@ -56,7 +59,7 @@ export class RequestToManufacturerComponent {
 
   bottomAdImage: string = 'https://elmanawy.info/demo/gusto/cdn/ads/gusto-ads-banner.png';
 
-  constructor(private authService:AuthService, private route:Router, private communicationService:CommunicationService, private elementRef: ElementRef ){
+  constructor(private authService:AuthService, private route:Router, private communicationService:CommunicationService, private elementRef: ElementRef,private spinner: NgxSpinnerService ){
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
   }
 
@@ -91,7 +94,8 @@ export class RequestToManufacturerComponent {
     if (this.SearchBrand) {
 
       const object={
-        brandName:this.SearchBrand
+        brandName:this.SearchBrand,
+        requestByEmail:this.userProfile.email        
       }
       this.authService.post('brand/searchmanufacturelist',object).subscribe(
         response => {    
@@ -175,6 +179,9 @@ export class RequestToManufacturerComponent {
     if (this.filters.subCategory) {
       body.subCategory = this.filters.subCategory;
     }   
+    if(this.userProfile.email){
+      body.requestByEmail=this.userProfile.email;
+    }
     // if (this.filters.country) {
     //   body.country = this.filters.country;
     // }
@@ -185,15 +192,17 @@ export class RequestToManufacturerComponent {
     //   body.state = this.filters.state;
     // }
   
-    // Call the API with the dynamically constructed body
+    // Call the API with the dynamically constructed body  
+    this.spinner.show()  
     this.authService.post(url, body).subscribe(
       (res: any) => {
         this.brandData=[]
-       this.productTypeWise=res 
+       this.productTypeWise=res;      
        this.dataType="product"     
+       this.spinner.hide()
       },
       (error) => {
-        console.log('Error:', error);
+        this.spinner.hide()
       }
     );
   }
@@ -206,8 +215,7 @@ export class RequestToManufacturerComponent {
     }
     this.authService.post('products/manufracturelist/byproduct',object).subscribe(
       response => {        
-        this.brandData=response       
-        // Handle the response as needed, e.g., update the UI
+        this.brandData=response;               
       },
       error => {
         console.error('Error searching brand:', error);
@@ -216,9 +224,9 @@ export class RequestToManufacturerComponent {
     );
   }
 
-  navigateToProfile(id: string,email:any) {
+  navigateToProfile(id: string,email:any,requestDetailsObject:any) {
     // Navigate to the target route with email as query parameter
-    this.route.navigate(['/wholesaler/mnf-details'], { queryParams: { id: id ,email:email } });
+    this.route.navigate(['/wholesaler/mnf-details'], { queryParams: { id: id ,email:email,RequestDetails: JSON.stringify(requestDetailsObject)} });
   }
 
   sendRequestToManufacturer(ownerDetails:any){  
@@ -242,14 +250,20 @@ export class RequestToManufacturerComponent {
       city:  ownerDetails.city,
       country:  ownerDetails.country
     }
+    this.spinner.show()
+    
   this.authService.post('request',requestBody).subscribe(
     response => {        
       this.brandData=response       
       this.communicationService.showNotification('snackbar-success', 'Request added successfully','bottom','center');
+      if(response){
+        this.GetProductTypeWiseManufacturar()
+      }
+      this.spinner.hide()
     },
     error => {
-      console.error('Error searching brand:', error);
-      // Handle error accordingly
+      this.spinner.hide()
+     
     }
   );
 }

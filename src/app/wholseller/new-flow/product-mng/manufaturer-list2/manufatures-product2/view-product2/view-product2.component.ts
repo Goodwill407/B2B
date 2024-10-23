@@ -198,7 +198,7 @@ export class ViewProduct2Component {
   }
 
   WishlistAdd() {
-    this.authService.post('wishlist', { productId: this.ProductId, email: this.userProfile.email }).subscribe((res: any) => {
+    this.authService.post('type2-wishlist', { productId: this.ProductId, email: this.userProfile.email }).subscribe((res: any) => {
       this.checkWishlist();
     }, (err: any) => {
       this.wishlist = false;
@@ -206,7 +206,7 @@ export class ViewProduct2Component {
   }
 
   checkWishlist() {
-    this.authService.get('wishlist/checkout/wishlist?productId=' + this.ProductId + '&email=' + this.userProfile.email).subscribe((res: any) => {
+    this.authService.get('type2-wishlist/checkout/wishlist?productId=' + this.ProductId + '&email=' + this.userProfile.email).subscribe((res: any) => {
       if (res) {
         this.wishlist = true;
       } else {

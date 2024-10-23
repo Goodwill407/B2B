@@ -30,10 +30,15 @@
                     {{request.status}}
                   </td>
                   <td class="text-center">
+                    <!-- view profile -->
+                    <button class="btn btn-icon p-2" pTooltip="View Profile" (click)="navigateToViewPage(request)"  tooltipPosition="top">
+                      <i class="fas fa-eye"></i>
+                  </button>
                     <!-- Accept Button -->                    
                     <button class="btn btn-icon p-2" pTooltip="Accept" tooltipPosition="top" (click)="requestAcceptOrRejectChange(request, 'accepted')">
                       <i class="bi bi-check2-circle text-success"></i>
                    </button>
+                   
                   </td>
                 </tr>
               </ng-template>

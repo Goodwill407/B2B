@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { AuthService, CommunicationService } from '@core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
+import { StepFourComponent } from './step-four/step-four.component';
 
 @Component({
   selector: 'app-add-product2',
@@ -15,6 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router';
     StepOneComponent,
     StepTwoComponent,
     StepThreeComponent,
+    StepFourComponent,
     CommonModule
     
   ],

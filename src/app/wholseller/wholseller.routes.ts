@@ -14,6 +14,7 @@ import { MnfListChallanComponent } from "./order-management/mnf-list-challan/mnf
 import { RetailersRequestsListComponent } from "./retailers-requests-list/retailers-requests-list.component";
 import { RejectedRetailersListComponent } from "./retailers-requests-list/rejected-retailers-list/rejected-retailers-list.component";
 import { ViewRetailersDetailsComponent } from "./retailers-requests-list/view-retailers-details/view-retailers-details.component";
+import { AssociatedMnfListComponent } from "./associated-mnf-list/associated-mnf-list.component";
 
 export const R_Auth: Route[] = [
     { path: 'new', loadChildren: () => import('./new-flow/new_flow.route').then((m) => m.NewFlow) },
@@ -31,6 +32,7 @@ export const R_Auth: Route[] = [
     },
     { path: 'dashboard', component: DashboardComponent },
     { path: 'profile', component: WholesalerProfileComponent },
+    { path: 'associated-mnf-list', component: AssociatedMnfListComponent },
     { path: 'new-retailer', component: AddRetailerComponent },
     { path: 'bulk-invite', component: RetailerBulkInviteComponent },
     { path: 'bulk-upload', component: RetailerBulkUploadComponent },

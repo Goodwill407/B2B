@@ -102,4 +102,11 @@ export class RejectedRetailersListComponent {
       }
     });
   }
+
+  navigateToViewPage(data:any){
+    const queryParams = { data: JSON.stringify(data) };
+    this.router.navigate(['/wholesaler/view-retailser-Details'], { queryParams });
+    // this.router.navigate(['/mnf/Wholseler-Details'], { queryParams: { data: data } });
+  }
+
 }

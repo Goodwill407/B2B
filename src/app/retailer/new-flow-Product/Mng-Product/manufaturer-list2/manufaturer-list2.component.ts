@@ -1,4 +1,4 @@
-import { NgClass, NgIf } from '@angular/common';
+import { NgIf,Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '@core';
@@ -8,20 +8,18 @@ import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 
 @Component({
-  selector: 'app-mnf-request-list',
+  selector: 'app-manufaturer-list2',
   standalone: true,
-  imports: [
-    TableModule,
+  imports: [TableModule,
     PaginatorModule,
-    NgIf,
-    NgClass, RouterModule,
+    NgIf, RouterModule,
     BottomSideAdvertiseComponent,
     RightSideAdvertiseComponent
   ],
-  templateUrl: './mnf-request-list.component.html',
-  styleUrl: './mnf-request-list.component.scss'
+  templateUrl: './manufaturer-list2.component.html',
+  styleUrl: './manufaturer-list2.component.scss'
 })
-export class MnfRequestListComponent {
+export class ManufaturerList2Component {
   allMnf: any;
   totalResults: any;
   limit = 10;
@@ -38,30 +36,20 @@ export class MnfRequestListComponent {
   ];
 
   bottomAdImage: string = 'https://5.imimg.com/data5/QE/UV/YB/SELLER-56975382/i-will-create-10-sizes-html5-creative-banner-ads.jpg';
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router,private location: Location) { }
 
   ngOnInit() {
     this.user = this.authService.currentUserValue;
     this.getAllMnf();
   }
 
-  getAllMnf(): void {
-    // Construct the API endpoint URL dynamically
-    const endpoint = `request?requestByEmail=${this.user.email}&page=${this.page}&limit=${this.limit}&status=pending`;
-    
-    // Call the API using the authService
-    this.authService.get(endpoint).subscribe({
-      next: (res: any) => {
-        // Handle the successful response
-        this.allMnf = res.results       // Assign the data to the local variable
-        this.totalResults = res.totalResults; // Store the total count of documents
-      },
-      error: (err: any) => {
-        // Handle errors here
-        console.error('Error fetching data:', err);
-      }
-    });
+  getAllMnf() {
+    this.authService.get(`wholesaler/manufactureList/${this.user.email}?page=${this.page}&limit=${this.limit}&userCategory=orderwise`).subscribe((res: any) => {
+      this.allMnf = res.docs;
+      this.totalResults = res.totalDocs;
+    })
   }
+
 
   onPageChange(event: any) {
     this.page = event.page + 1;
@@ -69,8 +57,11 @@ export class MnfRequestListComponent {
     this.getAllMnf();
   }
 
-  navigateToProfile(email:any,isForView:any) {
-    // Navigate to the target route with email as query parameter
-    this.router.navigate(['/wholesaler/mnf-details'],{ queryParams: {email:email,isForView:isForView} });
+  navigateToProduct(email: string) {
+    this.router.navigate(['/wholesaler/new/product/mnf-product'], {queryParams:{ email: email }});
+  }
+
+  navigateFun() {
+    this.location.back();
   }
 }

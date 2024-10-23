@@ -72,7 +72,7 @@
             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                 <label class="label-input" for="productType">Product Type<span
                         class="required">*</span></label>
-                <select name="productType" id="productType" class="form-select" (change)="OnProductTypeChange()"
+                <select name="productType" id="productType" class="form-select" (change)="OnProductTypeChange()" (change)="getAllGender()"
                     formControlName="productType"
                     [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('productType')?.invalid}">
                     <option value="" disabled selected>Select</option>
@@ -94,7 +94,7 @@
                     (change)="getCategoryByProductTypeAndGender()"
                     [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('gender')?.invalid}">
                     <option value="" disabled selected>Select</option>
-                    <option [value]="gender" *ngFor="let gender of allGender">{{gender}}</option>
+                    <option [value]="gender.name" *ngFor="let gender of allGender">{{gender.name}}</option>
                 </select>
                 <!-- Validation feedback -->
                 <div *ngIf="submittedStep1 && stepOne.get('gender')?.invalid" class="invalid-feedback">

@@ -93,12 +93,13 @@ export class RequestToWholesalerComponent {
  searchByWholselers(): void {
     if (this.SearchBrand) {         
       const object={
-        brand :this.SearchBrand
+        brand :this.SearchBrand,
+        requestByEmail:this.userProfile.email  
       }
       this.authService.post(`wholesaler-products/filter-wholesaler-products-brands?page=${this.page}&limit=${this.limit}`,object).subscribe(
         response => {    
           this.productTypeWise=[]
-          this.wholesalerData=response.results.map((item: any) => item.wholesaler);
+          this.wholesalerData=response.results
           // Handle the response as needed, e.g., update the UI
         },
         error => {
@@ -108,6 +109,7 @@ export class RequestToWholesalerComponent {
       );
     }   
   }  
+  
 
   // Filter Master
   getAllBrands() {
@@ -186,12 +188,14 @@ export class RequestToWholesalerComponent {
     if (this.filters.state) {
       body.state = this.filters.state;
     }
-  
+    if(this.userProfile.email){
+      body.requestByEmail=this.userProfile.email;
+    }
     // Call the API with the dynamically constructed body
     this.authService.post(url, body).subscribe(
       (res: any) => {
         this.wholesalerData=[]      
-       this.productTypeWise = res.results.map((item: any) => item.wholesaler);
+       this.productTypeWise = res.results
        this.dataType="product"     
       },
       (error) => {
@@ -218,9 +222,13 @@ export class RequestToWholesalerComponent {
     );
   }
 
-  navigateToProfile(id: any,email:any) {
+  // navigateToProfile(id: any,email:any) {
+  //   // Navigate to the target route with email as query parameter
+  //   this.route.navigate(['/retailer/view-wholesaler-details'], { queryParams: { id: id ,email:email } });
+  // }
+  navigateToProfile(id: string,email:any,requestDetailsObject:any) {
     // Navigate to the target route with email as query parameter
-    this.route.navigate(['/retailer/view-wholesaler-details'], { queryParams: { id: id ,email:email } });
+    this.route.navigate(['/retailer/view-wholesaler-details'], { queryParams: { id: id ,email:email,RequestDetails: JSON.stringify(requestDetailsObject)} });
   }
 
   sendRequestToWholesaler(wholesaler:any){  
@@ -248,6 +256,14 @@ export class RequestToWholesalerComponent {
     response => {        
       this.brandData=response       
       this.communicationService.showNotification('snackbar-success', 'Request added successfully','bottom','center');
+      if(response){
+        if(this.SearchBrand){
+        this.onSearchBrandChange()
+      }
+      else{
+        this.GetProductTypeWiseWholesaler()
+      }
+      }
     },
     error => {    
       this.communicationService.showNotification(

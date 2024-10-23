@@ -25,6 +25,8 @@ export class ViewWholesalerDetailsComponent {
     WholsellerData:any; 
     RetailserData:any
     id:any
+    RequestDetails:any
+    isRequestSend:boolean=false;
   
     constructor(private route: ActivatedRoute, private authService:AuthService,private communicationService:CommunicationService) {
       this.cdnPath=authService.cdnPath
@@ -36,7 +38,20 @@ export class ViewWholesalerDetailsComponent {
        // Access the query parameter
        this.route.queryParams.subscribe(params => {
         this.id = params['id']; 
-        this.email=params['email']             
+        this.email=params['email']    
+        
+        if (params['RequestDetails']) {
+          console.log('RequestDetails before parsing:', params['RequestDetails']);
+          try {
+            this.RequestDetails = JSON.parse(params['RequestDetails']); // Try parsing
+            console.log('Parsed RequestDetails:', this.RequestDetails); // Log the parsed object
+          } catch (error) {
+            console.error('Error parsing RequestDetails:', error);
+            this.RequestDetails = null; // Handle error
+          }
+        } else {
+          this.RequestDetails = null;
+        }
         // this.getBrandsOfManufacturer()
         this.getWholesalerProfileData()
        this.getRetailerProfileData() 
@@ -104,7 +119,9 @@ export class ViewWholesalerDetailsComponent {
         }
       this.authService.post('request',requestBody).subscribe(
         response => {        
-             
+             if(response){
+              this.isRequestSend=true;
+             }
           this.communicationService.showNotification('snackbar-success', 'Request added successfully','bottom','center');
         },
         error => {

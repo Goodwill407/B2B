@@ -107,28 +107,44 @@
             <div *ngFor="let wholesaler of wholesalerData" class="brand-box">
               <!-- Brand Logo -->
               <div class="brand-logo-container">
-                <img [src]="cdnPath + wholesaler.profileImg" alt="{{ wholesaler.companyName }}" class="brand-logo" />
+                <img [src]="cdnPath + wholesaler.wholesaler.profileImg" alt="{{ wholesaler.wholesaler.companyName }}" class="brand-logo" />
               </div>
               <!-- Brand Details -->
-              <h5 class="brand-name">{{ wholesaler.companyName }}</h5>
-              <p class="brand-location">{{ wholesaler.city }}, {{ wholesaler.state }}</p>
-              <button class="btn btn-link" (click)="navigateToProfile(wholesaler.id,wholesaler.email)">View Profile</button>
-              <button class="btn btn-outline-primary request-btn"
-                (click)="sendRequestToWholesaler(wholesaler)">Request to Add</button>
+              <h5 class="brand-name">{{ wholesaler.wholesaler.companyName }}</h5>
+              <p class="brand-location">{{ wholesaler.wholesaler.city }}, {{ wholesaler.wholesaler.state }}</p>
+              <button class="btn btn-link" (click)="navigateToProfile(wholesaler.wholesaler.id,wholesaler.wholesaler.email,wholesaler.requestDetails)">View Profile</button>
+              <!-- <button class="btn btn-outline-primary request-btn"
+                (click)="sendRequestToWholesaler(wholesaler)">Request to Add
+              </button> -->
+               <!-- Request Button -->
+               <button *ngIf="!wholesaler.requestDetails" class="btn btn-outline-primary request-btn" (click)="sendRequestToWholesaler(wholesaler.wholesaler)">
+                Request to Add
+              </button>
+              <button *ngIf="wholesaler.requestDetails?.status" class="btn btn-outline-primary request-btn" disabled>
+                {{ wholesaler.requestDetails.status === 'accepted' ? 'Accepted' : 'Requested' }}
+              </button>
             </div>
 
             <!-- Section for Product Data -->
             <div *ngFor="let product of productTypeWise" class="brand-box">
               <!-- Product Brand Logo -->
               <div class="brand-logo-container">
-                <img [src]="cdnPath + product.profileImg" alt="{{ product.companyName }}" class="brand-logo" />
+                <img [src]="cdnPath + product.wholesaler.profileImg" alt="{{ product.wholesaler.companyName }}" class="brand-logo" />
               </div>
               <!-- Product Details -->
-              <h5 class="brand-name">{{ product.companyName }}</h5>
-              <p class="brand-location">{{ product.city }}, {{ product.state }}</p>
-              <button class="btn btn-link" (click)="navigateToProfile(product.id,product.email)">View Profile</button>
-              <button class="btn btn-outline-primary request-btn"
-                (click)="sendRequestToWholesaler(product)">Request to Add</button>
+              <h5 class="brand-name">{{ product.wholesaler.companyName }}</h5>
+              <p class="brand-location">{{ product.wholesaler.city }}, {{ product.wholesaler.state }}</p>
+              <button class="btn btn-link" (click)="navigateToProfile(product.wholesaler.id,product.wholesaler.email,product.requestDetails)">View Profile</button>
+              <!-- <button class="btn btn-outline-primary request-btn"
+                (click)="sendRequestToWholesaler(product)">Request to Add
+              </button> -->
+             <!-- Request Button -->
+             <button *ngIf="!product.requestDetails" class="btn btn-outline-primary request-btn" (click)="sendRequestToWholesaler(product.wholesaler)">
+              Request to Add
+            </button>
+            <button *ngIf="product.requestDetails?.status" class="btn btn-outline-primary request-btn" disabled>
+              {{ product.requestDetails.status === 'accepted' ? 'Accepted' : 'Requested' }}
+            </button>
             </div>
           </div>
           </div>

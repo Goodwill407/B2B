@@ -92,28 +92,51 @@
               <!-- Brand Details -->
               <h5 class="brand-name">{{ brand.brandName }}</h5>
               <p class="brand-location">{{ brand.ownerDetails.city }}, {{ brand.ownerDetails.state }}</p>
-              <button class="btn btn-link" (click)="navigateToProfile(brand.ownerDetails._id,brand.ownerDetails.email)">View Profile</button>
-              <button class="btn btn-outline-primary request-btn"
-                (click)="sendRequestToManufacturer(brand.ownerDetails)">Request to Add</button>
+              <button class="btn btn-link" (click)="navigateToProfile(brand.ownerDetails._id,brand.ownerDetails.email,brand.requestDetails)">View Profile</button>
+              <!-- <button class="btn btn-outline-primary request-btn"
+                (click)="sendRequestToManufacturer(brand.ownerDetails)">Request to Add
+              </button> -->
+               <!-- Request Button -->
+               <button *ngIf="!brand.requestDetails" class="btn btn-outline-primary request-btn" (click)="sendRequestToManufacturer(brand.ownerDetails)">
+                Request to Add
+              </button>
+              <button *ngIf="brand.requestDetails?.status" class="btn btn-outline-primary request-btn" disabled>
+                {{ brand.requestDetails.status === 'accepted' ? 'Accepted' : 'Requested' }}
+              </button>
             </div>
 
             <!-- Section for Product Data -->
             <div *ngFor="let product of productTypeWise" class="brand-box">
               <!-- Product Brand Logo -->
-              <div class="brand-logo-container">
-                <img [src]="cdnPath + product.brand.brandLogo" alt="{{ product.brand.brandName }}" class="brand-logo" />
+              <div class="brand-logo-container" *ngIf="product.brand?.brandLogo">
+                <img [src]="cdnPath + product.brand.brandLogo" alt="{{ product.brand.brandName || 'Brand' }}" class="brand-logo" />
               </div>
+            
               <!-- Product Details -->
-              <h5 class="brand-name">{{ product.brand.brandName }}</h5>
-              <p class="brand-location">{{ product.city }}, {{ product.state }}</p>
-              <button class="btn btn-link" (click)="navigateToProfile(product.ownerDetails._id,product.ownerDetails.email)">View Profile</button>
-              <button class="btn btn-outline-primary request-btn"
-                (click)="sendRequestToManufacturer(product.ownerDetails)">Request to Add</button>
+              <h5 class="brand-name">{{ product.brand?.brandName || 'Unknown Brand' }}</h5>
+              <p class="brand-location">
+                {{ product.manufacturer?.city || 'Unknown City' }}, {{ product.manufacturer?.state || 'Unknown State' }}
+              </p>
+            
+              <button  class="btn btn-link" (click)="navigateToProfile(product.manufacturer.id, product.manufacturer.email,product.requestDetails)">
+                View Profile
+              </button>
+            
+              <!-- Request Button -->
+              <button *ngIf="!product.requestDetails" class="btn btn-outline-primary request-btn" (click)="sendRequestToManufacturer(product.manufacturer)">
+                Request to Add
+              </button>
+              <button *ngIf="product.requestDetails?.status" class="btn btn-outline-primary request-btn" disabled>
+                {{ product.requestDetails.status === 'accepted' ? 'Accepted' : 'Requested' }}
+              </button>
             </div>
+            
           </div>
         </div>
-      </div>
-
+      </div>    
+     
+      
+      
       <!-- Right-Side Ads Container -->
       <div class="ads-right mt-0">
         <app-right-side-advertise [imageUrls]="rightAdImages"></app-right-side-advertise>

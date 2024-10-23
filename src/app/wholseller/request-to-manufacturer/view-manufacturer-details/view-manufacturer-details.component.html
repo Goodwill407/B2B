@@ -1,3 +1,8 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="default" color="#fff" type="square-jelly-box"
+[fullScreen]="true">
+<p style="color: rgb(242, 94, 94)"> Sending Invitation By Mail ... </p>
+</ngx-spinner>
+
 <section class="content">
   <div class="content-block">
     <h4 class="title mt-2">
@@ -164,9 +169,19 @@
       <hr>
 
       <!-- Add Request Button -->
-      <div class="button-container">
+      <!-- <div class="button-container">
         <button class="add-request-button" (click)="sendRequestToManufacturer()">Request To Add</button>
-      </div>
+      </div> -->
+       <!-- Request Button -->
+       <div *ngIf="!OnlyForView" class="button-container">
+       <button *ngIf="!RequestDetails" class="btn btn-outline-primary request-btn" (click)="sendRequestToManufacturer()">
+        Request to Add
+      </button>
+      <button *ngIf="RequestDetails?.status" class="btn btn-outline-primary request-btn" disabled>
+        {{ RequestDetails.status === 'accepted' ? 'Accepted' : 'Requested' }}
+      </button>
+    </div>
+
     </div>
   </div>
 </section>

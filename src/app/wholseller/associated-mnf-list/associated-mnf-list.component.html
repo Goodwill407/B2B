@@ -1,3 +1,6 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="default" color="#fff" type="square-jelly-box" [fullScreen]="true">
+    <p style="color: rgb(242, 94, 94)"> Loading... </p>
+</ngx-spinner>
 <section class="content">
     <div class="content-block">
       <div class="ads-flex">
@@ -14,8 +17,7 @@
                       <th>Manufacture's Name</th>
                       <th>Company/Firm Name</th>
                       <th>Mobile Number</th>
-                      <th>Email</th>
-                      <th>Status</th>
+                      <th>Email</th>                     
                       <th>Action</th>
                     </tr>
                   </ng-template>
@@ -24,17 +26,11 @@
                       <td class="text-center">{{allMnf.fullName}}</td>
                       <td class="text-center">{{allMnf.companyName}}</td>
                       <td class="text-center">{{allMnf.mobileNumber}}</td>
-                      <td class="text-center">{{allMnf.email}}</td>                     
-                      <td class="text-center" [ngClass]="{
-                        'text-warning': allMnf.status === 'pending',
-                        'text-danger': allMnf.status === 'rejected',
-                        'text-success': allMnf.status === 'accepted' }">
-                        {{allMnf.status}}
-                      </td>
+                      <td class="text-center">{{allMnf.email}}</td>                   
                       <td>
                         <!-- (click)="viewProfile(distributor,'wholesaler')" -->
                         <button class="btn btn-icon p-2" pTooltip="View Profile" (click)="navigateToProfile(allMnf.email,true)"  tooltipPosition="top">
-                          <i class="fas fa-eye"></i>
+                            <i class="fas fa-eye"></i>
                         </button>
                       </td>
                     </tr>
@@ -42,7 +38,7 @@
                 </p-table>
                 <span *ngIf="!allMnf || allMnf.length == 0"
                   class="data-not-found d-flex justify-content-center align-items-center"> </span>
-                  <p-paginator  *ngIf="allMnf && allMnf.length > 0" (onPageChange)="onPageChange($event)"
+                  <p-paginator  *ngIf="allMnf && allMnf.length > 10" (onPageChange)="onPageChange($event)"
                   [first]="first" [rows]="rows" [totalRecords]="totalResults"
                   [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
               </div>

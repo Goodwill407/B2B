@@ -63,7 +63,13 @@
   
           <!-- Add Request Button -->
           <div class="button-container">
-            <button class="add-request-button" (click)="sendRequestToWholesaler()">Request To Add</button>
+            <!-- <button class="add-request-button" (click)="sendRequestToWholesaler()">Request To Add</button> -->
+            <button *ngIf="!RequestDetails" class="btn btn-outline-primary request-btn" (click)="sendRequestToWholesaler()">
+              Request to Add
+            </button>
+            <button *ngIf="RequestDetails?.status || isRequestSend" class="btn btn-outline-primary request-btn" disabled>
+              {{RequestDetails.status === 'accepted' ? 'Accepted' : 'Requested' }}
+            </button>
           </div>
       </div>
     </div>
