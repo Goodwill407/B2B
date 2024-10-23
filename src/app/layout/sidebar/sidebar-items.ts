@@ -672,6 +672,18 @@ export const ROUTES: RouteInfo[] = [
     submenu: []
   },  
   {
+    path: '/wholesaler/associated-mnf-list',
+    title: `Associated Manufacturer-List`,
+    iconType: 'material-icons-outlined',
+    icon: 'group_add',
+    class: '',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['wholesaler'],
+    submenu: []
+  },  
+  {
     path: '',
     title: `Retailer's Management`,
     iconType: 'material-icons-outlined',
@@ -769,7 +781,7 @@ export const ROUTES: RouteInfo[] = [
       },
       {
         path: '/wholesaler/retailers-requests-list',
-        title: "Request's of Retailers",
+        title: "Request's From Retailers",
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -1769,6 +1781,18 @@ export const ROUTES2: RouteInfo[] = [
     submenu: []
   },  
   {
+    path: '/wholesaler/associated-mnf-list',
+    title: `Associated Manufacturer-List`,
+    iconType: 'material-icons-outlined',
+    icon: 'group_add',
+    class: '',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['wholesaler'],
+    submenu: []
+  },  
+  {
     path: '',
     title: `Retailer's Management`,
     iconType: 'material-icons-outlined',
@@ -1926,7 +1950,7 @@ export const ROUTES2: RouteInfo[] = [
         submenu: [],
       },
       {
-        path: '/wholesaler/new/product/wishlist-product',
+        path: '/wholesaler/new/product/wish-list',
         title: 'Wishlist',
         iconType: '',
         icon: '',

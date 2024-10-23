@@ -1,12 +1,12 @@
-import { CommonModule, DatePipe } from '@angular/common';
-import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService, CommunicationService, DirectionService } from '@core';
-import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';     
+import { Router } from '@angular/router';
+import { AuthService, CommunicationService } from '@core';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
-  selector: 'app-step-three',
+  selector: 'app-step-four',
   standalone: true,
   imports: [
     ReactiveFormsModule,
@@ -14,11 +14,10 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
     FormsModule,
     NgxSpinnerModule
   ],
-  templateUrl: './step-three.component.html',
-  styleUrls: ['./step-three.component.scss'],
-  providers: [DatePipe]
+  templateUrl: './step-four.component.html',
+  styleUrl: './step-four.component.scss'
 })
-export class StepThreeComponent {
+export class StepFourComponent {
   @Input() productId: any;
   @Output() next = new EventEmitter<any>();
   stepThree: FormGroup = this.fb.group({});
@@ -69,11 +68,12 @@ export class StepThreeComponent {
   createFormControls2() {
     this.colourCollections.forEach((color: any) => {
       const sanitizedColorName = this.sanitizeControlName(color.colourName);
-      this.selectedSizes.forEach((size: string) => {
-        const quantityControlName = `${sanitizedColorName}_${size}`;              
-        if (!this.stepThree.contains(quantityControlName)) {
-          this.stepThree.addControl(quantityControlName, new FormControl('', Validators.min(0)));
-        }       
+      this.selectedSizes.forEach((size: string) => {       
+        const minimumControlName = `min_${sanitizedColorName}_${size}`;  
+
+        if (!this.stepThree.contains(minimumControlName)) {
+          this.stepThree.addControl(minimumControlName, new FormControl('', Validators.min(0)));
+        }
       });
     });
   }
@@ -86,47 +86,22 @@ export class StepThreeComponent {
     return `${this.sanitizeControlName(colourName)}_${size}`;
   }
 
-  patchInventoryData() {
-    const inventoryData = this.productDetails.inventory || [];
+  patchInventoryData() {   
     const minimumStockData = this.productDetails.minimumStock || [];
-    const patchObject: any = {};
-  
-    // Patch inventory quantities
-    inventoryData.forEach((item: any) => {
+    const patchObject: any = {};  
+    // Patch minimum stock quantities
+    minimumStockData.forEach((item: any) => {
       const sanitizedColorName = this.sanitizeControlName(item.colourName);
-      const controlName = `${sanitizedColorName}_${item.size}`;
+      const minControlName = `min_${sanitizedColorName}_${item.size}`;
       
-      if (this.stepThree.contains(controlName)) {
-        patchObject[controlName] = item.quantity; // Patch quantity
+      if (this.stepThree.contains(minControlName)) {
+        patchObject[minControlName] = item.quantity; // Patch minimum quantity
       }
-    });  
+    });
   
     // Apply all patched values to the form
     this.stepThree.patchValue(patchObject);
   }
-  
-  // patchInventoryData() {
-  //   const inventoryData = this.productDetails.inventory || [];
-  //   const patchObject: any = {};
-  
-  //   inventoryData.forEach((item: any) => {
-  //     const sanitizedColorName = this.sanitizeControlName(item.colourName);
-  //     const controlName = `${sanitizedColorName}_${item.size}`;
-  //     const minControlName = `min_${sanitizedColorName}_${item.size}`;
-  
-  //     // Patch inventory quantities
-  //     if (this.stepThree.contains(controlName)) {
-  //       patchObject[controlName] = item.quantity;
-  //     }
-  
-  //     // Patch minimum quantities
-  //     if (this.stepThree.contains(minControlName)) {
-  //       patchObject[minControlName] = item.quantity;
-  //     }
-  //   });
-  
-  //   this.stepThree.patchValue(patchObject);
-  // }
 
 
 
@@ -134,41 +109,44 @@ export class StepThreeComponent {
     this.submittedStep2 = true;
     
     if (this.stepThree.valid) {
-      const formData = this.stepThree.value;
-      const inventory: any[] = [];    
+      const formData = this.stepThree.value;     
+      const minimumStock: any[] = [];
   
       this.colourCollections.forEach((color: any) => {
         const sanitizedColorName = this.sanitizeControlName(color.colourName);
         
-        this.selectedSizes.forEach((size: string) => {
-          const quantityControlName = `${sanitizedColorName}_${size}`;
-          const minimumControlName = `min_${sanitizedColorName}_${size}`;
-          
-          const productQuantity = formData[quantityControlName];
-          const minimumQuantity = formData[minimumControlName];
+        this.selectedSizes.forEach((size: string) => {        
+          const minimumControlName = `min_${sanitizedColorName}_${size}`;          
+         
+          const minimumQuantity = formData[minimumControlName];         
   
-          if (productQuantity !== null && productQuantity !== undefined) {
-            inventory.push({
+          if (minimumQuantity !== null && minimumQuantity !== undefined) {
+            minimumStock.push({
               colourName: color.colourName,
               colourImage: color.colourImage,
               colour: color.colour,
-              quantity: productQuantity,
+              quantity: minimumQuantity,
               size: size
             });
-          }  
-          
+          }
         });
       });
   
-      const payload = { inventory, id: this.productId };
+      const payload = {minimumStock, id: this.productId };
       
       try {
         this.spinner.show();
         const res = await this.authService.patch('type2-products', payload).toPromise();
-        if (res) {       
-          
-            this.next.emit(this.productId);
-         
+        if (res) {
+          this.communicationService.showNotification(
+            'snackbar-success',
+            'Saved Successfully...!!!',
+            'bottom',
+            'center'
+          );
+          setTimeout(() => {
+            this.router.navigate(['mnf/new/manage-product2']);
+          }, 1500);
         }
       } catch (error) {
         console.error('Error occurred while saving:', error); // Log the error for debugging
@@ -191,5 +169,4 @@ export class StepThreeComponent {
       );
     }
   }
-  
 }

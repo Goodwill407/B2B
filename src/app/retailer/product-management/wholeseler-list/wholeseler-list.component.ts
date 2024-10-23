@@ -47,7 +47,7 @@ export class WholeselerListComponent {
   }
 
   getAllWholeseler() {
-    this.authService.get(`retailer/wholesalerslist/${this.user.id}?page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
+    this.authService.get(`retailer/wholesalerslist/${this.user.id}?page=${this.page}&limit=${this.limit}?userCategory=${this.user.userCategory}`).subscribe((res: any) => {
       this.allWholeselers = res.docs
       this.totalResults = res.totalDocs
     })

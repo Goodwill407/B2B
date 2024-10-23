@@ -1,25 +1,30 @@
-/* Right-side ads styling */
 
+
+// for ads
+/* Right-side ads styling */
 .ads-flex {
-    display: flex;
+    display: flex;  
     flex-wrap: nowrap;
   }
   
   .ads-right {
-    margin: 24px;
+    margin: 20px;
+    margin-top:67px ;
     margin-right: 0;
     flex-shrink: 0;
     width: 175px;
     display: flex;
     flex-direction: column;
     gap: 20px; /* Space between ads */
-    // justify-content: space-around;
+    background-color: #ffff;
+    padding: 10px!important;
+    border-radius: 10px;   
   }
   
   
   /* Bottom ads styling */
   .ads-bottom {
-    height: 130px;
+    // height: 130px;
     width: 100%;   
     bottom: 0;
     left: 0;
@@ -27,7 +32,10 @@
     overflow: hidden;
     display: flex;
     justify-content: center;
-    align-items: center; 
+    align-items: center;
+    background-color: #ffff;
+    padding: 10px!important;  
+    border-radius: 10px;
   }
   
   /* Responsive styling */
@@ -47,9 +55,6 @@
       position: static;
       height: auto;
     }
-  
-   
   }
-  
-  
-  
+    
+    

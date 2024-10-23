@@ -168,12 +168,12 @@ export class StepTwoComponent {
           this.resetForm();
           this.productDetails=response;
           this.colourCollections = response.colourCollections;
-          this.communicationService.showNotification(
-            'snackbar-success',
-            'Saved Successfully...!!!',
-            'bottom',
-            'center'
-          );
+          // this.communicationService.showNotification(
+          //   'snackbar-success',
+          //   'Saved Successfully...!!!',
+          //   'bottom',
+          //   'center'
+          // );
           this.updateValidators();       
         }
       } catch (error) {

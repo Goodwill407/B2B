@@ -60,7 +60,7 @@ export class StepOneComponent {
 
   amount: number | null = null;
   // allProductType = ["Clothing", "Bags", "Jewellery", "Shoes", "accessories", "Footwear"];
-  allGender = ['Men', 'Women', 'Boys', 'Girl', 'Unisex'];
+  allGender:any=[]
   allClothingType: any;
   allMaterialType: any;
   allFabricPattern: any;
@@ -244,12 +244,12 @@ export class StepOneComponent {
         { name: 'shoulderSize', label: 'Shoulder Size (in cm)', required: true, type: 'Item_size' },
         { name: 'frontLength', label: 'Front Length (in cm)', required: true, type: 'Item_size' },
         { name: 'neckSize', label: 'Neck Size (in cm)', required: false, type: 'Item_size' },
-        { name: 'length', label: 'Length (in cm)', required: false, type: 'item_dimention' },
-        { name: 'width', label: 'Width (in cm)', required: false, type: 'item_dimention' },
-        { name: 'height', label: 'Height (in cm)', required: true, type: 'item_dimention' },
-        { name: 'weight', label: 'Weight (in gm)', required: true, type: 'item_dimention' },
-        { name: 'manufacturerPrice', label: 'W/S Price', required: true, type: 'price' },
-        { name: 'RtlPrice', label: 'Rtl Price', required: true, type: 'price' },
+        // { name: 'length', label: 'Length (in cm)', required: false, type: 'item_dimention' },
+        // { name: 'width', label: 'Width (in cm)', required: false, type: 'item_dimention' },
+        // { name: 'height', label: 'Height (in cm)', required: true, type: 'item_dimention' },
+        // { name: 'weight', label: 'Weight (in gm)', required: true, type: 'item_dimention' },
+        { name: 'manufacturerPrice', label: 'Wholesaler Price', required: true, type: 'price' },
+        { name: 'RtlPrice', label: 'Retailer Price', required: true, type: 'price' },
         { name: 'singleMRP', label: 'MRP', required: true, type: 'price' }
     ];
     
@@ -264,12 +264,12 @@ export class StepOneComponent {
         { name: 'inseam', label: 'Inseam(in cm)', required: true, type: 'Item_size' },
         { name: 'lengthIn', label: 'Length(in cm)', required: true, type: 'Item_size' },
         { name: 'rise', label: 'Rise(in cm)', required: true, type: 'Item_size' },
-        { name: 'length', label: 'Length(in cm)', required: false, type: 'item_dimention' },
-        { name: 'width', label: 'Width(in cm)', required: false, type: 'item_dimention' },
-        { name: 'height', label: 'Height(in cm)', required: true, type: 'item_dimention' },
-        { name: 'weight', label: 'Weight(in Gm)', required: true, type: 'item_dimention' },
-        { name: 'manufacturerPrice', label: 'W/S Price', required: true, type: 'price' },
-        { name: 'RtlPrice', label: 'Rtl Price', required: true, type: 'price' },
+        // { name: 'length', label: 'Length(in cm)', required: false, type: 'item_dimention' },
+        // { name: 'width', label: 'Width(in cm)', required: false, type: 'item_dimention' },
+        // { name: 'height', label: 'Height(in cm)', required: true, type: 'item_dimention' },
+        // { name: 'weight', label: 'Weight(in Gm)', required: true, type: 'item_dimention' },
+        { name: 'manufacturerPrice', label: 'Wholesaler Price', required: true, type: 'price' },
+        { name: 'RtlPrice', label: 'Retailer Price', required: true, type: 'price' },
         { name: 'singleMRP', label: 'MRP', required: true, type: 'price' }
     ];
     
@@ -328,7 +328,10 @@ export class StepOneComponent {
 
   getProductType() {
     this.authService.get(`producttype`).subscribe((res: any) => {
-      this.allProductType = res.results;
+      this.allProductType = res.results;  
+      if(this.productId)  {        
+        this.getAllGender()
+      }  
     });
   }
 
@@ -544,21 +547,21 @@ export class StepOneComponent {
           this.stepOne.patchValue(this.productDetails);
 
           // Fetch categories and subcategories
-          await this.getCategoryByProductTypeAndGender(this.productDetails.productType, this.productDetails.gender);
+          await this.getCategoryByProductTypeAndGender(this.productDetails.productType, this.productDetails.gender);        
           await this.getSubCategoryBYProductType_Gender_and_Category(
             this.productDetails.productType,
             this.productDetails.gender,
             this.productDetails.clothing
           );
 
-          // Patch dimensions
-          if (this.productDetails.ProductDeimension?.length) {
-            this.stepOne.get('ProductDeimension')?.patchValue({
-              length: this.productDetails.ProductDeimension[0].length,
-              width: this.productDetails.ProductDeimension[0].width,
-              height: this.productDetails.ProductDeimension[0].height,
-            });
-          }
+          // // Patch dimensions
+          // if (this.productDetails.ProductDeimension?.length) {
+          //   this.stepOne.get('ProductDeimension')?.patchValue({
+          //     length: this.productDetails.ProductDeimension[0].length,
+          //     width: this.productDetails.ProductDeimension[0].width,
+          //     height: this.productDetails.ProductDeimension[0].height,
+          //   });
+          // }
 
           // Patch sizes
           this.patchSizesArray(this.productDetails.sizes);
@@ -596,10 +599,10 @@ export class StepOneComponent {
         shoulderSize: [size.shoulderSize, Validators.required],
         frontLength: [size.frontLength, Validators.required],
         neckSize: [size.neckSize,Validators.required],
-        length: [size.length],
-        width: [size.width],
-        height: [size.height],
-        weight: [size.weight, Validators.required],
+        // length: [size.length],
+        // width: [size.width],
+        // height: [size.height],
+        // weight: [size.weight, Validators.required],
         manufacturerPrice: [size.manufacturerPrice, Validators.required],
         RtlPrice:[size.RtlPrice, Validators.required],
         singleMRP: [size.singleMRP, Validators.required]
@@ -617,10 +620,10 @@ export class StepOneComponent {
         inseam: [size.inseam, Validators.required],
         lengthIn: [size.lengthIn, Validators.required],
         rise: [size.rise, Validators.required],
-        length: [size.length],
-        width: [size.width],
-        height: [size.height],
-        weight: [size.weight, Validators.required],
+        // length: [size.length],
+        // width: [size.width],
+        // height: [size.height],
+        // weight: [size.weight, Validators.required],
         manufacturerPrice: [size.manufacturerPrice, Validators.required],
         RtlPrice:[size.RtlPrice, Validators.required],
         singleMRP: [size.singleMRP, Validators.required]
@@ -670,6 +673,12 @@ export class StepOneComponent {
   // all Masters
 
   // all Masters data======================
+
+  getAllGender(){
+    this.authService.get('gender').subscribe((res:any)=>{
+      this.allGender=res.results
+    })
+  }
 
   getAllBrands() {
     this.authService.get(`brand?brandOwner=${this.authService.currentUserValue.email}`).subscribe(res => {

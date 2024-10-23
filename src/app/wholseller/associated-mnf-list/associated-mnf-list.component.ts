@@ -4,24 +4,25 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '@core';
 import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 
 @Component({
-  selector: 'app-mnf-request-list',
+  selector: 'app-associated-mnf-list',
   standalone: true,
-  imports: [
-    TableModule,
+  imports: [TableModule,
     PaginatorModule,
     NgIf,
     NgClass, RouterModule,
     BottomSideAdvertiseComponent,
-    RightSideAdvertiseComponent
+    RightSideAdvertiseComponent,
+    NgxSpinnerModule
   ],
-  templateUrl: './mnf-request-list.component.html',
-  styleUrl: './mnf-request-list.component.scss'
+  templateUrl: './associated-mnf-list.component.html',
+  styleUrl: './associated-mnf-list.component.scss'
 })
-export class MnfRequestListComponent {
+export class AssociatedMnfListComponent {
   allMnf: any;
   totalResults: any;
   limit = 10;
@@ -38,7 +39,7 @@ export class MnfRequestListComponent {
   ];
 
   bottomAdImage: string = 'https://5.imimg.com/data5/QE/UV/YB/SELLER-56975382/i-will-create-10-sizes-html5-creative-banner-ads.jpg';
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router,private spinner: NgxSpinnerService,) { }
 
   ngOnInit() {
     this.user = this.authService.currentUserValue;
@@ -47,16 +48,20 @@ export class MnfRequestListComponent {
 
   getAllMnf(): void {
     // Construct the API endpoint URL dynamically
-    const endpoint = `request?requestByEmail=${this.user.email}&page=${this.page}&limit=${this.limit}&status=pending`;
+    this.spinner.show()    
+    const endpoint = `wholesaler/manufactureList/${this.user.email}?userCategory=${this.user.userCategory}`;
     
     // Call the API using the authService
     this.authService.get(endpoint).subscribe({
       next: (res: any) => {
         // Handle the successful response
-        this.allMnf = res.results       // Assign the data to the local variable
+        this.allMnf = res.docs
+        // Assign the data to the local variable
         this.totalResults = res.totalResults; // Store the total count of documents
+        this.spinner.hide()
       },
       error: (err: any) => {
+        this.spinner.hide()
         // Handle errors here
         console.error('Error fetching data:', err);
       }
@@ -74,3 +79,4 @@ export class MnfRequestListComponent {
     this.router.navigate(['/wholesaler/mnf-details'],{ queryParams: {email:email,isForView:isForView} });
   }
 }
+

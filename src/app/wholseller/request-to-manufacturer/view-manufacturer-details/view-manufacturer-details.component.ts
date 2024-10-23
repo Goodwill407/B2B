@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import { CustomDatePipe } from 'app/common/custom-pipe.pipe';
 import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.component';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 
 export interface Company {
   name: string;
@@ -34,7 +35,7 @@ export interface Company {
 @Component({
   selector: 'app-view-manufacturer-details',
   standalone: true,
-  imports: [NgFor, CommonModule, CustomDatePipe],
+  imports: [NgFor, CommonModule, CustomDatePipe,NgxSpinnerModule,],
   templateUrl: './view-manufacturer-details.component.html',
   styleUrls: ['./view-manufacturer-details.component.scss'],
   providers: [DatePipe]
@@ -51,8 +52,10 @@ export class ViewManufacturerDetailsComponent {
   WholsellerData: any;
   allVisabilityData: any;
   id: any;
+  RequestDetails:any
+  OnlyForView:any
 
-  constructor(private route: ActivatedRoute, public authService: AuthService, private communicationService: CommunicationService,  private dialog: MatDialog,  private location: Location) {
+  constructor(private spinner: NgxSpinnerService, private route: ActivatedRoute, public authService: AuthService, private communicationService: CommunicationService,  private dialog: MatDialog,  private location: Location) {
     this.cdnPath = authService.cdnPath
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
   }
@@ -61,12 +64,36 @@ export class ViewManufacturerDetailsComponent {
   ngOnInit(): void {
     // Access the query parameter
     this.route.queryParams.subscribe(params => {
+      console.log('Received query params:', params); // Log the entire params object
+    
       this.id = params['id'];
-      this.email = params['email']
-      this.getManufacturerData()
-      this.getBrandsOfManufacturer()
-      this.getUserProfileData()
-      this.GetProfileVisabilityData()
+      this.email = params['email'];
+      this.OnlyForView=params['isForView']  //only for view not send Request
+    
+      // Check if RequestDetails exists
+      if (params['RequestDetails']) {
+        console.log('RequestDetails before parsing:', params['RequestDetails']);
+        try {
+          this.RequestDetails = JSON.parse(params['RequestDetails']); // Try parsing
+          console.log('Parsed RequestDetails:', this.RequestDetails); // Log the parsed object
+        } catch (error) {
+          console.error('Error parsing RequestDetails:', error);
+          this.RequestDetails = null; // Handle error
+        }
+      } else {
+        this.RequestDetails = null;
+      }
+    
+      this.getManufacturerData();
+      this.getBrandsOfManufacturer();
+      this.getUserProfileData();
+      if(!this.OnlyForView){
+        this.GetProfileVisabilityData();
+      }
+      else if(this.OnlyForView){
+        this.getMnfIdForData()
+      }
+     
     });
 
     this.company = {
@@ -167,6 +194,7 @@ export class ViewManufacturerDetailsComponent {
     })
   }
   GetProfileVisabilityData() {
+    this.spinner.show()
     this.authService.get(`manufacturers/visible-profile/${this.id}`).subscribe((res: any) => {
       if (res) {
         // res.registerOnFTH =res.registerOnFTH ? this.datePipe.transform(res.registerOnFTH, 'yyyy-MM-dd') : null;
@@ -191,13 +219,12 @@ export class ViewManufacturerDetailsComponent {
           clothing: Array.from(uniqueValues.clothing).join(', '),
           subCategory: Array.from(uniqueValues.subCategory).join(', ')
         };
+        this.spinner.hide()
       
       } else {
       }
     }, error => {
-      if (error.error.message === "Manufacturer not found") {
-        // this.getRegisteredUserData();
-      }
+      this.spinner.hide()     
     })
   }
 
@@ -210,6 +237,18 @@ export class ViewManufacturerDetailsComponent {
 
   navigateFun() {
     this.location.back();
+  }
+
+  // only for view data NotSend request
+  getMnfIdForData(){
+    this.spinner.show()
+    this.authService.get(`manufacturers/${this.email}`).subscribe((res:any)=>{
+      if(res){
+        this.id=res.id
+        this.GetProfileVisabilityData()
+        this.spinner.hide()
+      }
+    })
   }
 }
 

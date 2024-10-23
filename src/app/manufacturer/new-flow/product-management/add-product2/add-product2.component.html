@@ -14,6 +14,10 @@
     <div *ngIf="currentStep === 3">
       <app-step-three [productId]="productId ?? ''" (next)="goToNextStep($event)"></app-step-three>
     </div>
+
+    <div *ngIf="currentStep === 4">
+      <app-step-four [productId]="productId ?? ''" (next)="goToNextStep($event)"></app-step-four>
+    </div>
   
     <!-- <div class="button-container">
       <button (click)="goToPreviousStep()" [disabled]="currentStep === 1">Previous</button>
