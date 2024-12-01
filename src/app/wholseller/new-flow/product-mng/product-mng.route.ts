@@ -4,6 +4,7 @@ import { ManufaturesProduct2Component } from "./manufaturer-list2/manufatures-pr
 import { ViewProduct2Component } from "./manufaturer-list2/manufatures-product2/view-product2/view-product2.component";
 import { CartProduct2Component } from "./cart-product2/cart-product2.component";
 import { WishlistProduct2Component } from "./wishlist-product2/wishlist-product2.component";
+import { GenratepoComponent } from "./genratepo/genratepo.component";
 
 export const ProductMng:Route[]=[
     {path: 'wish-list',component:WishlistProduct2Component},
@@ -12,6 +13,7 @@ export const ProductMng:Route[]=[
     {path: 'view-product', component: ViewProduct2Component},
     // {path: 'wishlist-product', component: WishlistProductComponent},
     {path: 'add-to-cart', component: CartProduct2Component},
+    { path: 'viewpo/:id', component: GenratepoComponent },
     // {path: 'ordered-products', component:OrderedProductComponent},
     // {path: 'view-Product', component:ViewProductOwnComponent},
 ]

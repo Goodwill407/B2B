@@ -12,6 +12,9 @@ import { DirectionService } from './direction.service';
 export class AuthService {
   public currentUserSubject: BehaviorSubject<User>;
   public currentUser: Observable<User>;
+
+  private orderDataSubject = new BehaviorSubject<any>(null);  // Initializing with null or empty data
+  orderData$ = this.orderDataSubject.asObservable();
   apiURL: any = 'https://backend.fashiontradershub.com/v1/'; // main server
   // apiURL: any = 'http://165.22.211.140:3000/v1/'; // local server
 
@@ -109,5 +112,14 @@ export class AuthService {
     
   }
 
+
+  setOrderData(orderData: any): void {
+    this.orderDataSubject.next(orderData);  // Update the order data
+  }
+
+  // Get the order data
+  getOrderData(): any {
+    return this.orderDataSubject.getValue();  // Access current value of order data
+  }
   
 }
