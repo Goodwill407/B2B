@@ -183,3 +183,56 @@
     clear: both;
     /* Clear any floating elements */
 }
+
+/* Add border to the table itself */
+p-table {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  /* Add border to table header */
+  p-table thead th {
+    border: 1px solid #ddd;
+    background-color: #f1f1f1; /* Optional: For header background */
+    text-align: center;
+    padding: 8px;
+  }
+  
+  /* Add border to table body */
+  p-table tbody td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  /* Optional: Add a hover effect on rows */
+  p-table tbody tr:hover {
+    background-color: #f5f5f5;
+  }
+  .bordered-table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  .bordered-table th, .bordered-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .bordered-table td[colspan="3"] {
+    text-align: right;
+  }
+  ::ng-deep .p-datatable-tfoot tr {
+    background-color: white !important;
+  }
+  /* Override PrimeNG Table Footer */
+.p-datatable-tfoot {
+    background-color: white !important;
+  }
+  
+  .p-datatable-tfoot tr {
+    background-color: white !important;
+  }
+  
