@@ -130,3 +130,22 @@
     max-width: 100ch;                        
   }
   
+
+  /* Lighter background color for wishlist buttons */
+.btn-wishlist-true {
+  background-color: #f8d7da; /* Light red background */
+  color: #721c24; /* Dark red text */
+  border: 1px solid #f5c6cb; /* Lighter border */
+}
+
+.btn-wishlist {
+  background-color: #e2e3e5; /* Light grey background */
+  color: #000; /* Black text */
+  border: 1px solid #ccc; /* Light grey border */
+}
+
+.btn-light {
+  background-color: #f8f9fa; /* Very light background */
+  color: #000; /* Black text */
+  border: 1px solid #ddd; /* Light grey border */
+}
