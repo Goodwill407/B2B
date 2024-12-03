@@ -36,7 +36,7 @@
         
             <!-- Image Carousel -->
             <div class="image-carousel">
-              <img class="main-img" [src]="authService.cdnPath + product.selectedImageUrl" alt="{{ product.productTitle }}" [routerLink]="['/retailer/view-product', { id: product.id }]">
+              <img class="main-img" [src]="authService.cdnPath + product.selectedImageUrl" alt="{{ product.productTitle }}" [routerLink]="['/retailer/new/view-product2', { id: product.id }]">
               
               <div class="carousel-dots">
                 <span *ngFor="let img of product.selectedImageUrls; let i = index" [class.active]="i === product.hoverIndex" (click)="navigateToImage(product, i)"></span>

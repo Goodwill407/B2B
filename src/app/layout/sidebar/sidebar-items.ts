@@ -460,7 +460,7 @@ export const ROUTES: RouteInfo[] = [
     role: ['retailer'],
     submenu: [
       {
-        path: '/retailer/wholeseler-list',
+        path: '/retailer/new/wholseller-list3',
         title: "Wholesaler's List",
         iconType: '',
         icon: '',
@@ -1569,7 +1569,7 @@ export const ROUTES2: RouteInfo[] = [
     role: ['retailer'],
     submenu: [
       {
-        path: '/retailer/wholeseler-list',
+        path: '/retailer/new/wholseller-list3',
         title: "Wholesaler's List",
         iconType: '',
         icon: '',
