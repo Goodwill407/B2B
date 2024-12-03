@@ -3,23 +3,23 @@ import { Component } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
-
 @Component({
-  selector: 'app-view-product2',
+  selector: 'app-edit-price',
   standalone: true,
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule
   ],
-  templateUrl: './view-product2.component.html',
-  styleUrl: './view-product2.component.scss'
+  templateUrl: './edit-price.component.html',
+  styleUrl: './edit-price.component.scss'
 })
-export class ViewProduct2Component {
+export class EditPriceComponent {
   userProfile: any;
   wishlist: boolean = false;
   quantity: any;
   hoveredColourName: string = '';
+  Example: any;
   constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService, private fb: FormBuilder, private communicationService: CommunicationService) { }
 
   product: any;
@@ -41,8 +41,10 @@ export class ViewProduct2Component {
       const id = params['id'];
       this.ProductId = id;
       if (id) {
+        
         this.getProductDetails(id);
-        // this.checkWishlist()
+      
+        this.checkWishlist()
       }
     });
   }
@@ -50,6 +52,7 @@ export class ViewProduct2Component {
   getProductDetails(id: any) {
     this.authService.get('type2-products/' + id).subscribe((res: any) => {
       this.designno = res.designNumber;
+      console.log(res)
       if (res) {
         this.product = {
           brand: res.brand,
@@ -98,11 +101,35 @@ export class ViewProduct2Component {
           price:item.manufacturerPrice}
         });
         this.createFormControls2();
+        this.getpriceDetails(id);
         this.selectColourCollection(this.product.colours[0]);
         this.quantity = this.product.minimumOrderQty;
       }
     });
   }
+  async getpriceDetails(id: any) {
+    this.authService.get('wholesaler-price-type2/' + id).subscribe((res: any) => {
+      if (res) {
+        this.designno = res.designNumber; // Store the design number
+  
+        // Map the retrieved data to form controls
+        this.selectedSizes.forEach((size: any) => {
+          const controlName = `wholesalerPrice_${size.size}`; // Form control for each size
+          const price = res.set.find((item: any) => item.size === size.size)?.wholesalerPrice;
+  
+          // If price is found, set it, otherwise leave it blank
+          this.stepThree.patchValue({
+            [controlName]: price || '', // Use blank if no price found
+          });
+        });
+  
+        console.log(res); // Check the response for debugging
+      } else {
+        console.log('No price details found for this ID');
+      }
+    });
+  }
+  
 
   navigateFun() {
     this.location.back();
@@ -118,13 +145,20 @@ export class ViewProduct2Component {
 
   createFormControls2() {
     this.colourCollections.forEach((color: any) => {
-      const sanitizedColorName = this.sanitizeControlName(color.name); // Ensure control name compatibility
+      const sanitizedColorName = this.sanitizeControlName(color.name);
       this.selectedSizes.forEach((size: any) => {
         const controlName = `${sanitizedColorName}_${size.size}`;
+        const wholesalerControlName = `wholesalerPrice_${size.size}`;
+    
+        // Add controls for quantity and wholesaler price
         this.stepThree.addControl(controlName, new FormControl(''));
+        this.stepThree.addControl(wholesalerControlName, new FormControl(''));
       });
     });
+    
   }
+  
+  
 
   updateRowTotal(colorName: string, sizeName: string) {
     // Optional: You can add logic here to do something when the input changes
@@ -142,49 +176,47 @@ export class ViewProduct2Component {
     return total; // Return the total for this color
   }
   
-  async saveStepThree() {    
+  async saveStepThree() {
     if (this.stepThree.valid) {
       const formData = this.stepThree.value;
-      const result: any[] = [];
+      const setArray: any[] = [];
   
-      this.colourCollections.forEach((color: any) => {
-        const sanitizedColorName = this.sanitizeControlName(color.name);
-        this.selectedSizes.forEach((size: any) => {
-          const quantity = formData[`${sanitizedColorName}_${size.size}`];
-          if (quantity) {
-            result.push({
-              
-              colourName: color.name,
-              colourImage: color.image,
-              colour: color.hex,
-              quantity,
-              ...size,
-              designNumber: this.designno, // Use the class-level design number here
-            });
-          }
-        });
+      // Loop through sizes and collect price data
+      this.selectedSizes.forEach((size: any) => {
+        const controlName = `wholesalerPrice_${size.size}`;
+        const price = formData[controlName]; // Get the value entered for each size
+  
+        // If a price is provided, add it to the set array
+        if (price) {
+          setArray.push({
+            designNumber: this.designno,
+            size: size.size,
+            wholesalerPrice: price,
+          });
+        }
       });
   
+      // Construct the payload
       const payload = {
-        set: result,
-        productId: this.product.id,
-        email: this.authService.currentUserValue.email,
-        productBy: this.product.productBy
-       
+        productId: this.ProductId, // Sent once
+        WholesalerEmail: this.authService.currentUserValue.email, // Replace with dynamic email if necessary
+        manufacturerEmail: this.product.productBy, // Sent once
+        brandName: this.product.brand, // Sent once
+        set: setArray, // Repeated entries for sizes and prices
       };
   
       try {
-        const res = await this.authService.post('type2-cart', payload).toPromise();
+        // Send API request
+        const res = await this.authService.post('wholesaler-price-type2', payload).toPromise();
         if (res) {
           this.communicationService.customSuccess1('Saved Successfully...!!!');
         }
       } catch (error) {
         this.communicationService.customError1('Error occurred while saving...!!!');
-      } finally {
-        // Cleanup if needed
       }
     }
   }
+  
 
   changeMainMedia(media: any) {
     this.selectedMedia = media.src;
@@ -258,4 +290,3 @@ export class ViewProduct2Component {
     this.selectedColourName = this.hoveredColourName; // Revert to the original selected name when hover is removed
   }
 }
-

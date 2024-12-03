@@ -110,6 +110,11 @@ export class PlaceOrderComponent {
 
   getAllData() {
     this.showFlag = false;
+    // this.authService.get(`product-order?buyerEmail=${this.authService.currentUserValue.email}&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
+    //   this.tableData = res.results;
+    //   this.totalResults = res.totalResults;
+    // })
+
     this.authService.get(`type2-purchaseorder?=${this.authService.currentUserValue.email}&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
       this.tableData = res.results;
       this.totalResults = res.totalResults;

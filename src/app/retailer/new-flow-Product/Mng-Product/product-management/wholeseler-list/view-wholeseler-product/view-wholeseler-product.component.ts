@@ -1,21 +1,22 @@
-import { CommonModule,Location } from '@angular/common';
+import { CommonModule,Location, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 
 @Component({
-  selector: 'app-view-product2',
+  selector: 'app-view-wholeseler-product',
   standalone: true,
   imports: [
     CommonModule,
+    NgIf, NgFor,
     FormsModule,
     ReactiveFormsModule
   ],
-  templateUrl: './view-product2.component.html',
-  styleUrl: './view-product2.component.scss'
+  templateUrl: './view-wholeseler-product.component.html',
+  styleUrl: './view-wholeseler-product.component.scss'
 })
-export class ViewProduct2Component {
+export class ViewWholeselerProductComponent {
   userProfile: any;
   wishlist: boolean = false;
   quantity: any;
@@ -48,7 +49,7 @@ export class ViewProduct2Component {
   }
 
   getProductDetails(id: any) {
-    this.authService.get('type2-products/' + id).subscribe((res: any) => {
+    this.authService.get('wholesaler-price-type2/retailer-product/' + id).subscribe((res: any) => {
       this.designno = res.designNumber;
       if (res) {
         this.product = {
@@ -258,4 +259,3 @@ export class ViewProduct2Component {
     this.selectedColourName = this.hoveredColourName; // Revert to the original selected name when hover is removed
   }
 }
-

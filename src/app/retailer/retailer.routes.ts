@@ -8,7 +8,8 @@ import { WholeselerListComponent } from "./product-management/wholeseler-list/wh
 import { WholeselerProductsComponent } from "./product-management/wholeseler-list/wholeseler-products/wholeseler-products.component";
 import { ViewWholeselerProductComponent } from "./product-management/wholeseler-list/view-wholeseler-product/view-wholeseler-product.component";
 
-export const Retailer_Route :Route[]=[
+export const Retailer_Route :Route[]=[ 
+    { path: 'new', loadChildren:()=> import('./new-flow-Product/new_flow.routes').then((m)=>m.NewFlow)},
     {path:'dashboard', component:DashboardComponent},
     {path:'retailer-profile', component:ProfileComponent},
     {path:'request-to-wholesaler', component:RequestToWholesalerComponent},
