@@ -82,9 +82,11 @@ export class WholeselerProductsComponent {
     console.log('Filters applied:', this.filters);
   }
 
+
   getAllBrands() {
-    this.authService.get(`wholesaler-price-type2${this.WholeselerEmail}`).subscribe((res: any) => {
-      this.allBrand = res.uniqueBrands;
+    this.authService.get(`brand`).subscribe((res: any) => {
+      this.allBrand = res.results;
+      console.log(res.results)
     });
   }
   
@@ -114,15 +116,19 @@ export class WholeselerProductsComponent {
     if (this.WholeselerEmail) {
       filters.wholesalerEmail = this.WholeselerEmail;
     }
+
+    filters.limit=this.limit,
+    filters.page=this.page
   
     // Make the API request
     this.authService.post(url, filters).subscribe(
       (res: any) => {
         if (res && res.products) {
           // Assign results and total count
-          this.totalResults = res.totalResults;
+          this.totalResults = res.total;
           this.products = res.products.map((product: any) => ({
             designNumber: product.designNumber,
+            brand: product.brand,
             selectedImageUrl: product.colourCollections[0]?.productImages[0] || '', // Use first image
             selectedImageUrls: product.colourCollections[0]?.productImages || [], // Array of images
             productTitle: product.productTitle,

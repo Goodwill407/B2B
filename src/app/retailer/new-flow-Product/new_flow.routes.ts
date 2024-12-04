@@ -4,6 +4,8 @@ import { ManufaturerList2Component } from "./Mng-Product/manufaturer-list2/manuf
 import { WholeselerProductsComponent } from "./Mng-Product/product-management/wholeseler-list/wholeseler-products/wholeseler-products.component";
 import { WholeselerListComponent } from "./Mng-Product/product-management/wholeseler-list/wholeseler-list.component";
 import { ViewWholeselerProductComponent } from "./Mng-Product/product-management/wholeseler-list/view-wholeseler-product/view-wholeseler-product.component";
+import { CartProduct2RetailerComponent } from "./Mng-Product/cart-product2-retailer/cart-product2-retailer.component";
+import { GenraterpoComponent } from "./Mng-Product/genraterpo/genraterpo.component";
 
 
 export const NewFlow:Route[]=[
@@ -11,6 +13,8 @@ export const NewFlow:Route[]=[
     {path:'wholseller-list3',component:WholeselerListComponent},
     {path:'wholeseler-Products4', component:WholeselerProductsComponent},
     {path:'view-product2', component:ViewWholeselerProductComponent},
+    {path:'cart-product2-retailer', component:CartProduct2RetailerComponent},
+    {path:'poretailor/:id', component:GenraterpoComponent},
     
     
 ]

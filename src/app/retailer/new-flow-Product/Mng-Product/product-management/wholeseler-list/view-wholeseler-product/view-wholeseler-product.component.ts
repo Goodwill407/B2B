@@ -22,7 +22,7 @@ export class ViewWholeselerProductComponent {
   quantity: any;
   hoveredColourName: string = '';
   constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService, private fb: FormBuilder, private communicationService: CommunicationService) { }
-
+  WholeselerEmail: any;
   product: any;
   selectedMedia: any;
   selectedMediaType: string = 'image'; // 'image' or 'video'
@@ -36,10 +36,14 @@ export class ViewWholeselerProductComponent {
   Prodnum:any;
   
   ngOnInit(): void {
+
+   
     this.stepThree = this.fb.group({});
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
     this.route.params.subscribe(params => {
       const id = params['id'];
+      const wemail = params['WholeselerEmail'];
+      this.WholeselerEmail = wemail;
       this.ProductId = id;
       if (id) {
         this.getProductDetails(id);
@@ -211,12 +215,13 @@ export class ViewWholeselerProductComponent {
         set: result,
         productId: this.product.id,
         email: this.authService.currentUserValue.email,
+        wholesalerEmail: this.WholeselerEmail || "",
         productBy: this.product.productBy
        
       };
   
       try {
-        const res = await this.authService.post('type2-cart', payload).toPromise();
+        const res = await this.authService.post('retailer-cart-type2', payload).toPromise();
         if (res) {
           this.communicationService.customSuccess1('Saved Successfully...!!!');
         }
@@ -255,7 +260,7 @@ export class ViewWholeselerProductComponent {
 
   checkWishlist() {
     this.authService.get('type2-wishlist/checkout/wishlist?productId=' + this.ProductId + '&email=' + this.userProfile.email).subscribe((res: any) => {
-      if (res) {
+      if (res) {  
         this.wishlist = true;
       } else {
         this.wishlist = false;
@@ -277,6 +282,7 @@ export class ViewWholeselerProductComponent {
     }
     const cartBody = {
       "email": this.userProfile.email,
+      // "WholesalerEmail": this.WholeselerEmail,
       "productBy": data.productBy,
       "productId": data.id,
       "quantity": this.quantity
