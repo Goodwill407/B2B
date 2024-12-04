@@ -68,24 +68,24 @@ export class GenraterpoComponent {
       (res: any) => {
        
         this.responseData = res; // Store the response in responseData
-
+        console.log(this.responseData)
         // Update purchaseOrder from the response
         this.purchaseOrder = {
-          supplierName: res.manufacturer.companyName,
-          supplierDetails: res.manufacturer.fullName,
-          supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.city}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
-          supplierContact: `${res.manufacturer.mobNumber}`,
-          supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
-          buyerName: res.wholesaler.companyName,
-          logoUrl: this.authService.cdnPath + res.wholesaler.profileImg,
-          buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
-          buyerPhone: res.wholesaler.mobNumber,
-          buyerEmail: res.wholesaler.email,
-          buyerDetails: res.wholesaler.fullName,
-          buyerGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
+          supplierName: res.wholesaler.companyName,
+          supplierDetails: res.wholesaler.fullName,
+          supplierAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
+          supplierContact: `${res.wholesaler.mobNumber}`,
+          supplierGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
+          buyerName: res.retailer.companyName,
+          logoUrl: this.authService.cdnPath + res.retailer.profileImg,
+          buyerAddress: `${res.retailer.address}, ${res.retailer.city}, ${res.retailer.state} - ${res.retailer.pinCode}`,
+          buyerPhone: res.retailer.mobNumber,
+          buyerEmail: res.retailer.email,
+          buyerDetails: res.retailer.fullName,
+          buyerGSTIN: res.retailer.GSTIN || 'GSTIN_NOT_PROVIDED',
           poDate: new Date().toLocaleDateString(),
           poNumber: res.poNumber,
-          products: res.products || [],
+          products: res.set || [],
         };
 
         if (res.set && Array.isArray(res.set) && res.set.length > 0) {
@@ -211,7 +211,8 @@ export class GenraterpoComponent {
   }
 
   addpo() {
-    const cartBody = { ...this.responseData }; // Create a copy of the response data
+    const cartBody = { ...this.responseData };
+     // Create a copy of the response data
   
     // Remove unwanted fields
     delete cartBody.__v;
@@ -219,7 +220,7 @@ export class GenraterpoComponent {
     delete cartBody.productId;
   
     // Post the cleaned data to the backend
-    this.authService.post('type2-purchaseorder', cartBody).subscribe(
+    this.authService.post('retailer-purchase-order-type2', cartBody).subscribe(
       (res: any) => {
         this.communicationService.customSuccess('Product Successfully Added in Cart');
       },

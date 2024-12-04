@@ -10,9 +10,9 @@
             <img [src]="purchaseOrder.logoUrl" alt="Company Logo" />
           </div>
           <div class="company-info ms-4">
-            <h1>{{ purchaseOrder.supplierName }}</h1>
+            <h1>{{ purchaseOrder.buyerName }}</h1>
             <p>{{ purchaseOrder.buyerDetails }}</p>
-            <p>{{ purchaseOrder.supplierAddress }}</p>
+            <p>{{ purchaseOrder.buyerAddress }}</p>
             <p>{{ purchaseOrder.buyerPhone }}</p>
             <p class="mb-2"><b>GSTIN : {{ purchaseOrder.buyerGSTIN }}</b></p>
           </div>
@@ -28,8 +28,8 @@
   
         <section class="customer-details">
           <div class="customer-info">
-            <p><strong>Supplier :</strong> <span>{{ purchaseOrder.buyerName }}</span></p>
-            <p><strong>Address :</strong> <span>{{ purchaseOrder.buyerAddress }}</span></p>
+            <p><strong>Supplier :</strong> <span>{{ purchaseOrder.supplierName }}</span></p>
+            <p><strong>Address :</strong> <span>{{ purchaseOrder.supplierAddress }}</span></p>
             <p><strong>Phone :</strong> <span>{{ purchaseOrder.supplierContact }}</span></p>
             <p><strong>Email :</strong> <span>{{ purchaseOrder.supplierEmail }}</span></p>
             <p><strong>GSTIN :</strong> <span>{{ purchaseOrder.supplierGSTIN }}</span></p>
