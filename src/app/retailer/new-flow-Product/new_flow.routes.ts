@@ -11,6 +11,4 @@ export const NewFlow:Route[]=[
     {path:'wholseller-list3',component:WholeselerListComponent},
     {path:'wholeseler-Products4', component:WholeselerProductsComponent},
     {path:'view-product2', component:ViewWholeselerProductComponent},
-    
-    
 ]
