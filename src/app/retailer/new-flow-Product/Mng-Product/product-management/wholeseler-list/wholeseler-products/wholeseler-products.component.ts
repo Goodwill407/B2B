@@ -48,6 +48,7 @@ export class WholeselerProductsComponent {
   hoverIntervals: any = {}; // Track hover intervals for each product
   totalResults: any;
   WholeselerEmail: any;
+  wishlistItems: Set<string> = new Set();
 
   constructor(public authService: AuthService, private route:ActivatedRoute) { 
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
@@ -69,7 +70,8 @@ export class WholeselerProductsComponent {
       }
     })
     this.getAllBrands();
-    this.getProductType()
+    this.getProductType();
+    this.getWishlist();
   }
 
   ngOnDestroy(): void {
@@ -129,7 +131,8 @@ export class WholeselerProductsComponent {
             colors: product.colourCollections.map((c: any) => c.colour), // Array of colors
             stock: product.quantity || 0, // Fallback to 0 if stock not available
             id: product.id,
-            hoverIndex: 0 // To track which image is currently hovered over
+            hoverIndex: 0 ,// To track which image is currently hovered over
+            isInWishlist: this.wishlistItems.has(product.id),
           }));
 
           // Extract colors from images if no color information is available
@@ -245,5 +248,45 @@ export class WholeselerProductsComponent {
 
   });
 
+  }
+
+  
+
+  WishlistAdd(id: string) {
+    this.authService.post('type2-wishlist', { productId: id, email: this.userProfile.email }).subscribe(
+      (res: any) => {
+        console.log(res);
+        
+        this.wishlistItems.add(id); // Add product ID to wishlistItems set
+        this.updateProductWishlistStatus(id, true); // Update product wishlist status
+      },
+      (err: any) => {
+        console.log(err);
+      }
+    );
+  }
+
+
+  getWishlist() {
+    this.authService.get(`type2-wishlist?email=${this.userProfile.email}`).subscribe(
+      (res: any) => {
+        if (res) {
+          // Store the product IDs of wishlist items in a Set
+          this.wishlistItems = new Set(res.results.map((item: any) => item.productId));
+          this.getAllProducts(); // Fetch products after wishlist data is loaded
+        }
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+  
+
+  updateProductWishlistStatus(productId: string, isInWishlist: boolean) {
+    const product = this.products.find((p) => p.id === productId);
+    if (product) {
+      product.isInWishlist = isInWishlist; // Update the isInWishlist flag for the product
+    }
   }
 }

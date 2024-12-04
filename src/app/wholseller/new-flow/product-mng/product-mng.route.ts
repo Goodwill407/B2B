@@ -18,7 +18,7 @@ export const ProductMng:Route[]=[
     {path: 'view-product-price', component: EditPriceComponent},
     // {path: 'wishlist-product', component: WishlistProductComponent},
     {path: 'add-to-cart', component: CartProduct2Component},
-    { path: 'viewpo/:id', component: GenratepoComponent },
+    {path: 'viewpo/:id', component: GenratepoComponent },
     // {path: 'ordered-products', component:OrderedProductComponent},
     // {path: 'view-Product', component:ViewProductOwnComponent},
 ]

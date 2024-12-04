@@ -50,7 +50,6 @@ export class ManufaturerList2Component {
     })
   }
 
-
   onPageChange(event: any) {
     this.page = event.page + 1;
     this.limit = event.rows;
