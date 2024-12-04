@@ -88,7 +88,7 @@ export class WholeselerProductsComponent {
   
   getAllProducts() {
     // Construct the base URL with pagination parameters
-    let url = `wholesaler-products/multiplefilter?limit=${this.limit}&page=${this.page}`;
+    let url = `wholesaler-price-type2/filter/products`;
   
     // Initialize a filter object
     const filters: any = {};

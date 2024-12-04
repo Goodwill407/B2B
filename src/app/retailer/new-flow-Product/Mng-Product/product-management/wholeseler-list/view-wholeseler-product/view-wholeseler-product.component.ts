@@ -50,60 +50,101 @@ export class ViewWholeselerProductComponent {
 
   getProductDetails(id: any) {
     this.authService.get('wholesaler-price-type2/retailer-product/' + id).subscribe((res: any) => {
-      this.designno = res.designNumber;
+      this.designno = res.product.designNumber;
+  
       if (res) {
+        const productData = res.product;
+        const retailerPriceData = res.retailerPrice;
+  
+        // Start building the product object
         this.product = {
-          brand: res.brand,
+          brand: productData.brand,
           designNumber: this.designno,
-        
-          clothingType: res.clothing,
-          subCategory: res.subCategory,
-          gender: res.gender,
-          title: res.productTitle,
-          description: res.productDescription,
-          material: res.material,
-          materialVariety: res.materialvariety,
-          pattern: res.fabricPattern,
-          fitType: res.fitStyle,
-          occasion: res.selectedOccasion.join(', '),
-          lifestyle: res.selectedlifeStyle.join(', '),
-          closureType: res.closureType,
-          pocketDescription: res.pocketDescription,
-          sleeveCuffStyle: res.sleeveCuffStyle,
-          neckCollarStyle: res.neckStyle,
-          specialFeatures: res.specialFeature.join(', '),
-          careInstructions: res.careInstructions,
-          sizes: res.sizes,
-          colours: res.colourCollections.map((colour: any) => ({
+          clothingType: productData.clothing,
+          subCategory: productData.subCategory,
+          gender: productData.gender,
+          title: productData.productTitle,
+          description: productData.productDescription,
+          material: productData.material,
+          materialVariety: productData.materialvariety,
+          pattern: productData.fabricPattern,
+          fitType: productData.fitStyle,
+          occasion: productData.selectedOccasion.join(', '), // or 'N/A' if empty
+          lifestyle: productData.selectedlifeStyle.join(', '), // or 'N/A' if empty
+          closureType: productData.closureType,
+          pocketDescription: productData.noOfPockets,
+          sleeveCuffStyle: productData.sleeveLength,
+          neckCollarStyle: productData.neckStyle,
+          specialFeatures: productData.specialFeature.join(', '),
+          careInstructions: productData.careInstructions,
+          sizes: productData.sizes.map((size: any) => ({
+            size: size.standardSize,
+            price: size.manufacturerPrice, // Initially set manufacturerPrice
+            rtlPrice: size.RtlPrice,
+            mrp: size.singleMRP
+          })),
+          colours: productData.colourCollections.map((colour: any) => ({
             name: colour.colourName,
             hex: colour.colour,
             image: colour.colourImage,
             images: colour.productImages,
             video: colour.productVideo
           })),
-          setOfManPrice: res.setOfManPrice,
-          setOfMRP: res.setOfMRP,
-          setOFnetWeight: res.setOFnetWeight,
-          minimumOrderQty: res.minimumOrderQty,
-          dimensions: res.productDimension,
-          dateAvailable: res.dateOfListing ? new Date(res.dateOfListing).toLocaleDateString() : 'N/A',
-          availability: res.quantity > 0 ? `${res.quantity}` : 'Out of Stock',
-          id: res.id,
-          productBy: res.productBy,
-          inventory: res.inventory,
+          setOfManPrice: [], // This will be populated by matching sizes
+          setOfMRP: [], // You can add logic for MRP if available in the response
+          setOFnetWeight: [], // You can add logic for net weight if needed
+          minimumOrderQty: productData.sizes.length ? productData.sizes[0].weight : 1, // Use a valid logic
+          dimensions: productData.productDimension || 'N/A',
+          dateAvailable: productData.dateOfListing ? new Date(productData.dateOfListing).toLocaleDateString() : 'N/A',
+          availability: productData.inventory.map((inv: any) => ({
+            colour: inv.colourName,
+            size: inv.size,
+            quantity: inv.quantity || 0
+          })),
+          id: productData._id,
+          productBy: productData.productBy,
+          inventory: productData.inventory,
         };
+  
+        // Replace manufacturerPrice with wholesalerPrice by matching sizes
+        productData.sizes.forEach((size: any) => {
+           retailerPriceData.set.find((setItem: any) => { 
+            
+            if(setItem.size === size.standardSize)size.manufacturerPrice = setItem.wholesalerPrice;
+
+
+          });
+        });
+  
+        // Update the product object after replacing prices
+        this.product.sizes = productData.sizes.map((size: any) => ({
+          size: size.standardSize,
+          price: size.manufacturerPrice, // Updated manufacturerPrice with wholesalerPrice
+          rtlPrice: size.RtlPrice,
+          mrp: size.singleMRP
+        }));
+  
+        // Optional: Populate available colour and size information
         this.colourCollections = this.product.colours;
         this.selectedSizes = this.product.sizes.map((item: any) => {
-         return {
-          size:item.standardSize,
-          price:item.manufacturerPrice}
+          return {
+            size: item.size,
+            price: item.price, // Use wholesalerPrice if available
+            wholesalerPrice: item.manufacturerPrice // Add wholesalerPrice here
+          };
         });
+  
+        // Additional methods or logic (e.g., form controls, colour selection, etc.)
         this.createFormControls2();
         this.selectColourCollection(this.product.colours[0]);
         this.quantity = this.product.minimumOrderQty;
       }
     });
   }
+  
+  
+  
+  
 
   navigateFun() {
     this.location.back();
