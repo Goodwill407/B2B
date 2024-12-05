@@ -120,18 +120,18 @@
                                 <th>Company Name</th>
                                 <th>Email</th>
                                 <th>PO Number</th>
-                                <th>PO Date</th>
+                                <!-- <th>PO Date</th> -->
                                 <th>View</th>
 
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-data>
                             <tr>
-                                <td class="text-center">{{data.supplierDetails}}</td>
-                                <td class="text-center">{{data.supplierName}}</td>
-                                <td class="text-center">{{data.supplierEmail}}</td>
+                                <td class="text-center">{{data.manufacturer.fullName}}</td>
+                                <td class="text-center">{{data.manufacturer.companyName}}</td>
+                                <td class="text-center">{{data.manufacturer.email}}</td>
                                 <td class="text-center">{{data.poNumber}}</td>
-                                <td class="text-center">{{data.poDate}}</td>
+                                <!-- <td class="text-center">{{data.poDate}}</td> -->
                                 <td class="text-center"><button (click)="patchData(data)" class="btn"><i
                                             class="bi bi-eye h5"></i></button></td>
                             </tr>
