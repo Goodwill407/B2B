@@ -8,6 +8,7 @@ import { GenratepoComponent } from "./genratepo/genratepo.component";
 import { ViewWishlistproductComponent } from "./manufaturer-list2/manufatures-product2/view-wishlistproduct/view-wishlistproduct.component";
 import { EditPriceComponent } from "./manufaturer-list2/manufatures-product2/edit-price/edit-price.component";
 import { RetailorPoComponent } from "./retailor-po/retailor-po.component";
+import { RetailorPoGenComponent } from "./retailor-po/retailor-po-gen/retailor-po-gen.component";
 
 
 export const ProductMng:Route[]=[
@@ -20,7 +21,8 @@ export const ProductMng:Route[]=[
     // {path: 'wishlist-product', component: WishlistProductComponent},
     {path: 'add-to-cart', component: CartProduct2Component},
     {path: 'viewpo/:id', component: GenratepoComponent },
-    {path: 'RelatorPo', component: RetailorPoComponent},
+  
+
     // {path: 'ordered-products', component:OrderedProductComponent},
     // {path: 'view-Product', component:ViewProductOwnComponent},
 ]

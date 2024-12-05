@@ -5,7 +5,8 @@
   import { AuthService, CommunicationService } from '@core';
   import { AccordionModule } from 'primeng/accordion';
   import { TableModule } from 'primeng/table';
-
+  import html2canvas from 'html2canvas';
+  import jsPDF from 'jspdf';
   @Component({
     selector: 'app-genratepo',
     standalone: true,
@@ -71,21 +72,21 @@
           console.log(res)
           // Update purchaseOrder from the response
           this.purchaseOrder = {
-            supplierName: res.manufacturer.companyName,
-            supplierDetails: res.manufacturer.fullName,
-            supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.city}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
-            supplierContact: `${res.manufacturer.mobNumber}`,
-            supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
-            buyerName: res.wholesaler.companyName,
-            logoUrl: this.authService.cdnPath + res.wholesaler.profileImg,
-            buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
-            buyerPhone: res.wholesaler.mobNumber,
-            buyerEmail: res.wholesaler.email,
-            buyerDetails: res.wholesaler.fullName,
-            buyerGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
+            supplierName: res.wholesaler.companyName,
+            supplierDetails: res.wholesaler.fullName,
+            supplierAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
+            supplierContact: `${res.wholesaler.mobNumber}`,
+            supplierGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
+            buyerName: res.retailer.companyName,
+            logoUrl: this.authService.cdnPath + res.retailer.profileImg,
+            buyerAddress: `${res.retailer.address}, ${res.retailer.city}, ${res.retailer.state} - ${res.retailer.pinCode}`,
+            buyerPhone: res.retailer.mobNumber,
+            buyerEmail: res.retailer.email,
+            buyerDetails: res.retailer.fullName,
+            buyerGSTIN: res.retailer.GSTIN || 'GSTIN_NOT_PROVIDED',
             poDate: new Date().toLocaleDateString(),
             poNumber: res.poNumber,
-            products: res.products || [],
+            products: res.set || [],
           };
 
           if (res.set && Array.isArray(res.set) && res.set.length > 0) {
@@ -262,6 +263,44 @@
       return flatList;
   }
   
+  printPurchaseOrder(): void {
+    const data = document.getElementById('purchase-order');
+    if (data) {
+      html2canvas(data, {
+        scale: 3,  // Adjust scale for better quality
+        useCORS: true,
+      }).then((canvas) => {
+        const imgWidth = 208;  // A4 page width in mm
+        const pageHeight = 295;  // A4 page height in mm
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+  
+        const contentDataURL = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');  // Create new PDF
+        const margin = 10;  // Margin for PDF
+        let position = margin;
+  
+        // Add first page
+        pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
+        heightLeft -= pageHeight;
+  
+        // Loop over content to add remaining pages if content exceeds one page
+        while (heightLeft > 0) {
+          pdf.addPage();  // Add new page
+          position = margin - heightLeft;  // Position for the next page
+          pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
+          heightLeft -= pageHeight;
+        }
+  
+        // Save PDF file
+        pdf.save('purchase-order.pdf');
+      }).catch((error) => {
+        console.error("Error generating PDF:", error);
+      });
+    } else {
+      console.error("Element with id 'purchase-order' not found.");
+    }
+  }
   
     
   }

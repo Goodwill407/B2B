@@ -928,7 +928,7 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
       }, 
       {
-        path: '/wholesaler/product/RelatorPo',
+        path: '/wholesaler/order-mng/RelatorPo',
         title: 'Retailer Po',
         iconType: '',
         icon: '',

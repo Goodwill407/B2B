@@ -16,7 +16,7 @@
                             Design No : {{product.designNo}}
                           </div>
                           <div class="image-carousel">
-                            <img class="main-img" [src]="authService.cdnPath + product.selectedImageUrl" alt="{{product.title}}"   [routerLink]="['/retailer/new/view-product2',{id: product.productId}]">
+                            <img class="main-img" [src]="authService.cdnPath + product.selectedImageUrl" alt="{{product.title}}"   [routerLink]="['/retailer/new/wishlistproducts',{id: product.productId}]">
                             <div class="carousel-dots">
                               <span *ngFor="let img of product.selectedImageUrls; let i = index" [class.active]="i === product.hoverIndex" (click)="navigateToImage(product, i)"></span>
                             </div>
@@ -25,7 +25,7 @@
                             <div class="color-options mt-0">
                               <button *ngFor="let color of product.colors" [ngStyle]="{'background-color': color, 'border': color === '#FFFFFF' ? '1px solid #000' : 'none'}" [class.active]="product.selectedColor === color" (click)="changeProductImage(product, color)"></button>
                             </div>
-                            <h6 class="title" [routerLink]="['/retailer/new/view-product2',{id: product.productId}]">{{product.title}}</h6>
+                            <h6 class="title" [routerLink]="['/retailer/new/wishlistproducts',{id: product.productId}]">{{product.title}}</h6>
                             <p class="mb-0 truncate-text">{{ product.description }}</p>
                             <div class="availability">
                               <span *ngIf="product.stock > 0" class="in-stock">In stock - Qty {{product.stock}}</span>

@@ -1,6 +1,7 @@
 import { Route } from "@angular/router";
 import { ManufaturerList2Component } from "./manufaturer-list2/manufaturer-list2.component";
 import { WholeselerListComponent } from "./product-management/wholeseler-list/wholeseler-list.component";
+import { ViewDetailWishlistComponent } from "./product-management/wishlist-product2/view-detail-wishlist/view-detail-wishlist.component";
 
 export const NewFlow:Route[]=[
     // {path: 'mnf-list', component: ManufaturerList2Component},
@@ -11,5 +12,6 @@ export const NewFlow:Route[]=[
     // // {path: 'ordered-products', component:OrderedProductComponent},
     // // {path: 'view-Product', component:ViewProductOwnComponent},
     {path:'mnf-list', component:ManufaturerList2Component},
-    {path:'pmanage', component:WholeselerListComponent}
+    {path:'pmanage', component:WholeselerListComponent},
+
 ]

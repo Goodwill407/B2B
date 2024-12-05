@@ -7,6 +7,7 @@ import { ViewWholeselerProductComponent } from "./Mng-Product/product-management
 import { CartProduct2RetailerComponent } from "./Mng-Product/cart-product2-retailer/cart-product2-retailer.component";
 import { GenraterpoComponent } from "./Mng-Product/genraterpo/genraterpo.component";
 import { WishlistProduct2Component } from "./Mng-Product/product-management/wishlist-product2/wishlist-product2.component";
+import { ViewDetailWishlistComponent } from "./Mng-Product/product-management/wishlist-product2/view-detail-wishlist/view-detail-wishlist.component";
 
 
 export const NewFlow:Route[]=[
@@ -16,6 +17,7 @@ export const NewFlow:Route[]=[
     {path:'view-product2', component:ViewWholeselerProductComponent},
     {path:'cart-product2-retailer', component:CartProduct2RetailerComponent},
     {path:'poretailor/:id', component:GenraterpoComponent},
-    {path:'wishlist-product2', component:WishlistProduct2Component}
+    {path:'wishlist-product2', component:WishlistProduct2Component},
+    {path:'wishlistproducts', component:ViewDetailWishlistComponent}
     
 ]
