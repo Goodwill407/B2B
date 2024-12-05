@@ -68,7 +68,7 @@
         (res: any) => {
          
           this.responseData = res; // Store the response in responseData
-
+          console.log(res)
           // Update purchaseOrder from the response
           this.purchaseOrder = {
             supplierName: res.manufacturer.companyName,
