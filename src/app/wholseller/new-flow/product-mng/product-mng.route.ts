@@ -9,6 +9,7 @@ import { ViewWishlistproductComponent } from "./manufaturer-list2/manufatures-pr
 import { EditPriceComponent } from "./manufaturer-list2/manufatures-product2/edit-price/edit-price.component";
 import { RetailorPoComponent } from "./retailor-po/retailor-po.component";
 import { RetailorPoGenComponent } from "./retailor-po/retailor-po-gen/retailor-po-gen.component";
+import { WholesalerDiscountComponent } from "./wholesaler-discount/wholesaler-discount.component";
 
 
 export const ProductMng:Route[]=[
@@ -21,6 +22,7 @@ export const ProductMng:Route[]=[
     // {path: 'wishlist-product', component: WishlistProductComponent},
     {path: 'add-to-cart', component: CartProduct2Component},
     {path: 'viewpo/:id', component: GenratepoComponent },
+    {path: 'wholesaler-discount', component: WholesalerDiscountComponent},
   
 
     // {path: 'ordered-products', component:OrderedProductComponent},

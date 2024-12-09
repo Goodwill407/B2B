@@ -1842,6 +1842,18 @@ export const ROUTES2: RouteInfo[] = [
     submenu: []
   },  
   {
+    path: '/wholesaler/new/product/wholesaler-discount',
+    title: `Wholesaler Discount`,
+    iconType: 'material-icons-outlined',
+    icon: 'view_timeline',
+    class: '',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['wholesaler'],
+    submenu: []
+  },   
+  {
     path: '',
     title: `Retailer's Management`,
     iconType: 'material-icons-outlined',
