@@ -180,18 +180,20 @@ export class EditPriceComponent {
     if (this.stepThree.valid) {
       const formData = this.stepThree.value;
       const setArray: any[] = [];
-  
-      // Loop through sizes and collect price data
+      
+      // Loop through the sizes and collect price data
       this.selectedSizes.forEach((size: any) => {
-        const controlName = `wholesalerPrice_${size.size}`;
-        const price = formData[controlName]; // Get the value entered for each size
+        const wholesalerControlName = `wholesalerPrice_${size.size}`;
+        const wholesalerPrice = formData[wholesalerControlName]; // Get wholesaler price from form data
+        const manufacturerPrice = size.price; // Get the manufacturer price from the size object
   
-        // If a price is provided, add it to the set array
-        if (price) {
+        // Ensure wholesalerPrice is not empty and manufacturerPrice is available
+        if (wholesalerPrice && manufacturerPrice) {
           setArray.push({
-            designNumber: this.designno,
+            _id: size._id, // Ensure the size has a unique _id
             size: size.size,
-            wholesalerPrice: price,
+            wholesalerPrice: wholesalerPrice, // Wholesaler price entered by the user
+            manufacturerPrice: manufacturerPrice, // Manufacturer price from the size object
           });
         }
       });
@@ -199,15 +201,16 @@ export class EditPriceComponent {
       // Construct the payload
       const payload = {
         productId: this.ProductId, // Sent once
-        WholesalerEmail: this.authService.currentUserValue.email, // Replace with dynamic email if necessary
-        manufacturerEmail: this.product.productBy, // Sent once
-        brandName: this.product.brand, // Sent once
-        set: setArray, // Repeated entries for sizes and prices
+        WholesalerEmail: this.authService.currentUserValue.email, // Logged in wholesaler's email
+        manufacturerEmail: this.product.productBy, // Manufacturer's email
+        brandName: this.product.brand, // Brand name
+        set: setArray, // Array of sizes with both prices
       };
   
       try {
-        // Send API request
+        // Send the API request
         const res = await this.authService.post('wholesaler-price-type2', payload).toPromise();
+        
         if (res) {
           this.communicationService.customSuccess1('Saved Successfully...!!!');
         }
@@ -216,6 +219,8 @@ export class EditPriceComponent {
       }
     }
   }
+  
+  
   
 
   changeMainMedia(media: any) {

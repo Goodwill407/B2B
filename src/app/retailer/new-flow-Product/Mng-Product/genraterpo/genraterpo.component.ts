@@ -218,6 +218,11 @@ export class GenraterpoComponent {
     delete cartBody.__v;
     delete cartBody._id;
     delete cartBody.productId;
+    if (cartBody.set && Array.isArray(cartBody.set)) {
+      cartBody.set.forEach((product: any) => {
+        product.productBy = this.responseData.productBy; // Add productBy to each product in the set
+      });
+    }
   
     // Post the cleaned data to the backend
     this.authService.post('retailer-purchase-order-type2', cartBody).subscribe(

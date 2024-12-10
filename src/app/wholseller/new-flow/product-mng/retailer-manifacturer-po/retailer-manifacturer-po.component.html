@@ -1,0 +1,97 @@
+<section class="content">
+    <div class="content-block">
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i>&nbsp; Add To Cart Products</h4>
+
+        <!-- If products are available, display the accordion -->
+        <p-accordion [activeIndex]="0" class="card" *ngIf="products && products.length > 0">
+            <ng-container *ngFor="let prod of products; let distIndex = index">
+              <p-accordionTab class="px-0" [header]="prod.manufacturer.fullName">
+                  
+                <div id="purchase-order" class="challan-container card my-2">
+                  <div class="header">
+                    <div class="logo">
+                      <img [src]="prod.logoUrl" alt="Company Logo" />
+                    </div>
+                    <div class="buyer-info" *ngIf="purchaseOrder">
+                        <h5>From -</h5>
+                        <div class="product-details">
+                            <h6>{{ prod.wholesaler.companyName }}</h6>
+                            <p>{{ prod.wholesaler.address }}</p>
+                            <p><b>PO Number: </b>{{ prod.wholesaler?.poNumber }}</p>  <!-- Access dynamic purchaseOrder -->
+                            <p><b>Cart Added Date: </b>{{ prod.cartAddedDate }}</p>
+                          </div>
+                    </div>
+                    <div class="seller-info">
+                        <h5>To -</h5>
+                        <h6>{{ prod.manufacturer.companyName }}</h6>
+                        <p>{{ prod.manufacturer.address }}</p>
+                        <p><b>PO Number: </b>{{ prod.purchaseOrder?.poNumber }}</p>  <!-- Access dynamic purchaseOrder -->
+                        <p><b>Cart Added Date: </b>{{ prod.cartAddedDate }}</p>
+                        <p class="mb-2"><b>GSTIN : {{ prod.wholesaler.GSTIN }}</b></p>
+                        <p><strong>PO Number :</strong> <span><b>{{ prod.poNumber }}</b></span></p>
+                       
+                      </div>
+                    
+                  </div>
+                  <section class="gstin my-0">
+                    <h2>PURCHASE ORDER</h2>
+                  </section>
+                  <hr class="my-1">
+                  <section class="order-details">
+                    <!-- <div *ngFor="let group of processGroupedProducts(filteredData.set)" class="mb-4">
+                      <p-table [value]="group.rows">
+                          <ng-template pTemplate="header">
+                              <tr>
+                                  <th>Design No</th>
+                                  <th>Colour</th>
+                                  <th *ngFor="let size of sizeHeaders">
+                                      {{ size }} <br>
+                                      <span *ngIf="isSizeAvailable(group.rows, size)">
+                                          {{ priceHeaders[size] | currency: 'INR' }}
+                                      </span>
+                                      <span *ngIf="!isSizeAvailable(group.rows, size)">
+                                          N/A
+                                      </span>
+                                  </th>
+                                  <th>Price</th>
+                              </tr>
+                          </ng-template>
+                          <ng-template pTemplate="body" let-row>
+                              <tr>
+                                  <td>{{ group.designNumber }}</td>
+                                  <td>
+                                      <img *ngIf="row.colourImage" [src]="'https://lmscontent-cdn.blr1.digitaloceanspaces.com' + row.colourImage" alt="Colour Image" width="50" height="50" />
+                                      <span *ngIf="!row.colourImage" [ngStyle]="{'background-color': row.colour || '#ffffff'}" style="width: 50px; height: 50px; display: inline-block; text-align: center; line-height: 50px; color: #fff; border-radius: 4px;">
+                                      </span>
+                                  </td>
+                                  <td *ngFor="let size of sizeHeaders">
+                                      {{ row.quantities[size] > 0 ? row.quantities[size] : 'N/A' }}
+                                  </td>
+                                  <td>{{ calculateTotalPrice(row) | currency: 'INR' }}</td>
+                              </tr>
+                          </ng-template>
+                      </p-table>
+                  </div> -->
+                  </section>
+                
+                
+                
+                </div>
+              </p-accordionTab>
+            </ng-container>
+          </p-accordion>
+          
+
+        <!-- Display 'No data found' message if products array is empty -->
+        <div *ngIf="!products || products.length === 0" class="no-data-found">
+            <p>No data found</p>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="text-center my-3">
+              <button class="btn btn-success" (click)="addpo()">Generate Purchase Order</button>
+            </div>
+          </div>
+        </div>
+    </div>
+</section>

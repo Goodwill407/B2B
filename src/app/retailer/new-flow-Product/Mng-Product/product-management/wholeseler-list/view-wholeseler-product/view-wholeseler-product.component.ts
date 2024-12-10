@@ -199,7 +199,7 @@ export class ViewWholeselerProductComponent {
           const quantity = formData[`${sanitizedColorName}_${size.size}`];
           if (quantity) {
             result.push({
-              
+              productBy: this.product.productBy, 
               colourName: color.name,
               colourImage: color.image,
               colour: color.hex,

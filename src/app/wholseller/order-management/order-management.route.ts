@@ -6,6 +6,7 @@ import { OrderedProductsComponent } from "./ordered-products/ordered-products.co
 import { InwardStockEntryComponent } from "./inward-stock-entry/inward-stock-entry.component";
 import { RetailorPoComponent } from "../new-flow/product-mng/retailor-po/retailor-po.component";
 import { RetailorPoGenComponent } from "../new-flow/product-mng/retailor-po/retailor-po-gen/retailor-po-gen.component";
+import { RetailerManifacturerPoComponent } from "../new-flow/product-mng/retailer-manifacturer-po/retailer-manifacturer-po.component";
 
 export const Order_Management_Route:Route[]= [
     {path: 'place-order', component: PlaceOrderComponent},
@@ -15,4 +16,5 @@ export const Order_Management_Route:Route[]= [
     {path:'inward-stock', component:InwardStockEntryComponent},
     {path: 'RelatorPo', component: RetailorPoComponent},
     {path: 'viewporetailor', component: RetailorPoGenComponent },
+    { path: 'retailormanpo', component: RetailerManifacturerPoComponent },
 ]
