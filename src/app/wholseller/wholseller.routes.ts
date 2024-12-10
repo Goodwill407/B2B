@@ -15,6 +15,7 @@ import { RetailersRequestsListComponent } from "./retailers-requests-list/retail
 import { RejectedRetailersListComponent } from "./retailers-requests-list/rejected-retailers-list/rejected-retailers-list.component";
 import { ViewRetailersDetailsComponent } from "./retailers-requests-list/view-retailers-details/view-retailers-details.component";
 import { AssociatedMnfListComponent } from "./associated-mnf-list/associated-mnf-list.component";
+import { RetailerManifacturerPoComponent } from "./new-flow/product-mng/retailer-manifacturer-po/retailer-manifacturer-po.component";
 
 export const R_Auth: Route[] = [
     { path: 'new', loadChildren: () => import('./new-flow/new_flow.route').then((m) => m.NewFlow) },
@@ -46,4 +47,5 @@ export const R_Auth: Route[] = [
     { path: 'retailers-requests-list', component: RetailersRequestsListComponent },
     { path: 'rejected-retailsers-list', component: RejectedRetailersListComponent },
     { path: 'view-retailser-Details', component: ViewRetailersDetailsComponent },
+    
 ]

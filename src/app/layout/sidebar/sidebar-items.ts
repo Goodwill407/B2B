@@ -2087,7 +2087,7 @@ export const ROUTES2: RouteInfo[] = [
       }, 
       {
         path: '/wholesaler/order-mng/RelatorPo',
-        title: 'Retailer Po',
+        title: 'Retailers Po',
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -2096,7 +2096,20 @@ export const ROUTES2: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      },      
+      },  
+      {
+        path: '/wholesaler/order-mng/retailormanpo',
+        title: 'Retailer-Manifacturer-Po',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },  
+         
     ],
   },
   {

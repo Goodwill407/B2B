@@ -7,145 +7,96 @@ import { CustomDatePipe } from 'app/common/custom-pipe.pipe';
 import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.component';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 
-export interface Company {
-  name: string;
-  introduction: string;
-  factSheet: {
-    established: string;
-    founder: string;
-    employees: string;
-    headquarters: string;
-    industry: string;
-  };
-  contact: {
-    address: string;
-    phone: string;
-    email: string;
-  };
-  socialMedia: {
-    facebook: string;
-    twitter: string;
-    linkedin: string;
-  };
-  brands: string[];
-}
-
-
-
 @Component({
   selector: 'app-view-manufacturer-details',
   standalone: true,
-  imports: [NgFor, CommonModule, CustomDatePipe,NgxSpinnerModule,],
+  imports: [NgFor, CommonModule, CustomDatePipe, NgxSpinnerModule],
   templateUrl: './view-manufacturer-details.component.html',
   styleUrls: ['./view-manufacturer-details.component.scss'],
   providers: [DatePipe]
 })
-
-export class ViewManufacturerDetailsComponent {
-  // Define a company variable of type Company
-  company!: Company;
-  email: any
-  CompanyData: any
-  brandsDetails: any
-  cdnPath: any
+export class ViewManufacturerDetailsComponent implements OnInit {
+  company: any;
+  email: any;
+  CompanyData: any;
+  brandsDetails: any;
+  cdnPath: any;
   userProfile: any;
   WholsellerData: any;
   allVisabilityData: any;
   id: any;
-  RequestDetails:any
-  OnlyForView:any
+  RequestDetails: any;
+  OnlyForView: any;
 
-  constructor(private spinner: NgxSpinnerService, private route: ActivatedRoute, public authService: AuthService, private communicationService: CommunicationService,  private dialog: MatDialog,  private location: Location) {
-    this.cdnPath = authService.cdnPath
+  constructor(
+    private spinner: NgxSpinnerService,
+    private route: ActivatedRoute,
+    public authService: AuthService,
+    private communicationService: CommunicationService,
+    private dialog: MatDialog,
+    private location: Location
+  ) {
+    this.cdnPath = authService.cdnPath;
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
   }
 
-  // Initialize the company data in ngOnInit
   ngOnInit(): void {
-    // Access the query parameter
+    // Access the query parameters
     this.route.queryParams.subscribe(params => {
-      console.log('Received query params:', params); // Log the entire params object
-    
+      console.log('Received query params:', params);
+
       this.id = params['id'];
       this.email = params['email'];
-      this.OnlyForView=params['isForView']  //only for view not send Request
-    
-      // Check if RequestDetails exists
+      this.OnlyForView = params['isForView'];
+
+      // Parse RequestDetails
       if (params['RequestDetails']) {
-        console.log('RequestDetails before parsing:', params['RequestDetails']);
         try {
-          this.RequestDetails = JSON.parse(params['RequestDetails']); // Try parsing
-          console.log('Parsed RequestDetails:', this.RequestDetails); // Log the parsed object
+          this.RequestDetails = JSON.parse(params['RequestDetails']);
+          console.log('Parsed RequestDetails:', this.RequestDetails);
         } catch (error) {
           console.error('Error parsing RequestDetails:', error);
-          this.RequestDetails = null; // Handle error
+          this.RequestDetails = null;
         }
       } else {
         this.RequestDetails = null;
       }
-    
+
       this.getManufacturerData();
       this.getBrandsOfManufacturer();
       this.getUserProfileData();
-      if(!this.OnlyForView){
-        this.GetProfileVisabilityData();
-      }
-      else if(this.OnlyForView){
-        this.getMnfIdForData()
-      }
-     
-    });
 
-    this.company = {
-      name: 'Your Company Name',
-      introduction: 'This is a brief introduction of the company. It could include the mission, vision, or a short history.',
-      factSheet: {
-        established: 'January 1, 2000',
-        founder: 'John Doe',
-        employees: '500+',
-        headquarters: 'City, Country',
-        industry: 'Tech Industry'
-      },
-      contact: {
-        address: '1234 Main St, City, Country',
-        phone: '+1 234 567 890',
-        email: 'info@yourcompany.com'
-      },
-      socialMedia: {
-        facebook: 'https://facebook.com/yourcompany',
-        twitter: 'https://twitter.com/yourcompany',
-        linkedin: 'https://linkedin.com/company/yourcompany'
-      },
-      brands: ['Brand A', 'Brand B', 'Brand C']
-    };
+      if (!this.OnlyForView) {
+        this.GetProfileVisabilityData();
+      } else {
+        this.getMnfIdForData();
+      }
+    });
   }
 
+  // Fetch manufacturer data by email
   getManufacturerData() {
     this.authService.get(`manufacturers/${this.email}`).subscribe((res: any) => {
       if (res) {
-        this.CompanyData = res
-      } else {
+        this.CompanyData = res;
       }
     }, error => {
-      if (error.error.message === "Manufacturer not found") {
-
-      }
-    })
+      console.error('Error fetching manufacturer data:', error);
+    });
   }
 
+  // Fetch brands data for the manufacturer
   getBrandsOfManufacturer() {
     this.authService.get(`brand/visible/brandlist/${this.email}/true`).subscribe((res: any) => {
       if (res) {
-        this.brandsDetails = res
-      } else {
+        this.brandsDetails = res;
       }
     }, error => {
-      if (error.error.message === "Manufacturer not found") {
-
-      }
-    })
+      console.error('Error fetching brands data:', error);
+    });
   }
 
+  // Send request to manufacturer
   sendRequestToManufacturer() {
     const requestBody = {
       fullName: this.CompanyData.fullName,
@@ -166,89 +117,85 @@ export class ViewManufacturerDetailsComponent {
       state: this.CompanyData.state,
       city: this.CompanyData.city,
       country: this.CompanyData.country
-    }
-    this.authService.post('request', requestBody).subscribe(
-      response => {
+    };
 
-        this.communicationService.showNotification('snackbar-success', 'Request added successfully', 'bottom', 'center');
-      },
-      error => {
-        console.error('Error searching brand:', error);
-        // Handle error accordingly
-      }
-    );
+    this.authService.post('request', requestBody).subscribe(response => {
+      this.communicationService.showNotification('snackbar-success', 'Request added successfully', 'bottom', 'center');
+    }, error => {
+      console.error('Error sending request:', error);
+    });
   }
 
+  // Get user profile data
   getUserProfileData() {
     this.authService.get(`wholesaler/${this.userProfile.email}`).subscribe((res: any) => {
       if (res) {
-        this.WholsellerData = res
-
-      } else {
-        // Handle the case where there's no datap
+        this.WholsellerData = res;
       }
     }, error => {
-      if (error.error.message === "Manufacturer not found") {
-
-      }
-    })
+      console.error('Error fetching wholesaler data:', error);
+    });
   }
+
+  // Get profile visibility data for a manufacturer
   GetProfileVisabilityData() {
-    this.spinner.show()
+    this.spinner.show();
     this.authService.get(`manufacturers/visible-profile/${this.id}`).subscribe((res: any) => {
+      console.log('Received visibility data:', res);
       if (res) {
-        // res.registerOnFTH =res.registerOnFTH ? this.datePipe.transform(res.registerOnFTH, 'yyyy-MM-dd') : null;
         this.allVisabilityData = res;
+
+        // Handle unique products and grouping product types, gender, etc.
         const uniqueValues = {
           productType: new Set<string>(),
           gender: new Set<string>(),
           clothing: new Set<string>(),
           subCategory: new Set<string>()
         };
-        
-        const data = res.uniqueProducts.forEach((product: any) => {
+
+        res.uniqueProducts.forEach((product: any) => {
           uniqueValues.productType.add(product.productType);
           uniqueValues.gender.add(product.gender);
           uniqueValues.clothing.add(product.clothing);
           uniqueValues.subCategory.add(product.subCategory);
         });
-        
+
         this.allVisabilityData.dealingIn = {
           productType: Array.from(uniqueValues.productType).join(', '),
           gender: Array.from(uniqueValues.gender).join(', '),
           clothing: Array.from(uniqueValues.clothing).join(', '),
           subCategory: Array.from(uniqueValues.subCategory).join(', ')
         };
-        this.spinner.hide()
-      
-      } else {
       }
+      this.spinner.hide();
     }, error => {
-      this.spinner.hide()     
-    })
-  }
-
-  openImg(path:any,size:number){
-    const dialogRef = this.dialog.open(ImageDialogComponent, {
-      width: size+'px',
-      data: {path:path,width:size}  // Pass the current product data
+      this.spinner.hide();
+      console.error('Error fetching profile visibility data:', error);
     });
   }
 
+  // Open image in dialog
+  openImg(path: any, size: number) {
+    const dialogRef = this.dialog.open(ImageDialogComponent, {
+      width: size + 'px',
+      data: { path: path, width: size }
+    });
+  }
+
+  // Navigate back to the previous page
   navigateFun() {
     this.location.back();
   }
 
-  // only for view data NotSend request
-  getMnfIdForData(){
-    this.spinner.show()
-    this.authService.get(`manufacturers/${this.email}`).subscribe((res:any)=>{
-      if(res){
-        this.id=res.id
-        this.GetProfileVisabilityData()
-        this.spinner.hide()
+  // Fetch manufacturer data only for view (non-editable)
+  getMnfIdForData() {
+    this.spinner.show();
+    this.authService.get(`manufacturers/${this.email}`).subscribe((res: any) => {
+      if (res) {
+        this.id = res.id;
+        this.GetProfileVisabilityData();
       }
-    })
+      this.spinner.hide();
+    });
   }
 }
-

@@ -5,8 +5,8 @@
   import { AuthService, CommunicationService } from '@core';
   import { AccordionModule } from 'primeng/accordion';
   import { TableModule } from 'primeng/table';
-  import html2canvas from 'html2canvas';
-  import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
   @Component({
     selector: 'app-genratepo',
     standalone: true,
@@ -72,21 +72,21 @@
           console.log(res)
           // Update purchaseOrder from the response
           this.purchaseOrder = {
-            supplierName: res.wholesaler.companyName,
-            supplierDetails: res.wholesaler.fullName,
-            supplierAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
-            supplierContact: `${res.wholesaler.mobNumber}`,
-            supplierGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
-            buyerName: res.retailer.companyName,
-            logoUrl: this.authService.cdnPath + res.retailer.profileImg,
-            buyerAddress: `${res.retailer.address}, ${res.retailer.city}, ${res.retailer.state} - ${res.retailer.pinCode}`,
-            buyerPhone: res.retailer.mobNumber,
-            buyerEmail: res.retailer.email,
-            buyerDetails: res.retailer.fullName,
-            buyerGSTIN: res.retailer.GSTIN || 'GSTIN_NOT_PROVIDED',
+            supplierName: res.manufacturer.companyName,
+            supplierDetails: res.manufacturer.fullName,
+            supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.city}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
+            supplierContact: `${res.manufacturer.mobNumber}`,
+            supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
+            buyerName: res.wholesaler.companyName,
+            logoUrl: this.authService.cdnPath + res.wholesaler.profileImg,
+            buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
+            buyerPhone: res.wholesaler.mobNumber,
+            buyerEmail: res.wholesaler.email,
+            buyerDetails: res.wholesaler.fullName,
+            buyerGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
             poDate: new Date().toLocaleDateString(),
             poNumber: res.poNumber,
-            products: res.set || [],
+            products: res.products || [],
           };
 
           if (res.set && Array.isArray(res.set) && res.set.length > 0) {

@@ -173,8 +173,9 @@
         <button class="add-request-button" (click)="sendRequestToManufacturer()">Request To Add</button>
       </div> -->
        <!-- Request Button -->
-       <div *ngIf="!OnlyForView" class="button-container">
-       <button *ngIf="!RequestDetails" class="btn btn-outline-primary request-btn" (click)="sendRequestToManufacturer()">
+       <!-- *ngIf="!OnlyForView"  -->
+       <div class="button-container">     
+       <button  class="btn btn-outline-primary request-btn" (click)="sendRequestToManufacturer()">
         Request to Add
       </button>
       <button *ngIf="RequestDetails?.status" class="btn btn-outline-primary request-btn" disabled>
