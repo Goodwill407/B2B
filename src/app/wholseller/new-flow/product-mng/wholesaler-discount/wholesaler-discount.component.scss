@@ -1,0 +1,29 @@
+
+.submit-btn {
+    padding-right: 3rem !important;
+    padding-left: 3rem !important;
+    // margin: 2rem !important;
+    background-color: #f0ad4e;
+    color: #fff;
+}
+
+::ng-deep .p-datatable,
+.btn {
+    font-size: 13px !important;
+    /* Set your desired font size */
+}
+
+::ng-deep .p-datatable-header,
+.p-datatable-thead>tr>th,
+.p-datatable-tbody>tr>td {
+    text-align: center;
+    /* Center align text in table headers and cells */
+}
+
+::ng-deep .p-tooltip-text {
+    font-size: 10px !important;
+}
+
+.btn:disabled{
+    border: none !important;
+}
