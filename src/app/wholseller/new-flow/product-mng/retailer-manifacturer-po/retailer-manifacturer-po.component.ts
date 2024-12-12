@@ -179,8 +179,8 @@ export class RetailerManifacturerPoComponent {
   }
 
   // Place Order
-  navigateToProduct(memail: string, wemail: string) {
-    this.router.navigate(['/wholesaler/new/product/getmanpo'], {queryParams:{ memail: memail, wemail: wemail }});
+  navigateToProduct(memail: string, wemail: string, poNumber:number) {
+    this.router.navigate(['/wholesaler/new/product/getmanpo'], {queryParams:{ memail: memail, wemail: wemail, poNumber: poNumber }});
   }
 
   isSizeAvailable(rows: any[], size: string): boolean {
