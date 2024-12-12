@@ -1,44 +1,139 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe, NgStyle } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService, CommunicationService } from '@core';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
-import { AccordionModule } from 'primeng/accordion';
 import { TableModule } from 'primeng/table';
-
+import { AccordionModule } from 'primeng/accordion';
+import { FormsModule } from '@angular/forms';
+import { AuthService, CommunicationService } from '@core';
+import { ChangeDetectorRef } from '@angular/core';
 @Component({
-  selector: 'app-retailer-manifacturer-po',
+  selector: 'app-wholesaler-order-list',
   standalone: true,
   imports: [
     CommonModule,
     FormsModule,
+    // NgStyle,
     RouterModule,
     TableModule,
-    AccordionModule
+    AccordionModule,
+    DatePipe
   ],
-  templateUrl: './retailer-manifacturer-po.component.html',
-  styleUrl: './retailer-manifacturer-po.component.scss'
+  templateUrl: './wholesaler-order-list.component.html',
+  styleUrl: './wholesaler-order-list.component.scss'
 })
-export class RetailerManifacturerPoComponent {
-  products: any[] = [];
-  productssss: any[] = [];
-  userProfile: any;
-  filteredData: any;
-  sizeHeaders: string[] = []; // To hold unique sizes dynamically
-  priceHeaders: { [size: string]: number } = {}; 
+export class WholesalerOrderListComponent {
 
-  constructor(
-    public authService: AuthService,
-    public router: Router,
-    private communicationService: CommunicationService
-  ) {}
+  products: any[] = [];
+  filteredData: any;
+  priceHeaders: any;
+  sizeHeaders: any[] = [];
+  userProfile: any;
+  transportTypes: any = ['By Air', 'By Ship', 'By Road', 'By Courier'];
+  courierCompanies: any = ['FedEx', 'Delhivery', 'BlueDart', 'DHL', 'Shadowfax', 'Aramex Logistics Services', 'India Post', 'DTDC Courier'];
+
+  constructor(public authService: AuthService, private router: Router, private communicationService: CommunicationService, private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.userProfile = JSON.parse(localStorage.getItem('currentUser')!);
     this.getAllProducts(this.userProfile.email);
+    this.getCouriersCompany();
+    // this.postCourierCompany({name:'FedEx'})
   }
+
+
+
+  getCouriersCompany() {
+    this.authService.get('courier').subscribe((data) => {
+      this.courierCompanies = data.results;
+    })
+  }
+
+  postCourierCompany(data: any) {
+    this.authService.post('courier', data).subscribe((data) => {
+      console.log(data);
+    })
+  }
+
+  updateDeliveryQuantity(event: any, distributor: any, product: any): void {
+    const deliveryQuantity = event.target.value;
+    product.deliveryQty = deliveryQuantity;
+    this.updateTotals(distributor);
+    this.cd.detectChanges();
+  }
+
+  updateTotals(distributor: any): void {
+    distributor.subTotal = distributor.products.reduce((sum: number, product: any) => sum + (product.deliveryQty * product.rate), 0);
+    // Check if discount is defined and is an array
+    if (Array.isArray(distributor.discounts) && distributor.discounts.length > 0) {
+      const discountPercentage = Number(distributor.discounts[0].productDiscount.replace('%', '')) / 100;
+      distributor.discount = (distributor.subTotal * discountPercentage).toFixed(2);
+    } else {
+      distributor.discount = 0;
+    }
+
+    distributor.gst = Number((distributor.subTotal * 0.18).toFixed(2));
+    distributor.grandTotal = (distributor.subTotal - distributor.discount) + Number(distributor.gst);
+  }
+
+  onTransportTypeChange(distributor: any): void {
+    // Reset dependent fields when transport type changes
+    distributor.transportCompany = '';
+    distributor.lorryReceiptNo = '';
+    distributor.vehicleNo = '';
+    distributor.receiptNo = '';
+    distributor.courierCompany = '';
+    distributor.otherCompanyName = '';
+  }
+
+  validateShippingDetails(distributor: any): boolean {
+    let isValid = true;
+
+    if (!distributor.transportType) {
+      isValid = false;
+      this.communicationService.showNotification('snackbar-dark', 'Please select a transport type.', 'bottom', 'center')
+    } else if (distributor.transportType === 'By Road') {
+      if (!distributor.transportCompany || !distributor.lorryReceiptNo || !distributor.vehicleNo) {
+        isValid = false;
+        this.communicationService.showNotification('snackbar-dark', 'Please fill in all the fields for "By Road".', 'bottom', 'center')
+      }
+    } else if (distributor.transportType === 'By Air' || distributor.transportType === 'By Ship') {
+      if (!distributor.transportCompany || !distributor.receiptNo) {
+        isValid = false;
+        this.communicationService.showNotification('snackbar-dark', 'Please fill in all the fields for "Company " or "Receipt No".', 'bottom', 'center')
+      }
+    } else if (distributor.transportType === 'By Courier') {
+      if (!distributor.courierCompany || (!distributor.otherCompanyName && distributor.courierCompany === 'Other') || !distributor.trackingNo) {
+        isValid = false;
+        this.communicationService.showNotification('snackbar-dark', 'Please fill in all the fields for "By Courier".', 'bottom', 'center')
+      }
+    }
+
+    return isValid;
+  }
+
+  deliveryChallan(obj: any) {
+    if (this.validateShippingDetails(obj)) {
+      const serializedProduct = JSON.stringify(obj);
+      this.router.navigate(['/mnf/delivery-challan'], {
+        queryParams: { product: serializedProduct, email: this.userProfile.email }
+      });
+    }
+  }
+
+  onCourierCompanyChange(distributor: any): void {
+    if (distributor.courierCompany !== 'Other') {
+      distributor.otherCompanyName = '';
+    }
+  }
+
+  addOtherCompany(companyName: string): void {
+    if (companyName && !this.courierCompanies.includes(companyName)) {
+      this.postCourierCompany({ name: companyName });
+    }
+  }
+
+
+  ///  coyed component 
 
   totalGrandTotal: number = 0;
   gst: number = 0;
@@ -46,14 +141,12 @@ export class RetailerManifacturerPoComponent {
 
   // Fetch products from backend
   getAllProducts(email: string) {
-    const url = `retailer-purchase-order-type2/purchase-orders/wholesaler-email/combined-order?wholesaleremail=${email}`;
+    const url = `type2-purchaseorder/getby/supplier?supplierEmail=${email}`;
     this.authService.get(url).subscribe(
       (res: any) => {
-        if (res) {
+        if (res ) {
           this.products = res;
-          this.productssss = res;
-          console.log(res)
-          this.filteredData = this.products.find((product) => product.wholesaler.fullName);
+          this.filteredData = this.products.find((product) => product.manufacturer.fullName);
           if (this.filteredData && Array.isArray(this.filteredData.set)) {
             this.extractSizesAndPrices(this.filteredData.set); // Extract sizes and prices
           } else {
@@ -179,82 +272,25 @@ export class RetailerManifacturerPoComponent {
   }
 
   // Place Order
-  navigateToProduct(memail: string, wemail: string, poNumber:number) {
-    this.router.navigate(['/wholesaler/new/product/getmanpo'], {queryParams:{ memail: memail, wemail: wemail, poNumber: poNumber }});
+  placeOrder(prod: any) {
+    console.log(prod);
+
+    // Ensure distributor and _id exist
+    if (!prod || !prod._id) {
+        console.error('No distributor ID found:', prod);
+        return;
+    }
+
+    // Send the distributor ID to the OrderService if needed
+    this.authService.setOrderData({ distributorId: prod._id });
+
+    // Navigate to the place-order page with the distributor ID as a route parameter
+    this.router.navigate(['wholesaler/new/product/viewpo', prod._id]);
   }
 
   isSizeAvailable(rows: any[], size: string): boolean {
     return rows.some(row => row.quantities[size] > 0);  // Check if any row has a quantity greater than 0 for the given size
   }
 
-  
-  printPurchaseOrder(): void {
-    const data = document.getElementById('purchase-order');
-    if (data) {
-      html2canvas(data, {
-        scale: 3,  // Adjust scale for better quality
-        useCORS: true,
-      }).then((canvas) => {
-        const imgWidth = 208;  // A4 page width in mm
-        const pageHeight = 295;  // A4 page height in mm
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        let heightLeft = imgHeight;
-  
-        const contentDataURL = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');  // Create new PDF
-        const margin = 10;  // Margin for PDF
-        let position = margin;
-  
-        // Add first page
-        pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
-        heightLeft -= pageHeight;
-  
-        // Loop over content to add remaining pages if content exceeds one page
-        while (heightLeft > 0) {
-          pdf.addPage();  // Add new page
-          position = margin - heightLeft;  // Position for the next page
-          pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
-          heightLeft -= pageHeight;
-        }
-  
-        // Save PDF file
-        pdf.save('purchase-order.pdf');
-      }).catch((error) => {
-        console.error("Error generating PDF:", error);
-      });
-    } else {
-      console.error("Element with id 'purchase-order' not found.");
-    }
-  }
-
-  addpo() {
-    const cartBody = { ...this.productssss };
-  
-    // Loop over each item in the array (this.productsss is already an array)
-    this.productssss.forEach((item: any) => {
-      // Here, 'item' is a single element of your array, no need for Object.values(res)
-      const content = {
-        set: item.set,
-        email: item.email,
-        cartAddedDate: item.cartAddedDate,
-        manufacturer: item.manufacturer,
-        poNumber: item.poNumber,
-        productBy: item.productBy,
-        retailerPOs: item.retailerPOs,
-        wholesaler: item.wholesaler
-      };
-  
-      // Send each content as a separate request
-      this.authService.post('type2-purchaseorder', content).subscribe(
-        (response) => {
-          // Handle success for each item
-          this.communicationService.customSuccess('Product Successfully Added in Cart');
-        },
-        (error) => {
-          // Handle error for each request
-          this.communicationService.customError1(error.error.message);
-        }
-      );
-    });
-  }
 }
+

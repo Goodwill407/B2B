@@ -10,6 +10,7 @@ import { EditPriceComponent } from "./manufaturer-list2/manufatures-product2/edi
 import { RetailorPoComponent } from "./retailor-po/retailor-po.component";
 import { RetailorPoGenComponent } from "./retailor-po/retailor-po-gen/retailor-po-gen.component";
 import { WholesalerDiscountComponent } from "./wholesaler-discount/wholesaler-discount.component";
+import { ReMaPoShowComponent } from "./retailer-manifacturer-po/re-ma-po-show/re-ma-po-show.component";
 
 
 export const ProductMng:Route[]=[
@@ -23,6 +24,7 @@ export const ProductMng:Route[]=[
     {path: 'add-to-cart', component: CartProduct2Component},
     {path: 'viewpo/:id', component: GenratepoComponent },
     {path: 'wholesaler-discount', component: WholesalerDiscountComponent},
+    {path: 'getmanpo', component: ReMaPoShowComponent },
   
 
     // {path: 'ordered-products', component:OrderedProductComponent},

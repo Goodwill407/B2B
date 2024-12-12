@@ -1,0 +1,63 @@
+::ng-deep .p-datatable {
+    font-size: 12px;
+}
+
+::ng-deep .p-datatable-header,
+.p-datatable-thead>tr>th,
+.p-datatable-tbody>tr>td {
+    text-align: center;
+}
+
+::ng-deep .p-accordion .p-accordion-content {
+    padding: 1.25rem 0.5rem;
+    border: 1px solid #e5e7eb;
+}
+
+input,
+select,
+.totals,
+.form-control,
+.form-select {
+    font-size: 12px;
+    padding: 5px;
+    font-family: inherit;
+}
+
+.form-control,
+.form-select {
+    font-size: 13px !important;
+    color: inherit !important;
+}
+
+.totals {
+    p {
+        font-size: 13px;
+        font-weight: bold;
+        color: inherit !important;
+        margin-bottom: 2px;
+    }
+}
+
+.card {
+    height: 80vh;
+    padding: 1em;
+
+    .form-control {
+        border: 1px solid !important;
+        border-color: #d2d4d8 !important;
+    }
+
+    .btn-success {
+        height: 44px !important;
+    }
+}
+
+.header-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 250px;
+    align-items: center;
+    :last-child{
+       align-items: end;
+    }
+}
