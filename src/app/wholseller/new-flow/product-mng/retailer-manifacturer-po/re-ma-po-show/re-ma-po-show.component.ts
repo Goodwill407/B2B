@@ -39,6 +39,7 @@ export class ReMaPoShowComponent {
   responseData: any; // New variable to store response data
   distributorId: string = '';
   distributorId2: string = '';
+  pono: string = '';
   products: any[] = [];
   userProfile: any;
   filteredData: any;
@@ -61,6 +62,7 @@ export class ReMaPoShowComponent {
   ngOnInit(): void {
     this.distributorId = this.route.snapshot.queryParamMap.get('memail') ?? '';
     this.distributorId2 = this.route.snapshot.queryParamMap.get('wemail') ?? '';
+    this.pono = this.route.snapshot.queryParamMap.get('poNumber') ?? '';
     this.userProfile = JSON.parse(localStorage.getItem('currentUser')!);
     this.getAllProducts();
   }
