@@ -14,13 +14,14 @@ import { CategoryComponent } from "./category/category.component";
 import { WholselersRequestsComponent } from "./wholselers-requests/wholselers-requests.component";
 import { RejectedRequestsListComponent } from "./wholselers-requests/rejected-requests-list/rejected-requests-list.component";
 import { WholselerDetailsViewComponent } from "./wholselers-requests/wholseler-details-view/wholseler-details-view.component";
-import { WlsListPoComponent } from "./order-management/wls-list-po/wls-list-po.component";
+// import { WlsListPoComponent } from "./order-management/wls-list-po/wls-list-po.component";
 import { DeliveryChallanComponent } from "./order-management/delivery-challan/delivery-challan.component";
 import { CustomiseProfileComponent } from "./profile/customise-profile/customise-profile.component";
 import { InventryStockComponent } from "./product-manager/inventry-stock/inventry-stock.component";
 import { PreviewProfileComponent } from "./profile/customise-profile/preview-profile/preview-profile.component";
 import { ProductSummaryComponent } from "./product-manager/inventry-stock/product-summary/product-summary.component";
 import { AddNewProduct2Component } from "./product-manager/add-new-product2/add-new-product2.component";
+import { WholesalerOrderListComponent } from "./new-flow/order-managment/wholesaler-order-list/wholesaler-order-list.component";
 
 
 export const M_Auth: Route[] = [
@@ -43,9 +44,10 @@ export const M_Auth: Route[] = [
     { path: 'wholselers-Requests', component: WholselersRequestsComponent },
     { path: 'Rejected-Requests', component: RejectedRequestsListComponent },
     { path: 'Wholseler-Details', component: WholselerDetailsViewComponent },
-    { path: 'wls-list', component: WlsListPoComponent },
+    { path: 'wls-list', component: WholesalerOrderListComponent },
     { path: 'delivery-challan', component: DeliveryChallanComponent },
     { path: 'customise_profile', component: CustomiseProfileComponent },
     { path: 'preview-profile', component: PreviewProfileComponent },
     { path: 'product-summary', component: ProductSummaryComponent },
+
 ]
