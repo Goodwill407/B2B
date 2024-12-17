@@ -22,6 +22,9 @@ import { PreviewProfileComponent } from "./profile/customise-profile/preview-pro
 import { ProductSummaryComponent } from "./product-manager/inventry-stock/product-summary/product-summary.component";
 import { AddNewProduct2Component } from "./product-manager/add-new-product2/add-new-product2.component";
 import { WholesalerOrderListComponent } from "./new-flow/order-managment/wholesaler-order-list/wholesaler-order-list.component";
+import { ViewWholsalerOrderComponent } from "./new-flow/order-managment/view-wholsaler-order/view-wholsaler-order.component";
+import { GenWholsalerOrderPoComponent } from "./new-flow/order-managment/view-wholsaler-order/gen-wholsaler-order-po/gen-wholsaler-order-po.component";
+import { GenDlvChallanComponent } from "./new-flow/order-managment/view-wholsaler-order/gen-dlv-challan/gen-dlv-challan.component";
 
 
 export const M_Auth: Route[] = [
@@ -44,7 +47,9 @@ export const M_Auth: Route[] = [
     { path: 'wholselers-Requests', component: WholselersRequestsComponent },
     { path: 'Rejected-Requests', component: RejectedRequestsListComponent },
     { path: 'Wholseler-Details', component: WholselerDetailsViewComponent },
-    { path: 'wls-list', component: WholesalerOrderListComponent },
+    { path: 'wls-list', component: ViewWholsalerOrderComponent },
+    { path: 'wls-list-po', component: GenWholsalerOrderPoComponent },
+    { path: 'wls-list-po2', component: GenDlvChallanComponent },
     { path: 'delivery-challan', component: DeliveryChallanComponent },
     { path: 'customise_profile', component: CustomiseProfileComponent },
     { path: 'preview-profile', component: PreviewProfileComponent },
