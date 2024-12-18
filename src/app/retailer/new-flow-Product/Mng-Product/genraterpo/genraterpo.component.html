@@ -3,47 +3,45 @@
       <h4 class="mt-4">
         <i class="bi bi-person-vcard-fill h3"></i> Generate Purchase Order
       </h4>
+
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-success"  (click)="printPO()">Download PDF</button>
+      </div>
   
       <div id="purchase-order" class="challan-container card my-2">
         <div class="header">
           <div class="logo">
             <img [src]="purchaseOrder.logoUrl" alt="Company Logo" />
           </div>
-          <div class="company-info ms-4">
-            <h1>{{ purchaseOrder.buyerName }}</h1>
+
+             <!-- Buyer Information Container -->
+          <div class="buyer-info">
+            <h5>From -</h5>
+            <p>{{ purchaseOrder.buyerName }}</p>
             <p>{{ purchaseOrder.buyerDetails }}</p>
             <p>{{ purchaseOrder.buyerAddress }}</p>
             <p>{{ purchaseOrder.buyerPhone }}</p>
             <p class="mb-2"><b>GSTIN : {{ purchaseOrder.buyerGSTIN }}</b></p>
           </div>
+
+             <!-- Seller Information Container -->
+             <div class="seller-info">
+              <h5>To -</h5>
+              <p>{{ purchaseOrder.supplierName }}</p>
+              <p>{{ purchaseOrder.supplierEmail }}</p>
+              <p>{{ purchaseOrder.supplierAddress }}</p>
+              <p>{{ purchaseOrder.supplierContact }}</p>
+              <p class="mb-2"><b>GSTIN : {{ purchaseOrder.supplierGSTIN }}</b></p>
+              <p><strong>PO Number :</strong> <span><b>{{ purchaseOrder.poNumber }}</b></span></p>
+              <p><strong>PO Date :</strong> <span><b>{{ purchaseOrder.poDate }}</b></span></p>
+            </div>
         </div>
   
         <section class="gstin my-0">
           <h2>PURCHASE ORDER</h2>
         </section>
         <hr class="my-1">
-        <div class="text-center">
-          <h5 class="mb-0"><u>SUPPLIER DETAILS</u></h5>
-        </div>
-  
-        <section class="customer-details">
-          <div class="customer-info">
-            <p><strong>Supplier :</strong> <span>{{ purchaseOrder.supplierName }}</span></p>
-            <p><strong>Address :</strong> <span>{{ purchaseOrder.supplierAddress }}</span></p>
-            <p><strong>Phone :</strong> <span>{{ purchaseOrder.supplierContact }}</span></p>
-            <p><strong>Email :</strong> <span>{{ purchaseOrder.supplierEmail }}</span></p>
-            <p><strong>GSTIN :</strong> <span>{{ purchaseOrder.supplierGSTIN }}</span></p>
-          </div>
-          <div class="challan-info">
-            <p><strong>PO Number :</strong> <span><b>{{ purchaseOrder.poNumber }}</b></span></p>
-            <p><strong>PO Date :</strong> <span>{{ purchaseOrder.poDate }}</span></p>
-          </div>
-        </section>
-  
-        <div class="text-center">
-          <h5 class="mb-0"><u>ORDER DETAILS</u></h5>
-        </div>
-        <hr class="my-1">
+
         <section class="order-details">
           <div *ngIf="mergedProducts && mergedProducts.length > 0">
             <p-table [value]="mergedProducts" class="bordered-table">
@@ -63,13 +61,7 @@
                 <tr>
                   <td>{{ row.designNumber }}</td>
                   <td>
-                    <img *ngIf="row.colourImage"
-                         [src]="'https://lmscontent-cdn.blr1.digitaloceanspaces.com' + row.colourImage"
-                         alt="Colour Image" width="50" height="50" />
-                    <span *ngIf="!row.colourImage"
-                          [ngStyle]="{ 'background-color': row.colour || '#ffffff' }"
-                          style="width: 50px; height: 50px; display: inline-block; text-align: center; line-height: 50px; color: #fff; border-radius: 4px;">
-                    </span>
+                    {{row.colourName}}
                   </td>
                   <td *ngFor="let size of sizeHeaders">
                     {{ row.quantities[size] > 0 ? row.quantities[size] : 'N/A' }}
@@ -81,17 +73,17 @@
               <!-- Footer Row for Subtotal, GST, and Grand Total under Size 2 -->
               <ng-template pTemplate="footer">
                 <tr [ngStyle]="{'background-color': 'white'}">
-                  <td colspan="5" style="border: none;"></td> <!-- Empty cells to align totals under Size 2 -->
+                  <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td> <!-- Empty cells to align totals under Size 2 -->
                   <td style="text-align: right; font-weight: bold;">Subtotal:</td>
                   <td>{{ Totalsub | currency: 'INR' }}</td>
                 </tr>
                 <tr [ngStyle]="{'background-color': 'white'}">
-                  <td colspan="5" style="border: none;"></td> <!-- Empty cells to align totals under Size 2 -->
+                  <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td> <!-- Empty cells to align totals under Size 2 -->
                   <td style="text-align: right; font-weight: bold;">GST (18%):</td>
                   <td>{{ gst | currency: 'INR' }}</td>
                 </tr>
                 <tr [ngStyle]="{'background-color': 'white'}">
-                  <td colspan="5" style="border: none;"></td> <!-- Empty cells to align totals under Size 2 -->
+                  <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td> <!-- Empty cells to align totals under Size 2 -->
                   <td style="text-align: right; font-weight: bold;">Grand Total:</td>
                   <td>{{ totalGrandTotal | currency: 'INR' }}</td>
                 </tr>
@@ -102,9 +94,8 @@
           </div>
         </section>
         
-        
-        
       </div>
+
   
       <div class="row">
         <div class="col-12">
@@ -115,4 +106,6 @@
       </div>
     </div>
   </section>
+  
+
   

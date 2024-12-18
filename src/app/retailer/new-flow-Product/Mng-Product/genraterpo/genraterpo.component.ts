@@ -5,6 +5,8 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import { AccordionModule } from 'primeng/accordion';
 import { TableModule } from 'primeng/table';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-genraterpo',
@@ -268,6 +270,45 @@ export class GenraterpoComponent {
     return flatList;
 }
 
+
+printPO(): void {
+  const data = document.getElementById('purchase-order');
+  if (data) {
+    html2canvas(data, {
+      scale: 3,  // Adjust scale for better quality
+      useCORS: true,
+    }).then((canvas) => {
+      const imgWidth = 208;  // A4 page width in mm
+      const pageHeight = 295;  // A4 page height in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+
+      const contentDataURL = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');  // Create new PDF
+      const margin = 10;  // Margin for PDF
+      let position = margin;
+
+      // Add first page
+      pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
+      heightLeft -= pageHeight;
+
+      // Loop over content to add remaining pages if content exceeds one page
+      while (heightLeft > 0) {
+        pdf.addPage();  // Add new page
+        position = margin - heightLeft;  // Position for the next page
+        pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      // Save PDF file
+      pdf.save('purchase-order.pdf');
+    }).catch((error) => {
+      console.error("Error generating PDF:", error);
+    });
+  } else {
+    console.error("Element with id 'purchase-order' not found.");
+  }
+}
 
   
 }

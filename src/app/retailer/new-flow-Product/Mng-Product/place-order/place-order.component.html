@@ -1,0 +1,149 @@
+<section class="content">
+    <div class="content-block">
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> {{isNewPO?'Generate PO':'PO List'}}</h4>
+        @if(showFlag){
+        <!-- <h4 class="mt-3 flex-grow-1" > -->
+            <div class="m-0 p-0 d-flex align-items-center">
+                <button class="btn text-start" (click)="getAllData()" *ngIf="!isNewPO">
+                    <i class="bi bi-arrow-left-circle h4"></i>
+                </button>
+                <button class="btn btn-success ms-auto" (click)="printPurchaseOrder()">Download Purchase Order</button>
+            </div>
+        <!-- </h4> -->
+        <div class="text-end">
+        </div>
+        <div id="purchase-order" class="challan-container card my-2">
+            <div class="header">
+                <div class="logo">
+                    <img [src]="purchaseOrder.logoUrl" alt="Company Logo">
+                </div>
+                <div class="company-info ms-4">
+                    <h1>{{ purchaseOrder.buyerName }}</h1>
+                    <p>{{ purchaseOrder.buyerDetails }}</p>
+                    <p>{{ purchaseOrder.buyerAddress }}</p>
+                    <p>{{ purchaseOrder.buyerPhone }}</p>
+                    <p class="mb-2"><b>GSTIN : {{ purchaseOrder.buyerGSTIN }}</b></p>
+                </div>
+            </div>
+
+            <section class="gstin my-0">
+                <h2>PURCHASE ORDER</h2>
+            </section>
+            <hr class="my-1">
+            <div class="text-center">
+                <h5 class="mb-0"><u>SUPPLIER DETAILS</u></h5>
+            </div>
+
+            <section class="customer-details">
+                <div class="customer-info">
+                    <p><strong>Supplier :</strong> <span>{{ purchaseOrder.supplierName }}</span></p>
+                    <p><strong>Address :</strong> <span>{{ purchaseOrder.supplierAddress }}</span></p>
+                    <p><strong>Phone :</strong> <span>{{ purchaseOrder.supplierContact }}</span></p>
+                    <p><strong>Email :</strong> <span>{{ purchaseOrder.supplierEmail }}</span></p>
+                    <p><strong>GSTIN :</strong> <span>{{ purchaseOrder.supplierGSTIN }}</span></p>
+                </div>
+                <div class="challan-info">
+                    <p><strong>PO Number :</strong> <span><b>{{purchaseOrder.poNumber}}</b></span></p>
+                    <p><strong>PO Date :</strong> <span>{{purchaseOrder.poDate}}</span></p>
+                </div>
+            </section>
+
+            <div class="text-center">
+                <h5 class="mb-0"><u>ORDER DETAILS</u></h5>
+            </div>
+            <hr class="my-1">
+
+            <section class="order-details">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Sr. No.</th>
+                            <th>Design No.</th>
+                            <th>Design Title</th>
+                            <th>Quantity</th>
+                            <th>MRP</th>
+                            <th>Rate</th>
+                            <th>Taxable Value</th>
+                            <th>GST</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let product of purchaseOrder.products">
+                            <td>{{ product.srNo }}</td>
+                            <td>{{ product.designNo }}</td>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.qty }}</td>
+                            <td>{{ product.mrp }}</td>
+                            <td>{{ product.rate }}</td>
+                            <td>{{ product.taxableValue }}</td>
+                            <td>{{ product.gst }}</td>
+                            <td>{{ product.total }}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="6" class="text-end">Total Amount</th>
+                            <th>{{ purchaseOrder.totalRate }}</th>
+                            <th>{{ purchaseOrder.totalGST }}</th>
+                            <th>{{ purchaseOrder.totalAmount }}</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </section>
+
+            <section class="totals">
+                <div class="total-amount">
+                    <p><strong>Total Amount After Tax : </strong> <span>{{ purchaseOrder.totalAmount }}</span></p>
+                    <p><strong>Roundoff Total Amount : </strong> <span>{{ purchaseOrder.roundedOffTotal }}</span></p>
+                    <p><strong>Total Amount in Words : </strong> <span>{{ purchaseOrder.totalInWords }}</span></p>
+                </div>
+            </section>
+
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center my-3" *ngIf="isNewPO">
+                    <button class="btn btn-success" (click)="generatePO(purchaseOrder)">Generate Purchase Order</button>
+                </div>
+            </div>
+        </div>
+        }
+        @else {
+        <div class="card mt-3 p-4">
+            <div class="p-grid p-fluid">
+                <div class="p-col-12 text-center">
+                    <p-table [value]="tableData">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Manufacturer's Name</th>
+                                <th>Company Name</th>
+                                <th>Email</th>
+                                <th>PO Number</th>
+                                <!-- <th>PO Date</th> -->
+                                <th>View</th>
+
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-data>
+                            <tr>
+                                <td class="text-center">{{data.supplierDetails }}</td>
+                                <td class="text-center">{{data.supplierName}}</td>
+                                <td class="text-center">{{data.supplierEmail}}</td>
+                                <td class="text-center">{{data.poNumber}}</td>
+                                <!-- <td class="text-center">{{data.poDate}}</td> -->
+                                <td class="text-center"><button (click)="patchData(data)" class="btn"><i
+                                            class="bi bi-eye h5"></i></button></td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    <span *ngIf="!tableData || tableData.length == 0"
+                        class="data-not-found d-flex justify-content-center align-items-center"> </span>
+                    <p-paginator *ngIf="tableData && tableData.length > 0" (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
+                        [totalRecords]="totalResults" [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</section>

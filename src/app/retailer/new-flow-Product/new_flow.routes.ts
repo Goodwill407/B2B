@@ -8,6 +8,8 @@ import { CartProduct2RetailerComponent } from "./Mng-Product/cart-product2-retai
 import { GenraterpoComponent } from "./Mng-Product/genraterpo/genraterpo.component";
 import { WishlistProduct2Component } from "./Mng-Product/product-management/wishlist-product2/wishlist-product2.component";
 import { ViewDetailWishlistComponent } from "./Mng-Product/product-management/wishlist-product2/view-detail-wishlist/view-detail-wishlist.component";
+import { ViewRetailerpoComponent } from "./Mng-Product/view-retailerpo/view-retailerpo.component";
+import { RetailerpoGenerateComponent } from "./Mng-Product/view-retailerpo/retailerpo-generate/retailerpo-generate.component";
 
 
 export const NewFlow:Route[]=[
@@ -18,6 +20,8 @@ export const NewFlow:Route[]=[
     {path:'cart-product2-retailer', component:CartProduct2RetailerComponent},
     {path:'poretailor/:id', component:GenraterpoComponent},
     {path:'wishlist-product2', component:WishlistProduct2Component},
-    {path:'wishlistproducts', component:ViewDetailWishlistComponent}
+    {path:'wishlistproducts', component:ViewDetailWishlistComponent},
+    {path:'view-retailerpo',component:ViewRetailerpoComponent},
+    {path:'retailerpo-generate',component:RetailerpoGenerateComponent}
     
 ]

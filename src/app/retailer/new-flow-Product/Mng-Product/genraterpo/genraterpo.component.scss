@@ -8,14 +8,10 @@
 
 .header {
     display: flex;
+    align-items: flex-start;
     justify-content: space-between;
-    border-bottom: 2px solid #000;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    p{
-        font-size: small;
-        margin: -5px 2px !important;
-    }
+    padding: 20px;
+    border-bottom: 2px solid #ccc;
 }
 
 .company-info {
@@ -44,7 +40,7 @@
 
 .gstin {
     text-align: center;
-    margin: 10px 0;
+    margin: 30px 0;
     font-weight: bold;
 }
 
@@ -234,5 +230,55 @@ p-table {
   
   .p-datatable-tfoot tr {
     background-color: white !important;
+  }
+  .logo img {
+    max-width: 150px;
+    height: auto;
+}
+
+/* Buyer Information Section */
+.buyer-info {
+    max-width: 40%;
+    margin-left: 20px;
+}
+
+/* Seller Information Section */
+.seller-info {
+    max-width: 40%;
+    margin-left: 20px;
+}
+
+/* Styling for text */
+h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+p {
+    margin: 5px 0;
+}
+
+strong {
+    font-weight: bold;
+}
+
+.mb-2 {
+    margin-bottom: 10px;
+}
+
+
+@media print {
+    body * {
+      visibility: hidden;
+    }
+    #purchase-order, #purchase-order * {
+      visibility: visible;
+    }
+    #purchase-order {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+    }
   }
   

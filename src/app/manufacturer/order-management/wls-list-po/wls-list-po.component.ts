@@ -13,7 +13,7 @@ import { ChangeDetectorRef } from '@angular/core';
   imports: [
     CommonModule,
     FormsModule,
-    NgStyle,
+    // NgStyle,
     RouterModule,
     TableModule,
     AccordionModule,

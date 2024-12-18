@@ -582,6 +582,18 @@ export const ROUTES: RouteInfo[] = [
         role: [''],
         submenu: [],
       },      
+      {
+        path: '/retailer/new/view-retailerpo',
+        title: 'Retailer PO',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
     ],
   },
   {
@@ -1728,6 +1740,18 @@ export const ROUTES2: RouteInfo[] = [
         role: [''],
         submenu: [],
       },      
+      {
+        path: '/retailer/new/view-retailerpo',
+        title: 'Retailer PO',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
     ],
   },
   {
@@ -1841,6 +1865,18 @@ export const ROUTES2: RouteInfo[] = [
     role: ['wholesaler'],
     submenu: []
   },  
+  {
+    path: '/wholesaler/new/product/wholesaler-discount',
+    title: `Wholesaler Discount`,
+    iconType: 'material-icons-outlined',
+    icon: 'view_timeline',
+    class: '',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['wholesaler'],
+    submenu: []
+  },   
   {
     path: '',
     title: `Retailer's Management`,
