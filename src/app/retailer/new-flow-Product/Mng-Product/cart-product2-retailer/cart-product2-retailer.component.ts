@@ -24,7 +24,7 @@ export class CartProduct2RetailerComponent {
   filteredData: any;
   sizeHeaders: string[] = []; // To hold unique sizes dynamically
   priceHeaders: { [size: string]: number } = {}; 
-
+  groupedByWholesaler: any[] = [];
   constructor(
     public authService: AuthService,
     private router: Router,
@@ -47,7 +47,8 @@ export class CartProduct2RetailerComponent {
       (res: any) => {
         if (res && res.results) {
           this.products = res.results;
-          this.filteredData = this.products.find((product) => product.wholesaler.fullName);
+          
+          this.filteredData = this.products.find((product) => product.wholesaler.email);
           if (this.filteredData && Array.isArray(this.filteredData.set)) {
             this.extractSizesAndPrices(this.filteredData.set); // Extract sizes and prices
           } else {
@@ -193,5 +194,38 @@ export class CartProduct2RetailerComponent {
   isSizeAvailable(rows: any[], size: string): boolean {
     return rows.some(row => row.quantities[size] > 0);  // Check if any row has a quantity greater than 0 for the given size
   }
+
+  groupProductsByWholesaler(products: any[]): void {
+    const grouped: { [wholesalerEmail: string]: any } = {};
+
+    products.forEach((product) => {
+        const wholesalerEmail = product.wholesaler.email;
+        const manufacturerId = product.manufacturerId; // Assuming manufacturerId is available
+
+        if (!grouped[wholesalerEmail]) {
+            grouped[wholesalerEmail] = {
+                name: product.wholesaler.fullName,
+                email: wholesalerEmail,
+                manufacturers: {} // Nested grouping by manufacturer
+            };
+        }
+
+        if (!grouped[wholesalerEmail].manufacturers[manufacturerId]) {
+            grouped[wholesalerEmail].manufacturers[manufacturerId] = [];
+        }
+
+        grouped[wholesalerEmail].manufacturers[manufacturerId].push(product);
+    });
+
+    // Convert to array for iteration in the template
+    this.groupedByWholesaler = Object.keys(grouped).map((key) => ({
+        wholesaler: grouped[key],
+        manufacturers: Object.keys(grouped[key].manufacturers).map((manKey) => ({
+            manufacturerId: manKey,
+            products: grouped[key].manufacturers[manKey]
+        }))
+    }));
+}
+
 }
 
