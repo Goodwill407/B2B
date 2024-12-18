@@ -90,7 +90,7 @@ export class SidebarComponent extends UnsubscribeOnDestroyAdapter implements OnI
       }, (error) => {
         this.userImg = 'assets/images/user/person.png';
       });
-      if (this.authService.currentUserValue.userCategory == 'setWise') {
+      if (this.authService.currentUserValue.userCategory == 'setwise') {
         this.sidebarItems = ROUTES.filter(
           (x) => x.role.indexOf(userRole) !== -1 || x.role.indexOf('All') !== -1
         );

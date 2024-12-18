@@ -31,7 +31,9 @@ export class ViewProduct2Component {
   stepThree!: FormGroup;
   selectedSizes: any[] = [];
   colourCollections: any[] = [];
-
+  designno:any;
+  Prodnum:any;
+  
   ngOnInit(): void {
     this.stepThree = this.fb.group({});
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
@@ -40,17 +42,19 @@ export class ViewProduct2Component {
       this.ProductId = id;
       if (id) {
         this.getProductDetails(id);
-        this.checkWishlist()
+        // this.checkWishlist()
       }
     });
   }
 
   getProductDetails(id: any) {
     this.authService.get('type2-products/' + id).subscribe((res: any) => {
+      this.designno = res.designNumber;
       if (res) {
         this.product = {
           brand: res.brand,
-          designNumber: res.designNumber,
+          designNumber: this.designno,
+        
           clothingType: res.clothing,
           subCategory: res.subCategory,
           gender: res.gender,
@@ -139,34 +143,36 @@ export class ViewProduct2Component {
   }
   
   async saveStepThree() {    
-
     if (this.stepThree.valid) {
       const formData = this.stepThree.value;
       const result: any[] = [];
-
+  
       this.colourCollections.forEach((color: any) => {
         const sanitizedColorName = this.sanitizeControlName(color.name);
         this.selectedSizes.forEach((size: any) => {
           const quantity = formData[`${sanitizedColorName}_${size.size}`];
           if (quantity) {
             result.push({
+              
               colourName: color.name,
               colourImage: color.image,
               colour: color.hex,
               quantity,
               ...size,
+              designNumber: this.designno, // Use the class-level design number here
             });
           }
         });
       });
-
+  
       const payload = {
         set: result,
         productId: this.product.id,
         email: this.authService.currentUserValue.email,
         productBy: this.product.productBy
+       
       };
-
+  
       try {
         const res = await this.authService.post('type2-cart', payload).toPromise();
         if (res) {
@@ -175,7 +181,7 @@ export class ViewProduct2Component {
       } catch (error) {
         this.communicationService.customError1('Error occurred while saving...!!!');
       } finally {
-       
+        // Cleanup if needed
       }
     }
   }

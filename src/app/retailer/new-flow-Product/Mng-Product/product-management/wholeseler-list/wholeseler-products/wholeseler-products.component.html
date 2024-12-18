@@ -1,0 +1,101 @@
+<section class="content">
+    <div class="content-block">
+      <h4 class="mt-4">View Products</h4>
+      <div class="ads-flex">
+        <div class="flex-grow-1">
+      <div class="card p-4">
+        <div class="search-bar">
+          <select name="" class="form-select" [(ngModel)]="filters.brand">
+            <option value="">Select Brand</option>
+            <option *ngFor="let brand of allBrand" [value]="brand.brandName">{{brand.brandName}}</option>
+          </select>
+          <select class="form-select" [(ngModel)]="filters.productType" placeholder="Product Type">
+            <option value="">Select Product Type</option>
+            <option *ngFor="let type of allProductType" [value]="type.name">{{ type.name }}</option>
+          </select>
+          <select name="" class="form-select" [(ngModel)]="filters.gender" (change)="getCategoryByProductTypeAndGender()">
+            <option value="">Select Gender</option>
+            <option *ngFor="let gender of allGender" [value]="gender">{{gender}}</option>
+          </select>
+          <select name="" class="form-select" [(ngModel)]="filters.category" (change)="getSubCategoryBYProductType_Gender_and_Category()">
+            <option value="">Select category</option>
+            <option *ngFor="let category of allcategory" [value]="category">{{category}}</option>
+          </select>
+          <select name="" class="form-select" [(ngModel)]="filters.subCategory">
+            <option value="">Select Sub-Category</option>
+            <option *ngFor="let subCategory of allSubCategory" [value]="subCategory">{{subCategory}}</option>
+          </select>
+          <button class="btn btn-info" (click)="getAllProducts()">Display</button>
+        </div>
+        <hr>
+        <div class="cards-container">
+          <div *ngFor="let product of products" class="product-card" (mouseenter)="onMouseEnter(product)" (mouseleave)="onMouseLeave(product)">
+            
+            <!-- Display Design Number -->
+            <div class="design-no">Design No : {{ product.designNumber }} </div>
+            <div class="design-no">Brand : {{ product.brand }}</div>
+        
+            <!-- Image Carousel -->
+            <div class="image-carousel">
+              <img class="main-img" [src]="authService.cdnPath + product.selectedImageUrl" alt="{{ product.productTitle }}" [routerLink]="['/retailer/new/view-product2', { id: product.id, WholeselerEmail }]">
+              
+              <div class="carousel-dots">
+                <span *ngFor="let img of product.selectedImageUrls; let i = index" [class.active]="i === product.hoverIndex" (click)="navigateToImage(product, i)"></span>
+              </div>
+            </div>
+        
+            <!-- Product Details -->
+            <div class="product-details">
+              <!-- Color Options -->
+              <div class="color-options mt-0">
+                <button *ngFor="let color of product.colors"
+                        [ngStyle]="{ 'background-color': color, 'border': color === '#FFFFFF' ? '1px solid #000' : 'none' }"
+                        [class.active]="product.selectedColor === color"
+                        (click)="changeProductImage(product, color)">
+                </button>
+              </div>
+        
+              <!-- Product Title -->
+              <h6 class="title" [routerLink]="['/retailer/new/view-product2', { id: product.id }]">{{ product.productTitle }}</h6>
+        
+              <!-- Product Description -->
+              <p>{{ product.productDescription }}</p> 
+
+            
+        
+              <!-- Stock Availability -->
+              <div class="availability">
+            
+                
+                &nbsp;
+                  <button type="button" class="btn" 
+                    [disabled]="wishlistItems.has(product.id)" 
+                    [ngClass]="wishlistItems.has(product.id) ? 'btn-wishlist-true' : 'btn-wishlist'" 
+                    (click)="WishlistAdd(product.id)">
+                    <i class="bi bi-heart"></i>
+                  </button>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <p-paginator *ngIf="products && products.length > 0" (onPageChange)="onPageChange($event)"
+          [first]="first" [rows]="rows" [totalRecords]="totalResults"
+          [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
+      </div>
+       </div>              
+
+       <!-- Right-Side Ads Container -->
+       <div class="ads-right mt-0">
+        <app-right-side-advertise [imageUrls]="rightAdImages"></app-right-side-advertise>
+    </div>
+</div>
+
+<!-- Bottom-Side Ad Container -->
+<div class="ads-bottom mb-3">
+    <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
+</div>
+    </div>
+  </section>
+  

@@ -22,7 +22,7 @@ export class UserCategoryComponent {
     });
     if(this.authService.currentUserValue.userCategory){
       this.userForm.patchValue({userCategory: this.authService.currentUserValue.userCategory});
-      this.userForm.controls['userCategory'].disable();
+      // this.userForm.controls['userCategory'].disable();
     }
   }
 
