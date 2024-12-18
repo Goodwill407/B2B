@@ -11,6 +11,8 @@ import { RetailorPoComponent } from "./retailor-po/retailor-po.component";
 import { RetailorPoGenComponent } from "./retailor-po/retailor-po-gen/retailor-po-gen.component";
 import { WholesalerDiscountComponent } from "./wholesaler-discount/wholesaler-discount.component";
 import { ReMaPoShowComponent } from "./retailer-manifacturer-po/re-ma-po-show/re-ma-po-show.component";
+import { ViewMdeliveryChallanComponent } from "./mdelivery-challan/view-mdelivery-challan/view-mdelivery-challan.component";
+import { MdeliveryChallanComponent } from "./mdelivery-challan/mdelivery-challan.component";
 
 
 export const ProductMng:Route[]=[
@@ -25,8 +27,8 @@ export const ProductMng:Route[]=[
     {path: 'viewpo/:id', component: GenratepoComponent },
     {path: 'wholesaler-discount', component: WholesalerDiscountComponent},
     {path: 'getmanpo', component: ReMaPoShowComponent },
-  
-
+    
+    
     // {path: 'ordered-products', component:OrderedProductComponent},
     // {path: 'view-Product', component:ViewProductOwnComponent},
 ]

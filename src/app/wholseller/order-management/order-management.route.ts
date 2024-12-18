@@ -8,6 +8,8 @@ import { RetailorPoComponent } from "../new-flow/product-mng/retailor-po/retailo
 import { RetailorPoGenComponent } from "../new-flow/product-mng/retailor-po/retailor-po-gen/retailor-po-gen.component";
 import { RetailerManifacturerPoComponent } from "../new-flow/product-mng/retailer-manifacturer-po/retailer-manifacturer-po.component";
 import { ReMaPoShowComponent } from "../new-flow/product-mng/retailer-manifacturer-po/re-ma-po-show/re-ma-po-show.component";
+import { MdeliveryChallanComponent } from "../new-flow/product-mng/mdelivery-challan/mdelivery-challan.component";
+import { ViewMdeliveryChallanComponent } from "../new-flow/product-mng/mdelivery-challan/view-mdelivery-challan/view-mdelivery-challan.component";
 
 export const Order_Management_Route:Route[]= [
     {path: 'place-order', component: PlaceOrderComponent},
@@ -19,4 +21,6 @@ export const Order_Management_Route:Route[]= [
     {path: 'viewporetailor', component: RetailorPoGenComponent },
     { path: 'retailormanpo', component: RetailerManifacturerPoComponent },
     {path: 'getmanpo', component: ReMaPoShowComponent },
+    {path: 'MNFDChalan', component: MdeliveryChallanComponent },
+    {path: 'View-MNFDChalan', component: ViewMdeliveryChallanComponent },
 ]
