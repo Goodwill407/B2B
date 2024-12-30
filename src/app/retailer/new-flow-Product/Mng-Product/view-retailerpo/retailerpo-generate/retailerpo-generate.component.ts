@@ -40,6 +40,7 @@ export class RetailerpoGenerateComponent {
   products: any[] = [];
   userProfile: any;
   filteredData: any;
+  discountedTotal: any;
   sizeHeaders: string[] = [];
   priceHeaders: { [size: string]: number } = {};
 
@@ -86,6 +87,7 @@ export class RetailerpoGenerateComponent {
           poDate: new Date().toLocaleDateString(),
           poNumber: res.poNumber,
           products: res.set || [],
+          ProductDiscount: res.retailer.productDiscount,
         };
 
         if (res.set && Array.isArray(res.set) && res.set.length > 0) {
@@ -137,10 +139,11 @@ export class RetailerpoGenerateComponent {
     let totalGrandTotal = 0;
     let totalGST = 0;
     let totalSub = 0;
-
+    let totalDiscounted = 0;
+  
     productSet.forEach((product) => {
       const designKey = product.designNumber;
-
+  
       if (!groupedByDesignNumber[designKey]) {
         groupedByDesignNumber[designKey] = {
           designNumber: product.designNumber,
@@ -148,13 +151,14 @@ export class RetailerpoGenerateComponent {
           subTotal: 0,
           gst: 0,
           grandTotal: 0,
+          discountedTotal: 0,
         };
       }
-
+  
       let existingRow = groupedByDesignNumber[designKey].rows.find(
         (row: any) => row.colourName === product.colourName
       );
-
+  
       if (!existingRow) {
         existingRow = {
           colourName: product.colourName,
@@ -165,36 +169,44 @@ export class RetailerpoGenerateComponent {
         };
         groupedByDesignNumber[designKey].rows.push(existingRow);
       }
-
+  
       existingRow.quantities[product.size] = (existingRow.quantities[product.size] || 0) + product.quantity;
       existingRow.totalPrice += product.quantity * product.price;
     });
-
+  
     Object.values(groupedByDesignNumber).forEach((group: any) => {
-      group.subTotal = group.rows.reduce((acc: number, row: any) => acc + this.calculateTotalPrice(row), 0);
-      group.gst = this.calculateGST(group.subTotal);
+      group.subTotal = group.rows.reduce((acc: number, row: any) => acc + this.calculateTotalPrice(row, false), 0);
+      group.discountedTotal = group.rows.reduce((acc: number, row: any) => acc + this.calculateTotalPrice(row, true), 0);
+      group.gst = this.calculateGST(group.discountedTotal);
       totalGST += group.gst;
       totalSub += group.subTotal;
-      group.grandTotal = this.calculateGrandTotal(group.subTotal, group.gst);
+      totalDiscounted += group.discountedTotal;
+      group.grandTotal = this.calculateGrandTotal(group.discountedTotal, group.gst);
       totalGrandTotal += group.grandTotal;
     });
-
+  
     this.Totalsub = totalSub;
+    this.discountedTotal = totalDiscounted;
     this.gst = totalGST;
     this.totalGrandTotal = totalGrandTotal;
-
+  
     return Object.values(groupedByDesignNumber);
   }
-
-  calculateTotalPrice(row: any): number {
+  
+  calculateTotalPrice(row: any, applyDiscount: boolean = true): number {
     let total = 0;
-
+  
     this.sizeHeaders.forEach((size) => {
       if (row.quantities[size] > 0) {
         total += row.quantities[size] * (this.priceHeaders[size] || 0);
       }
     });
-
+  
+    if (applyDiscount && this.purchaseOrder.ProductDiscount > 0) {
+      const discount = (total * this.purchaseOrder.ProductDiscount) / 100;
+      total -= discount;
+    }
+  
     return total;
   }
 

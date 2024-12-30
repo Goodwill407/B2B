@@ -63,19 +63,26 @@ export class CartProduct2RetailerComponent {
   }
 
   // Extract unique sizes and prices for each size
-  extractSizesAndPrices(productSet: any[]): void {
-    const uniqueSizes = new Set<string>();
-    this.priceHeaders = {}; // Object to store size-price mapping
-    
-    productSet.forEach((product) => {
-      if (product.size && product.price > 0) {  // Only add sizes with valid price > 0
-        uniqueSizes.add(product.size);
-        this.priceHeaders[product.size] = product.price; // Map size to its price
-      }
-    });
+  // Extract unique sizes and map prices to their corresponding sizes
+extractSizesAndPrices(productSet: any[]): void {
+  const uniqueSizes = new Set<string>();
+  const tempPriceHeaders: { [size: string]: number } = {};
 
-    this.sizeHeaders = Array.from(uniqueSizes); // Convert Set to Array for the table header
-  }
+  productSet.forEach((product) => {
+      if (product.size && product.price > 0) { // Only consider valid sizes and prices
+          uniqueSizes.add(product.size);
+
+          // Ensure no overwriting of price if size already exists
+          if (!tempPriceHeaders[product.size]) {
+              tempPriceHeaders[product.size] = product.price;
+          }
+      }
+  });
+
+  this.sizeHeaders = Array.from(uniqueSizes); // Convert to an array for rendering
+  this.priceHeaders = tempPriceHeaders; // Assign the mapped prices
+}
+
 
   // Group products by design number and color, then aggregate quantities by size, 
   // and also calculate the Sub Total, GST, and Grand Total.
@@ -153,15 +160,16 @@ export class CartProduct2RetailerComponent {
   calculateTotalPrice(row: any): number {
     let total = 0;
 
-    // Loop through each size and calculate the price based on available quantities
-    this.sizeHeaders.forEach(size => {
-      if (row.quantities[size] > 0) {  // Check if there's a quantity for this size
-        total += row.quantities[size] * (this.priceHeaders[size] || 0); 
-        // Calculate price based on quantity and price for that size
-      }
+    this.sizeHeaders.forEach((size) => {
+        if (row.quantities[size] > 0) { // Check if quantity exists for the size
+            const price = this.priceHeaders[size] || 0; // Default to 0 if price is missing
+            total += row.quantities[size] * price; // Calculate the total
+        }
     });
+
     return total;
-  }
+}
+
 
   // Calculate GST (18%)
   calculateGST(subTotal: number): number {

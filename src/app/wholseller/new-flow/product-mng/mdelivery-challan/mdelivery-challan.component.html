@@ -83,6 +83,46 @@
                         </div>
                     </div>
                 </mat-tab>
+                <mat-tab label="Checked">
+                    <div class="content-block">
+                        <div class="card mt-3 p-4">
+                            <div class="p-grid p-fluid">
+                                <div class="p-col-12 text-center">
+                                    <p-table [value]="tableData3">
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th>Wholesaler's Name</th>
+                                                <th>Company Name</th>
+                                                <th>Email</th>
+                                                <th>PO Number</th>
+                                                <th>Status</th>
+                                                <!-- <th>PO Date</th> -->
+                                                <th>View</th>
+                
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-data>
+                                            <tr>
+                                                <td class="text-center">{{data.wholesaler.fullName}}</td>
+                                                <td class="text-center">{{data.wholesaler.companyName}}</td>
+                                                <td class="text-center">{{data.wholesaler.email}}</td>
+                                                <td class="text-center">{{data.poNumber}}</td>
+                                                <td class="text-center">{{data.status}}</td>
+                                                <!-- <td class="text-center">{{data.poDate}}</td> -->
+                                                <td class="text-center" [routerLink]="['/wholesaler/order-mng/View-MNFDChalan-sfinal',{id: data.id}]"><button class="btn"><i class="bi bi-eye h5"></i></button></td>
+                                            </tr>
+                                        </ng-template>
+                                    </p-table>
+                                    <span *ngIf="!tableData || tableData.length == 0"
+                                        class="data-not-found d-flex justify-content-center align-items-center"> </span>
+                                    <p-paginator *ngIf="tableData && tableData.length > 0" (onPageChange)="onPageChange($event)"
+                                        [first]="first" [rows]="rows" [totalRecords]="totalResults2"
+                                        [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
             </mat-tab-group>
         </div>
     </div>

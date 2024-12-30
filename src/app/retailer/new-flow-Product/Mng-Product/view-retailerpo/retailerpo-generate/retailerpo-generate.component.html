@@ -73,17 +73,22 @@
                   <!-- Footer Row for Subtotal, GST, and Grand Total under Size 2 -->
                   <ng-template pTemplate="footer">
                     <tr [ngStyle]="{'background-color': 'white'}">
-                      <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td> <!-- Empty cells to align totals under Size 2 -->
+                      <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
                       <td style="text-align: right; font-weight: bold;">Subtotal:</td>
                       <td>{{ Totalsub | currency: 'INR' }}</td>
                     </tr>
                     <tr [ngStyle]="{'background-color': 'white'}">
-                      <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td> <!-- Empty cells to align totals under Size 2 -->
+                      <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
+                      <td style="text-align: right; font-weight: bold;">Discount ({{this.purchaseOrder.ProductDiscount}}%) :</td>
+                      <td>{{ discountedTotal | currency: 'INR' }}</td>
+                    </tr>
+                    <tr [ngStyle]="{'background-color': 'white'}">
+                      <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
                       <td style="text-align: right; font-weight: bold;">GST (18%):</td>
                       <td>{{ gst | currency: 'INR' }}</td>
                     </tr>
                     <tr [ngStyle]="{'background-color': 'white'}">
-                      <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td> <!-- Empty cells to align totals under Size 2 -->
+                      <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
                       <td style="text-align: right; font-weight: bold;">Grand Total:</td>
                       <td>{{ totalGrandTotal | currency: 'INR' }}</td>
                     </tr>

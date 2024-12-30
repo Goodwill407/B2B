@@ -1,5 +1,5 @@
 .challan-container {
-    width: 100%;
+    width: 800px;
     margin: 0 auto;
     font-family: Arial, sans-serif;
     border: 1px solid #ccc;
@@ -280,84 +280,4 @@ strong {
       width: 100%;
     }
   }
-  
-/* General dialog styling */
-p-dialog {
-    font-family: Arial, sans-serif;
-  }
-  
-  /* Adjusting dialog width and centering content */
-  .ui-dialog {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  /* Styling for the form inside the dialog */
-  .p-fluid {
-    width: 100%;
-    padding: 1rem;
-  }
-  
-  /* Styling individual form fields */
-  .p-field {
-    margin-bottom: 1.5rem;
-  }
-  
-  .p-field label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-    color: #333;
-  }
-  
-  .p-field input[type="text"],
-  .p-field textarea {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-    color: #333;
-    background-color: #fff;
-    transition: border-color 0.3s ease-in-out;
-  }
-  
-  /* Input field hover and focus effects */
-  .p-field input[type="text"]:hover,
-  .p-field textarea:hover,
-  .p-field input[type="text"]:focus,
-  .p-field textarea:focus {
-    border-color: #007ad9;
-    outline: none;
-  }
-  
-  /* Styling the Submit button */
-  p-footer button {
-    background-color: #007ad9;
-    color: white;
-    font-size: 1rem;
-    padding: 0.5rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
-  }
-  
-  p-footer button:hover {
-    background-color: #005fa3;
-  }
-  
-  /* Responsive adjustments */
-  @media screen and (max-width: 768px) {
-    p-dialog {
-      width: 90vw !important;
-    }
-  
-    .p-fluid {
-      padding: 0.5rem;
-    }
-  }
-  
   

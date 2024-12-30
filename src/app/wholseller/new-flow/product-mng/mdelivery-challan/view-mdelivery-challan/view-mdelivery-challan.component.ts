@@ -7,10 +7,19 @@ import { AccordionModule } from 'primeng/accordion';
 import { TableModule } from 'primeng/table';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
 @Component({
   selector: 'app-view-mdelivery-challan',
   standalone: true,
-  imports: [CommonModule, FormsModule, AccordionModule, TableModule],
+  imports: [CommonModule, FormsModule, AccordionModule, TableModule
+    ,  CommonModule,
+    FormsModule,
+    AccordionModule,
+    TableModule,
+    DialogModule,
+    ButtonModule,
+  ],
   templateUrl: './view-mdelivery-challan.component.html',
   styleUrl: './view-mdelivery-challan.component.scss'
 })
@@ -35,7 +44,11 @@ export class ViewMdeliveryChallanComponent {
   };
 
   mergedProducts: any[] = [];
-
+  isDialogVisible: boolean = false;
+  selectedRow: any = null;
+  selectedSize: string = '';
+  feedback: string = '';
+  
   responseData: any; // New variable to store response data
   distributorId: string = '';
   distributorId2: string = '';
@@ -215,54 +228,147 @@ export class ViewMdeliveryChallanComponent {
   }
 
   addpo() {
-    const cartBody = { ...this.responseData }; // Create a copy of the response data
+    // Initialize separate payloads for defective and accepted items
+    const defectivePayload: any[] = [];
+    const acceptedPayload: any[] = [];
   
-    delete cartBody._id;
-
+    // Iterate over `mergedProducts` to create transformed payloads
+    this.mergedProducts.forEach((row) => {
+      this.sizeHeaders.forEach((size) => {
+        const receivedQuantity = row.quantities[size] || 0; // Original received quantity
+        const defectiveQuantity = row.defective[size] || 0; // Defective quantity
+        const acceptedQuantity = Math.max(receivedQuantity - defectiveQuantity, 0); // Accepted quantity
+        const returnReason = row.feedback[size] || ''; // Fetch returnReason for the specific size
   
-    // Post the cleaned data to the backend
-    this.authService.post('type2-purchaseorder', cartBody).subscribe(
+        // Base payload shared between accepted and defective
+        const basePayload = {
+          designNumber: row.designNumber,
+          colour: row.colour,
+          colourName: row.colourName,
+          colourImage: row.colourImage,
+          size: size,
+          price: this.priceHeaders[size] || 0,
+          productBy: this.responseData?.email || '',
+        };
+  
+        // Add to defective payload if there are defective items
+        if (defectiveQuantity > 0) {
+          defectivePayload.push({
+            ...basePayload,
+            quantity: defectiveQuantity,
+            returnReason: returnReason,
+          });
+        }
+  
+        // Add to accepted payload if there are accepted items
+        if (acceptedQuantity > 0) {
+          acceptedPayload.push({
+            ...basePayload,
+            quantity: acceptedQuantity,
+          });
+        }
+      });
+    });
+  
+    // Construct the full payload for defective and accepted
+    const defectiveFullPayload = {
+      ...this.responseData, // Keep all original fields
+      set: defectivePayload, // Update the set with defective items
+    };
+  
+    const acceptedFullPayload = {
+      ...this.responseData, // Keep all original fields
+      set: acceptedPayload, // Update the set with accepted items
+    };
+  
+    console.log('Defective Full Payload:', defectiveFullPayload);
+    console.log('Accepted Full Payload:', acceptedFullPayload);
+  
+    // Send the defective full payload to `/wholesaler-return`
+    if (defectivePayload.length > 0) {
+      this.authService.post('/wholesaler-return', defectiveFullPayload).subscribe(
+        (res: any) => {
+          this.communicationService.customSuccess('Defective items processed successfully.');
+          this.updateStatusToChecked(); // Call API to update status after successful processing
+        },
+        (error) => {
+          this.communicationService.customError1('Failed to process defective items.');
+        }
+      );
+    }
+  
+    // Send the accepted full payload to `/final-product`
+    if (acceptedPayload.length > 0) {
+      this.authService.post('/final-product', acceptedFullPayload).subscribe(
+        (res: any) => {
+          this.communicationService.customSuccess('Accepted items processed successfully.');
+          this.updateStatusToChecked(); // Call API to update status after successful processing
+        },
+        (error) => {
+          this.communicationService.customError1('Failed to process accepted items.');
+        }
+      );
+    }
+  }
+  
+  // Method to update the status to "checked"
+  updateStatusToChecked() {
+    // const url = ``,; // Use the `id` from the fetched data
+    const payload = { status: 'checked', id:this.responseData.id }; // Payload to update the status
+  
+    this.authService.patch(`mnf-delivery-challan`, payload).subscribe(
       (res: any) => {
-        this.communicationService.customSuccess('Product Successfully Added in Cart');
+        this.communicationService.customSuccess('Status updated to checked successfully.');
+        console.log('Updated Response:', res);
       },
       (error) => {
-        this.communicationService.customError1(error.error.message);
+        this.communicationService.customError1('Failed to update status.');
+        console.error('Error:', error);
       }
     );
   }
+  
+  
+  
+  
+  
+  
+  
 
   flattenProductData(productSet: any[]): any[] {
     const flatList: any[] = [];
-
-    // Iterate through each product in the set
+  
     productSet.forEach((product) => {
-        const designKey = product.designNumber; // Assuming each product has a designNumber
-
-        // Check if we already have a row for this designNumber + colourName
-        let existingRow = flatList.find(row => row.designNumber === designKey && row.colourName === product.colourName);
-
-        // If no existing row, create a new one
-        if (!existingRow) {
-            existingRow = {
-                designNumber: product.designNumber,
-                colourName: product.colourName,
-                colourImage: product.colourImage,
-                colour: product.colour,
-                quantities: {},
-                totalPrice: 0
-            };
-            flatList.push(existingRow);
-        }
-
-        // Update quantities for this specific size
-        if (product.size && product.quantity) {
-            existingRow.quantities[product.size] = (existingRow.quantities[product.size] || 0) + product.quantity;
-            existingRow.totalPrice += product.quantity * parseFloat(product.price); // Assuming price is a string
-        }
+      const designKey = product.designNumber;
+      let existingRow = flatList.find(
+        (row) => row.designNumber === designKey && row.colourName === product.colourName
+      );
+  
+      if (!existingRow) {
+        existingRow = {
+          designNumber: product.designNumber,
+          colourName: product.colourName,
+          colourImage: product.colourImage,
+          quantities: {},
+          accepted: {},
+          defective: {},
+          feedback: {}, // Add feedback field for each size
+        };
+        flatList.push(existingRow);
+      }
+  
+      if (product.size && product.quantity) {
+        existingRow.quantities[product.size] = product.quantity;
+        existingRow.accepted[product.size] = product.quantity; // Default accepted to full quantity
+        existingRow.defective[product.size] = 0; // Default defective to 0
+        existingRow.feedback[product.size] = ''; // Initialize feedback for the size
+      }
     });
-
+  
     return flatList;
-}
+  }
+  
+  
 
 printPurchaseOrder(): void {
   const data = document.getElementById('purchase-order');
@@ -302,6 +408,107 @@ printPurchaseOrder(): void {
     console.error("Element with id 'purchase-order' not found.");
   }
 }
+onDefectiveChange(row: any, size: string): void {
+  const totalQuantity = row.quantities[size] || 0;
+  const defectiveQuantity = row.defective[size];
 
-  
+  // Ensure accepted quantity doesn't go below zero
+  row.accepted[size] = Math.max(totalQuantity - defectiveQuantity, 0);
+
+  if (defectiveQuantity < 0) {
+    row.defective[size] = 0; // Reset to zero if negative
+  }
+}
+
+openFeedbackDialog(row: any, size: string): void {
+  this.selectedRow = row;
+  this.selectedSize = size;
+  this.feedback = row.feedback[size] || ''; // Loa  d existing feedback or initialize
+  this.isDialogVisible = true; // Show the dialog
+}
+submitFeedback(): void {
+  if (this.selectedRow) {
+    // Store the returnReason in the specific size of the selected row
+    this.selectedRow.feedback[this.selectedSize] = this.feedback;
+    console.log('Feedback submitted:', {
+      designNumber: this.selectedRow.designNumber,
+      size: this.selectedSize,
+      returnReason: this.feedback, // Rename feedback to returnReason
+    });
+  }
+
+  // Clear feedback dialog inputs
+  this.feedback = '';
+  this.isDialogVisible = false;
+}
+
+
+processQuantitiesForResponses() {
+  const defectiveResponse: any[] = [];
+  const approvedResponse: any[] = [];
+
+  // Iterate over the `mergedProducts`
+  this.mergedProducts.forEach((row) => {
+    this.sizeHeaders.forEach((size) => {
+      const receivedQuantity = row.quantities[size] || 0; // Received quantity
+      const defectiveQuantity = row.defective[size] || 0; // Defective quantity
+      const approvedQuantity = Math.max(receivedQuantity - defectiveQuantity, 0); // Approved quantity
+      const feedback = row.feedback[size] || ''; // Fetch feedback for the size
+
+      // For defective response
+      if (defectiveQuantity > 0) {
+        defectiveResponse.push({
+          designNumber: row.designNumber,
+          colourName: row.colourName,
+          size: size,
+          defectiveQuantity: defectiveQuantity,
+          feedback: feedback, // Add feedback to defective response
+        });
+      }
+
+      // For approved response
+      if (approvedQuantity > 0) {
+        approvedResponse.push({
+          designNumber: row.designNumber,
+          colourName: row.colourName,
+          size: size,
+          approvedQuantity: approvedQuantity,
+          feedback: feedback, // Optionally include feedback
+        });
+      }
+    });
+  });
+
+  console.log('Defective Response:', defectiveResponse);
+  console.log('Approved Response:', approvedResponse);
+
+  return { defectiveResponse, approvedResponse };
+}
+
+
+submitResponses() {
+  const { defectiveResponse, approvedResponse } = this.processQuantitiesForResponses();
+console.log(defectiveResponse, approvedResponse)
+  // Send defective response
+  // this.authService.post('defective-api-endpoint', defectiveResponse).subscribe(
+  //   (res: any) => {
+  //     this.communicationService.customSuccess('Defective response submitted successfully.');
+  //   },
+  //   (error) => {
+  //     this.communicationService.customError1('Failed to submit defective response.');
+  //   }
+  // );
+
+  // Send approved response
+  // this.authService.post('approved-api-endpoint', approvedResponse).subscribe(
+  //   (res: any) => {
+  //     this.communicationService.customSuccess('Approved response submitted successfully.');
+  //   },
+  //   (error) => {
+  //     this.communicationService.customError1('Failed to submit approved response.');
+  //   }
+  // );
+}
+
+
 }

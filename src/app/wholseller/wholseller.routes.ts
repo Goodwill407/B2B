@@ -17,6 +17,7 @@ import { ViewRetailersDetailsComponent } from "./retailers-requests-list/view-re
 import { AssociatedMnfListComponent } from "./associated-mnf-list/associated-mnf-list.component";
 import { RetailerManifacturerPoComponent } from "./new-flow/product-mng/retailer-manifacturer-po/retailer-manifacturer-po.component";
 import { ViewMdeliveryChallanComponent } from "./new-flow/product-mng/mdelivery-challan/view-mdelivery-challan/view-mdelivery-challan.component";
+import { ViewDeliveryFinalComponent } from "./new-flow/product-mng/mdelivery-challan/view-delivery-final/view-delivery-final.component";
 
 export const R_Auth: Route[] = [
     { path: 'new', loadChildren: () => import('./new-flow/new_flow.route').then((m) => m.NewFlow) },
@@ -49,4 +50,5 @@ export const R_Auth: Route[] = [
     { path: 'rejected-retailsers-list', component: RejectedRetailersListComponent },
     { path: 'view-retailser-Details', component: ViewRetailersDetailsComponent },
     {path: 'View-MNFDChalan', component: ViewMdeliveryChallanComponent },
+    {path: 'View-MNFDChalan-sfinal', component: ViewDeliveryFinalComponent },
 ]

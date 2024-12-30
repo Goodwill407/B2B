@@ -5,48 +5,14 @@
 <section class="content">
     <div class="content-block">
       <h4 class="mt-4">
-        <i class="bi bi-person-vcard-fill h3"></i> Generate Delivery Challan
+        <i class="bi bi-person-vcard-fill h3"></i> Check Received Product
       </h4>
   
       <div id="purchase-order" class="challan-container card my-2">
-        <div class="header">
-          <!-- Logo Section -->
-          <div class="logo">
-              <img [src]="purchaseOrder.logoUrl" alt="Company Logo" />
-          </div>
+    
       
-          <!-- Buyer Information Container -->
-          <div class="buyer-info">
-             <h5>From -</h5>
-              <p>{{ purchaseOrder.buyerName }}</p>
-              <p>{{ purchaseOrder.buyerDetails }}</p>
-              <p>{{ purchaseOrder.buyerAddress }}</p>
-              <p>{{ purchaseOrder.buyerPhone }}</p>
-              <p class="mb-2"><b>GSTIN : {{ purchaseOrder.buyerGSTIN }}</b></p>
-          </div>
-      
-          <!-- Seller Information Container -->
-          <div class="seller-info">
-            <h5>To -</h5>
-            <p>{{ purchaseOrder.supplierName }}</p>
-            <p>{{ purchaseOrder.buyerDetails2 }}</p>
-            <p>{{ purchaseOrder.supplierAddress }}</p>
-            <p>{{ purchaseOrder.supplierContact }}</p>
-            <p class="mb-2"><b>GSTIN : {{ purchaseOrder.supplierGSTIN }}</b></p>
-            <p><strong>PO Number :</strong> <span><b>{{ purchaseOrder.poNumber }}</b></span></p>
-            <p><strong>Date :</strong>{{ purchaseOrder.poDate }}</p>
-          </div>
-      </div>
-
-      
-  
-        <section class="gstin my-0">
-          <h2>Delivery Challan</h2>
-        </section>
-        <hr class="my-1">
-  
         
-        <section class="order-details">
+        <section class="">
           <div *ngIf="mergedProducts && mergedProducts.length > 0">
             <p-table [value]="mergedProducts" class="bordered-table">
               <ng-template pTemplate="header">
@@ -54,10 +20,10 @@
                   <th>Design No</th>
                   <th>Colour</th>
                   <th *ngFor="let size of sizeHeaders">
-                    {{ size }} <br />
+                    {{ size }} <br/>
                     <span *ngIf="!isSizeAvailable(mergedProducts, size)">N/A</span>
                   </th>
-                  <th>Price</th>
+                  <!-- <th>Price</th> -->
                 </tr>
               </ng-template>
         
@@ -68,30 +34,66 @@
                    {{row.colourName}}
                   </td>
                   <td *ngFor="let size of sizeHeaders">
-                    {{ row.quantities[size] > 0 ? row.quantities[size] : 'N/A' }}
+                   
+                      <tr>
+                        <th>Received</th>
+                        <th>Accepted</th>
+                        <th>Defective</th>
+                        
+                      </tr>
+               <tr> 
+                <td>{{ row.quantities[size] > 0 ? row.quantities[size] : 'N/A' }}</td>
+                <td>
+                  <input
+                    type="number"
+                    [(ngModel)]="row.accepted[size]"
+                    [readonly]="true"
+                    style="width: 50px; text-align: center;"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    [(ngModel)]="row.defective[size]"
+                    (input)="onDefectiveChange(row, size)"
+                    style="width: 50px; text-align: center;"
+                  /> &nbsp;
+                  <i 
+                  class="fa fa-upload" 
+                  aria-hidden="true" 
+                  *ngIf="row.defective[size] && row.defective[size] !== 0"
+                  (click)="openFeedbackDialog(row, size)">
+                </i>
+                
+                </td>
+                
+                
+                
+              </tr>
+                   
                   </td>
-                  <td>{{ calculateTotalPrice(row) | currency: 'INR' }}</td>
+                  <!-- <td>{{ calculateTotalPrice(row) | currency: 'INR' }}</td> -->
                 </tr>
               </ng-template>
         
               <!-- Footer Row for Subtotal, GST, and Grand Total under Size 2 -->
-              <ng-template pTemplate="footer">
+              <!-- <ng-template pTemplate="footer">
                 <tr [ngStyle]="{'background-color': 'white'}">
-                  <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td> <!-- Empty cells to align totals under Size 2 -->
+                  <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td> 
                   <td style="text-align: right; font-weight: bold;">Subtotal:</td>
                   <td>{{ Totalsub | currency: 'INR' }}</td>
                 </tr>
                 <tr [ngStyle]="{'background-color': 'white'}">
-                    <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td> <!-- Empty cells to align totals under Size 2 -->
+                    <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td> 
                   <td style="text-align: right; font-weight: bold;">GST (18%):</td>
                   <td>{{ gst | currency: 'INR' }}</td>
                 </tr>
                 <tr [ngStyle]="{'background-color': 'white'}">
-                    <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td><!-- Empty cells to align totals under Size 2 -->
+                    <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
                   <td style="text-align: right; font-weight: bold;">Grand Total:</td>
                   <td>{{ totalGrandTotal | currency: 'INR' }}</td>
                 </tr>
-              </ng-template>
+              </ng-template> -->
               
               
             </p-table>
@@ -113,4 +115,26 @@
       </div>
     </div>
   </section>
+
+  
+  <p-dialog [(visible)]="isDialogVisible" [header]="'Feedback'" [modal]="true" [closable]="true" [style]="{width: '50vw'}">
+    <div class="p-fluid">
+      <div class="p-field">
+        <label for="designNumber">Design No</label>
+        <input id="designNumber" type="text" [value]="selectedRow?.designNumber" readonly>
+      </div>
+      <div class="p-field">
+        <label for="size">Size</label>
+        <input id="size" type="text" [value]="selectedSize" readonly>
+      </div>
+      <div class="p-field">
+        <label for="feedback">Feedback</label>
+        <textarea id="feedback" rows="3" [(ngModel)]="feedback"></textarea>
+      </div>
+    </div>
+    <p-footer>
+      <button pButton type="button" label="Submit" (click)="submitFeedback()"></button>
+    </p-footer>
+  </p-dialog>
+  
   

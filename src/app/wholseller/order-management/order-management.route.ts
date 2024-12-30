@@ -10,6 +10,10 @@ import { RetailerManifacturerPoComponent } from "../new-flow/product-mng/retaile
 import { ReMaPoShowComponent } from "../new-flow/product-mng/retailer-manifacturer-po/re-ma-po-show/re-ma-po-show.component";
 import { MdeliveryChallanComponent } from "../new-flow/product-mng/mdelivery-challan/mdelivery-challan.component";
 import { ViewMdeliveryChallanComponent } from "../new-flow/product-mng/mdelivery-challan/view-mdelivery-challan/view-mdelivery-challan.component";
+import { ViewDeliveryFinalComponent } from "../new-flow/product-mng/mdelivery-challan/view-delivery-final/view-delivery-final.component";
+import { FinalProductWhComponent } from "../new-flow/product-mng/final-product-wh/final-product-wh.component";
+import { ViwFinalProductPoWhComponent } from "../new-flow/product-mng/final-product-wh/viw-final-product-po-wh/viw-final-product-po-wh.component";
+import { DistributeMProductComponent } from "../new-flow/product-mng/final-product-wh/distribute-m-product/distribute-m-product.component";
 
 export const Order_Management_Route:Route[]= [
     {path: 'place-order', component: PlaceOrderComponent},
@@ -22,5 +26,9 @@ export const Order_Management_Route:Route[]= [
     { path: 'retailormanpo', component: RetailerManifacturerPoComponent },
     {path: 'getmanpo', component: ReMaPoShowComponent },
     {path: 'MNFDChalan', component: MdeliveryChallanComponent },
+    {path: 'viiw-Accept-product-po', component: ViwFinalProductPoWhComponent },
+    {path: 'Distribute-Accept-product-po', component: DistributeMProductComponent },
+    {path: 'okproductlist', component: FinalProductWhComponent },
     {path: 'View-MNFDChalan', component: ViewMdeliveryChallanComponent },
+    {path: 'View-MNFDChalan-sfinal', component: ViewDeliveryFinalComponent },
 ]

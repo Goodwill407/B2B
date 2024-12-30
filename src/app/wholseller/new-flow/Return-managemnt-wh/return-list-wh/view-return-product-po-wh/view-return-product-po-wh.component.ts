@@ -5,14 +5,16 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import { AccordionModule } from 'primeng/accordion';
 import { TableModule } from 'primeng/table';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 @Component({
-  selector: 'app-retailor-po-gen',
+  selector: 'app-view-return-product-po-wh',
   standalone: true,
   imports: [CommonModule, FormsModule, AccordionModule, TableModule],
-  templateUrl: './retailor-po-gen.component.html',
-  styleUrl: './retailor-po-gen.component.scss'
+  templateUrl: './view-return-product-po-wh.component.html',
+  styleUrl: './view-return-product-po-wh.component.scss'
 })
-export class RetailorPoGenComponent {
+export class ViewReturnProductPoWhComponent {
   purchaseOrder: any = {
     supplierName: '',
     supplierDetails: '',
@@ -33,15 +35,17 @@ export class RetailorPoGenComponent {
   };
 
   mergedProducts: any[] = [];
-  dicountprice: number = 0;
+
   responseData: any; // New variable to store response data
-  distributorId: string;
+  distributorId: string = '';
+  distributorId2: string = '';
+  pono: string = '';
   products: any[] = [];
   userProfile: any;
   filteredData: any;
   sizeHeaders: string[] = [];
   priceHeaders: { [size: string]: number } = {};
-  discountedTotal: number = 0;
+
   totalGrandTotal: number = 0;
   gst: number = 0;
   Totalsub: number = 0;
@@ -50,19 +54,19 @@ export class RetailorPoGenComponent {
     public authService: AuthService,
     private router: Router,
     private communicationService: CommunicationService,
-    private route: ActivatedRoute
-  ) {
-    this.distributorId = this.route.snapshot.paramMap.get('id') ?? '';
- 
+    private route: ActivatedRoute,
+  ) 
+  {
   }
 
   ngOnInit(): void {
+    this.distributorId = this.route.snapshot.paramMap.get('id') ?? '';
     this.userProfile = JSON.parse(localStorage.getItem('currentUser')!);
-    this.getAllProducts(this.distributorId);
+    this.getAllProducts();
   }
 
-  getAllProducts(distributorId: string) {
-    const url = `retailer-purchase-order-type2/${distributorId}`;
+  getAllProducts() {
+    const url = `wholesaler-return/${this.distributorId}`;
     this.authService.get(url).subscribe(
       (res: any) => {
        
@@ -70,22 +74,22 @@ export class RetailorPoGenComponent {
         console.log(res)
         // Update purchaseOrder from the response
         this.purchaseOrder = {
-          supplierName: res.wholesaler.companyName,
-          supplierDetails: res.wholesaler.fullName,
-          supplierAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
-          supplierContact: `${res.wholesaler.mobNumber}`,
-          supplierGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
-          buyerName: res.retailer.companyName,
-          logoUrl: this.authService.cdnPath + res.retailer.profileImg,
-          buyerAddress: `${res.retailer.address}, ${res.retailer.city}, ${res.retailer.state} - ${res.retailer.pinCode}`,
-          buyerPhone: res.retailer.mobNumber,
-          buyerEmail: res.retailer.email,
-          buyerDetails: res.retailer.fullName,
-          buyerGSTIN: res.retailer.GSTIN || 'GSTIN_NOT_PROVIDED',
+          supplierName: res.manufacturer.companyName,
+          supplierDetails: res.manufacturer.fullName,
+          supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.city}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
+          supplierContact: `${res.manufacturer.mobNumber}`,
+          supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
+          buyerName: res.wholesaler.companyName,
+          logoUrl: this.authService.cdnPath + res.wholesaler.profileImg,
+          buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
+          buyerPhone: res.wholesaler.mobNumber,
+          buyerEmail: res.wholesaler.email,
+          buyerDetails: res.wholesaler.fullName,
+          buyerDetails2: res.manufacturer.fullName,
+          buyerGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
           poDate: new Date().toLocaleDateString(),
           poNumber: res.poNumber,
-          products: res.set || [],
-          ProductDiscount: res.retailer.productDiscount,
+          products: res.products || [],
         };
 
         if (res.set && Array.isArray(res.set) && res.set.length > 0) {
@@ -137,11 +141,10 @@ export class RetailorPoGenComponent {
     let totalGrandTotal = 0;
     let totalGST = 0;
     let totalSub = 0;
-    let totalDiscounted = 0;
-  
+
     productSet.forEach((product) => {
       const designKey = product.designNumber;
-  
+
       if (!groupedByDesignNumber[designKey]) {
         groupedByDesignNumber[designKey] = {
           designNumber: product.designNumber,
@@ -149,14 +152,13 @@ export class RetailorPoGenComponent {
           subTotal: 0,
           gst: 0,
           grandTotal: 0,
-          discountedTotal: 0,
         };
       }
-  
+
       let existingRow = groupedByDesignNumber[designKey].rows.find(
         (row: any) => row.colourName === product.colourName
       );
-  
+
       if (!existingRow) {
         existingRow = {
           colourName: product.colourName,
@@ -167,47 +169,38 @@ export class RetailorPoGenComponent {
         };
         groupedByDesignNumber[designKey].rows.push(existingRow);
       }
-  
+
       existingRow.quantities[product.size] = (existingRow.quantities[product.size] || 0) + product.quantity;
       existingRow.totalPrice += product.quantity * product.price;
     });
-  
+
     Object.values(groupedByDesignNumber).forEach((group: any) => {
-      group.subTotal = group.rows.reduce((acc: number, row: any) => acc + this.calculateTotalPrice(row, false), 0);
-      group.discountedTotal = group.rows.reduce((acc: number, row: any) => acc + this.calculateTotalPrice(row, true), 0);
-      group.gst = this.calculateGST(group.discountedTotal);
+      group.subTotal = group.rows.reduce((acc: number, row: any) => acc + this.calculateTotalPrice(row), 0);
+      group.gst = this.calculateGST(group.subTotal);
       totalGST += group.gst;
       totalSub += group.subTotal;
-      totalDiscounted += group.discountedTotal;
-      group.grandTotal = this.calculateGrandTotal(group.discountedTotal, group.gst);
+      group.grandTotal = this.calculateGrandTotal(group.subTotal, group.gst);
       totalGrandTotal += group.grandTotal;
     });
-  
+
     this.Totalsub = totalSub;
-    this.discountedTotal = totalDiscounted;
     this.gst = totalGST;
     this.totalGrandTotal = totalGrandTotal;
-  
+
     return Object.values(groupedByDesignNumber);
   }
 
-  calculateTotalPrice(row: any, applyDiscount: boolean = true): number {
+  calculateTotalPrice(row: any): number {
     let total = 0;
-  
+
     this.sizeHeaders.forEach((size) => {
       if (row.quantities[size] > 0) {
         total += row.quantities[size] * (this.priceHeaders[size] || 0);
       }
     });
-  
-    if (applyDiscount && this.purchaseOrder.ProductDiscount > 0) {
-      const discount = (total * this.purchaseOrder.ProductDiscount) / 100;
-      total -= discount;
-    }
-  
+
     return total;
   }
-  
 
   calculateGST(subTotal: number): number {
     return (subTotal * 18) / 100; // 18% GST
@@ -222,16 +215,13 @@ export class RetailorPoGenComponent {
   }
 
   addpo() {
-    const cartBody = { ...this.responseData };
-     // Create a copy of the response data
+    const cartBody = { ...this.responseData }; // Create a copy of the response data
   
-    // Remove unwanted fields
-    delete cartBody.__v;
     delete cartBody._id;
-    delete cartBody.productId;
+
   
     // Post the cleaned data to the backend
-    this.authService.post('retailer-purchase-order-type2', cartBody).subscribe(
+    this.authService.post('type2-purchaseorder', cartBody).subscribe(
       (res: any) => {
         this.communicationService.customSuccess('Product Successfully Added in Cart');
       },
@@ -274,7 +264,44 @@ export class RetailorPoGenComponent {
     return flatList;
 }
 
+printPurchaseOrder(): void {
+  const data = document.getElementById('purchase-order');
+  if (data) {
+    html2canvas(data, {
+      scale: 3,  // Adjust scale for better quality
+      useCORS: true,
+    }).then((canvas) => {
+      const imgWidth = 208;  // A4 page width in mm
+      const pageHeight = 295;  // A4 page height in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+
+      const contentDataURL = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');  // Create new PDF
+      const margin = 10;  // Margin for PDF
+      let position = margin;
+
+      // Add first page
+      pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
+      heightLeft -= pageHeight;
+
+      // Loop over content to add remaining pages if content exceeds one page
+      while (heightLeft > 0) {
+        pdf.addPage();  // Add new page
+        position = margin - heightLeft;  // Position for the next page
+        pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      // Save PDF file
+      pdf.save('purchase-order.pdf');
+    }).catch((error) => {
+      console.error("Error generating PDF:", error);
+    });
+  } else {
+    console.error("Element with id 'purchase-order' not found.");
+  }
+}
 
   
 }
-

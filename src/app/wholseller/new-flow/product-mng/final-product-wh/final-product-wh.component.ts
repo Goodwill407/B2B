@@ -1,31 +1,29 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgFor } from '@angular/common';
 import { Component } from '@angular/core';
-import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { MatTabsModule } from '@angular/material/tabs';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
-import { TooltipModule } from 'primeng/tooltip';
-import jsPDF from 'jspdf';
-import {  RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { AccordionModule } from 'primeng/accordion';
 @Component({
-  selector: 'app-mdelivery-challan',
+  selector: 'app-final-product-wh',
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    CommonModule,
-    PaginatorModule,
-    TooltipModule,
-    TableModule,
-    MatTabsModule,
-    RouterModule
-  ],
-  templateUrl: './mdelivery-challan.component.html',
-  styleUrl: './mdelivery-challan.component.scss'
+   imports: [
+      TableModule,
+      FormsModule,
+      AccordionModule,
+      CommonModule,
+      RouterModule,
+      PaginatorModule
+    ],
+  templateUrl: './final-product-wh.component.html',
+  styleUrl: './final-product-wh.component.scss'
 })
-export class MdeliveryChallanComponent {
+export class FinalProductWhComponent {
   purchaseOrder: any = {
     supplierName: '',
     supplierDetails: '',
@@ -49,17 +47,12 @@ export class MdeliveryChallanComponent {
   userProfile: any;
   showFlag: boolean = false;
   tableData: any;
-  tableData2: any;
-  
-  tableData3: any;
   totalResults: any;
-  totalResults2: any;
   limit = 10;
   page: number = 1
   first: number = 0;
   rows: number = 10;
   isNewPO: boolean = false;
-  totalResults3: any;
 
   constructor(private route: ActivatedRoute, private authService: AuthService, private communicationService: CommunicationService) { }
 
@@ -70,33 +63,16 @@ export class MdeliveryChallanComponent {
 
   
         this.getAllData();
-        this.getAllData2();
-        this.getAllData3();
+    
     });
   }
 
   getAllData() {
     this.showFlag = false;
-    this.authService.get(`/mnf-delivery-challan?email=${this.authService.currentUserValue.email}&status=proceed&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
+    this.authService.get(`final-product?email=${this.authService.currentUserValue.email}`).subscribe((res: any) => {
       this.tableData = res.results;
       console.log(res)
       this.totalResults = res.totalResults;
-    })
-  }
-  getAllData2() {
-    this.showFlag = false;
-    this.authService.get(`/mnf-delivery-challan?email=${this.authService.currentUserValue.email}&status=pending&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
-      this.tableData2 = res.results;
-      console.log(res)
-      this.totalResults2 = res.totalResults;
-    })
-  }
-  getAllData3() {
-    this.showFlag = false;
-    this.authService.get(`/mnf-delivery-challan?email=${this.authService.currentUserValue.email}&status=checked&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
-      this.tableData3 = res.results;
-      console.log(res)
-      this.totalResults3 = res.totalResults;
     })
   }
 

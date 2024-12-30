@@ -1,0 +1,87 @@
+<!-- First Table: No Changes -->
+<div class="content-block">
+    <div id="purchase-order" class="challan-container card my-2">
+        <section class="order-details">
+            <div *ngIf="mergedProducts && mergedProducts.length > 0">
+                <p-table [value]="mergedProducts" class="bordered-table">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Design No</th>
+                            <th>Colour</th>
+                            <th *ngFor="let size of sizeHeaders">
+                                {{ size }} <br />
+                                <span *ngIf="!isSizeAvailable(mergedProducts, size)">N/A</span>
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-row>
+                        <tr>
+                            <td>{{ row.designNumber }}</td>
+                            <td>{{ row.colourName }}</td>
+                            <td *ngFor="let size of sizeHeaders">
+                                {{ row.quantities[size] > 0 ? row.quantities[size] : 'N/A' }}
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- Second Table: Retailer Details -->
+<div class="content-block">
+    <p-accordion [activeIndex]="0" class="card" *ngIf="retailerDetails && retailerDetails.length > 0">
+        <ng-container *ngFor="let detail of retailerDetails">
+            <p-accordionTab class="px-0" [header]="detail.retailer.fullName">
+                <div *ngFor="let group of processGroupedProducts(detail.set)" class="mb-4">
+                    <p-table [value]="group.rows">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Design No</th>
+                                <th>Colour</th>
+                                <th *ngFor="let size of sizeHeaders">
+                                    {{ size }} <br />
+                                    <span *ngIf="isSizeAvailable(group.rows, size)">Available</span>
+                                    <span *ngIf="!isSizeAvailable(group.rows, size)">N/A</span>
+                                </th>
+                                <th>Price</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-row>
+                            <tr>
+                                <td>{{ group.designNumber }}</td>
+                                <td>
+                                    <img
+                                        *ngIf="row.colourImage"
+                                        [src]="'https://lmscontent-cdn.blr1.digitaloceanspaces.com' + row.colourImage"
+                                        alt="Colour Image"
+                                        width="50"
+                                        height="50"
+                                    />
+                                    <span
+                                        *ngIf="!row.colourImage"
+                                        [ngStyle]="{ 'background-color': row.colour || '#ffffff' }"
+                                        style="width: 50px; height: 50px; display: inline-block; text-align: center; line-height: 50px; color: #fff; border-radius: 4px;"
+                                    ></span>
+                                </td>
+                                <td *ngFor="let size of sizeHeaders">
+                                    {{ row.quantities[size] > 0 ? row.quantities[size] : 'N/A' }}
+                                </td>
+                                <td>{{ calculateTotalPrice(row) | currency: 'INR' }}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+                <hr />
+                <div class="d-flex align-items-center">
+                    <div class="totals">
+                        <p class="mb-1 fw-bold">Sub Total: {{ detail.subTotal | currency: 'INR' }}</p>
+                        <p class="mb-1 fw-bold">GST (18%): {{ detail.gst | currency: 'INR' }}</p>
+                        <p class="mb-1 fw-bold">Grand Total: {{ detail.grandTotal | currency: 'INR' }}</p>
+                    </div>
+                </div>
+            </p-accordionTab>
+        </ng-container>
+    </p-accordion>
+</div>
