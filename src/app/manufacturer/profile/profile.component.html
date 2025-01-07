@@ -48,17 +48,22 @@
                             </div>
 
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                <label class="label-input" for="introduction">Company/Firm Introduction<span class="required">*</span></label>
+                                <label class="label-input" for="introduction">Company/Firm Introduction<span
+                                        class="required">*</span></label>
                                 <textarea type="text" id="introduction" formControlName="introduction"
-                                    class="form-control" [ngClass]="{ 'is-invalid': submitted && f.introduction.errors }"></textarea>
-                                
+                                    class="form-control"
+                                    [ngClass]="{ 'is-invalid': submitted && f.introduction.errors }"></textarea>
+
                                 <!-- Validation Messages -->
                                 <div *ngIf="submitted && f.introduction.errors" class="invalid-feedback">
-                                    <div *ngIf="f.introduction.errors.required">Company/Firm Introduction is required.</div>
-                                    <div *ngIf="f.introduction.errors.maxlength">Introduction cannot exceed 4000 characters.</div>
+                                    <div *ngIf="f.introduction.errors.required">Company/Firm Introduction is required.
+                                    </div>
+                                    <div *ngIf="f.introduction.errors.maxlength">Introduction cannot exceed 4000
+                                        characters.</div>
                                 </div>
                             </div>
-                            <div class="note"><span class="text-muted fw-bold">Note :</span> Write Introduction upto 4000 characters.</div>
+                            <div class="note"><span class="text-muted fw-bold">Note :</span> Write Introduction upto
+                                4000 characters.</div>
 
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                 <label class="label-input" for="address">Address<span class="required">*</span></label>
@@ -72,6 +77,7 @@
                             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="country">Country<span class="required">*</span></label>
                                 <select id="country" formControlName="country" class="form-select"
+                                    (change)="onCountryChange($event)"
                                     [ngClass]="{ 'is-invalid': submitted && f.country.errors }">
                                     <option value="">Select Country</option>
                                     <option *ngFor="let country of countries" [value]="country">{{ country }}</option>
@@ -80,27 +86,27 @@
                                     <div *ngIf="f.country.errors.required">Country is required.</div>
                                 </div>
                             </div>
+
                             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="state">State<span class="required">*</span></label>
-                                <select id="state" formControlName="state" (change)="stateWiseCity($event)"
-                                    class="form-select" [ngClass]="{ 'is-invalid': submitted && f.state.errors }">
+                                <select id="state" formControlName="state" class="form-select"
+                                    [ngClass]="{ 'is-invalid': submitted && f.state.errors }">
                                     <option value="">Select State</option>
-                                    <option *ngFor="let state of allState" [value]="state.iso2">{{ state.name }}
+                                    <option *ngFor="let state of allState" [value]="state.name">
+                                        {{ state.name }}
                                     </option>
                                 </select>
+
                                 <div *ngIf="submitted && f.state.errors" class="invalid-feedback">
                                     <div *ngIf="f.state.errors.required">State is required.</div>
                                 </div>
                             </div>
                             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                                <label class="label-input" for="city">City<span class="required">*</span></label>
-                                <select id="city" formControlName="city" class="form-select"
+                                <label class="label-input" for="pincode">City<span class="required">*</span></label>
+                                <input type="text" id="city" formControlName="city" class="form-control"
                                     [ngClass]="{ 'is-invalid': submitted && f.city.errors }">
-                                    <option value="">Select City</option>
-                                    <option *ngFor="let city of cityList" [value]="city.name">{{ city.name }}</option>
-                                </select>
                                 <div *ngIf="submitted && f.city.errors" class="invalid-feedback">
-                                    <div *ngIf="f.city.errors.required">City is required.</div>
+                                    <div *ngIf="f.city.errors.required">City is required</div>
                                 </div>
                             </div>
                             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
@@ -119,13 +125,13 @@
                                 <div class="d-flex mat-select">
                                     <mat-form-field appearance="outline" class="me-2">
                                         <mat-select formControlName="code">
-                                            <mat-option *ngFor="let country of countryCode" [value]="country.code">
-                                                <img [src]="country.flag" class="country-flag"
-                                                    alt="{{ country.countryName }}" />
-                                                {{ country.code }}
+                                            <mat-option [value]="countryCode">
+                                                {{ countryCode }}
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
+
+
                                     <input type="text" id="mobNumber" formControlName="mobNumber" placeholder="Number"
                                         class="form-control"
                                         [ngClass]="{ 'is-invalid': submitted && f.mobNumber.errors }" />
@@ -140,12 +146,12 @@
                                 <div class="d-flex mat-select">
                                     <mat-form-field appearance="outline" class="me-2">
                                         <mat-select formControlName="altCode">
-                                            <mat-option *ngFor="let country of countryCode" [value]="country.code">
-                                                <img [src]="country.flag" class="country-flag"
-                                                    alt="{{ country.countryName }}" />
-                                                {{ country.code }}
+                                            <mat-option [value]="countryCode">
+                                                {{ countryCode }}
                                             </mat-option>
                                         </mat-select>
+
+
                                     </mat-form-field>
                                     <input type="text" id="mobNumberAlt" formControlName="mobNumber2"
                                         class="form-control"
@@ -190,7 +196,7 @@
                                         15-character alphanumeric code with a valid structure (22AAAAA0000A1Z5).</div>
                                 </div>
                             </div>
-                            
+
                             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="pan">PAN<span class="required">*</span></label>
                                 <input type="text" id="pan" formControlName="pan" class="form-control"
@@ -318,8 +324,7 @@
                                     (change)="onCountryChange($event)"
                                     [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('country').errors }">
                                     <option disabled value="">Select Country </option>
-                                    <option [value]="country.name.common" *ngFor="let country of allCountry">
-                                        {{country.name.common}}</option>
+                                    <option *ngFor="let country of countries" [value]="country">{{ country }}</option>
 
                                 </select>
                                 <div *ngIf="submitted && f.BankDetails.get('country').errors" class="invalid-feedback">

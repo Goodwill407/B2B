@@ -46,6 +46,7 @@
     products: any[] = [];
     userProfile: any;
     filteredData: any;
+    Deliverychllanid: any;
     sizeHeaders: string[] = [];
     priceHeaders: { [size: string]: number } = {};
 
@@ -71,6 +72,7 @@
 
     getAllProducts() {
       const url = `type2-purchaseorder/${this.distributorId}`;
+     
       this.authService.get(url).subscribe(
         (res: any) => {
         
@@ -94,9 +96,16 @@
             poDate: new Date().toLocaleDateString(),
             poNumber: res.poNumber,
             status: res.status,
+            deliveryChallanNumber: this.Deliverychllanid,
             products: res.products || [],
             id: res.id,
           };
+          const url2 = `mnf-delivery-challan/purchase-orders/genrate-chall-no?manufacturerEmail=${this.purchaseOrder.buyerEmail}`;
+          this.authService.get(url2).subscribe(
+            (res: any) => {
+              console.log(res)
+    this.Deliverychllanid = res.deliveryChallanNumber
+            })
 
           if (res.set && Array.isArray(res.set) && res.set.length > 0) {
             this.extractSizesAndPrices(res.set); // <-- Ensure this is called
@@ -361,7 +370,8 @@ addpo() {
   );
 
   // Step 3: Prepare the proceed cart payload
-  const updatedCartBody = this.createPayload("proceed", updatedProducts);
+  const updatedCartBody = this.createPayload("proceed", updatedProducts, this.Deliverychllanid);
+
   console.log("Updated Cart Body:", updatedCartBody);
 
   // Step 4: Send updated data to the backend
@@ -369,7 +379,7 @@ addpo() {
 
   // Step 5: Generate and send pending cart payload only if there are changes
   if (hasPendingChanges) {
-    const pendingCartBody = this.createPayload("pending", filteredData);
+    const pendingCartBody = this.createPayload("pending", filteredData , this.Deliverychllanid);
     console.log("Pending Cart Body:", pendingCartBody);
 
     this.sendToBackend(
@@ -391,10 +401,11 @@ calculatePrice(product: any, quantities: { [key: string]: number }): string {
 }
 
 // Function to create payload with status
-createPayload(status: string, setData: any) {
+createPayload(status: string, setData: any, deliveryChallanNumber: any) {
   return {
     ...this.responseData,
     status,
+    deliveryChallanNumber,
     set: setData,
   };
 }

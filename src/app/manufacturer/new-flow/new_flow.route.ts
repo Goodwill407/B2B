@@ -5,6 +5,8 @@ import { StepOneComponent } from "./product-management/add-product2/step-one/ste
 import { StepTwoComponent } from "./product-management/add-product2/step-two/step-two.component";
 import { StepThreeComponent } from "./product-management/add-product2/step-three/step-three.component";
 import { AddProduct2Component } from "./product-management/add-product2/add-product2.component";
+import { RetrunProductsComponent } from "./return-managment/retrun-products/retrun-products.component";
+import { ViewReturnProductPoComponent } from "./return-managment/retrun-products/view-return-product-po/view-return-product-po.component";
 
 export const NewFlow:Route[]=[
     {path:'add-product2',component:AddProduct2Component},
@@ -13,4 +15,6 @@ export const NewFlow:Route[]=[
     {path:'step-two',component:StepTwoComponent},
     {path:'step-three',component:StepThreeComponent},
     {path:'view-product',component:ViewProductComponent},
+    {path:'Return-products',component:RetrunProductsComponent},
+    {path:'Return-products-po',component:ViewReturnProductPoComponent},
 ]

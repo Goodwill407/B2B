@@ -243,7 +243,7 @@ export class StepOneComponent {
         { name: 'chestSize', label: 'Chest Size (in cm)', required: true, type: 'Item_size' },
         { name: 'shoulderSize', label: 'Shoulder Size (in cm)', required: true, type: 'Item_size' },
         { name: 'frontLength', label: 'Front Length (in cm)', required: true, type: 'Item_size' },
-        { name: 'neckSize', label: 'Neck Size (in cm)', required: false, type: 'Item_size' },
+        { name: 'neckSize', label: 'Neck Size (in cm)', type: 'Item_size' },
         // { name: 'length', label: 'Length (in cm)', required: false, type: 'item_dimention' },
         // { name: 'width', label: 'Width (in cm)', required: false, type: 'item_dimention' },
         // { name: 'height', label: 'Height (in cm)', required: true, type: 'item_dimention' },
@@ -591,24 +591,21 @@ export class StepOneComponent {
 
     if(this.foundSizeSet === 'Size Set'){
 
-    sizes.forEach(size => {
-      sizesArray.push(this.fb.group({
-        standardSize: [size.standardSize],
-        brandSize: [size.brandSize, Validators.required],
-        chestSize: [size.chestSize, Validators.required],
-        shoulderSize: [size.shoulderSize, Validators.required],
-        frontLength: [size.frontLength, Validators.required],
-        neckSize: [size.neckSize,Validators.required],
-        // length: [size.length],
-        // width: [size.width],
-        // height: [size.height],
-        // weight: [size.weight, Validators.required],
-        manufacturerPrice: [size.manufacturerPrice, Validators.required],
-        RtlPrice:[size.RtlPrice, Validators.required],
-        singleMRP: [size.singleMRP, Validators.required]
-      }));
-      this.selectedSizes.push(size.standardSize); // Keep track of selected sizes
-    });
+      sizes.forEach(size => {
+        sizesArray.push(this.fb.group({
+          standardSize: [size.standardSize],
+          brandSize: [size.brandSize, Validators.required],
+          chestSize: [size.chestSize, Validators.required],
+          shoulderSize: [size.shoulderSize, Validators.required],
+          frontLength: [size.frontLength, Validators.required],
+          neckSize: [size.neckSize], // Removed Validators.required to make it optional
+          manufacturerPrice: [size.manufacturerPrice, Validators.required],
+          RtlPrice: [size.RtlPrice, Validators.required],
+          singleMRP: [size.singleMRP, Validators.required]
+        }));
+        this.selectedSizes.push(size.standardSize); // Keep track of selected sizes
+      });
+      
   }
   else{
     sizes.forEach(size => {

@@ -15,8 +15,8 @@ export class AuthService {
 
   private orderDataSubject = new BehaviorSubject<any>(null);  // Initializing with null or empty data
   orderData$ = this.orderDataSubject.asObservable();
-  // apiURL: any = 'https://backend.fashiontradershub.com/v1/'; // main server
-  apiURL: any = 'http://165.22.211.140:3000/v1/'; // local server
+  apiURL: any = 'https://backend.fashiontradershub.com/v1/'; // main server
+  // apiURL: any = 'http://165.22.211.140:3000/v1/'; // local server
 
   token = '';
   headerToken: any;
@@ -72,7 +72,9 @@ export class AuthService {
   delete(url: string, id: any) {
     return this.http.delete<any>(this.apiURL + url + "/" + id, { headers: this.headerToken });
   }
-
+  delete2(url: string) {
+    return this.http.delete<any>(this.apiURL + url , { headers: this.headerToken });
+  }
   // patch when email send for patch
   patchWithEmail(url:any,data:any){
     return this.http.patch<any>(this.apiURL + url, data, { headers: this.headerToken });

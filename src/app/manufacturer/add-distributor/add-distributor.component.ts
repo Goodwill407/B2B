@@ -61,20 +61,22 @@ export class AddDistributorComponent {
 
   onSubmit() {
     this.spinner.show();
-    this.authService.post(`invitations`,this.mgfRegistrationForm.value).subscribe((res:any) =>{
+    this.authService.post('invitations', this.mgfRegistrationForm.value).subscribe((res: any) => {
       this.communicationService.showNotification('snackbar-success', 'Distributor invitation sent successfully', 'bottom', 'center');
       this.mgfRegistrationForm.reset();
       this.initializeForm();
       this.spinner.hide();
-    },(err:any) =>{
+    }, (err: any) => {
       this.spinner.hide();
       this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
-    })
+    });
   }
+  
 
   getIdentityType(){
     this.authService.get('entitytype').subscribe((res:any) =>{
       this.identityType = res.results;
+      console.log(this.identityType);
     });
   }
   

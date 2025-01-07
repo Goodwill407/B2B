@@ -262,6 +262,18 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
       },
       {
+        path: '/mnf/wls-list',
+        title: 'Pending Orders',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+      {
         path: '/users/skill-trainer',
         title: 'View Order Status',
         iconType: '',
@@ -951,6 +963,7 @@ export const ROUTES: RouteInfo[] = [
         role: [''],
         submenu: [],
       }, 
+     
            
     ],
   },
@@ -1396,8 +1409,32 @@ export const ROUTES2: RouteInfo[] = [
     role: ['manufacture'],
     submenu: [
       {
+        path: '/mnf/wls-po-list',
+        title: 'Wholeseller po list',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+      {
         path: '/mnf/wls-list',
         title: 'New Orders',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+      {
+        path: '/mnf/wls-pen-list',
+        title: 'Pending Orders',
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -1421,6 +1458,7 @@ export const ROUTES2: RouteInfo[] = [
       },      
     ],
   },
+
   {
     path: '',
     title: `Returns  Management`,
@@ -1433,7 +1471,7 @@ export const ROUTES2: RouteInfo[] = [
     role: ['manufacture'],
     submenu: [
       {
-        path: '/mnf/return-mng/order-return',
+        path: '/mnf/new/Return-products',
         title: 'Order Return',
         iconType: '',
         icon: '',
@@ -1444,6 +1482,18 @@ export const ROUTES2: RouteInfo[] = [
         role: [''],
         submenu: [],
       },
+      // {
+      //   path: '/mnf/return-mng/order-return',  ppp
+      //   title: 'Order Return',
+      //   iconType: '',
+      //   icon: '',
+      //   class: 'ml-menu',
+      //   groupTitle: false,
+      //   badge: '',
+      //   badgeClass: '',
+      //   role: [''],
+      //   submenu: [],
+      // },
       {
         path: '/users/skill-trainer',
         title: 'Order Cancelled',
@@ -2124,6 +2174,30 @@ export const ROUTES2: RouteInfo[] = [
       {
         path: '/wholesaler/order-mng/retailormanpo',
         title: 'Retailer-Manifacturer-Po',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      }, 
+      {
+        path: '/wholesaler/order-mng/MNFDChalan',
+        title: 'Manufacturer Delivery Challan',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },  
+      {
+        path: '/wholesaler/order-mng/okproductlist',
+        title: 'Accepted Products',
         iconType: '',
         icon: '',
         class: 'ml-menu',

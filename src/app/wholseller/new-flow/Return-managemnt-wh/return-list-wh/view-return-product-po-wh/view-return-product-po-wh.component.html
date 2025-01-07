@@ -1,0 +1,114 @@
+
+
+
+
+<section class="content">
+    <div class="content-block">
+      <h4 class="mt-4">
+        <i class="bi bi-person-vcard-fill h3"></i> View Return Product PO
+      </h4>
+  
+      <div id="purchase-order" class="challan-container card my-2">
+        <div class="header">
+          <!-- Logo Section -->
+          <div class="logo">
+              <img [src]="purchaseOrder.logoUrl" alt="Company Logo" />
+          </div>
+      
+          <!-- Buyer Information Container -->
+          <div class="buyer-info">
+             <h5>From -</h5>
+              <p>{{ purchaseOrder.buyerName }}</p>
+              <p>{{ purchaseOrder.buyerDetails }}</p>
+              <p>{{ purchaseOrder.buyerAddress }}</p>
+              <p>{{ purchaseOrder.buyerPhone }}</p>
+              <p class="mb-2"><b>GSTIN : {{ purchaseOrder.buyerGSTIN }}</b></p>
+          </div>
+      
+          <!-- Seller Information Container -->
+          <div class="seller-info">
+            <h5>To -</h5>
+            <p>{{ purchaseOrder.supplierName }}</p>
+            <p>{{ purchaseOrder.buyerDetails2 }}</p>
+            <p>{{ purchaseOrder.supplierAddress }}</p>
+            <p>{{ purchaseOrder.supplierContact }}</p>
+            <p class="mb-2"><b>GSTIN : {{ purchaseOrder.supplierGSTIN }}</b></p>
+            <p><strong>PO Number :</strong> <span><b>{{ purchaseOrder.poNumber }}</b></span></p>
+            <p><strong>Date :</strong>{{ purchaseOrder.poDate }}</p>
+          </div>
+      </div>
+
+      
+  
+        <section class="gstin my-0">
+          <h2>Delivery Challan</h2>
+        </section>
+        <hr class="my-1">
+  
+        
+        <section class="order-details">
+          <div *ngIf="mergedProducts && mergedProducts.length > 0">
+            <p-table [value]="mergedProducts" class="bordered-table">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Design No</th>
+                  <th>Colour</th>
+                  <th *ngFor="let size of sizeHeaders">
+                    {{ size }} <br />
+                    <span *ngIf="!isSizeAvailable(mergedProducts, size)">N/A</span>
+                  </th>
+                  <th>Price</th>
+                </tr>
+              </ng-template>
+        
+              <ng-template pTemplate="body" let-row>
+                <tr>
+                  <td>{{ row.designNumber }}</td>
+                  <td>
+                   {{row.colourName}}
+                  </td>
+                  <td *ngFor="let size of sizeHeaders">
+                    {{ row.quantities[size] > 0 ? row.quantities[size] : 'N/A' }}
+                  </td>
+                  <td>{{ calculateTotalPrice(row) | currency: 'INR' }}</td>
+                </tr>
+              </ng-template>
+        
+              <!-- Footer Row for Subtotal, GST, and Grand Total under Size 2 -->
+              <ng-template pTemplate="footer">
+                <tr [ngStyle]="{'background-color': 'white'}">
+                  <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td> <!-- Empty cells to align totals under Size 2 -->
+                  <td style="text-align: right; font-weight: bold;">Subtotal:</td>
+                  <td>{{ Totalsub | currency: 'INR' }}</td>
+                </tr>
+                <tr [ngStyle]="{'background-color': 'white'}">
+                    <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td> <!-- Empty cells to align totals under Size 2 -->
+                  <td style="text-align: right; font-weight: bold;">GST (18%):</td>
+                  <td>{{ gst | currency: 'INR' }}</td>
+                </tr>
+                <tr [ngStyle]="{'background-color': 'white'}">
+                    <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td><!-- Empty cells to align totals under Size 2 -->
+                  <td style="text-align: right; font-weight: bold;">Grand Total:</td>
+                  <td>{{ totalGrandTotal | currency: 'INR' }}</td>
+                </tr>
+              </ng-template>
+              
+              
+            </p-table>
+          </div>
+        </section>
+        
+        
+        
+      </div>
+  
+      <div class="row">
+        <div class="col-12">
+          <div class="text-center my-3">  
+            <button class="btn btn-success ms-auto" (click)="printPurchaseOrder()">Download Return Product PO</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  

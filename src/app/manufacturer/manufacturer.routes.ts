@@ -25,6 +25,10 @@ import { WholesalerOrderListComponent } from "./new-flow/order-managment/wholesa
 import { ViewWholsalerOrderComponent } from "./new-flow/order-managment/view-wholsaler-order/view-wholsaler-order.component";
 import { GenWholsalerOrderPoComponent } from "./new-flow/order-managment/view-wholsaler-order/gen-wholsaler-order-po/gen-wholsaler-order-po.component";
 import { GenDlvChallanComponent } from "./new-flow/order-managment/view-wholsaler-order/gen-dlv-challan/gen-dlv-challan.component";
+import { WolesellerPendingOrdersComponent } from "./new-flow/order-managment/woleseller-pending-orders/woleseller-pending-orders.component";
+import { WholsellerPoComponent } from "./new-flow/order-managment/wholseller-po/wholseller-po.component";
+import { ViewWholesalerPoComponent } from "./new-flow/order-managment/wholseller-po/view-wholesaler-po/view-wholesaler-po.component";
+import { ViewWholesellerPendingOrderComponent } from "./new-flow/order-managment/woleseller-pending-orders/view-wholeseller-pending-order/view-wholeseller-pending-order.component";
 
 
 export const M_Auth: Route[] = [
@@ -48,7 +52,11 @@ export const M_Auth: Route[] = [
     { path: 'Rejected-Requests', component: RejectedRequestsListComponent },
     { path: 'Wholseler-Details', component: WholselerDetailsViewComponent },
     { path: 'wls-list', component: ViewWholsalerOrderComponent },
+    { path: 'wls-pen-list', component: WolesellerPendingOrdersComponent },
     { path: 'wls-list-po', component: GenWholsalerOrderPoComponent },
+    { path: 'wls-po-listview', component: ViewWholesalerPoComponent },
+    { path: 'wls-po-pen-listview', component: ViewWholesellerPendingOrderComponent },
+    { path: 'wls-po-list', component: WholsellerPoComponent },   
     { path: 'wls-list-po2', component: GenDlvChallanComponent },
     { path: 'delivery-challan', component: DeliveryChallanComponent },
     { path: 'customise_profile', component: CustomiseProfileComponent },

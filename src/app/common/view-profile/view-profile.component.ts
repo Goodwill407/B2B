@@ -86,6 +86,7 @@ export class ViewProfileComponent {
       fullName: ['', Validators.required],
       companyName: ['', Validators.required],
       address: ['', Validators.required],
+      contryCode: ['', Validators.required],
       country: ['India', Validators.required],
       state: ['', Validators.required],
       city: ['', Validators.required],

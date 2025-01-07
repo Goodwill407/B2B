@@ -77,17 +77,20 @@
               <!-- Footer Row for Subtotal, GST, and Grand Total under Size 2 -->
               <ng-template pTemplate="footer">
                 <tr [ngStyle]="{'background-color': 'white'}">
-                  <td colspan="5" style="border: none;"></td> <!-- Empty cells to align totals under Size 2 -->
+                  <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
+                  <!-- Empty cells to align totals under Size 2 -->
                   <td style="text-align: right; font-weight: bold;">Subtotal:</td>
                   <td>{{ Totalsub | currency: 'INR' }}</td>
                 </tr>
                 <tr [ngStyle]="{'background-color': 'white'}">
-                  <td colspan="5" style="border: none;"></td> <!-- Empty cells to align totals under Size 2 -->
+                  <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
+                   <!-- Empty cells to align totals under Size 2 -->
                   <td style="text-align: right; font-weight: bold;">GST (18%):</td>
                   <td>{{ gst | currency: 'INR' }}</td>
                 </tr>
                 <tr [ngStyle]="{'background-color': 'white'}">
-                  <td colspan="5" style="border: none;"></td> <!-- Empty cells to align totals under Size 2 -->
+                  <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
+                 <!-- Empty cells to align totals under Size 2 -->
                   <td style="text-align: right; font-weight: bold;">Grand Total:</td>
                   <td>{{ totalGrandTotal | currency: 'INR' }}</td>
                 </tr>
@@ -105,7 +108,7 @@
       <div class="row">
         <div class="col-12">
           <div class="text-center my-3">  
-            <button class="btn btn-success" (click)="addpo()">Generate Purchase Order</button>
+            <button class="btn btn-success" (click)="addpo()">Generate Purchase Order</button> &nbsp;
             <button class="btn btn-success ms-auto" (click)="printPurchaseOrder()">Download Purchase Order</button>
           </div>
         </div>

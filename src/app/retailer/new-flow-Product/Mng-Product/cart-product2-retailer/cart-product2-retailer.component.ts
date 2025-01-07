@@ -24,7 +24,7 @@ export class CartProduct2RetailerComponent {
   filteredData: any;
   sizeHeaders: string[] = []; // To hold unique sizes dynamically
   priceHeaders: { [size: string]: number } = {}; 
-
+  groupedByWholesaler: any[] = [];
   constructor(
     public authService: AuthService,
     private router: Router,
@@ -47,7 +47,8 @@ export class CartProduct2RetailerComponent {
       (res: any) => {
         if (res && res.results) {
           this.products = res.results;
-          this.filteredData = this.products.find((product) => product.wholesaler.fullName);
+          
+          this.filteredData = this.products.find((product) => product.wholesaler.email);
           if (this.filteredData && Array.isArray(this.filteredData.set)) {
             this.extractSizesAndPrices(this.filteredData.set); // Extract sizes and prices
           } else {
@@ -62,19 +63,26 @@ export class CartProduct2RetailerComponent {
   }
 
   // Extract unique sizes and prices for each size
-  extractSizesAndPrices(productSet: any[]): void {
-    const uniqueSizes = new Set<string>();
-    this.priceHeaders = {}; // Object to store size-price mapping
-    
-    productSet.forEach((product) => {
-      if (product.size && product.price > 0) {  // Only add sizes with valid price > 0
-        uniqueSizes.add(product.size);
-        this.priceHeaders[product.size] = product.price; // Map size to its price
-      }
-    });
+  // Extract unique sizes and map prices to their corresponding sizes
+extractSizesAndPrices(productSet: any[]): void {
+  const uniqueSizes = new Set<string>();
+  const tempPriceHeaders: { [size: string]: number } = {};
 
-    this.sizeHeaders = Array.from(uniqueSizes); // Convert Set to Array for the table header
-  }
+  productSet.forEach((product) => {
+      if (product.size && product.price > 0) { // Only consider valid sizes and prices
+          uniqueSizes.add(product.size);
+
+          // Ensure no overwriting of price if size already exists
+          if (!tempPriceHeaders[product.size]) {
+              tempPriceHeaders[product.size] = product.price;
+          }
+      }
+  });
+
+  this.sizeHeaders = Array.from(uniqueSizes); // Convert to an array for rendering
+  this.priceHeaders = tempPriceHeaders; // Assign the mapped prices
+}
+
 
   // Group products by design number and color, then aggregate quantities by size, 
   // and also calculate the Sub Total, GST, and Grand Total.
@@ -152,15 +160,16 @@ export class CartProduct2RetailerComponent {
   calculateTotalPrice(row: any): number {
     let total = 0;
 
-    // Loop through each size and calculate the price based on available quantities
-    this.sizeHeaders.forEach(size => {
-      if (row.quantities[size] > 0) {  // Check if there's a quantity for this size
-        total += row.quantities[size] * (this.priceHeaders[size] || 0); 
-        // Calculate price based on quantity and price for that size
-      }
+    this.sizeHeaders.forEach((size) => {
+        if (row.quantities[size] > 0) { // Check if quantity exists for the size
+            const price = this.priceHeaders[size] || 0; // Default to 0 if price is missing
+            total += row.quantities[size] * price; // Calculate the total
+        }
     });
+
     return total;
-  }
+}
+
 
   // Calculate GST (18%)
   calculateGST(subTotal: number): number {
@@ -193,5 +202,38 @@ export class CartProduct2RetailerComponent {
   isSizeAvailable(rows: any[], size: string): boolean {
     return rows.some(row => row.quantities[size] > 0);  // Check if any row has a quantity greater than 0 for the given size
   }
+
+  groupProductsByWholesaler(products: any[]): void {
+    const grouped: { [wholesalerEmail: string]: any } = {};
+
+    products.forEach((product) => {
+        const wholesalerEmail = product.wholesaler.email;
+        const manufacturerId = product.manufacturerId; // Assuming manufacturerId is available
+
+        if (!grouped[wholesalerEmail]) {
+            grouped[wholesalerEmail] = {
+                name: product.wholesaler.fullName,
+                email: wholesalerEmail,
+                manufacturers: {} // Nested grouping by manufacturer
+            };
+        }
+
+        if (!grouped[wholesalerEmail].manufacturers[manufacturerId]) {
+            grouped[wholesalerEmail].manufacturers[manufacturerId] = [];
+        }
+
+        grouped[wholesalerEmail].manufacturers[manufacturerId].push(product);
+    });
+
+    // Convert to array for iteration in the template
+    this.groupedByWholesaler = Object.keys(grouped).map((key) => ({
+        wholesaler: grouped[key],
+        manufacturers: Object.keys(grouped[key].manufacturers).map((manKey) => ({
+            manufacturerId: manKey,
+            products: grouped[key].manufacturers[manKey]
+        }))
+    }));
+}
+
 }
 
