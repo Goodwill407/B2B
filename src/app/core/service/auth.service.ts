@@ -72,7 +72,9 @@ export class AuthService {
   delete(url: string, id: any) {
     return this.http.delete<any>(this.apiURL + url + "/" + id, { headers: this.headerToken });
   }
-
+  delete2(url: string) {
+    return this.http.delete<any>(this.apiURL + url , { headers: this.headerToken });
+  }
   // patch when email send for patch
   patchWithEmail(url:any,data:any){
     return this.http.patch<any>(this.apiURL + url, data, { headers: this.headerToken });

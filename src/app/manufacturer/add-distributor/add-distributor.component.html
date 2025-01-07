@@ -40,18 +40,18 @@
                     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                         <label class="lable-input" for="role">Distributor's Identity<span>*</span>:</label>
                         <select formControlName="role" class="form-select" placeholder="Select Designation">
-                            <option value="" disabled>Select Identity</option>
-                            @for(type of identityType;track type){
-                            @if(type.name!=='manufacture'){
-                            <option value="type.name" dis>{{type.name|titlecase}}</option>
-                            }
-                            }
+                          <option value="" disabled>Select Identity</option>
+                          <ng-container *ngFor="let type of identityType">
+                            <!-- Bind value to type.id and display type.name -->
+                            <option [value]="type.name" [disabled]="type.name === 'manufacture'">{{type.name | titlecase}}</option>
+                          </ng-container>
                         </select>
-                        <div *ngIf="mgfRegistrationForm.get('role')?.touched && mgfRegistrationForm.get('role')?.invalid"
-                            class="text-danger">
-                            Distributor's Identity is required.
+                        <div *ngIf="mgfRegistrationForm.get('role')?.touched && mgfRegistrationForm.get('role')?.invalid" class="text-danger">
+                          Distributor's Identity is required.
                         </div>
-                    </div>
+                      </div>
+                      
+
 
                     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                         <div class="row">

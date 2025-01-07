@@ -41,7 +41,8 @@
                                 <select formControlName="role" class="form-select"
                                     placeholder="Select Organization Identity">
                                     <option value="" disabled>Select Identity</option>
-                                    <option *ngFor="let item of allIdentity" [value]="item.name">{{item.name|titlecase}}</option>                                   
+                                    <option *ngFor="let item of allIdentity" [value]="item.name">{{item.name|titlecase}}
+                                    </option>
                                 </select>
                                 <div *ngIf="mgfRegistrationForm.get('role')?.touched && mgfRegistrationForm.get('role')?.invalid"
                                     class="text-danger">
@@ -53,10 +54,11 @@
                                 <label class="lable-input" for="mobileNumber">Mobile Number<span>*</span>:</label>
                                 <div class="d-flex mat-select">
                                     <mat-form-field appearance="outline" class="w-25 me-2">
-                                        <mat-select formControlName="code">
-                                            <mat-option *ngFor="let country of countryCode" [value]="country.code">
-                                                <img [src]="country.flag" alt="{{ country.countryName }}"
-                                                    class="country-flag" /> {{ country.code }}
+                                        <mat-select formControlName="contryCode"
+                                            (selectionChange)="onCountryChange($event)">
+                                            <mat-option *ngFor="let country of countryCode"
+                                                [value]="'+' + country.dial_code">
+                                                +{{ country.dial_code }}
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
@@ -113,34 +115,67 @@
                         </div> -->
 
                         <div *ngIf="otpStep" class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
+                            <!-- Unified Timer -->
+                            <div *ngIf="otpStep" class="mt-3 text-center">
+                                <span *ngIf="timeLeft > 0">Resend OTP in {{ timeLeft }}</span>
+
+                            </div>
+
+
+                            <!-- Email OTP -->
                             <!-- Email OTP -->
                             <label class="lable-input"><b>Enter Email OTP</b><span>*</span> :</label>
                             <div class="otp-input mt-4">
-                              <input type="text" id="otp1" maxlength="1" (input)="onOtpChange(0, $event)" class="form-control otp-box" />
-                              <input type="text" id="otp2" maxlength="1" (input)="onOtpChange(1, $event)" class="form-control otp-box" />
-                              <input type="text" id="otp3" maxlength="1" (input)="onOtpChange(2, $event)" class="form-control otp-box" />
-                              <input type="text" id="otp4" maxlength="1" (input)="onOtpChange(3, $event)" class="form-control otp-box" />
-                              <input type="text" id="otp5" maxlength="1" (input)="onOtpChange(4, $event)" class="form-control otp-box" />
-                              <input type="text" id="otp6" maxlength="1" (input)="onOtpChange(5, $event)" class="form-control otp-box" />
+                                <input type="text" maxlength="1" (input)="onOtpChange(0, $event)"
+                                    class="form-control otp-box" />
+                                <input type="text" maxlength="1" (input)="onOtpChange(1, $event)"
+                                    class="form-control otp-box" />
+                                <input type="text" maxlength="1" (input)="onOtpChange(2, $event)"
+                                    class="form-control otp-box" />
+                                <input type="text" maxlength="1" (input)="onOtpChange(3, $event)"
+                                    class="form-control otp-box" />
+                                <input type="text" maxlength="1" (input)="onOtpChange(4, $event)"
+                                    class="form-control otp-box" />
+                                <input type="text" maxlength="1" (input)="onOtpChange(5, $event)"
+                                    class="form-control otp-box" />
+
                             </div>
-                          
+
                             <!-- Mobile OTP -->
-                            <label class="lable-input"><b>Enter Mobile OTP</b><span>*</span> :</label>
-                            <div class="otp-input mt-4">
-                              <input type="text" id="mobileOtp1" maxlength="1" (input)="onMobileOtpChange(0, $event)" class="form-control otp-box" />
-                              <input type="text" id="mobileOtp2" maxlength="1" (input)="onMobileOtpChange(1, $event)" class="form-control otp-box" />
-                              <input type="text" id="mobileOtp3" maxlength="1" (input)="onMobileOtpChange(2, $event)" class="form-control otp-box" />
-                              <input type="text" id="mobileOtp4" maxlength="1" (input)="onMobileOtpChange(3, $event)" class="form-control otp-box" />
-                              <input type="text" id="mobileOtp5" maxlength="1" (input)="onMobileOtpChange(4, $event)" class="form-control otp-box" />
-                              <input type="text" id="mobileOtp6" maxlength="1" (input)="onMobileOtpChange(5, $event)" class="form-control otp-box" />
+                            <label class="lable-input" *ngIf="isIndiaSelected"><b>Enter Mobile OTP</b><span>*</span>
+                                :</label>
+                            <div class="otp-input mt-4" *ngIf="isIndiaSelected">
+                                <input type="text" maxlength="1" (input)="onMobileOtpChange(0, $event)"
+                                    class="form-control otp-box" />
+                                <input type="text" maxlength="1" (input)="onMobileOtpChange(1, $event)"
+                                    class="form-control otp-box" />
+                                <input type="text" maxlength="1" (input)="onMobileOtpChange(2, $event)"
+                                    class="form-control otp-box" />
+                                <input type="text" maxlength="1" (input)="onMobileOtpChange(3, $event)"
+                                    class="form-control otp-box" />
+                                <input type="text" maxlength="1" (input)="onMobileOtpChange(4, $event)"
+                                    class="form-control otp-box" />
+                                <input type="text" maxlength="1" (input)="onMobileOtpChange(5, $event)"
+                                    class="form-control otp-box" />
                             </div>
-                          </div>
-                          
+
+                        </div>
+
+
 
                         <div class="col-12 text-center">
-                            <button type="submit" class="btn submit-btn" [disabled]="mgfRegistrationForm.invalid">{{
-                                otpStep ? 'Submit Otp' : 'Submit' }}</button>
+                            <!-- Submit OTP or Submit Button -->
+                            <button *ngIf="!otpStep || (otpStep && timeLeft > 0)" type="submit" class="btn submit-btn"
+                                [disabled]="mgfRegistrationForm.invalid">
+                                {{ otpStep ? 'Submit OTP' : 'Submit' }}
+                            </button>
+
+                            <!-- Resend OTP Button -->
+                            <button *ngIf="otpStep && timeLeft === 0" (click)="resendOtps()" class="btn submit-btn">
+                                Resend OTP
+                            </button>
                         </div>
+
                     </div>
                     }
                 </form>

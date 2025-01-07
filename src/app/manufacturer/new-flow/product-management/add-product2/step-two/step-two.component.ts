@@ -8,7 +8,7 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { MultiSelectModule } from 'primeng/multiselect';
-
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-step-two',
   standalone: true,
@@ -290,17 +290,55 @@ export class StepTwoComponent {
     return this.CloudPath + video;
   }
 
-  deleteColorCOllection(CollectionData:any) {
-    const id = `?&id=${this.productId}&collectionId=${CollectionData._id}`
-    this.spinner.show()
-    this.authService.delete(`products/delete/colour-collection`, id).subscribe(res => {
-      this.getProductDataById()
-      this.spinner.hide()
-      this.communicationService.showNotification('snackbar-success', `Deleted Successfully...!!!`, 'bottom', 'center');
-    }, error => {
-      this.spinner.hide()
+  deleteColorCollection(CollectionData: any) {
+    // Display confirmation dialog with SweetAlert
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this color collection? This action cannot be undone!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Construct the query parameters
+        const queryParams = `id=${this.productId}&collectionId=${CollectionData._id}`;
+        this.spinner.show();
+  
+        // Manually construct the URL to avoid adding the slash
+        const apiUrl = `type2-products/delete/colour-collection?${queryParams}`;
+  
+        // Call the delete method with the modified URL
+        this.authService.delete2(apiUrl).subscribe(
+          (res) => {
+            this.getProductDataById(); // Refresh the data after deletion
+            this.spinner.hide();
+            Swal.fire(
+              'Deleted!',
+              'Your color collection has been deleted.',
+              'success'
+            );
+          },
+          (error) => {
+            this.spinner.hide();
+            console.error('Error during deletion:', error);
+            Swal.fire(
+              'Error!',
+              'An error occurred while deleting the color collection.',
+              'error'
+            );
+          }
+        );
+      } else {
+        // User clicked "Cancel"
+        console.log('Deletion cancelled by the user.');
+      }
     });
   }
+  
+  
 
   goToNextPage(){
     this.next.emit( this.productId);

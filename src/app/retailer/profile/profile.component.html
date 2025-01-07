@@ -119,14 +119,15 @@
                                             class="required">*</span>:</label>
                                     <div class="d-flex mat-select">
                                         <mat-form-field appearance="outline" class="me-2">
-                                            <mat-select formControlName="code">
-                                                <mat-option *ngFor="let country of countryCode" [value]="country.code">
-                                                    <img [src]="country.flag" class="country-flag"
-                                                        alt="{{ country.countryName }}" />
-                                                    {{ country.code }}
-                                                </mat-option>
-                                            </mat-select>
-                                        </mat-form-field>
+                                        <mat-select formControlName="contryCode">
+                                            <mat-option *ngFor="let country of countryCode" [value]="country.code">
+                                        
+                                              <img [src]="country.flag" class="country-flag" alt="{{ country.countryName }}" />
+                                            {{ country.code }}
+                                            </mat-option>
+                                          </mat-select>
+                                          
+                                    </mat-form-field>
                                         <input type="text" id="mobNumber" formControlName="mobNumber" placeholder="Number"
                                             class="form-control"
                                             [ngClass]="{ 'is-invalid': submitted && f.mobNumber.errors }" />
@@ -140,13 +141,14 @@
                                     <label class="label-input" for="mobileNumber">Alternative Mobile Number:</label>
                                     <div class="d-flex mat-select">
                                         <mat-form-field appearance="outline" class="me-2">
-                                            <mat-select formControlName="altCode">
+                                            <mat-select formControlName="contryCode">
                                                 <mat-option *ngFor="let country of countryCode" [value]="country.code">
-                                                    <img [src]="country.flag" class="country-flag"
-                                                        alt="{{ country.countryName }}" />
-                                                    {{ country.code }}
+                                            
+                                                  <img [src]="country.flag" class="country-flag" alt="{{ country.countryName }}" />
+                                                {{ country.code }}
                                                 </mat-option>
-                                            </mat-select>
+                                              </mat-select>
+                                              
                                         </mat-form-field>
                                         <input type="text" id="mobNumberAlt" formControlName="mobNumber2"
                                             class="form-control"

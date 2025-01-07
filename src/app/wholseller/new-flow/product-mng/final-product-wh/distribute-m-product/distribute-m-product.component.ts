@@ -7,6 +7,17 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { AccordionModule } from 'primeng/accordion';
 import { TableModule } from 'primeng/table';
+
+interface RetailerDetail {
+  retailer: {
+    fullName: string;
+    email: string;
+    address: string;
+    state: string;
+  };
+  poNumber: number;
+  set: any[];
+}
 @Component({
   selector: 'app-distribute-m-product',
   standalone: true,
@@ -41,7 +52,6 @@ export class DistributeMProductComponent {
   };
 
   mergedProducts: any[] = [];
-  retailerDetails: any[] = [];
 
   responseData: any; // New variable to store response data
   distributorId: string = '';
@@ -52,7 +62,7 @@ export class DistributeMProductComponent {
   filteredData: any;
   sizeHeaders: string[] = [];
   priceHeaders: { [size: string]: number } = {};
-
+  retailerDetails: any[] = [];
   totalGrandTotal: number = 0;
   gst: number = 0;
   Totalsub: number = 0;
@@ -76,58 +86,29 @@ export class DistributeMProductComponent {
     const url = `final-product/distribute/${this.distributorId}`;
     this.authService.get(url).subscribe(
       (res: any) => {
-       
-        this.responseData = res; // Store the response in responseData
-        console.log(res)
-        // Update purchaseOrder from the response
-        this.purchaseOrder = {
-          supplierName: res.manufacturer.companyName,
-          supplierDetails: res.manufacturer.fullName,
-          supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.city}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
-          supplierContact: `${res.manufacturer.mobNumber}`,
-          supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
-          buyerName: res.wholesaler.companyName,
-          logoUrl: this.authService.cdnPath + res.wholesaler.profileImg,
-          buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
-          buyerPhone: res.wholesaler.mobNumber,
-          buyerEmail: res.wholesaler.email,
-          buyerDetails: res.wholesaler.fullName,
-          buyerDetails2: res.manufacturer.fullName,
-          buyerGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
-          poDate: new Date().toLocaleDateString(),
-          poNumber: res.poNumber,
-          products: res.products || [],
-        };
+        this.responseData = res;
 
+        // Process the general products for the first table
         if (res.set && Array.isArray(res.set) && res.set.length > 0) {
           this.extractSizesAndPrices(res.set);
-          this.mergedProducts = this.processGroupedProducts(res.set);
-      } else {
-          this.mergedProducts = [];
-      }
+          this.mergedProducts = this.flattenProductData(res.set);
+        }
 
-      // Second Table Logic: Inner `set` from `retailerDetails`
-      if (res.retailerDetails.set && Array.isArray(res.retailerDetails) && res.retailerDetails.length > 0) {
-          this.retailerDetails = res.retailerDetails.map((detail:any) => {
-              const groupedProducts = this.processGroupedProducts(detail.set);
-
-              return {
-                  ...detail,
-                  groupedProducts,
-                  subTotal: groupedProducts.reduce((acc, group) => acc + group.subTotal, 0),
-                  gst: groupedProducts.reduce((acc, group) => acc + group.gst, 0),
-                  grandTotal: groupedProducts.reduce((acc, group) => acc + group.grandTotal, 0),
-              };
-          });
-      } else {
-          this.retailerDetails = [];
+        // Process retailer details for the second table
+        if (res.retailerDetails && Array.isArray(res.retailerDetails)) {
+          this.retailerDetails = res.retailerDetails.map((retailer: RetailerDetail) => ({
+            ...retailer,
+            mergedProducts: this.flattenProductData(retailer.set || []),
+          }));
+        }
+      },
+      (error) => {
+        console.error('Error fetching products:', error);
       }
-  },
-  (error) => {
-      console.error('Error fetching data:', error);
+    );
   }
-);
-  }
+
+  
 
   extractSizesAndPrices(productSet: any[]): void {
     const uniqueSizes = new Set<string>();
@@ -309,8 +290,6 @@ printPurchaseOrder(): void {
     console.error("Element with id 'purchase-order' not found.");
   }
 }
-
-
 
   
 }
