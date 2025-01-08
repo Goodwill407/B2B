@@ -143,55 +143,50 @@ export class ProfileComponent {
   }
 
   getSavedProfileData() {
-    this.authService.get(`manufacturers/${this.userProfile.email}`).subscribe(
-      (res: any) => {
-        if (res) {
-          console.log(res);
-  
-          // Format dates
-          res.establishDate = res.establishDate
-            ? this.datePipe.transform(res.establishDate, 'yyyy-MM-dd')
-            : null;
-          res.registerOnFTH = res.registerOnFTH
-            ? this.datePipe.transform(res.registerOnFTH, 'yyyy-MM-dd')
-            : null;
-  
-          // Default country code to "+91" if not available
-          this.countryCode = res.countryCode || '+91';
-  
-          // Set state value
-          this.state = res.state;
-  
-          // Assign other response data to the form
-          this.allData = res;
-          this.mgfRegistrationForm.patchValue(this.allData);
-  
-          // Patch the country code
-          this.mgfRegistrationForm.patchValue({ code: this.countryCode });
-  
-          // Fetch states and patch the state value once loaded
-          this.getAllState({ country_name: res.country });
-  
-          // Disable specific fields
-          this.mgfRegistrationForm.get('countryCode')?.disable();
-  
-          this.stateWiseCity(null, this.allData.state, this.allData.city);
-  
-          this.mgfRegistrationForm.disable();
-          this.currentStep = 1;
-          this.isDataSaved = true;
-          this.isEditFlag = true;
-        } else {
-          // Handle manufacturer not found error
-        }
-      },
-      (error) => {
-        if (error.error.message === 'Manufacturer not found') {
-          this.getRegisteredUserData();
-        }
+  this.authService.get(`manufacturers/${this.userProfile.email}`).subscribe(
+    async (res: any) => {
+      if (res) {
+        console.log(res);
+
+        // Format dates
+        res.establishDate = res.establishDate
+          ? this.datePipe.transform(res.establishDate, 'yyyy-MM-dd')
+          : null;
+        res.registerOnFTH = res.registerOnFTH
+          ? this.datePipe.transform(res.registerOnFTH, 'yyyy-MM-dd')
+          : null;
+
+        // Default country code to "+91" if not available
+        this.countryCode = res.countryCode || '+91';
+
+        // Assign other response data to the form
+        this.allData = res;
+        this.mgfRegistrationForm.patchValue(this.allData);
+
+        // Patch the country code
+        this.mgfRegistrationForm.patchValue({ code: this.countryCode });
+
+        // Fetch states and patch the state value once loaded
+        await this.getAllState({ country_name: res.country });
+        this.mgfRegistrationForm.patchValue({ state: res.state });
+
+        this.stateWiseCity(null, this.allData.state, this.allData.city);
+
+        this.mgfRegistrationForm.disable();
+        this.currentStep = 1;
+        this.isDataSaved = true;
+        this.isEditFlag = true;
+      } else {
+        // Handle manufacturer not found error
       }
-    );
-  }
+    },
+    (error) => {
+      if (error.error.message === 'Manufacturer not found') {
+        this.getRegisteredUserData();
+      }
+    }
+  );
+}
   
   
 
@@ -266,25 +261,30 @@ export class ProfileComponent {
     );
   }
   
-  getAllState(body: { country_name: string }): void {
-    this.authService.post('/state/searchby/country', body).subscribe(
-      (res: any) => {
-        if (res && res.data && res.data.results) {
-          // Populate allState
-          this.allState = res.data.results.map((state: any) => ({
-            name: state.name,
-          }));
+  getAllState(country: { country_name: string }): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.authService.post('/state/searchby/country', country).subscribe(
+        (states: any) => {
+          if (states && states.data && states.data.results) {
+            // Assuming states.data.results contains the state list
+            this.allState = states.data.results.map((state: any) => ({
+              name: state.name,
+            }));
   
-          // Patch the state value if it matches one in the list
-          if (this.state) {
-            this.mgfRegistrationForm.patchValue({ state: this.state });
+            // Resolve the promise after processing
+            resolve();
+          } else {
+            // Reject the promise if the response structure isn't as expected
+            reject(new Error('Invalid response structure'));
           }
+        },
+        (error) => {
+          // Log the error and reject the promise
+          console.error('Error fetching states:', error);
+          reject(error);
         }
-      },
-      (error) => {
-        console.error('Error fetching states:', error);
-      }
-    );
+      );
+    });
   }
   
   
