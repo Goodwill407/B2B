@@ -449,5 +449,18 @@ interval: any; // Interval for the timer
 
     this.startTimer(); // Restart timer
   }
+
+  moveFocus(event: KeyboardEvent, index: number, type: string): void {
+    const target = event.target as HTMLInputElement;
+    if (target.value.length === 1) {
+      const nextInput = document.querySelector(
+        `.otp-input.${type}-otp input:nth-child(${index + 1})`
+      ) as HTMLInputElement;
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
+  }
+
     
 }

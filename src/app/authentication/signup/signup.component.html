@@ -30,7 +30,7 @@
                             </div>
 
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
-                                <label class="lable-input" for="companyName">Company/Firm Name :</label>
+                                <label class="lable-input" for="companyName">Company/Firm Name<span>*</span>:</label>
                                 <input type="text" id="companyName" formControlName="companyName"
                                     placeholder="Enter Company/Firm Name " class="form-control" />
                             </div>
@@ -137,13 +137,13 @@
                             <!-- Mobile OTP -->
                             <label class="lable-input" *ngIf="isIndiaSelected"><b>Enter Mobile OTP</b><span>*</span>
                                 :</label>
-                            <div *ngIf="isIndiaSelected" class="otp-input mt-4">
-                                <input id="otp0" type="text" maxlength="1" (input)="onMobileOtpChange(0, $event)" class="form-control otp-box" />
-                                <input id="otp1" type="text" maxlength="1" (input)="onMobileOtpChange(1, $event)" class="form-control otp-box" />
-                                <input id="otp2" type="text" maxlength="1" (input)="onMobileOtpChange(2, $event)" class="form-control otp-box" />
-                                <input id="otp3" type="text" maxlength="1" (input)="onMobileOtpChange(3, $event)" class="form-control otp-box" />
-                                <input id="otp4" type="text" maxlength="1" (input)="onMobileOtpChange(4, $event)" class="form-control otp-box" />
-                                <input id="otp5" type="text" maxlength="1" (input)="onMobileOtpChange(5, $event)" class="form-control otp-box" />
+                            <div class="otp-input mt-4">
+                                <input id="mobotp0" type="text" maxlength="1" (input)="onMobileOtpChange(0, $event)" class="form-control otp-box" />
+                                <input id="mobotp1" type="text" maxlength="1" (input)="onMobileOtpChange(1, $event)" class="form-control otp-box" />
+                                <input id="mobotp2" type="text" maxlength="1" (input)="onMobileOtpChange(2, $event)" class="form-control otp-box" />
+                                <input id="mobotp3" type="text" maxlength="1" (input)="onMobileOtpChange(3, $event)" class="form-control otp-box" />
+                                <input id="mobotp4" type="text" maxlength="1" (input)="onMobileOtpChange(4, $event)" class="form-control otp-box" />
+                                <input id="mobotp5" type="text" maxlength="1" (input)="onMobileOtpChange(5, $event)" class="form-control otp-box" />
                               </div>
                         </div>
 

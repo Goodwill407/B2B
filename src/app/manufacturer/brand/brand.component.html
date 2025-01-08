@@ -4,12 +4,12 @@
 <section class="content">
     <div class="content-block">
         <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Brands</h4>
-        <div class="card p-3">
+        <div class="card p-3 add-brand-form">
             <h5 class="">Add Brands</h5>
             <hr class="mt-0">
             <form [formGroup]="brandForm" (ngSubmit)="onSubmit()">
                 <div class="w-75">
-                    <label for="brandName">Brand Name:</label>
+                    <label for="brandName" class="label-input">Brand Name<span>*</span>:</label>
                     <input type="text" id="brandName" formControlName="brandName" class="form-control" />
                     <div *ngIf="brandForm.get('brandName')?.touched && brandForm.get('brandName')?.invalid"
                         class="text-danger">
@@ -18,7 +18,7 @@
                 </div>
 
                 <div class="mt-2 w-75">
-                    <label for="brandDescription">Brand Description:</label>
+                    <label for="brandDescription">Brand Description<span>*</span>:</label>
                     <textarea id="brandDescription" formControlName="brandDescription" class="form-control"></textarea>
                     <div *ngIf="brandForm.get('brandDescription')?.touched && brandForm.get('brandDescription')?.invalid"
                         class="text-danger">
@@ -27,7 +27,7 @@
                 </div>
 
                 <div class="mt-2 w-50">
-                    <label for="brandLogo">Brand Logo:</label>
+                    <label for="brandLogo">Brand Logo<span>*</span>:</label>
                     <input type="file" id="brandLogo" (change)="onImageChange($event)" class="form-control" title=""
                         #fileInput />
                     <div *ngIf="imageFormatError" class="text-danger">{{ imageFormatError }}</div>
