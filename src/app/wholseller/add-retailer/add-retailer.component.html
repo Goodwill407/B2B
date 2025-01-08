@@ -68,9 +68,9 @@
                                         <div class="d-flex">
                                             <mat-form-field appearance="outline" class="me-3">
                                                 <mat-select formControlName="code">
-                                                    <mat-option *ngFor="let country of countryCode" [value]="country.code">
-                                                        <img [src]="country.flag" alt="{{ country.countryName }}" class="country-flag" />{{ country.code }}
-                                                    </mat-option>
+                                                    <mat-option *ngFor="let code of altcountryCode" [value]="'+' + code">
+                                                        +{{ code }}
+                                                    </mat-option> 
                                                 </mat-select>
                                             </mat-form-field>
                                             <input type="number" id="mobileNumber" formControlName="mobileNumber"
