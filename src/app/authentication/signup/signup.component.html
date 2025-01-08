@@ -126,6 +126,7 @@
                             <!-- Email OTP -->
                             <label class="lable-input"><b>Enter Email OTP</b><span>*</span> :</label>
                             <div class="otp-input mt-4">
+<<<<<<< HEAD
                                 <input type="text" maxlength="1" (input)="onOtpChange(0, $event)"
                                     class="form-control otp-box"  id="otp1"/>
                                 <input type="text" maxlength="1" (input)="onOtpChange(1, $event)"
@@ -139,11 +140,20 @@
                                 <input type="text" maxlength="1" (input)="onOtpChange(5, $event)"
                                     class="form-control otp-box"  id="otp6"/>
 
+=======
+                              <input id="otp0" type="text" maxlength="1" (input)="onOtpChange(0, $event)" class="form-control otp-box" />
+                              <input id="otp1" type="text" maxlength="1" (input)="onOtpChange(1, $event)" class="form-control otp-box" />
+                              <input id="otp2" type="text" maxlength="1" (input)="onOtpChange(2, $event)" class="form-control otp-box" />
+                              <input id="otp3" type="text" maxlength="1" (input)="onOtpChange(3, $event)" class="form-control otp-box" />
+                              <input id="otp4" type="text" maxlength="1" (input)="onOtpChange(4, $event)" class="form-control otp-box" />
+                              <input id="otp5" type="text" maxlength="1" (input)="onOtpChange(5, $event)" class="form-control otp-box" />
+>>>>>>> 19c0af4c5132a343767654aa4e4835b100c1edf6
                             </div>
-
+                            
                             <!-- Mobile OTP -->
                             <label class="lable-input" *ngIf="isIndiaSelected"><b>Enter Mobile OTP</b><span>*</span>
                                 :</label>
+<<<<<<< HEAD
                             <div class="otp-input mt-4" *ngIf="isIndiaSelected">
                                 <input type="text" maxlength="1" (input)="onMobileOtpChange(0, $event)"
                                     class="form-control otp-box" id="mobileOtp1"/>
@@ -159,6 +169,16 @@
                                     class="form-control otp-box" id="mobileOtp6"/>
                             </div>
 
+=======
+                            <div class="otp-input mt-4">
+                                <input id="otp0" type="text" maxlength="1" (input)="onMobileOtpChange(0, $event)" class="form-control otp-box" />
+                                <input id="otp1" type="text" maxlength="1" (input)="onMobileOtpChange(1, $event)" class="form-control otp-box" />
+                                <input id="otp2" type="text" maxlength="1" (input)="onMobileOtpChange(2, $event)" class="form-control otp-box" />
+                                <input id="otp3" type="text" maxlength="1" (input)="onMobileOtpChange(3, $event)" class="form-control otp-box" />
+                                <input id="otp4" type="text" maxlength="1" (input)="onMobileOtpChange(4, $event)" class="form-control otp-box" />
+                                <input id="otp5" type="text" maxlength="1" (input)="onMobileOtpChange(5, $event)" class="form-control otp-box" />
+                              </div>
+>>>>>>> 19c0af4c5132a343767654aa4e4835b100c1edf6
                         </div>
 
 

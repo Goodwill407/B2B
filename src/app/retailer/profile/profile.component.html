@@ -146,12 +146,10 @@
                                 <div class="d-flex mat-select">
                                     <mat-form-field appearance="outline" class="me-2">
                                         <mat-select formControlName="altCode">
-                                            <mat-option [value]="countryCode">
-                                                {{ countryCode }}
+                                            <mat-option *ngFor="let code of altcountryCode" [value]="'+' + code">
+                                                +{{ code }}
                                             </mat-option>
                                         </mat-select>
-
-
                                     </mat-form-field>
                                     <input type="text" id="mobNumberAlt" formControlName="mobNumber2"
                                         class="form-control"

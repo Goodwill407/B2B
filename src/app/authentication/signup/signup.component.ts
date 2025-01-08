@@ -260,12 +260,29 @@ interval: any; // Interval for the timer
 
   onOtpChange(index: number, event: any) {
     const value = event.target.value;
-    if (value.length === 1 && index < 5) {
-      (document.getElementById(`otp${index + 2}`) as HTMLElement).focus();
+    
+    // Ensure only single digit is entered
+    if (/^\d$/.test(value)) {
+      this.otpFields[index] = value; // Update the OTP field at the specified index
+    } else {
+      this.otpFields[index] = ''; // Clear the input if it's not a digit
     }
-    this.otpFields[index] = value;
-    this.mgfRegistrationForm.controls['otp'].setValue(this.otpFields.join(''));
+  
+    // Concatenate the OTP fields into a single string
+    const fullOtp = this.otpFields.join('');
+  
+    // Update the form control with the full OTP
+    this.mgfRegistrationForm.controls['otp'].setValue(fullOtp);
+  
+    // Automatically focus the next input field, if it exists
+    if (value.length === 1 && index < this.otpFields.length - 1) {
+      const nextInput = document.getElementById(`otp${index + 1}`) as HTMLInputElement;
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
   }
+  
 
   mustMatch(controlName: string, matchingControlName: string): ValidatorFn {
     return (formGroup: AbstractControl): ValidationErrors | null => {
@@ -341,6 +358,8 @@ interval: any; // Interval for the timer
       );
     });
   }
+
+ 
   
   
 
