@@ -408,7 +408,7 @@ interval: any; // Interval for the timer
     this.communicationService.showNotification('snackbar-success', 'Mobile OTP resent successfully', 'bottom', 'center');
   }
   startTimer() {
-    this.timeLeft = 10; // Reset timer to 3 minutes
+    this.timeLeft = 180; // Reset timer to 3 minutes
     clearInterval(this.interval); // Clear any existing interval
   
     this.interval = setInterval(() => {
@@ -430,5 +430,18 @@ interval: any; // Interval for the timer
 
     this.startTimer(); // Restart timer
   }
+
+  moveFocus(event: KeyboardEvent, index: number, type: string): void {
+    const target = event.target as HTMLInputElement;
+    if (target.value.length === 1) {
+      const nextInput = document.querySelector(
+        `.otp-input.${type}-otp input:nth-child(${index + 1})`
+      ) as HTMLInputElement;
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
+  }
+
     
 }
