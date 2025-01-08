@@ -48,6 +48,7 @@ export class WholesalerProfileComponent {
   allCountry: any;
   Allcities: any;
   allData: any;
+  altcountryCode: any;
 
   constructor(private fb: FormBuilder, public authService: AuthService, private communicationService: CommunicationService, private datePipe: DatePipe, private direction: DirectionService,private dialog: MatDialog) { }
 
@@ -70,7 +71,7 @@ export class WholesalerProfileComponent {
     this.getAllCountry()
     this.getSavedProfileData()
     this.disabledFields();
-    
+    this.getAllCountryCode()
   }
 
   initializeValidation() {
@@ -313,6 +314,18 @@ export class WholesalerProfileComponent {
     const dialogRef = this.dialog.open(ImageDialogComponent, {
       width: size+'px',
       data: {path:path,width:size}  // Pass the current product data
+    });
+  }
+
+  getAllCountryCode() {
+    this.authService.get('/countrycode?sortBy=dial_code').subscribe((res: any) => {
+      // Store the list of dial codes in the altcountryCode array
+      this.altcountryCode = res.results.map((country: any) => country.dial_code);
+      
+      // Optionally, set a default value (e.g., '+91') for altCode if needed
+      if (this.altcountryCode.includes('91')) {
+        this.mgfRegistrationForm.controls['altCode'].setValue('+91');
+      }
     });
   }
 }
