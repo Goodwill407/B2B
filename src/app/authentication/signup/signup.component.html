@@ -137,7 +137,7 @@
                             <!-- Mobile OTP -->
                             <label class="lable-input" *ngIf="isIndiaSelected"><b>Enter Mobile OTP</b><span>*</span>
                                 :</label>
-                            <div class="otp-input mt-4">
+                            <div *ngIf="isIndiaSelected" class="otp-input mt-4">
                                 <input id="otp0" type="text" maxlength="1" (input)="onMobileOtpChange(0, $event)" class="form-control otp-box" />
                                 <input id="otp1" type="text" maxlength="1" (input)="onMobileOtpChange(1, $event)" class="form-control otp-box" />
                                 <input id="otp2" type="text" maxlength="1" (input)="onMobileOtpChange(2, $event)" class="form-control otp-box" />

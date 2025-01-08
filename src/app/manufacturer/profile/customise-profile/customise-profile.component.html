@@ -24,8 +24,16 @@
                                     <input type="checkbox" formControlName="companyName"> Company/Firm Name
                                 </div>
                                 <div class="form-check">
-                                    <input type="checkbox" formControlName="leagalStatusOfFirm"> Legal Status of Firm
+                                    <input
+                                        type="checkbox"
+                                        formControlName="leagalStatusOfFirm"
+                                        name="leagalStatusOfFirm"
+                                        (change)="onCheckboxChange($event, 'leagalStatusOfFirm')"
+                                    >
+                                    Legal Status of Firm
                                 </div>
+                                
+                                
                                 <div class="form-check">
                                     <input type="checkbox" formControlName="address"> Address
                                 </div>

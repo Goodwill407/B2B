@@ -148,7 +148,7 @@ export class WholesalerProfileComponent {
     this.mgfRegistrationForm.get('companyName')?.disable();
     this.mgfRegistrationForm.get('registerOnFTH')?.disable();
     this.mgfRegistrationForm.get('code')?.disable();
-    this.mgfRegistrationForm.get('code')?.disable();
+    
   }
 
   getSavedProfileData() {
@@ -183,7 +183,7 @@ export class WholesalerProfileComponent {
   
           // Disable specific fields
           this.mgfRegistrationForm.get('countryCode')?.disable();
-  
+          this.mgfRegistrationForm.get('code')?.disable();
           this.stateWiseCity(null, this.allData.state, this.allData.city);
   
           this.mgfRegistrationForm.disable();
@@ -254,6 +254,7 @@ export class WholesalerProfileComponent {
     this.mgfRegistrationForm.get('code')?.disable();
     this.mgfRegistrationForm.get('mobNumber')?.disable();
     this.mgfRegistrationForm.get('email')?.disable();
+    this.mgfRegistrationForm.get('code')?.disable();
     this.isUpdateBtn = true;
   }
 

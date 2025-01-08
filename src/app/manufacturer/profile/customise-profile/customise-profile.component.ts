@@ -135,6 +135,13 @@ export class CustomiseProfileComponent {
     })
   }
 
+  onCheckboxChange(event: Event, controlName: string) {
+    const checkbox = event.target as HTMLInputElement;
+    this.mgfRegistrationForm.get(controlName)?.setValue(checkbox.checked); // Checked = true, Unchecked = false
+  }
+  
+  
+
   onSubmit(type: string): void {
     this.submitted = true;
     if (this.mgfRegistrationForm.invalid) {
@@ -151,6 +158,7 @@ export class CustomiseProfileComponent {
   saveProfileData() {
     // Retrieve the raw form data including all fields
     const formData = this.mgfRegistrationForm.getRawValue();
+    console.log(formData)
     formData.id = this.allData.id
     
     this.authService.patch(`manufacturers/visibility`, formData).subscribe(
