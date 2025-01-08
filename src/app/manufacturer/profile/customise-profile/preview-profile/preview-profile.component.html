@@ -1,39 +1,49 @@
 <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="default" color="#fff" type="square-jelly-box" [fullScreen]="true">
-  <p style="color: rgb(242, 94, 94)"> Loading... </p>
+  <p style="color: rgb(242, 94, 94)">Loading...</p>
 </ngx-spinner>
+
 <section class="content">
   <div class="content-block">
     <h4 class="title mt-2">
-        <i class="bi bi-person-vcard-fill icon"></i> Profile Preview
-      </h4>
-   
+      <i class="bi bi-person-vcard-fill icon"></i> Profile Preview
+    </h4>
+
     <div class="company-profile">
       <button class="btn navigate" (click)="navigateFun()">
         <i class="bi bi-arrow-left-circle h4"></i>
       </button>
-      <!-- Company Name -->
-      <div class="company-head">
-        <img src="{{cdnPath+allVisabilityData?.profileImg}}" alt="">
+
+      <!-- Company Head -->
+      <div class="company-head" *ngIf="allVisabilityData?.visibilitySettings?.companyName || 
+                                       allVisabilityData?.visibilitySettings?.address || 
+                                       allVisabilityData?.visibilitySettings?.email || 
+                                       allVisabilityData?.visibilitySettings?.mobNumber || 
+                                       allVisabilityData?.visibilitySettings?.socialMedia">
+        <img *ngIf="allVisabilityData?.visibilitySettings?.logo" src="{{cdnPath+allVisabilityData?.profileImg}}" alt="">
         <div class="ms-4">
-          <h3 class="company-name mb-1">{{ allVisabilityData?.companyName }}</h3>
-          <p class="mb-1">{{ allVisabilityData?.address }}</p>
-          <p class="mb-1"><a href="mailto:{{ allVisabilityData?.email }}">{{ allVisabilityData?.email }}</a></p>
-          <p class="mb-1">{{ allVisabilityData?.mobNumber }}</p>
-          <a *ngIf="allVisabilityData?.visibilitySettings?.socialMedia?.webSite"
-            href="{{ allVisabilityData?.socialMedia?.webSite }}" target="_blank" class="facebook">
-            {{ allVisabilityData?.socialMedia?.webSite}}
+          <h3 class="company-name mb-1" *ngIf="allVisabilityData?.visibilitySettings?.companyName">
+            {{ allVisabilityData?.companyName }}
+          </h3>
+          <p class="mb-1" *ngIf="allVisabilityData?.visibilitySettings?.address">
+            {{ allVisabilityData?.address }}
+          </p>
+          <p class="mb-1" *ngIf="allVisabilityData?.visibilitySettings?.email">
+            <a href="mailto:{{ allVisabilityData?.email }}">{{ allVisabilityData?.email }}</a>
+          </p>
+          <p class="mb-1" *ngIf="allVisabilityData?.visibilitySettings?.mobNumber">
+            {{ allVisabilityData?.mobNumber }}
+          </p>
+          <a *ngIf="allVisabilityData?.visibilitySettings?.socialMedia?.webSite" href="{{ allVisabilityData?.socialMedia?.webSite }}" target="_blank" class="facebook">
+            {{ allVisabilityData?.socialMedia?.webSite }}
           </a>
           <div class="share-options">
-            <a *ngIf="allVisabilityData?.visibilitySettings?.socialMedia?.facebook"
-              href="{{ allVisabilityData?.socialMedia?.facebook }}" target="_blank" class="share-icon facebook">
+            <a *ngIf="allVisabilityData?.visibilitySettings?.socialMedia?.facebook" href="{{ allVisabilityData?.socialMedia?.facebook }}" target="_blank" class="share-icon facebook">
               <i class="fab fa-facebook"></i>
             </a>
-            <a *ngIf="allVisabilityData?.visibilitySettings?.socialMedia?.instagram"
-              href="{{ allVisabilityData?.socialMedia?.instagram }}" target="_blank" class="share-icon instagram">
+            <a *ngIf="allVisabilityData?.visibilitySettings?.socialMedia?.instagram" href="{{ allVisabilityData?.socialMedia?.instagram }}" target="_blank" class="share-icon instagram">
               <i class="fab fa-instagram"></i>
             </a>
-            <a *ngIf="allVisabilityData?.visibilitySettings?.socialMedia?.linkedIn"
-              href="{{ allVisabilityData?.socialMedia?.linkedin }}" target="_blank" class="share-icon twitter">
+            <a *ngIf="allVisabilityData?.visibilitySettings?.socialMedia?.linkedIn" href="{{ allVisabilityData?.socialMedia?.linkedin }}" target="_blank" class="share-icon twitter">
               <i class="bi bi-linkedin"></i>
             </a>
           </div>
@@ -42,118 +52,90 @@
       <hr>
 
       <!-- Introduction -->
-      <p class="introduction" *ngIf="allVisabilityData?.visibilitySettings?.introduction">{{
-        allVisabilityData?.introduction }}</p>
+      <p class="introduction" *ngIf="allVisabilityData?.visibilitySettings?.introduction">
+        {{ allVisabilityData?.introduction }}
+      </p>
 
-      <!-- Fact Sheet -->
-      <div class="fact-sheet">
+      <!-- Fact Sheet Section -->
+      <div class="fact-sheet" *ngIf="allVisabilityData?.visibilitySettings?.establishDate || 
+                                     allVisabilityData?.visibilitySettings?.fullName || 
+                                     allVisabilityData?.visibilitySettings?.leagalStatusOfFirm || 
+                                     allVisabilityData?.visibilitySettings?.GSTIN || 
+                                     allVisabilityData?.visibilitySettings?.state || 
+                                     allVisabilityData?.visibilitySettings?.city || 
+                                     allVisabilityData?.visibilitySettings?.country || 
+                                     allVisabilityData?.visibilitySettings?.pinCode || 
+                                     allVisabilityData?.visibilitySettings?.mobNumber2 || 
+                                     allVisabilityData?.visibilitySettings?.email2 || 
+                                     allVisabilityData?.visibilitySettings?.pan || 
+                                     allVisabilityData?.visibilitySettings?.code">
         <h4>Fact Sheet</h4>
 
-        <!-- Established Date -->
         <p *ngIf="allVisabilityData?.visibilitySettings?.establishDate">
           <strong>Established :</strong> {{ allVisabilityData?.establishDate | date:'MMM d, y' }}
         </p>
-
-        <!-- Founder Name -->
         <p *ngIf="allVisabilityData?.visibilitySettings?.fullName">
           <strong>Founder :</strong> {{ allVisabilityData?.fullName }}
         </p>
-
-        <!-- Legal Status of Firm -->
         <p *ngIf="allVisabilityData?.visibilitySettings?.leagalStatusOfFirm">
           <strong>Legal Status of Firm :</strong> {{ allVisabilityData?.leagalStatusOfFirm }}
         </p>
-
-        <!-- GST Number -->
         <p *ngIf="allVisabilityData?.visibilitySettings?.GSTIN">
           <strong>GST No :</strong> {{ allVisabilityData?.GSTIN }}
         </p>
-
-        <!-- State -->
         <p *ngIf="allVisabilityData?.visibilitySettings?.state">
           <strong>State :</strong> {{ allVisabilityData?.state }}
         </p>
-
-        <!-- City -->
         <p *ngIf="allVisabilityData?.visibilitySettings?.city">
           <strong>City :</strong> {{ allVisabilityData?.city }}
         </p>
-
-        <!-- Country -->
         <p *ngIf="allVisabilityData?.visibilitySettings?.country">
           <strong>Country :</strong> {{ allVisabilityData?.country }}
         </p>
-
-        <!-- PIN Code -->
         <p *ngIf="allVisabilityData?.visibilitySettings?.pinCode">
           <strong>PIN Code :</strong> {{ allVisabilityData?.pinCode }}
         </p>
-
-        <!-- Turnover -->
-        <!-- <p *ngIf="allVisabilityData?.visibilitySettings?.turnover">
-              <strong>Turnover :</strong> {{ allVisabilityData?.turnover }}
-            </p>           -->
-
-        <!-- Mobile Number 2 -->
         <p *ngIf="allVisabilityData?.visibilitySettings?.mobNumber2">
           <strong>Alternate Mobile Number :</strong> {{ allVisabilityData?.mobNumber2 }}
         </p>
-
-        <!-- Alternate Email -->
         <p *ngIf="allVisabilityData?.visibilitySettings?.email2">
-          <strong>Alternate Email :</strong> <a href="mailto:{{ allVisabilityData?.email2 }}">{{
-            allVisabilityData?.email2 }}</a>
+          <strong>Alternate Email :</strong> 
+          <a href="mailto:{{ allVisabilityData?.email2 }}">{{ allVisabilityData?.email2 }}</a>
         </p>
-
-        <!-- PAN -->
         <p *ngIf="allVisabilityData?.visibilitySettings?.pan">
           <strong>PAN :</strong> {{ allVisabilityData?.pan }}
         </p>
-
-        <!-- Code -->
         <p *ngIf="allVisabilityData?.visibilitySettings?.code">
           <strong>Country Code :</strong> {{ allVisabilityData?.contryCode }}
         </p>
-        <p *ngIf="allVisabilityData?.visibilitySettings?.fileName"><strong>KYC Document :</strong> {{
-          allVisabilityData?.fileName }} <span class="ms-3" *ngIf="allVisabilityData?.visibilitySettings?.file"><button class="btn"
-              (click)="openImg(authService.cdnPath +allVisabilityData?.file,800)"><i class="bi bi-eye-fill h5"></i></button>
-          </span></p>
-      </div>
-
-
-
-      <!-- Contact Details -->
-      <div class="contact-details">
-        <h4>Contact Details</h4>
-        <p><strong>Address :</strong> {{ allVisabilityData?.address }}</p>
-        <p><strong>Phone :</strong> {{ allVisabilityData?.mobNumber }}</p>
-        <p><strong>Email :</strong> <a href="mailto:{{ allVisabilityData?.email }}">{{ allVisabilityData?.email }}</a>
+        <p *ngIf="allVisabilityData?.visibilitySettings?.fileName">
+          <strong>KYC Document :</strong> {{ allVisabilityData?.fileName }}
+          <span class="ms-3" *ngIf="allVisabilityData?.visibilitySettings?.file">
+            <button class="btn" (click)="openImg(authService.cdnPath +allVisabilityData?.file,800)">
+              <i class="bi bi-eye-fill h5"></i>
+            </button>
+          </span>
         </p>
       </div>
 
-      <!-- Contact Details -->
-      <div class="contact-details">
+      <!-- Bank Details Section -->
+      <div class="contact-details" *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.bankName || 
+                                           allVisabilityData?.visibilitySettings?.BankDetails?.branch || 
+                                           allVisabilityData?.visibilitySettings?.BankDetails?.accountNumber || 
+                                           allVisabilityData?.visibilitySettings?.BankDetails?.IFSCcode">
         <h4>Bank Details</h4>
-        <p *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.bankName"><strong>Bank Name :</strong> {{
-          allVisabilityData?.BankDetails?.bankName }}</p>
-        <p *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.branch"><strong>Branch :</strong> {{
-          allVisabilityData?.BankDetails?.branch }}</p>
-        <p *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.accountNumber"><strong>Ac. No :</strong>{{
-          allVisabilityData?.BankDetails?.accountNumber }}</p>
-        <p *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.IFSCcode"><strong>IFSC code :</strong>{{
-          allVisabilityData?.BankDetails?.IFSCcode }}</p>
-      </div>
-
-      <!-- Social Media -->
-      <div class="social-media"
-        *ngIf="allVisabilityData?.uniqueProducts && allVisabilityData?.uniqueProducts?.length > 0">
-        <h4>Dealing In</h4>
-        <div class="d-flex justify-content-between">
-          <p><span class="fw-medium">Product Type</span><br>{{allVisabilityData?.dealingIn?.productType}}</p>
-          <p><span class="fw-medium">Gender</span><br>{{allVisabilityData?.dealingIn?.gender}}</p>
-          <p><span class="fw-medium">Category</span><br>{{allVisabilityData?.dealingIn?.clothing}}</p>
-          <p><span class="fw-medium">Sub Category</span><br>{{allVisabilityData?.dealingIn?.subCategory}}</p>
-        </div>
+        <p *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.bankName">
+          <strong>Bank Name :</strong> {{ allVisabilityData?.BankDetails?.bankName }}
+        </p>
+        <p *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.branch">
+          <strong>Branch :</strong> {{ allVisabilityData?.BankDetails?.branch }}
+        </p>
+        <p *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.accountNumber">
+          <strong>Ac. No :</strong> {{ allVisabilityData?.BankDetails?.accountNumber }}
+        </p>
+        <p *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.IFSCcode">
+          <strong>IFSC code :</strong> {{ allVisabilityData?.BankDetails?.IFSCcode }}
+        </p>
       </div>
 
       <!-- Brands Section -->
@@ -164,11 +146,12 @@
             <div class="brand-item">
               <img [src]="cdnPath + brand.brandLogo" [alt]="brand.brandName" />
             </div>
-            <div class="brand-name text-center mt-2"><strong>{{ brand.brandName }}</strong></div>
+            <div class="brand-name text-center mt-2">
+              <strong>{{ brand.brandName }}</strong>
+            </div>
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </section>

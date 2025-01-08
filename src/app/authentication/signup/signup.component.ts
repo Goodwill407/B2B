@@ -408,7 +408,7 @@ interval: any; // Interval for the timer
     this.communicationService.showNotification('snackbar-success', 'Mobile OTP resent successfully', 'bottom', 'center');
   }
   startTimer() {
-    this.timeLeft = 10; // Reset timer to 3 minutes
+    this.timeLeft = 180; // Reset timer to 3 minutes
     clearInterval(this.interval); // Clear any existing interval
   
     this.interval = setInterval(() => {
