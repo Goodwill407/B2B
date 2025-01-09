@@ -89,8 +89,8 @@ export class WholesalerProfileComponent {
       mobNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       mobNumber2: [''],
       leagalStatusOfFirm: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-      email2: ['', Validators.email],
+      email: ['', [Validators.required, Validators.pattern(/^[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]],//A-Z removed
+      email2: ['', [ Validators.pattern(/^[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]],//A-Z removed
       establishDate: ['', Validators.required],
       registerOnFTH: [{ value: '', disabled: true }],
       GSTIN: ['', [Validators.required, Validators.pattern(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z0-9]{1}[Z]{1}[A-Z0-9]{1}$/)]],
