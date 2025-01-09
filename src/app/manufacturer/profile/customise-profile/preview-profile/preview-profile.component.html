@@ -66,6 +66,7 @@
                                      allVisabilityData?.visibilitySettings?.country || 
                                      allVisabilityData?.visibilitySettings?.pinCode || 
                                      allVisabilityData?.visibilitySettings?.mobNumber2 || 
+                                     allVisabilityData?.visibilitySettings?.registerOnFTH ||
                                      allVisabilityData?.visibilitySettings?.email2 || 
                                      allVisabilityData?.visibilitySettings?.pan || 
                                      allVisabilityData?.visibilitySettings?.code">
@@ -73,6 +74,9 @@
 
         <p *ngIf="allVisabilityData?.visibilitySettings?.establishDate">
           <strong>Established :</strong> {{ allVisabilityData?.establishDate | date:'MMM d, y' }}
+        </p>
+        <p *ngIf="allVisabilityData?.visibilitySettings?.registerOnFTH">
+          <strong>RegisterOnFTH :</strong> {{ allVisabilityData?.registerOnFTH | date:'MMM d, y' }}
         </p>
         <p *ngIf="allVisabilityData?.visibilitySettings?.fullName">
           <strong>Founder :</strong> {{ allVisabilityData?.fullName }}
