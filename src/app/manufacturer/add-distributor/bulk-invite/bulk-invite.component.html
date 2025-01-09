@@ -65,12 +65,12 @@
             <span class="d-flex mat-select" style="width: 305px; height: 22px;">
               <mat-form-field appearance="outline" class="w-25 me-2">
                 <mat-select formControlName="code">
-                  <mat-option *ngFor="let country of countryCode" [value]="country.code">
-                    <img [src]="country.flag" alt="{{ country.countryName }}" class="country-flag" /> {{ country.code }}
+                  <mat-option *ngFor="let code of altcountryCode" [value]="'+' + code">
+                      +{{ code }}
                   </mat-option>
-                </mat-select>
+              </mat-select>
               </mat-form-field>
-              <input class="form-control w-75" formControlName="mobileNumber" type="tel" placeholder="Number">
+              <input oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" class="form-control w-75" formControlName="mobileNumber" type="tel" placeholder="Number">
             </span>
             <div
               *ngIf="distributor.get('mobileNumber')?.invalid && (distributor.get('mobileNumber')?.touched || isSubmitted)"

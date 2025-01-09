@@ -23,6 +23,7 @@ export class BulkInviteSingleComponent {
   inviteForm!: FormGroup;
   isSubmitted: boolean = false;
   identityType: any;
+  altcountryCode: any;
 
   constructor(private fb: FormBuilder, private communicationService: CommunicationService, private authService: AuthService) { }
 
@@ -31,6 +32,7 @@ export class BulkInviteSingleComponent {
     this.inviteForm = this.fb.group({
       invitations: this.fb.array([this.createDistributorFormGroup()])
     });
+    this.getAllCountryCode()
   }
 
   get invitations(): FormArray {
@@ -118,4 +120,16 @@ export class BulkInviteSingleComponent {
     }
     return '';
   }
+  getAllCountryCode() {
+    this.authService.get('/countrycode?sortBy=dial_code').subscribe((res: any) => {
+      // Store the list of dial codes in the altcountryCode array
+      this.altcountryCode = res.results.map((country: any) => country.dial_code);
+      
+      // Optionally, set a default value (e.g., '+91') for altCode if needed
+      if (this.altcountryCode.includes('91')) {
+        this.inviteForm.controls['altCode'].setValue('+91');
+      }
+    });
+  }
+
 }

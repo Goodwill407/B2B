@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormGroup, FormBuilder, FormArray, Validators } fr
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterModule } from '@angular/router';
-import { CommunicationService } from '@core';
+import { AuthService, CommunicationService } from '@core';
 import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
 
@@ -34,13 +34,15 @@ export class RetailerBulkInviteComponent {
   ];
 
   bottomAdImage: string = 'https://5.imimg.com/data5/QE/UV/YB/SELLER-56975382/i-will-create-10-sizes-html5-creative-banner-ads.jpg';
+  altcountryCode: any;
 
-  constructor(private fb: FormBuilder, private communicationService: CommunicationService) { }
+  constructor(private fb: FormBuilder, private communicationService: CommunicationService, private auth: AuthService) { }
 
   ngOnInit(): void {
     this.inviteForm = this.fb.group({
       distributors: this.fb.array([this.createDistributorFormGroup()])
     });
+    this.getAllCountryCode()
   }
 
   get distributors(): FormArray {
@@ -53,16 +55,11 @@ export class RetailerBulkInviteComponent {
       companyName: ['',Validators.required],
       code: ['+91', Validators.required],
       mobileNumber: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, Validators.pattern(/^[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]],//A-Z removed
     });
   }
 
-  countryCode = [
-    { countryName: 'United States', flag: 'assets/images/flags/us.jpg', code: '+1' },
-    { countryName: 'India', flag: 'assets/images/flags/ind.png', code: '+91' },
-    { countryName: 'United Kingdom', flag: 'assets/images/flags/uk.png', code: '+44' },
-    { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
-  ];
+  countryCode:any
 
 
   addDistributor(): void {
@@ -98,5 +95,17 @@ export class RetailerBulkInviteComponent {
       return 'Please enter a valid email address.';
     }
     return '';
+  }
+
+  getAllCountryCode() {
+    this.auth.get('/countrycode?sortBy=dial_code').subscribe((res: any) => {
+      // Store the list of dial codes in the altcountryCode array
+      this.altcountryCode = res.results.map((country: any) => country.dial_code);
+      
+      // Optionally, set a default value (e.g., '+91') for altCode if needed
+      if (this.countryCode.includes('91')) {
+        this.inviteForm.controls['altCode'].setValue('+91');
+      }
+    });
   }
 }

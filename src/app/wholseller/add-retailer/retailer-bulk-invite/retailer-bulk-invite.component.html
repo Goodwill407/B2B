@@ -49,12 +49,11 @@
             <div>
               <!-- <label>Mobile Number</label> -->
               <span class="d-flex mat-select" style="width: 350px; height: 22px;">
-                <mat-form-field appearance="outline" class="w-25 me-2">
+                <mat-form-field appearance="outline" class="me-3">
                   <mat-select formControlName="code">
-                      <mat-option *ngFor="let country of countryCode" [value]="country.code">
-                          <img [src]="country.flag" alt="{{ country.countryName }}"
-                              class="country-flag" /> {{ country.code }}
-                      </mat-option>
+                      <mat-option *ngFor="let code of altcountryCode" [value]="'+' + code">
+                          +{{ code }}
+                      </mat-option> 
                   </mat-select>
               </mat-form-field>
                 <input class="form-control w-75" formControlName="mobileNumber" type="number" placeholder="Number">

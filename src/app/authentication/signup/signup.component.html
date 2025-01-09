@@ -62,7 +62,7 @@
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
-                                    <input type="number" id="mobileNumber" placeholder="Enter Mobile No"
+                                    <input oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);"  type="text" id="mobileNumber" placeholder="Enter Mobile No"
                                         formControlName="mobileNumber" class="form-control w-75" />
                                 </div>
                                 <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.touched && mgfRegistrationForm.get('mobileNumber')?.invalid"
@@ -137,14 +137,15 @@
                             <!-- Mobile OTP -->
                             <label class="lable-input" *ngIf="isIndiaSelected"><b>Enter Mobile OTP</b><span>*</span>
                                 :</label>
-                            <div class="otp-input mt-4" *ngIf="isIndiaSelected">
-                                <input id="mobotp0" type="text" maxlength="1" (input)="onMobileOtpChange(0, $event)" class="form-control otp-box" />
-                                <input id="mobotp1" type="text" maxlength="1" (input)="onMobileOtpChange(1, $event)" class="form-control otp-box" />
-                                <input id="mobotp2" type="text" maxlength="1" (input)="onMobileOtpChange(2, $event)" class="form-control otp-box" />
-                                <input id="mobotp3" type="text" maxlength="1" (input)="onMobileOtpChange(3, $event)" class="form-control otp-box" />
-                                <input id="mobotp4" type="text" maxlength="1" (input)="onMobileOtpChange(4, $event)" class="form-control otp-box" />
-                                <input id="mobotp5" type="text" maxlength="1" (input)="onMobileOtpChange(5, $event)" class="form-control otp-box" />
-                              </div>
+                                <div class="otp-input mt-4" *ngIf="isIndiaSelected">
+                                    <input id="mobotp0" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onMobileOtpChange(0, $event)" class="form-control otp-box" />
+                                    <input id="mobotp1" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onMobileOtpChange(1, $event)" class="form-control otp-box" />
+                                    <input id="mobotp2" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onMobileOtpChange(2, $event)" class="form-control otp-box" />
+                                    <input id="mobotp3" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onMobileOtpChange(3, $event)" class="form-control otp-box" />
+                                    <input id="mobotp4" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onMobileOtpChange(4, $event)" class="form-control otp-box" />
+                                    <input id="mobotp5" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onMobileOtpChange(5, $event)" class="form-control otp-box" />
+                                  </div>
+                                  
                         </div>
 
 
