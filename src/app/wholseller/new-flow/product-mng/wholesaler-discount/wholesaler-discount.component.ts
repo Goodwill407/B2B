@@ -55,7 +55,7 @@ export class WholesalerDiscountComponent {
       productDiscount: ['', Validators.required],
       shippingDiscount: ['', Validators.required],
       categoryBy: [this.userProfile.email, Validators.required],
-   
+      id:[""]
     });
   }
 
@@ -65,6 +65,7 @@ export class WholesalerDiscountComponent {
 
   submitRetailerCategory() {
     if (this.formType === 'Save') {
+      delete this.categoryForm2.value.id;
       this.authService.post('retailer-category', this.categoryForm2.value).subscribe((res: any) => {
         console.log(res);
         this.communicationService.showNotification('snackbar-success', 'Retailer category created successfully', 'bottom', 'center');
