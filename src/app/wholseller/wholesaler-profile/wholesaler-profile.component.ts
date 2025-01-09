@@ -295,9 +295,9 @@ export class WholesalerProfileComponent {
   editUserData() {
     this.mgfRegistrationForm.enable();
     this.mgfRegistrationForm.get('registerOnFTH')?.disable();
+    this.mgfRegistrationForm.get('email')?.disable();
     this.mgfRegistrationForm.get('code')?.disable();
     this.mgfRegistrationForm.get('mobNumber')?.disable();
-    this.mgfRegistrationForm.get('email')?.disable();
     this.isUpdateBtn = true;
   }
 

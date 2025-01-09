@@ -142,6 +142,8 @@ export class ProfileComponent {
     this.mgfRegistrationForm.get('mobNumber')?.disable();
     this.mgfRegistrationForm.get('companyName')?.disable();
     this.mgfRegistrationForm.get('registerOnFTH')?.disable();
+    this.mgfRegistrationForm.get('email')?.disable();
+    
   }
 
   getSavedProfileData() {
@@ -239,6 +241,9 @@ export class ProfileComponent {
   editUserData() {
     this.mgfRegistrationForm.enable();
     this.mgfRegistrationForm.get('registerOnFTH')?.disable();
+    this.mgfRegistrationForm.get('email')?.disable();
+    this.mgfRegistrationForm.get('code')?.disable();
+    this.mgfRegistrationForm.get('mobNumber')?.disable();
     this.isUpdateBtn = true;
   }
 
