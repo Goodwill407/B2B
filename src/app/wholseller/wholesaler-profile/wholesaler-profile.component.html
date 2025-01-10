@@ -51,7 +51,7 @@
                                 <label class="label-input" for="introduction">Company/Firm Introduction<span
                                         class="required">*</span></label>
                                 <textarea type="text" id="introduction" formControlName="introduction"
-                                    class="form-control"
+                                    class="form-control" maxlength="4000"
                                     [ngClass]="{ 'is-invalid': submitted && f.introduction.errors }"></textarea>
 
                                 <!-- Validation Messages -->

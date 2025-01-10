@@ -143,7 +143,7 @@ export class KycUploadComponent implements OnInit {
           }
         );
       } else {
-        this.communicationService.showNotification('snackbar-info', 'No changes detected to submit.', 'bottom', 'center');
+        this.communicationService.showNotification('snackbar-info', 'Submited Successfully.', 'bottom', 'center');
       }
     } else {
       this.communicationService.showNotification('snackbar-danger', 'Please complete the form before submitting.', 'bottom', 'center');

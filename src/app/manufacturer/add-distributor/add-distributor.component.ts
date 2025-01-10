@@ -41,6 +41,7 @@ export class AddDistributorComponent {
   ];
   altcountryCode: any;
   identityType: any;
+  filteredIdentityType: any; // This will store the filtered identity types
 
   constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private spinner: NgxSpinnerService) {}
 
@@ -75,10 +76,12 @@ export class AddDistributorComponent {
   }
   
 
-  getIdentityType(){
-    this.authService.get('entitytype').subscribe((res:any) =>{
+  getIdentityType() {
+    this.authService.get('entitytype').subscribe((res: any) => {
       this.identityType = res.results;
-      console.log(this.identityType);
+      // Filter out the 'manufacture' option from the identityType list
+      this.filteredIdentityType = this.identityType.filter((type: any) => type.name !== 'manufacture');
+      console.log(this.filteredIdentityType);  // Log the filtered data
     });
   }
   
@@ -93,5 +96,7 @@ export class AddDistributorComponent {
       }
     });
   }
+
+  
 
 }

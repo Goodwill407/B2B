@@ -257,8 +257,9 @@ export class CommunicationService {
         showCancelButton: false,
         width: '300px',
         showConfirmButton: false,
-        background: '#DFF2E2', // Softer green
-        color: '#47BE7D',
+        // background: '#DFF2E2', // Softer green
+        background: '#7ed5fe',
+        color: 'white',
         backdrop: false,
         customClass: {
           popup: 'custom-swal-width',
