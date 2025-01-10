@@ -41,6 +41,7 @@ export class ViewProductComponent {
 
   getProductDetails(id: any) {
     this.authService.get('type2-products/' + id).subscribe((res: any) => {
+      console.log(res);
       if (res) {
         this.product = {
           brand: res.brand,
@@ -63,7 +64,17 @@ export class ViewProductComponent {
           neckCollarStyle: res.neckStyle,
           specialFeatures: res.specialFeature.join(', '),
           careInstructions: res.careInstructions,
-          sizes: res.sizes.map((size: any) => `${size.standardSize}`).join(' | '),
+          sizes: res.sizes.map((size: any) => ({
+            standardSize: size.standardSize,
+            brandSize: size.brandSize,
+            chestSize: size.chestSize,
+            frontLength: size.frontLength,
+            neckSize: size.neckSize,
+            shoulderSize: size.shoulderSize,
+            RtlPrice: size.RtlPrice,
+            singleMRP: size.singleMRP,
+            manufacturerPrice: size.manufacturerPrice,
+          })),
           colours: res.colourCollections.map((colour: any) => ({
             name: colour.colourName,
             hex: colour.colour,

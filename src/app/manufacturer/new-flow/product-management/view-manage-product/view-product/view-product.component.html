@@ -83,11 +83,8 @@
             <p class="col-md-4 col-sm-6"><small>Care Instructions</small><br> {{ product?.careInstructions }}</p>
           </div>
 
-          <hr>
-
-          <div class="row">
-            <p class="col-md-4 col-sm-6"><small>Sizes Available</small> <br> {{ product?.sizes }}</p>            
-          </div>
+       
+          
 
           <hr>
 
@@ -121,6 +118,7 @@
             <p class="col-md-4 col-sm-6"><small>Availability</small> <br> {{ product?.availability }}</p>
           </div> -->
         </div>
+        
       </div>
       <!-- <hr>
       <div class="add-to-card">
@@ -131,6 +129,39 @@
         </div>
         <button type="button" class="btn btn-wishlist">ADD TO CART</button>
       </div> -->
+      <hr>
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Standard Size</th>
+              <th>Brand Size</th>
+              <th>Chest Size</th>
+              <th>Front Length</th>
+              <th>Neck Size</th>
+              <th>Shoulder Size</th>
+              <th>Rtl Price</th>
+              <th>Single MRP</th>
+              <th>Manufacturer Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let size of product?.sizes">
+              <tr>
+                <td>{{ size.standardSize }}</td>
+                <td>{{ size.brandSize }}</td>
+                <td>{{ size.chestSize }}</td>
+                <td>{{ size.frontLength }}</td>
+                <td>{{ size.neckSize }}</td>
+                <td>{{ size.shoulderSize }}</td>
+                <td>{{ size.RtlPrice }}</td>
+                <td>{{ size.singleMRP }}</td>
+                <td>{{ size.manufacturerPrice }}</td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </section>

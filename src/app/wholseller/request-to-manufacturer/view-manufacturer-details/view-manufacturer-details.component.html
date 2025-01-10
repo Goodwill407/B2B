@@ -12,7 +12,7 @@
         <i class="bi bi-arrow-left-circle h4"></i>
       </button>
       <div class="company-head">
-        <img src="{{cdnPath+allVisabilityData?.profileImg}}" alt="">
+        <img *ngIf="allVisabilityData?.visibilitySettings?.profileImg" src="{{ cdnPath+allVisabilityData?.profileImg }}" alt="">
         <div class="ms-4">
           <h3 class="company-name mb-1">{{ allVisabilityData?.companyName }}</h3>
           <p class="mb-1">{{ allVisabilityData?.address }}</p>

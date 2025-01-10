@@ -101,6 +101,7 @@ export class ViewManufacturerDetailsComponent implements OnInit {
     const requestBody = {
       fullName: this.CompanyData.fullName,
       companyName: this.CompanyData.companyName,
+      profileImg: this.CompanyData.profileImg,
       email: this.CompanyData.email,
       code: this.CompanyData.code,
       mobileNumber: this.CompanyData.mobNumber,
