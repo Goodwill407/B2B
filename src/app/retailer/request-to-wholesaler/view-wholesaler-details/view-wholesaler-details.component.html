@@ -63,12 +63,18 @@
   
           <!-- Add Request Button -->
           <div class="button-container">
-            <!-- <button class="add-request-button" (click)="sendRequestToWholesaler()">Request To Add</button> -->
-            <button *ngIf="!RequestDetails" class="btn btn-outline-primary request-btn" (click)="sendRequestToWholesaler()">
+            <!-- Show Request to Add button if status is empty -->
+            <button *ngIf="!requestDetails" class="btn btn-outline-primary request-btn" [disabled]="isRequestSent" (click)="sendRequestToWholesaler()">
               Request to Add
             </button>
-            <button *ngIf="RequestDetails?.status || isRequestSend" class="btn btn-outline-primary request-btn" disabled>
-              {{RequestDetails.status === 'accepted' ? 'Accepted' : 'Requested' }}
+            <!-- Disable button if status is 'pending' or 'rejected' -->
+            <button *ngIf="requestDetails === 'pending' || requestDetails === 'rejected'" class="btn btn-outline-primary request-btn" disabled>
+              <!-- {{ requestDetails === 'pending' ? 'Requested' : 'Rejected' }} -->
+                Pending
+            </button>
+            <!-- Hide button if status is 'accepted' -->
+            <button *ngIf="requestDetails === 'accepted'" class="btn btn-outline-primary request-btn" hidden>
+              Accepted
             </button>
           </div>
       </div>
