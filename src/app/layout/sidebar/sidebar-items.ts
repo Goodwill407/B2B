@@ -1952,7 +1952,7 @@ export const ROUTES2: RouteInfo[] = [
       },
       {
         path: '/wholesaler/manage-retailer',
-        title: 'View And Manage Retailer',
+        title: "View And Manage Retailer's",
         iconType: '',
         icon: '',
         class: 'ml-menu',

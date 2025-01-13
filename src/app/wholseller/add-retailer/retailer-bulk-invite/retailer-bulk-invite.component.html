@@ -56,7 +56,7 @@
                       </mat-option> 
                   </mat-select>
               </mat-form-field>
-                <input class="form-control w-75" formControlName="mobileNumber" type="number" placeholder="Number">
+                <input class="form-control w-75" formControlName="mobileNumber" type="text" maxlength="10" placeholder="Number">
               </span>
               <div *ngIf="distributor.get('mobileNumber')?.invalid && (distributor.get('mobileNumber')?.touched || isSubmitted)" style="margin-top: 13px;" class="text-danger">
                 {{ getErrorMessage('mobileNumber', i) }}

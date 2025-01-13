@@ -39,7 +39,7 @@ export class RequestToWholesalerComponent {
   allSubCategory:any[]=[];
   allcategory:any[]=[];
   allGender = ['Men', 'Women', 'Boys', 'Girls'];
-  countries=['India']
+  countries:any[]=[]
   userProfile:any;
   WholsellerData:any
   filteredSuggestions: string[] = [];
@@ -76,9 +76,9 @@ export class RequestToWholesalerComponent {
    this.getRetailerProfileData()
     this.getAllBrands()
     this.getProductType()
-    this.getProductType()
-    this.getAllState()    
+    this.getProductType() 
     this.getWholesalerProfileData()
+    this.getAllCountry()
   }
 
   @HostListener('document:click', ['$event'])
@@ -162,7 +162,8 @@ export class RequestToWholesalerComponent {
 
   GetProductTypeWiseWholesaler() {
     let url = `wholesaler-products/multiplefilters/filter-wholesalers`;
-  
+    // console.log('Selected state:', this.filters.state);
+
     // Construct the body object dynamically
     const body: any = {}; // Initialize an empty object
   
@@ -202,6 +203,8 @@ export class RequestToWholesalerComponent {
         console.log('Error:', error);
       }
     );
+
+
   }
   
 
@@ -358,25 +361,99 @@ selectSuggestion(suggestion: string) {
 }
 
 // for address filter
-stateWiseCity() {
-  const state = this.filters.state;
-  this.direction.getCities(`https://api.countrystatecity.in/v1/countries/IN/states/${state}/cities`).subscribe((res: any) => {
-    this.cityList = res;   
-  });
-}
+// stateWiseCity() {
+//   const state = this.filters.state;
+//   this.direction.getCities(`https://api.countrystatecity.in/v1/countries/IN/states/${state}/cities`).subscribe((res: any) => {
+//     this.cityList = res;   
+//   });
+// }
 
+// getAllCountry() {
+//   this.direction.getAllCountry().subscribe((res: any) => {
+//     this.allCountry = res
+//   })
+// }
 getAllCountry() {
-  this.direction.getAllCountry().subscribe((res: any) => {
-    this.allCountry = res
-  })
+  this.authService.get('newcountry').subscribe(
+    (res: any) => {
+      if (res && res.results) {
+        // Extract only the country names
+        this.countries = res.results.map((country: any) => country.name);  
+      } else {  
+      }
+    },
+  );
 }
 
-getAllState() {
-  this.direction.getStates('https://api.countrystatecity.in/v1/countries/IN/states').subscribe(res => {
-    this.allState = res;
+// getAllState() {
+//   this.direction.getStates('https://api.countrystatecity.in/v1/countries/IN/states').subscribe(res => {
+//     this.allState = res;
+//   });
+// }
+
+getAllState(country: { country_name: string }): Promise<void> {
+  return new Promise((resolve, reject) => {
+    this.authService.post('/state/searchby/country', country).subscribe(
+      (states: any) => {
+        if (states && states.data && states.data.results) {
+          // Assuming states.data.results contains the state list
+          this.allState = states.data.results.map((state: any) => ({
+            name: state.name,
+          }));
+
+          // Resolve the promise after processing
+          resolve();
+        } else {
+          // Reject the promise if the response structure isn't as expected
+          reject(new Error('Invalid response structure'));
+        }
+      },
+      (error) => {
+        // Log the error and reject the promise
+        console.error('Error fetching states:', error);
+        reject(error);
+      }
+    );
   });
 }
 
+onCountryChange(event: any): void {
+  const selectedCountry = event.target.value; // Get selected country
+  
+  if (selectedCountry) {
+    const body = { country_name: selectedCountry }; // Format the request body
+    this.getAllState(body); // Fetch states
+    this.filters.state = ''; // Reset state filter
+    this.filters.city = '';  // Reset city filter
+    this.cityList = [];      // Clear city list
+  } else {
+    this.allState = [];      // Clear states if no country selected
+    this.cityList = [];      // Clear city list
+  }
+}
 
+// onStateChange(event: any) {
+//   console.log('State selected:', this.filters.state);
+// }
+
+// stateWiseCity(event: any, stateName: string = '', cityName: string = '') {
+//   const state = event ? event.target.value : stateName;
+
+//   if (state) { // Only proceed if state is valid
+//     this.direction.getCities(`https://api.countrystatecity.in/v1/countries/IN/states/${state}/cities`).subscribe(
+//       (res: any) => {
+//         this.cityList = res;
+//         if (cityName) {
+//           this.filters.city = cityName;
+//         }
+//       },
+//       (error) => {
+//         console.error('Error fetching cities:', error);
+//       }
+//     );
+//   } else {
+//     this.cityList = []; // Clear city list if state is invalid
+//   }
+// }
 
 }
