@@ -794,7 +794,7 @@ export class StepOneComponent {
   }
 
   getNoofpockets() {
-    this.authService.get('noofpockets').subscribe(res => {
+    this.authService.get('noOfPockets').subscribe(res => {
       if (res) {
         this.allNoofpockets = res.results
       }

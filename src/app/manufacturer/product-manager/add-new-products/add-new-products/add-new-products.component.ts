@@ -1030,7 +1030,7 @@ export class AddNewProductsComponent {
   }
 
   getNoofpockets() {
-    this.authService.get('noofpockets').subscribe(res => {
+    this.authService.get('noOfpockets').subscribe(res => {
       if (res) {
         this.allNoofpockets = res.results
       }
