@@ -7,6 +7,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-brand',
@@ -135,10 +136,24 @@ export class BrandComponent {
     this.getAllBrands();
   }
 
+
   deleteData(user: any) {
-    this.authService.delete(`brand`, user.id).subscribe((res) => {
-      this.communicationService.showNotification('snackbar-success', 'Brand Deleted successfully', 'bottom', 'center');
-      this.getAllBrands();
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this brand?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.authService.delete(`brand`, user.id).subscribe((res) => {
+          this.communicationService.showNotification('snackbar-success', 'Brand Deleted successfully', 'bottom', 'center');
+          this.getAllBrands();
+        });
+      }
     });
   }
 

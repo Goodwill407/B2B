@@ -1,30 +1,28 @@
-
 <section class="content">
-    <div class="content-block">
-      <h4 class="mt-4">
-        <i class="bi bi-person-vcard-fill h3"></i> View Wholesaler's And Send Request
-      </h4>
-  
-      <div class="ads-flex">
-        <div class="flex-grow-1">
-          <!-- Card Table Wrapper -->
-          <div class="card-table p-0">
-            <!-- Search Section -->
-            
-            <!-- Search Section -->
+  <div class="content-block">
+    <h4 class="mt-4">
+      <i class="bi bi-person-vcard-fill h3"></i> View Wholesaler's And Send Request
+    </h4>
+
+    <div class="ads-flex">
+      <div class="flex-grow-1">
+        <!-- Card Table Wrapper -->
+        <div class="card-table p-0">
+          <!-- Search Section -->
+
+          <!-- Search Section -->
           <div class="search-section p-3">
 
             <!-- Tabs -->
             <ul class="nav nav-tabs" id="searchTab" role="tablist">
               <li class="nav-item" role="presentation">
                 <a class="nav-link active" id="brand-tab" data-bs-toggle="tab" href="#brand" role="tab"
-                   aria-controls="brand" aria-selected="true"
-                   (shown.bs.tab)="onTabChange('brand')">Search By Brand</a>
+                  aria-controls="brand" aria-selected="true" (shown.bs.tab)="onTabChange('brand')">Search By Brand</a>
               </li>
               <li class="nav-item" role="presentation">
                 <a class="nav-link" id="product-tab" data-bs-toggle="tab" href="#product" role="tab"
-                   aria-controls="product" aria-selected="false"
-                   (shown.bs.tab)="onTabChange('product')">Search By Product Type</a>
+                  aria-controls="product" aria-selected="false" (shown.bs.tab)="onTabChange('product')">Search By
+                  Product Type</a>
               </li>
             </ul>
 
@@ -38,8 +36,9 @@
                 <div class="tab-pane fade show active" id="brand" role="tabpanel" aria-labelledby="brand-tab">
                   <div class="d-flex align-items-center">
                     <div class="brand-search d-flex align-items-center ms-2 position-relative">
-                      <input type="text" class="form-control me-2" [(ngModel)]="SearchBrand" (input)="onSearchBrandChange()" placeholder="Search Brand" />
-                      <button class="btn btn-primary" (click)="searchByWholselers()">Search</button>                     
+                      <input type="text" class="form-control me-2" [(ngModel)]="SearchBrand"
+                        (input)="onSearchBrandChange()" placeholder="Search Brand" />
+                      <button class="btn btn-primary" (click)="searchByWholselers()">Search</button>
                       <!-- Suggestions dropdown -->
                       <ul *ngIf="filteredSuggestions.length > 0" class="suggestions-list position-absolute">
                         <li *ngFor="let suggestion of filteredSuggestions" (click)="selectSuggestion(suggestion)">
@@ -71,25 +70,26 @@
                         <option value="">Select Sub-Category</option>
                         <option *ngFor="let type of allSubCategory" [value]="type">{{ type }}</option>
                       </select>
-  <!-- for country city and state -->                         
-                        <select id="country" [(ngModel)]="filters.country" class="form-select me-2">
-                            <option value="">Select Country</option>
-                            <option *ngFor="let country of countries" [value]="country">{{ country }}
-                            </option>
-                        </select>               
-                    
-                        <select id="state" [(ngModel)]="filters.state" (change)="stateWiseCity()" class="form-select me-2" >
-                            <option value="">Select State</option>
-                            <option *ngFor="let state of allState" [value]="state.iso2">{{ state.name }}
-                            </option>
-                        </select>                      
-                                        
-                        <select id="city" [(ngModel)]="filters.city" class="form-select me-2">
-                            <option value="">Select City</option>
-                            <option *ngFor="let city of cityList" [value]="city.name">{{ city.name }}
-                            </option>
-                        </select>                
-                      
+                      <!-- for country city and state -->
+                      <select id="country" [(ngModel)]="filters.country" (change)="onCountryChange($event)"
+                        class="form-select me-2">
+                        <option value="">Select Country</option>
+                        <option *ngFor="let country of countries" [value]="country">{{ country }}</option>
+                      </select>
+
+                      <select id="state" [(ngModel)]="filters.state" class="form-select me-2">
+                        <option value="">Select State</option>
+                        <option *ngFor="let state of allState" [value]="state.name">{{ state.name }}</option>
+                      </select>
+
+                      <input type="text" name="city" [(ngModel)]="filters.city" id="city" placeholder="Enter City"
+                        class="form-control me-2">
+
+                      <!-- <select id="city" [(ngModel)]="filters.city" class="form-select me-2">
+    <option value="">Select City</option>
+    <option *ngFor="let city of cityList" [value]="city.name">{{ city.name }}</option>
+  </select>         -->
+
                       <button class="btn btn-primary ms-2" (click)="GetProductTypeWiseWholesaler()">Search</button>
                     </div>
                   </div>
@@ -98,26 +98,30 @@
             </div>
             <hr class="mb-0 mt-0">
           </div>
-  
-  
-  
-             <!-- Display Brand and Product Data -->
+
+
+
+          <!-- Display Brand and Product Data -->
           <div class="brand-list">
             <!-- Section for Brand Data -->
             <div *ngFor="let wholesaler of wholesalerData" class="brand-box">
               <!-- Brand Logo -->
               <div class="brand-logo-container">
-                <img [src]="cdnPath + wholesaler.wholesaler.profileImg" alt="{{ wholesaler.wholesaler.companyName }}" class="brand-logo" />
+                <img [src]="cdnPath + wholesaler.wholesaler.profileImg" alt="{{ wholesaler.wholesaler.companyName }}"
+                  class="brand-logo" />
               </div>
               <!-- Brand Details -->
               <h5 class="brand-name">{{ wholesaler.wholesaler.companyName }}</h5>
               <p class="brand-location">{{ wholesaler.wholesaler.city }}, {{ wholesaler.wholesaler.state }}</p>
-              <button class="btn btn-link" (click)="navigateToProfile(wholesaler.wholesaler.id,wholesaler.wholesaler.email,wholesaler.requestDetails)">View Profile</button>
+              <button class="btn btn-link"
+                (click)="navigateToProfile(wholesaler.wholesaler.id,wholesaler.wholesaler.email,wholesaler.requestDetails)">View
+                Profile</button>
               <!-- <button class="btn btn-outline-primary request-btn"
                 (click)="sendRequestToWholesaler(wholesaler)">Request to Add
               </button> -->
-               <!-- Request Button -->
-               <button *ngIf="!wholesaler.requestDetails" class="btn btn-outline-primary request-btn" (click)="sendRequestToWholesaler(wholesaler.wholesaler)">
+              <!-- Request Button -->
+              <button *ngIf="!wholesaler.requestDetails" class="btn btn-outline-primary request-btn"
+                (click)="sendRequestToWholesaler(wholesaler.wholesaler)">
                 Request to Add
               </button>
               <button *ngIf="wholesaler.requestDetails?.status" class="btn btn-outline-primary request-btn" disabled>
@@ -129,36 +133,40 @@
             <div *ngFor="let product of productTypeWise" class="brand-box">
               <!-- Product Brand Logo -->
               <div class="brand-logo-container">
-                <img [src]="cdnPath + product.wholesaler.profileImg" alt="{{ product.wholesaler.companyName }}" class="brand-logo" />
+                <img [src]="cdnPath + product.wholesaler.profileImg" alt="{{ product.wholesaler.companyName }}"
+                  class="brand-logo" />
               </div>
               <!-- Product Details -->
               <h5 class="brand-name">{{ product.wholesaler.companyName }}</h5>
               <p class="brand-location">{{ product.wholesaler.city }}, {{ product.wholesaler.state }}</p>
-              <button class="btn btn-link" (click)="navigateToProfile(product.wholesaler.id,product.wholesaler.email,product.requestDetails)">View Profile</button>
+              <button class="btn btn-link"
+                (click)="navigateToProfile(product.wholesaler.id,product.wholesaler.email,product.requestDetails)">View
+                Profile</button>
               <!-- <button class="btn btn-outline-primary request-btn"
                 (click)="sendRequestToWholesaler(product)">Request to Add
               </button> -->
-             <!-- Request Button -->
-             <button *ngIf="!product.requestDetails" class="btn btn-outline-primary request-btn" (click)="sendRequestToWholesaler(product.wholesaler)">
-              Request to Add
-            </button>
-            <button *ngIf="product.requestDetails?.status" class="btn btn-outline-primary request-btn" disabled>
-              {{ product.requestDetails.status === 'accepted' ? 'Accepted' : 'Requested' }}
-            </button>
+              <!-- Request Button -->
+              <button *ngIf="!product.requestDetails" class="btn btn-outline-primary request-btn"
+                (click)="sendRequestToWholesaler(product.wholesaler)">
+                Request to Add
+              </button>
+              <button *ngIf="product.requestDetails?.status" class="btn btn-outline-primary request-btn" disabled>
+                {{ product.requestDetails.status === 'accepted' ? 'Accepted' : 'Requested' }}
+              </button>
             </div>
           </div>
-          </div>
         </div>
-  
-        <!-- Right-Side Ads Container -->
-        <!-- <div class="ads-right mt-0">
+      </div>
+
+      <!-- Right-Side Ads Container -->
+      <!-- <div class="ads-right mt-0">
           <app-right-side-advertise [imageUrls]="rightAdImages"></app-right-side-advertise>
         </div> -->
-      </div>
-  
-      <!-- Bottom-Side Ad Container -->
-      <div class="ads-bottom mb-3">
-        <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
-      </div>
     </div>
-  </section>
+
+    <!-- Bottom-Side Ad Container -->
+    <div class="ads-bottom mb-3">
+      <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
+    </div>
+  </div>
+</section>

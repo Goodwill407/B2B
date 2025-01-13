@@ -89,12 +89,13 @@ export class RetailerBulkInviteComponent {
 
   getErrorMessage(controlName: string, index: number): string {
     const control = this.distributors.at(index).get(controlName);
+    let errorMessage = '';
     if (control?.hasError('required')) {
-      return `${controlName.replace(/([A-Z])/g, ' $1')} is required.`;
+      errorMessage =  `${controlName.replace(/([A-Z])/g, ' $1')} is required.`;
     } else if (control?.hasError('email')) {
-      return 'Please enter a valid email address.';
+      errorMessage =  'Please enter a valid email address.';
     }
-    return '';
+    return errorMessage.charAt(0).toUpperCase() + errorMessage.slice(1).toLowerCase();
   }
 
   getAllCountryCode() {

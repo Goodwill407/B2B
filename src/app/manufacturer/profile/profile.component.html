@@ -51,9 +51,9 @@
                                 <label class="label-input" for="introduction">Company/Firm Introduction<span
                                         class="required">*</span></label>
                                 <textarea type="text" id="introduction" formControlName="introduction"
-                                    class="form-control"
+                                    class="form-control" maxlength="4000"
                                     [ngClass]="{ 'is-invalid': submitted && f.introduction.errors }"></textarea>
-
+                                    
                                 <!-- Validation Messages -->
                                 <div *ngIf="submitted && f.introduction.errors" class="invalid-feedback">
                                     <div *ngIf="f.introduction.errors.required">Company/Firm Introduction is required.
@@ -382,9 +382,9 @@
                         <div class="row" *ngIf="!isDataSaved || isDataSaved">
                             <div class="col-12 d-flex justify-content-center mt-3">
                                 <button *ngIf="!isDataSaved" type="submit" class="btn submit-btn me-3"
-                                    (click)="onSubmit('Save')">Save & Next >></button>
+                                    (click)="onSubmit('Save')">Save & Proceed >></button>
                                 <button *ngIf="isUpdateBtn" type="button" class="btn submit-btn"
-                                    (click)="onSubmit('Update')">Update & Next >></button>
+                                    (click)="onSubmit('Update')">Update & Proceed >></button>
                             </div>
                         </div>
                     </div>
