@@ -45,24 +45,14 @@ export class ProfileComponent {
   allCountry: any;
   Allcities: any;
   allData: any;
-
-  // for ads
-  rightAdImages: string[] = [
-    'https://en.pimg.jp/081/115/951/1/81115951.jpg',
-    'https://en.pimg.jp/087/336/183/1/87336183.jpg'
-  ];
-
-  bottomAdImage: string = 'https://5.imimg.com/data5/QE/UV/YB/SELLER-56975382/i-will-create-10-sizes-html5-creative-banner-ads.jpg';
+  altcountryCode: any;
 
   constructor(private fb: FormBuilder, public authService: AuthService, private communicationService: CommunicationService, private datePipe: DatePipe, private direction: DirectionService,private dialog: MatDialog) { }
 
-  countries: any[] = [
-    'India',
-  ];
+  countries: any[] = [ ];
+  state: any;
 
-  countryCode = [
-    { countryName: 'India', flag: 'assets/images/flags/ind.png', code: '+91' },
-  ];
+  countryCode: string = '+91';
 
   legalStatusOptions: any[] = [
     "Individual - Proprietor",
@@ -70,7 +60,7 @@ export class ProfileComponent {
     "LLP /LLC",
     "Private Limited",
     "Limited"
-  ];
+  ]
 
   ngOnInit(): void {
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
@@ -78,7 +68,8 @@ export class ProfileComponent {
     this.getAllCountry()
     this.getSavedProfileData()
     this.disabledFields();
-    this.getAllState();
+    this.getAllCountryCode()
+    
   }
 
   initializeValidation() {
@@ -87,17 +78,17 @@ export class ProfileComponent {
       companyName: ['', Validators.required],
       address: ['', Validators.required],
       introduction: ['', [Validators.required, Validators.maxLength(4000)]],
-      country: ['India', Validators.required],
+      country: ['', Validators.required],
       state: ['', Validators.required],
       city: ['', Validators.required],
-      code: ['', Validators.required],
+      code: [{ value: this.countryCode, disabled: true }, Validators.required],
       altCode: [''],
       pinCode: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
       mobNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       mobNumber2: [''],
       leagalStatusOfFirm: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-      email2: ['', Validators.email],
+      email: ['',  [Validators.required, Validators.pattern(/^[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]],//A-Z removed
+      email2: ['', [ Validators.pattern(/^[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]],//A-Z removed
       establishDate: ['', Validators.required],
       registerOnFTH: [{ value: '', disabled: true }],
       GSTIN: ['', [Validators.required, Validators.pattern(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[A-Z0-9]{1}[Z]{1}[A-Z0-9]{1}$/)]],
@@ -122,6 +113,7 @@ export class ProfileComponent {
   }
 
 
+
   get f() {
     return this.mgfRegistrationForm.controls;
   }
@@ -130,11 +122,13 @@ export class ProfileComponent {
   getRegisteredUserData() {
     this.authService.get(`users/registered-user/${this.userProfile.email}`).subscribe(res => {
       this.getResisterData = res;
+     
       this.mgfRegistrationForm.patchValue({
         companyName: this.getResisterData.companyName,
         mobNumber: this.getResisterData.mobileNumber,
         email: this.getResisterData.email,
         fullName: this.getResisterData.fullName
+        
       });
 
     },
@@ -151,28 +145,54 @@ export class ProfileComponent {
     this.mgfRegistrationForm.get('mobNumber')?.disable();
     this.mgfRegistrationForm.get('companyName')?.disable();
     this.mgfRegistrationForm.get('registerOnFTH')?.disable();
+    this.mgfRegistrationForm.get('code')?.disable();
+    this.mgfRegistrationForm.get('code')?.disable();
   }
-
-
+  
   getSavedProfileData() {
-    this.authService.get(`retailer/${this.userProfile.email}`).subscribe((res: any) => {
-      if (res) {
-        res.establishDate = res.establishDate ? this.datePipe.transform(res.establishDate, 'yyyy-MM-dd') : null;
-        res.registerOnFTH = res.registerOnFTH ? this.datePipe.transform(res.registerOnFTH, 'yyyy-MM-dd') : null;
-        this.allData = res;
-        this.mgfRegistrationForm.patchValue(this.allData);
-        this.stateWiseCity(null, this.allData.state, this.allData.city);
-        this.mgfRegistrationForm.disable();
-        this.isDataSaved = true;
-        this.currentStep = 1;
-        this.isEditFlag = true
-      } else {
+    this.authService.get(`retailer/${this.userProfile.email}`).subscribe(
+      async (res: any) => {
+        if (res) {
+          //console.log(res);
+  
+          // Format dates
+          res.establishDate = res.establishDate
+            ? this.datePipe.transform(res.establishDate, 'yyyy-MM-dd')
+            : null;
+          res.registerOnFTH = res.registerOnFTH
+            ? this.datePipe.transform(res.registerOnFTH, 'yyyy-MM-dd')
+            : null;
+  
+          // Default country code to "+91" if not available
+          this.countryCode = res.countryCode || '+91';
+  
+          // Assign other response data to the form
+          this.allData = res;
+          this.mgfRegistrationForm.patchValue(this.allData);
+  
+          // Patch the country code
+          this.mgfRegistrationForm.patchValue({ code: this.countryCode });
+  
+          // Fetch states and patch the state value once loaded
+          await this.getAllState({ country_name: res.country });
+          this.mgfRegistrationForm.patchValue({ state: res.state });
+  
+          this.stateWiseCity(null, this.allData.state, this.allData.city);
+  
+          this.mgfRegistrationForm.disable();
+          this.currentStep = 1;
+          this.isDataSaved = true;
+          this.isEditFlag = true;
+        } else {
+          // Handle manufacturer not found error
+        }
+      },
+      (error) => {
+        if (error.error.message === 'Manufacturer not found') {
+          this.getRegisteredUserData();
+        }
       }
-    }, error => {
-      if (error.error.message === "Manufacturer not found") {
-        this.getRegisteredUserData();
-      }
-    })
+    );
   }
 
   onSubmit(type: string): void {
@@ -222,14 +242,13 @@ export class ProfileComponent {
   editUserData() {
     this.mgfRegistrationForm.enable();
     this.mgfRegistrationForm.get('registerOnFTH')?.disable();
+    this.mgfRegistrationForm.get('email')?.disable();
+    this.mgfRegistrationForm.get('code')?.disable();
+    this.mgfRegistrationForm.get('mobNumber')?.disable();
     this.isUpdateBtn = true;
   }
 
-  getAllState() {
-    this.direction.getStates('https://api.countrystatecity.in/v1/countries/IN/states').subscribe(res => {
-      this.allState = res;
-    });
-  }
+ 
 
   stateWiseCity(event: any, stateName: any = '', cityName: any = '') {
     const state = event === null ? stateName : event.target.value;
@@ -238,19 +257,54 @@ export class ProfileComponent {
       this.mgfRegistrationForm.get('city')?.setValue(cityName);
     });
   }
-
   getAllCountry() {
-    this.direction.getAllCountry().subscribe((res: any) => {
-      this.allCountry = res
-    })
+    this.authService.get('newcountry').subscribe(
+      (res: any) => {
+        if (res && res.results) {
+          // Extract only the country names
+          this.countries = res.results.map((country: any) => country.name);  
+        } else {  
+        }
+      },
+    );
   }
-  onCountryChange(event: any): void {
-    const target = event.target as HTMLSelectElement;
-    const countryCode = target.value;
-    this.direction.getCities(countryCode).subscribe(data => {
-      this.Allcities = data;
+  
+  getAllState(country: { country_name: string }): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.authService.post('/state/searchby/country', country).subscribe(
+        (states: any) => {
+          if (states && states.data && states.data.results) {
+            // Assuming states.data.results contains the state list
+            this.allState = states.data.results.map((state: any) => ({
+              name: state.name,
+            }));
+  
+            // Resolve the promise after processing
+            resolve();
+          } else {
+            // Reject the promise if the response structure isn't as expected
+            reject(new Error('Invalid response structure'));
+          }
+        },
+        (error) => {
+          // Log the error and reject the promise
+          console.error('Error fetching states:', error);
+          reject(error);
+        }
+      );
     });
   }
+  
+  onCountryChange(event: any): void {
+    const selectedCountry = event.target.value; // Get selected country
+    if (selectedCountry) {
+      const body = { country_name: selectedCountry }; // Format the request body
+      this.getAllState(body); // Fetch states
+    } else {
+      this.allState = []; // Clear states if no country selected
+    }
+  }
+  
 
   openImg(path:any,size:number){
     const dialogRef = this.dialog.open(ImageDialogComponent, {
@@ -258,5 +312,17 @@ export class ProfileComponent {
       data: {path:path,width:size}  // Pass the current product data
     });
   }
-}
 
+  //alternate c code 
+  getAllCountryCode() {
+    this.authService.get('/countrycode?sortBy=dial_code').subscribe((res: any) => {
+      // Store the list of dial codes in the altcountryCode array
+      this.altcountryCode = res.results.map((country: any) => country.dial_code);
+      
+      // Optionally, set a default value (e.g., '+91') for altCode if needed
+      if (this.altcountryCode.includes('91')) {
+        this.mgfRegistrationForm.controls['altCode'].setValue('+91');
+      }
+    });
+  }
+}

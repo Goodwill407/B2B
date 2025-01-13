@@ -13,7 +13,7 @@
                         <div class="d-flex">
                             <h5>Invite Single Retailer</h5>
                             <div class="ms-auto navigation-link-log">
-                                <div type="button" class="" routerLink="/wholesaler/bulk-invite">Invite Bulk Retailer's List</div>
+                                <div type="button" class="" routerLink="/wholesaler/bulk-invite">Invite Bulk Retailer's</div>
                             </div>
                         </div>
                         <div class="row ms-4">
@@ -68,12 +68,12 @@
                                         <div class="d-flex">
                                             <mat-form-field appearance="outline" class="me-3">
                                                 <mat-select formControlName="code">
-                                                    <mat-option *ngFor="let country of countryCode" [value]="country.code">
-                                                        <img [src]="country.flag" alt="{{ country.countryName }}" class="country-flag" />{{ country.code }}
-                                                    </mat-option>
+                                                    <mat-option *ngFor="let code of altcountryCode" [value]="'+' + code">
+                                                        +{{ code }}
+                                                    </mat-option> 
                                                 </mat-select>
                                             </mat-form-field>
-                                            <input type="number" id="mobileNumber" formControlName="mobileNumber"
+                                            <input type="number" maxlength="10" id="mobileNumber" formControlName="mobileNumber"
                                                    placeholder="Number" class="form-control w-75" />
                                         </div>
                                         <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.touched && mgfRegistrationForm.get('mobileNumber')?.invalid" class="text-danger" style="margin-top: -22px;">

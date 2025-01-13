@@ -40,16 +40,16 @@
                     <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                         <label class="lable-input" for="role">Distributor's Identity<span>*</span>:</label>
                         <select formControlName="role" class="form-select" placeholder="Select Designation">
-                          <option value="" disabled>Select Identity</option>
-                          <ng-container *ngFor="let type of identityType">
-                            <!-- Bind value to type.id and display type.name -->
-                            <option [value]="type.name" [disabled]="type.name === 'manufacture'">{{type.name | titlecase}}</option>
-                          </ng-container>
+                            <option value="" disabled>Select Identity</option>
+                            <ng-container *ngFor="let type of filteredIdentityType">
+                                <option [value]="type.name">{{type.name | titlecase}}</option>
+                            </ng-container>
                         </select>
                         <div *ngIf="mgfRegistrationForm.get('role')?.touched && mgfRegistrationForm.get('role')?.invalid" class="text-danger">
-                          Distributor's Identity is required.
+                            Distributor's Identity is required.
                         </div>
-                      </div>
+                    </div>
+                    
                       
 
 
@@ -75,9 +75,8 @@
                                 <div class="d-flex">
                                     <mat-form-field appearance="outline" class="me-1">
                                         <mat-select formControlName="code">
-                                            <mat-option *ngFor="let country of countryCode" [value]="country.code">
-                                                <img [src]="country.flag" alt="{{ country.countryName }}"
-                                                    class="country-flag" />{{ country.code }}
+                                            <mat-option *ngFor="let code of altcountryCode" [value]="'+' + code">
+                                                +{{ code }}
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>

@@ -7,6 +7,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-brand',
@@ -37,6 +38,7 @@ export class BrandComponent {
   cdnPath: string = '';
   userProfile: any;
   isEditing = false;
+  actionName = "Add"
   @ViewChild('fileInput') fileInput!: ElementRef;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private router: Router, private spinner: NgxSpinnerService) { }
@@ -134,10 +136,24 @@ export class BrandComponent {
     this.getAllBrands();
   }
 
+
   deleteData(user: any) {
-    this.authService.delete(`brand`, user.id).subscribe((res) => {
-      this.communicationService.showNotification('snackbar-success', 'Brand Deleted successfully', 'bottom', 'center');
-      this.getAllBrands();
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this brand?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.authService.delete(`brand`, user.id).subscribe((res) => {
+          this.communicationService.showNotification('snackbar-success', 'Brand Deleted successfully', 'bottom', 'center');
+          this.getAllBrands();
+        });
+      }
     });
   }
 
@@ -145,6 +161,7 @@ export class BrandComponent {
     this.isEditing = true;
     this.brandForm.patchValue(data);
     this.formType = 'Update';
+    this.actionName = "Edit";
     this.imagePreview = this.cdnPath + data.brandLogo;
     this.brandForm.get('brandLogo')?.setValidators(null); // Remove validators for editing
     this.brandForm.get('brandLogo')?.updateValueAndValidity();
@@ -164,5 +181,6 @@ export class BrandComponent {
     this.brandForm.get('brandLogo')?.setValidators([Validators.required]); // Re-add validators for new entries
     this.brandForm.get('brandLogo')?.updateValueAndValidity();
     this.getAllBrands();
+    this.actionName = "Add";
   }
 }

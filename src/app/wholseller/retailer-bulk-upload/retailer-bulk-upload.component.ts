@@ -42,21 +42,22 @@ export class RetailerBulkUploadComponent {
     if (this.selectedFile) {
       const formData = new FormData();
       formData.append('file', this.selectedFile);
-      this.http.post('schools/bulkupload', formData).subscribe(
+      this.http.post('invitations/bulk-upload', formData).subscribe(
         (response) => {
           this.communicationService.showNotification('snackbar-success', 'File Uploaded Successfully...!!!', 'bottom', 'center')
-          this.duplicates = response.duplicates.data;
-          this.nonduplicates = response.nonduplicates.data;
-          this.showTable = true;
+          // this.duplicates = response.duplicates.data;
+          // this.nonduplicates = response.nonduplicates.data;
+          // this.showTable = true;
         },
         (error) => {
-          this.communicationService.showNotification('snackbar-danger', 'Error uploading file...!!!', 'bottom', 'center')
+          this.communicationService.showNotification('snackbar-danger', error.error.message, 'bottom', 'center')
         }
       );
     } else {
       this.communicationService.showNotification('snackbar-danger', 'Error uploading file...!!!', 'bottom', 'center')
     }
   }
+  
   showDuplicates(): void {
     this.showDuplicateTable = true;
     this.showNonDuplicateTable = false;

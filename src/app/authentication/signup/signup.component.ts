@@ -115,7 +115,7 @@ interval: any; // Interval for the timer
       role: ['', Validators.required],
       contryCode: ['+91'],
       mobileNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
-      email: [this.email, [Validators.required, Validators.email]],
+      email: [this.email, [Validators.required, Validators.pattern(/^[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]],//A-Z removed
       otp: [''], // For email OTP
       mobileOtp: [''], // For mobile OTP
       refByEmail: [''],
@@ -260,12 +260,29 @@ interval: any; // Interval for the timer
 
   onOtpChange(index: number, event: any) {
     const value = event.target.value;
-    if (value.length === 1 && index < 5) {
-      (document.getElementById(`otp${index + 2}`) as HTMLElement).focus();
+    
+    // Ensure only single digit is entered
+    if (/^\d$/.test(value)) {
+      this.otpFields[index] = value; // Update the OTP field at the specified index
+    } else {
+      this.otpFields[index] = ''; // Clear the input if it's not a digit
     }
-    this.otpFields[index] = value;
-    this.mgfRegistrationForm.controls['otp'].setValue(this.otpFields.join(''));
+  
+    // Concatenate the OTP fields into a single string
+    const fullOtp = this.otpFields.join('');
+  
+    // Update the form control with the full OTP
+    this.mgfRegistrationForm.controls['otp'].setValue(fullOtp);
+  
+    // Automatically focus the next input field, if it exists
+    if (value.length === 1 && index < this.otpFields.length - 1) {
+      const nextInput = document.getElementById(`otp${index + 1}`) as HTMLInputElement;
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
   }
+  
 
   mustMatch(controlName: string, matchingControlName: string): ValidatorFn {
     return (formGroup: AbstractControl): ValidationErrors | null => {
@@ -288,13 +305,24 @@ interval: any; // Interval for the timer
   onMobileOtpChange(index: number, event: any): void {
     const value = event.target.value;
     const input = event.target as HTMLInputElement;
-    const nextInput = document.getElementById(`mobileOtp${index + 2}`) as HTMLInputElement;
-    if (input.value.length === 1 && nextInput) {
-      nextInput.focus(); // Move to the next input field
+    const nextInput = document.getElementById(`mobotp${index + 1}`) as HTMLInputElement;
+    const prevInput = document.getElementById(`mobotp${index - 1}`) as HTMLInputElement;
+  
+    if (value.length === 1) {
+      if (nextInput) {
+        nextInput.focus(); // Move to the next input field if it exists
+      }
+    } else if (value.length === 0 && prevInput) {
+      prevInput.focus(); // Move to the previous input field if backspace is pressed
     }
+  
+    // Update the corresponding OTP field value
     this.otpFields[index] = value;
+  
+    // Set the concatenated OTP value to the form control
     this.mgfRegistrationForm.controls['mobileOtp'].setValue(this.otpFields.join(''));
   }
+  
   
 
   verifyMobileOtp(mobileNumber: string, mobileOtp: string): Promise<boolean> {
@@ -341,6 +369,8 @@ interval: any; // Interval for the timer
       );
     });
   }
+
+ 
   
   
 
@@ -408,7 +438,7 @@ interval: any; // Interval for the timer
     this.communicationService.showNotification('snackbar-success', 'Mobile OTP resent successfully', 'bottom', 'center');
   }
   startTimer() {
-    this.timeLeft = 10; // Reset timer to 3 minutes
+    this.timeLeft = 180; // Reset timer to 3 minutes
     clearInterval(this.interval); // Clear any existing interval
   
     this.interval = setInterval(() => {
@@ -430,5 +460,18 @@ interval: any; // Interval for the timer
 
     this.startTimer(); // Restart timer
   }
+
+  moveFocus(event: KeyboardEvent, index: number, type: string): void {
+    const target = event.target as HTMLInputElement;
+    if (target.value.length === 1) {
+      const nextInput = document.querySelector(
+        `.otp-input.${type}-otp input:nth-child(${index + 1})`
+      ) as HTMLInputElement;
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
+  }
+
     
 }

@@ -37,6 +37,8 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 export class AddRetailerComponent {
   mgfRegistrationForm!: FormGroup;
 
+  altcountryCode: any;
+
   countryCode = [
     // { countryName: 'United States', flag: 'assets/images/flags/us.jpg', code: '+1' },
     { countryName: 'India', flag: 'assets/images/flags/ind.png', code: '+91' },
@@ -56,6 +58,7 @@ export class AddRetailerComponent {
 
   ngOnInit() {
     this.initializeForm();
+    this.getAllCountryCode();
   }
 
   initializeForm() {
@@ -81,6 +84,16 @@ export class AddRetailerComponent {
       this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
     })
   }
-
+  getAllCountryCode() {
+    this.authService.get('/countrycode?sortBy=dial_code').subscribe((res: any) => {
+      // Store the list of dial codes in the altcountryCode array
+      this.altcountryCode = res.results.map((country: any) => country.dial_code);
+      
+      // Optionally, set a default value (e.g., '+91') for altCode if needed
+      if (this.altcountryCode.includes('91')) {
+        this.mgfRegistrationForm.controls['altCode'].setValue('+91');
+      }
+    });
+  }
   
 }

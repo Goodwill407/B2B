@@ -18,6 +18,7 @@ import { AssociatedMnfListComponent } from "./associated-mnf-list/associated-mnf
 import { RetailerManifacturerPoComponent } from "./new-flow/product-mng/retailer-manifacturer-po/retailer-manifacturer-po.component";
 import { ViewMdeliveryChallanComponent } from "./new-flow/product-mng/mdelivery-challan/view-mdelivery-challan/view-mdelivery-challan.component";
 import { ViewDeliveryFinalComponent } from "./new-flow/product-mng/mdelivery-challan/view-delivery-final/view-delivery-final.component";
+import { ViewProductRePriceComponent } from "./new-flow/view-product-re-price/view-product-re-price.component";
 
 export const R_Auth: Route[] = [
     { path: 'new', loadChildren: () => import('./new-flow/new_flow.route').then((m) => m.NewFlow) },
@@ -42,6 +43,7 @@ export const R_Auth: Route[] = [
     { path: 'invite-status', component: RetailerInviteStatusComponent },
     { path: 'manage-retailer', component: ManageRetailerComponent },
     { path: 'request-to-mnf', component: RequestToManufacturerComponent },
+    { path: 'viewproductre', component: ViewProductRePriceComponent },
     { path: 'mnf-details', component: ViewManufacturerDetailsComponent },
     { path: 'requested-mnf_list', component: MnfRequestListComponent },
     { path: 'view-challan', component: ViewChallanComponent },

@@ -51,9 +51,9 @@
                                 <label class="label-input" for="introduction">Company/Firm Introduction<span
                                         class="required">*</span></label>
                                 <textarea type="text" id="introduction" formControlName="introduction"
-                                    class="form-control"
+                                    class="form-control" maxlength="4000"
                                     [ngClass]="{ 'is-invalid': submitted && f.introduction.errors }"></textarea>
-
+                                    
                                 <!-- Validation Messages -->
                                 <div *ngIf="submitted && f.introduction.errors" class="invalid-feedback">
                                     <div *ngIf="f.introduction.errors.required">Company/Firm Introduction is required.
@@ -112,7 +112,7 @@
                             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                                 <label class="label-input" for="pincode">Zip / Pin Code<span
                                         class="required">*</span></label>
-                                <input type="text" id="pincode" formControlName="pinCode" class="form-control"
+                                <input  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" type="text" id="pincode" formControlName="pinCode" class="form-control"
                                     [ngClass]="{ 'is-invalid': submitted && f.pinCode.errors }">
                                 <div *ngIf="submitted && f.pinCode.errors" class="invalid-feedback">
                                     <div *ngIf="f.pinCode.errors.required">Pin Code is required.</div>
@@ -146,14 +146,12 @@
                                 <div class="d-flex mat-select">
                                     <mat-form-field appearance="outline" class="me-2">
                                         <mat-select formControlName="altCode">
-                                            <mat-option [value]="countryCode">
-                                                {{ countryCode }}
+                                            <mat-option *ngFor="let code of altcountryCode" [value]="'+' + code">
+                                                +{{ code }}
                                             </mat-option>
                                         </mat-select>
-
-
                                     </mat-form-field>
-                                    <input type="text" id="mobNumberAlt" formControlName="mobNumber2"
+                                    <input  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" type="text" id="mobNumberAlt" formControlName="mobNumber2"
                                         class="form-control"
                                         [ngClass]="{ 'is-invalid': submitted && f.mobNumber2.errors }">
                                 </div>
@@ -268,7 +266,7 @@
                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
                                 <label class="label-input" for="acNo">Account Number<span
                                         class="required">*</span></label>
-                                <input type="text" id="acNo" formControlName="accountNumber" class="form-control"
+                                <input oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 100);" type="text" id="acNo" formControlName="accountNumber" class="form-control"
                                     [ngClass]="{ 'is-invalid': submitted && f.BankDetails.get('accountNumber').errors }">
                                 <div *ngIf="submitted && f.BankDetails.get('accountNumber').errors"
                                     class="invalid-feedback">
@@ -384,9 +382,9 @@
                         <div class="row" *ngIf="!isDataSaved || isDataSaved">
                             <div class="col-12 d-flex justify-content-center mt-3">
                                 <button *ngIf="!isDataSaved" type="submit" class="btn submit-btn me-3"
-                                    (click)="onSubmit('Save')">Save & Next >></button>
+                                    (click)="onSubmit('Save')">Save & Proceed >></button>
                                 <button *ngIf="isUpdateBtn" type="button" class="btn submit-btn"
-                                    (click)="onSubmit('Update')">Update & Next >></button>
+                                    (click)="onSubmit('Update')">Update & Proceed >></button>
                             </div>
                         </div>
                     </div>

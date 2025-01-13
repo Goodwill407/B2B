@@ -21,8 +21,13 @@
                     <div class="row">
                         <div class="col-lg-3 col-md-3 col-sm-6 mt-2">
                             <label for="productDiscount">Product Discount<span class="required">*</span><small>(in %)</small> </label>
-                            <input type="text" id="productDiscount" formControlName="productDiscount"
-                                placeholder="Enter Product Discount in ( % )" class="form-control" />
+                            <input type="text" 
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^0+(?!$)/, ''); if (this.value > 100) this.value = 100;" 
+                                max="100" 
+                                id="productDiscount" 
+                                formControlName="productDiscount" 
+                                placeholder="Enter Product Discount in ( % )" 
+                                class="form-control" />
                             <div *ngIf="categoryForm2.get('productDiscount')?.touched && categoryForm2.get('productDiscount')?.invalid"
                                 class="text-danger">
                                 Product Discount is required.
@@ -31,7 +36,9 @@
 
                         <div class="col-lg-3 col-md-3 col-sm-6 mt-2">
                             <label for="shippingDiscount">Shipping Discount<span class="required">*</span><small>(in %)</small> </label>
-                            <input type="text" id="shippingDiscount" formControlName="shippingDiscount"
+                            <input type="text" 
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^0+(?!$)/, ''); if (this.value > 100) this.value = 100;" 
+                            max="100" id="shippingDiscount" formControlName="shippingDiscount"
                                 placeholder="Enter Shipping Discount in ( % )" class="form-control" />
                             <div *ngIf="categoryForm2.get('shippingDiscount')?.touched && categoryForm2.get('shippingDiscount')?.invalid"
                                 class="text-danger">

@@ -54,6 +54,7 @@ export class ManageRetailerComponent {
     // Modify the API request to include the searchKey parameter
     this.authService.get(`wholesaler/get-referred/retailer?page=${this.page}&limit=${this.limit}&refByEmail=${this.user.email}&searchKeywords=${searchKey}`).subscribe((res: any) => {
         this.distributors = res.results;
+        console.log(res.results)
         this.totalResults = res.totalResults;
     });
 }
@@ -64,12 +65,7 @@ export class ManageRetailerComponent {
     this.getPendingInvites();
   }
   
-  distributors: any = [
-    { fullName: 'John Doe', companyName: 'ABC Ltd.', mobileNumber: '1234567890', email: 'john@example.com', city: 'New York', country: 'USA', status: 'Active' },
-    { fullName: 'Jane Smith', companyName: 'XYZ Inc.', mobileNumber: '0987654321', email: 'jane@example.com', city: 'Los Angeles', country: 'USA', status: 'Inactive' },
-    { fullName: 'Michael Brown', companyName: '123 Corp.', mobileNumber: '5678901234', email: 'michael@example.com', city: 'Chicago', country: 'USA', status: 'Active' },
-    { fullName: 'Lisa Johnson', companyName: '789 LLC', mobileNumber: '4321098765', email: 'lisa@example.com', city: 'Houston', country: 'USA', status: 'Inactive' }
-  ];
+  distributors: any [] = [];
 
   changeUserStatus(user: any){
     this.authService.patchWithEmail(`invitations/${user}`,{status:'accepted'}).subscribe((res)=>{

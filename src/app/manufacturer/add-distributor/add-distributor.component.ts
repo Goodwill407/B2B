@@ -39,13 +39,16 @@ export class AddDistributorComponent {
     // { countryName: 'United Kingdom', flag: 'assets/images/flags/uk.png', code: '+44' },
     // { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
   ];
+  altcountryCode: any;
   identityType: any;
+  filteredIdentityType: any; // This will store the filtered identity types
 
   constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private spinner: NgxSpinnerService) {}
 
   ngOnInit() {
     this.initializeForm();
     this.getIdentityType();
+    this.getAllCountryCode()
   }
 
   initializeForm() {
@@ -73,11 +76,27 @@ export class AddDistributorComponent {
   }
   
 
-  getIdentityType(){
-    this.authService.get('entitytype').subscribe((res:any) =>{
+  getIdentityType() {
+    this.authService.get('entitytype').subscribe((res: any) => {
       this.identityType = res.results;
-      console.log(this.identityType);
+      // Filter out the 'manufacture' option from the identityType list
+      this.filteredIdentityType = this.identityType.filter((type: any) => type.name !== 'manufacture');
+      console.log(this.filteredIdentityType);  // Log the filtered data
     });
   }
   
+  getAllCountryCode() {
+    this.authService.get('/countrycode?sortBy=dial_code').subscribe((res: any) => {
+      // Store the list of dial codes in the altcountryCode array
+      this.altcountryCode = res.results.map((country: any) => country.dial_code);
+      
+      // Optionally, set a default value (e.g., '+91') for altCode if needed
+      if (this.altcountryCode.includes('91')) {
+        this.mgfRegistrationForm.controls['altCode'].setValue('+91');
+      }
+    });
+  }
+
+  
+
 }
