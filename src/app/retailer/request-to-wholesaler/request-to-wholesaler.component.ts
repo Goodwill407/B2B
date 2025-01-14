@@ -109,33 +109,8 @@ export class RequestToWholesalerComponent {
 //       );
 //     }   
 //   }  
-  
-  // searchByWholselers(): void {
-  //   console.log('SearchBrand:', this.SearchBrand); // Debugging line
-  //   if (this.SearchBrand) {
-  //     const object = {
-  //       brandName: this.SearchBrand,
-  //       requestByEmail: this.userProfile.email
-  //     };
-  //     this.authService.post(`brand/search/brands-connected-to-wholesalers`, object).subscribe(
-  //       (response: any) => {
-  //         this.productTypeWise = [];
-  //         // Map the response to extract wholesalers for each brand
-  //         this.wholesalerData = response.map((brandItem: any) => {
-  //           return {
-  //             brandName: brandItem.brand.brandName,
-  //             brandLogo: brandItem.brand.brandLogo,
-  //             wholesalers: brandItem.wholesalers
-  //           };
-  //         });
-  //       },
-  //       (error) => {
-  //         console.error('Error searching brand:', error);
-  //       }
-  //     );
-  //   }
-  // }
-  
+ 
+//
 
   searchByWholselers(): void {
     if (this.SearchBrand) {
