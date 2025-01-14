@@ -1,8 +1,10 @@
 import { CommonModule,Location } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
+import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.component';
 
 @Component({
   selector: 'app-view-product2',
@@ -20,7 +22,9 @@ export class ViewProduct2Component {
   wishlist: boolean = false;
   quantity: any;
   hoveredColourName: string = '';
-  constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService, private fb: FormBuilder, private communicationService: CommunicationService) { }
+  constructor(private location: Location,private renderer: Renderer2, private route: ActivatedRoute, public authService: AuthService, private fb: FormBuilder, private communicationService: CommunicationService,private dialog: MatDialog) { }
+ @ViewChild('mainImage') mainImage!: ElementRef; // Reference to the main image element
+  zoomed: boolean = false;
 
   product: any;
   selectedMedia: any;
@@ -61,6 +65,7 @@ export class ViewProduct2Component {
           title: res.productTitle,
           description: res.productDescription,
           material: res.material,
+          FSIN: res.FSIN,
           materialVariety: res.materialvariety,
           pattern: res.fabricPattern,
           fitType: res.fitStyle,
@@ -248,7 +253,40 @@ export class ViewProduct2Component {
       }
     )
   }
+ zoomImage(event: MouseEvent) {
+    const imageElement = this.mainImage?.nativeElement; // Get the native image element
 
+    if (!imageElement) {
+      console.error('Image element not found.');
+      return;
+    }
+    this.renderer.setStyle(imageElement, 'transform', `scale(1.8)`);
+    this.renderer.setStyle(imageElement, 'cursor', 'zoom-in');
+    this.renderer.setStyle(imageElement, 'transform-origin', `${event.offsetX}px ${event.offsetY}px`);
+  }
+
+  resetZoom(event: MouseEvent) {
+    const imageElement = this.mainImage?.nativeElement; // Get the native image element
+
+    if (!imageElement) {
+      console.error('Image element not found.');
+      return;
+    }
+
+    this.renderer.setStyle(imageElement, 'transform', 'none');
+    this.renderer.setStyle(imageElement, 'cursor', 'default');
+  }
+
+  openImg(path: any, size: number) {
+    const dialogRef = this.dialog.open(ImageDialogComponent, {
+      // width: size+'px',
+      data: { path: path, width: size },  // Pass the current product data
+      width: '90%', // Set the desired width
+      height: '90%', // Set the desired height
+      maxWidth: '90vw', // Maximum width to prevent overflow
+      maxHeight: '90vh' // Maximum height to prevent overflow
+    });
+  }
   onHoverColour(colour: any) {
     this.hoveredColourName = this.selectedColourName; // Save the current selected name to revert later
     this.selectedColourName = colour.name; // Set the name to the hovered color name

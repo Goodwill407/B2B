@@ -1,8 +1,10 @@
 import { CommonModule,Location } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
+import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.component';
 @Component({
   selector: 'app-edit-re-product-price',
   standalone: true,
@@ -20,8 +22,9 @@ export class EditReProductPriceComponent {
   quantity: any;
   hoveredColourName: string = '';
   Example: any;
-  constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService, private fb: FormBuilder, private communicationService: CommunicationService) { }
-
+  constructor(private location: Location,private renderer: Renderer2, private route: ActivatedRoute, public authService: AuthService, private fb: FormBuilder, private communicationService: CommunicationService,private dialog: MatDialog) { }
+ @ViewChild('mainImage') mainImage!: ElementRef; // Reference to the main image element
+  zoomed: boolean = false;
   product: any;
   selectedMedia: any;
   selectedMediaType: string = 'image'; // 'image' or 'video'
@@ -54,6 +57,7 @@ export class EditReProductPriceComponent {
       this.designno = res.designNumber;
       console.log(res)
       if (res) {
+        console.log(res);
         this.product = {
           brand: res.brand,
           designNumber: this.designno,
@@ -62,6 +66,7 @@ export class EditReProductPriceComponent {
           subCategory: res.subCategory,
           gender: res.gender,
           title: res.productTitle,
+          FSIN: res.FSIN,
           description: res.productDescription,
           material: res.material,
           materialVariety: res.materialvariety,
@@ -98,7 +103,8 @@ export class EditReProductPriceComponent {
         this.selectedSizes = this.product.sizes.map((item: any) => {
          return {
           size:item.standardSize,
-          price:item.manufacturerPrice}
+          price:item.manufacturerPrice,
+          MRP:item.singleMRP}
         });
         this.createFormControls2();
         this.getpriceDetails(id);
@@ -149,14 +155,16 @@ export class EditReProductPriceComponent {
       this.selectedSizes.forEach((size: any) => {
         const controlName = `${sanitizedColorName}_${size.size}`;
         const wholesalerControlName = `wholesalerPrice_${size.size}`;
-    
-        // Add controls for quantity and wholesaler price
+        const mrpControlName = `singleMRP_${size.size}`; // Control for single MRP
+  
+        // Add controls for quantity, wholesaler price, and single MRP
         this.stepThree.addControl(controlName, new FormControl(''));
         this.stepThree.addControl(wholesalerControlName, new FormControl(''));
+        this.stepThree.addControl(mrpControlName, new FormControl(size.MRP || '')); // Initialize with MRP if available
       });
     });
-    
   }
+  
   
   
 
@@ -180,37 +188,40 @@ export class EditReProductPriceComponent {
     if (this.stepThree.valid) {
       const formData = this.stepThree.value;
       const setArray: any[] = [];
-      
-      // Loop through the sizes and collect price data
+  
+      // Loop through sizes and collect price data
       this.selectedSizes.forEach((size: any) => {
         const wholesalerControlName = `wholesalerPrice_${size.size}`;
-        const wholesalerPrice = formData[wholesalerControlName]; // Get wholesaler price from form data
-        const manufacturerPrice = size.price; // Get the manufacturer price from the size object
+        const mrpControlName = `singleMRP_${size.size}`;
+        const wholesalerPrice = formData[wholesalerControlName];
+        const singleMRP = formData[mrpControlName]; // Get single MRP from form data
+        const manufacturerPrice = size.price;
   
-        // Ensure wholesalerPrice is not empty and manufacturerPrice is available
-        if (wholesalerPrice && manufacturerPrice) {
+        // Ensure all necessary data is available
+        if (wholesalerPrice && manufacturerPrice && singleMRP) {
           setArray.push({
             _id: size._id, // Ensure the size has a unique _id
             size: size.size,
-            wholesalerPrice: wholesalerPrice, // Wholesaler price entered by the user
-            manufacturerPrice: manufacturerPrice, // Manufacturer price from the size object
+            wholesalerPrice: wholesalerPrice,
+            singleMRP: singleMRP, // Include single MRP in the payload
+            manufacturerPrice: manufacturerPrice,
           });
         }
       });
   
       // Construct the payload
       const payload = {
-        productId: this.ProductId, // Sent once
-        WholesalerEmail: this.authService.currentUserValue.email, // Logged in wholesaler's email
-        manufacturerEmail: this.product.productBy, // Manufacturer's email
-        brandName: this.product.brand, // Brand name
-        set: setArray, // Array of sizes with both prices
+        productId: this.ProductId,
+        WholesalerEmail: this.authService.currentUserValue.email,
+        manufacturerEmail: this.product.productBy,
+        brandName: this.product.brand,
+        set: setArray, // Array of sizes with all prices
       };
   
       try {
         // Send the API request
         const res = await this.authService.post('wholesaler-price-type2', payload).toPromise();
-        
+  
         if (res) {
           this.communicationService.customSuccess1('Saved Successfully...!!!');
         }
@@ -219,6 +230,7 @@ export class EditReProductPriceComponent {
       }
     }
   }
+  
   
   
   
@@ -286,12 +298,46 @@ export class EditReProductPriceComponent {
     )
   }
 
-  onHoverColour(colour: any) {
-    this.hoveredColourName = this.selectedColourName; // Save the current selected name to revert later
-    this.selectedColourName = colour.name; // Set the name to the hovered color name
-  }
-
-  onLeaveColour() {
-    this.selectedColourName = this.hoveredColourName; // Revert to the original selected name when hover is removed
-  }
+  zoomImage(event: MouseEvent) {
+     const imageElement = this.mainImage?.nativeElement; // Get the native image element
+ 
+     if (!imageElement) {
+       console.error('Image element not found.');
+       return;
+     }
+     this.renderer.setStyle(imageElement, 'transform', `scale(1.8)`);
+     this.renderer.setStyle(imageElement, 'cursor', 'zoom-in');
+     this.renderer.setStyle(imageElement, 'transform-origin', `${event.offsetX}px ${event.offsetY}px`);
+   }
+ 
+   resetZoom(event: MouseEvent) {
+     const imageElement = this.mainImage?.nativeElement; // Get the native image element
+ 
+     if (!imageElement) {
+       console.error('Image element not found.');
+       return;
+     }
+ 
+     this.renderer.setStyle(imageElement, 'transform', 'none');
+     this.renderer.setStyle(imageElement, 'cursor', 'default');
+   }
+ 
+   openImg(path: any, size: number) {
+     const dialogRef = this.dialog.open(ImageDialogComponent, {
+       // width: size+'px',
+       data: { path: path, width: size },  // Pass the current product data
+       width: '90%', // Set the desired width
+       height: '90%', // Set the desired height
+       maxWidth: '90vw', // Maximum width to prevent overflow
+       maxHeight: '90vh' // Maximum height to prevent overflow
+     });
+   }
+   onHoverColour(colour: any) {
+     this.hoveredColourName = this.selectedColourName; // Save the current selected name to revert later
+     this.selectedColourName = colour.name; // Set the name to the hovered color name
+   }
+ 
+   onLeaveColour() {
+     this.selectedColourName = this.hoveredColourName; // Revert to the original selected name when hover is removed
+   }
 }
