@@ -10,6 +10,7 @@ import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import jsPDF from 'jspdf';
 import {  RouterModule } from '@angular/router';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 @Component({
   selector: 'app-mdelivery-challan',
   standalone: true,
@@ -20,7 +21,8 @@ import {  RouterModule } from '@angular/router';
     TooltipModule,
     TableModule,
     MatTabsModule,
-    RouterModule
+    RouterModule,
+    BottomSideAdvertiseComponent
   ],
   templateUrl: './mdelivery-challan.component.html',
   styleUrl: './mdelivery-challan.component.scss'
@@ -60,6 +62,11 @@ export class MdeliveryChallanComponent {
   rows: number = 10;
   isNewPO: boolean = false;
   totalResults3: any;
+  bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+  'assets/images/adv/ads.jpg'
+  ];
+
 
   constructor(private route: ActivatedRoute, private authService: AuthService, private communicationService: CommunicationService) { }
 

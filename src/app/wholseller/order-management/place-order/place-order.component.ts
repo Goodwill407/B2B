@@ -2,6 +2,7 @@ import { CommonModule, NgFor } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { PaginatorModule } from 'primeng/paginator';
@@ -14,6 +15,7 @@ import { TableModule } from 'primeng/table';
     CommonModule,
     TableModule,
     PaginatorModule,
+    BottomSideAdvertiseComponent
   ],
   templateUrl: './place-order.component.html',
   styleUrls: ['./place-order.component.scss']
@@ -47,6 +49,11 @@ export class PlaceOrderComponent {
   first: number = 0;
   rows: number = 10;
   isNewPO: boolean = false;
+  bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+  'assets/images/adv/ads.jpg'
+  ];
+
 
   constructor(private route: ActivatedRoute, private authService: AuthService, private communicationService: CommunicationService) { }
 

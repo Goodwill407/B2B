@@ -7,12 +7,15 @@ import jsPDF from 'jspdf';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 import {  RouterModule } from '@angular/router';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 @Component({
   selector: 'app-retailor-po',
   standalone: true,
   imports: [ CommonModule,
     TableModule,
-    PaginatorModule,RouterModule],
+    PaginatorModule,RouterModule,
+    BottomSideAdvertiseComponent
+  ],
   templateUrl: './retailor-po.component.html',
   styleUrl: './retailor-po.component.scss'
 })
@@ -46,6 +49,11 @@ export class RetailorPoComponent {
   first: number = 0;
   rows: number = 10;
   isNewPO: boolean = false;
+  bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+  'assets/images/adv/ads.jpg'
+  ];
+
 
   constructor(private route: ActivatedRoute, private authService: AuthService, private communicationService: CommunicationService) { }
 

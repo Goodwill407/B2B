@@ -60,7 +60,7 @@ export class WholeselerProductsComponent {
     'https://en.pimg.jp/087/336/183/1/87336183.jpg'
   ];
 
-  bottomAdImage: string = 'https://elmanawy.info/demo/gusto/cdn/ads/gusto-ads-banner.png';
+  bottomAdImage: string[] = ['https://elmanawy.info/demo/gusto/cdn/ads/gusto-ads-banner.png'];
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
