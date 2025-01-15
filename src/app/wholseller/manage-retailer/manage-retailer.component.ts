@@ -1,16 +1,17 @@
-import { NgClass } from '@angular/common';
+import { NgClass, CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
 import { PaginatorModule } from 'primeng/paginator';
-import { TableModule } from 'primeng/table'; // Import TableModule from PrimeNG
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'app-manage-retailer',
   standalone: true,
   imports: [
+    CommonModule,
     TableModule,
     PaginatorModule,
     RightSideAdvertiseComponent,
@@ -55,13 +56,40 @@ export class ManageRetailerComponent {
   // }
 
   getPendingInvites(searchKey: string = '') {
-    // Modify the API request to include the searchKey parameter
-    this.authService.get(`wholesaler/get-referred/retailer?page=${this.page}&limit=${this.limit}&refByEmail=${this.user.email}&searchKeywords=${searchKey}`).subscribe((res: any) => {
-        this.distributors = res.results;
-        console.log(res.results)
-        this.totalResults = res.totalResults;
-    });
-}
+    this.authService
+      .get(
+        `wholesaler/get-referred/retailer?page=${this.page}&limit=${this.limit}&refByEmail=${this.user.email}&searchKeywords=${searchKey}`
+      )
+      .subscribe(
+        (res: any) => {
+          this.distributors = res.results || [];
+          this.totalResults = res.totalResults || 0;
+  
+          // Process discounts for each distributor
+          this.distributors.forEach((distributor: any) => {
+            if (distributor.discountGiven?.length) {
+              // Filter discounts for the distributor by email
+              const filteredDiscounts = distributor.discountGiven.filter(
+                (discount: any) => discount.discountGivenBy === this.user.email
+              );
+  
+              // Create a comma-separated list of discount categories
+              distributor.discountCategories = filteredDiscounts.length
+                ? filteredDiscounts.map((discount: any) => discount.category).join(', ')
+                : 'No Discounts';
+            } else {
+              distributor.discountCategories = 'No Discounts';
+            }
+          });
+        },
+        (error) => {
+          console.error('Error fetching retailers:', error);
+          this.distributors = [];
+          this.totalResults = 0;
+        }
+      );
+  }
+  
 
   onPageChange(event: any) {
     this.page = event.page + 1;
@@ -76,15 +104,18 @@ export class ManageRetailerComponent {
       this.communicationService.showNotification('snackbar-success', 'User status updated successfully','bottom','center');
     });
   }
-
-  viewProfile(distributors:any){
-    debugger
-    this.router.navigate(['/common/view-profile'],{queryParams:{email:distributors.email,role:'retailer'}});
-    
+  viewProfile(distributor: any) {
+    this.router.navigate(['/common/view-profile'], {
+      queryParams: { email: distributor.email, role: 'retailer' },
+    });
   }
-
+ 
   onSearchChange(event: any) {
-    const searchKey = event.target.value;
+    const searchKey = event.target.value.trim();
+    this.page = 1; // Reset to the first page on new search
     this.getPendingInvites(searchKey);
-}
+  }
+  
+
+
 }
