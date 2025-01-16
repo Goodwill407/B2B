@@ -64,7 +64,7 @@ export class CommunicationService {
         }
     }
     openImg(path: string) {
-      window.open(this.authService.cdnPath + path, '_blank');
+      window.open(path, '_blank');
     }
 
     allState(){
