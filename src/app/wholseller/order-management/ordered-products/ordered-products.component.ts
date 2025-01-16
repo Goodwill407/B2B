@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 import { AccordionModule } from 'primeng/accordion';
 import { TableModule } from 'primeng/table';
 
@@ -14,7 +15,8 @@ import { TableModule } from 'primeng/table';
     TableModule,
     FormsModule,
     AccordionModule,
-    CommonModule
+    CommonModule,
+    BottomSideAdvertiseComponent
   ],
   templateUrl: './ordered-products.component.html',
   styleUrl: './ordered-products.component.scss'
@@ -27,6 +29,11 @@ export class OrderedProductsComponent {
   }> = [];
 
   showFlag: boolean = false;
+  bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+  'assets/images/adv/ads.jpg'
+  ];
+
 
   constructor(private authService: AuthService, private route: ActivatedRoute, private communicationService: CommunicationService, private dialog: MatDialog) { }
 

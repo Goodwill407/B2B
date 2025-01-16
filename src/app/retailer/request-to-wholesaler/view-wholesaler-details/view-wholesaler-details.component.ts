@@ -25,8 +25,10 @@ export class ViewWholesalerDetailsComponent {
     WholsellerData:any; 
     RetailserData:any
     id:any
-    RequestDetails:any
+    // RequestDetails:any
     isRequestSend:boolean=false;
+    requestDetails:any;
+    isRequestSent = false;
   
     constructor(private route: ActivatedRoute, private authService:AuthService,private communicationService:CommunicationService) {
       this.cdnPath=authService.cdnPath
@@ -39,19 +41,21 @@ export class ViewWholesalerDetailsComponent {
        this.route.queryParams.subscribe(params => {
         this.id = params['id']; 
         this.email=params['email']    
-        
-        if (params['RequestDetails']) {
-          console.log('RequestDetails before parsing:', params['RequestDetails']);
-          try {
-            this.RequestDetails = JSON.parse(params['RequestDetails']); // Try parsing
-            console.log('Parsed RequestDetails:', this.RequestDetails); // Log the parsed object
-          } catch (error) {
-            console.error('Error parsing RequestDetails:', error);
-            this.RequestDetails = null; // Handle error
-          }
-        } else {
-          this.RequestDetails = null;
-        }
+        const wholesalerEmail = this.email; // Replace with dynamic value
+        const requestByEmail = this.userProfile.email; // Assume userProfile is already available
+        this.checkRequestStatus(wholesalerEmail, requestByEmail);
+        // if (params['RequestDetails']) {
+        //   console.log('RequestDetails before parsing:', params['RequestDetails']);
+        //   try {
+        //     this.RequestDetails = JSON.parse(params['RequestDetails']); // Try parsing
+        //     console.log('Parsed RequestDetails:', this.RequestDetails); // Log the parsed object
+        //   } catch (error) {
+        //     console.error('Error parsing RequestDetails:', error);
+        //     this.RequestDetails = null; // Handle error
+        //   }
+        // } else {
+        //   this.RequestDetails = null;
+        // }
         // this.getBrandsOfManufacturer()
         this.getWholesalerProfileData()
        this.getRetailerProfileData() 
@@ -97,6 +101,7 @@ export class ViewWholesalerDetailsComponent {
       }
   
       sendRequestToWholesaler(){  
+        this.isRequestSent = true; // Disable the button immediately
         const requestBody={
           fullName : this.WholsellerData.fullName ,
           companyName: this.WholsellerData.companyName,
@@ -149,7 +154,6 @@ export class ViewWholesalerDetailsComponent {
       this.authService.get(`wholesaler/${this.email}`).subscribe((res: any) => {
         if (res) {
          this.WholsellerData=res
-          
         } else {
           // Handle the case where there's no datap
         }
@@ -160,5 +164,19 @@ export class ViewWholesalerDetailsComponent {
       })
     }
    
+
+    checkRequestStatus(wholesalerEmail: string, requestByEmail: string): void {
+      const url = `request/check/status-request?wholsalerEmail=${wholesalerEmail}&requestByEmail=${requestByEmail}`;
+      this.authService.get(url).subscribe(
+        (response: any) => {
+          this.requestDetails = response.status;
+        },
+        (error) => {
+          console.error('Error checking request status:', error);
+          this.requestDetails = null; // Handle error accordingly
+        }
+      );
+    }
+    
 
 }

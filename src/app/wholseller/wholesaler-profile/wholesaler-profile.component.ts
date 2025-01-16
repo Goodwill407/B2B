@@ -65,6 +65,12 @@ export class WholesalerProfileComponent {
     "Limited"
   ]
 
+  bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+  'assets/images/adv/ads.jpg'
+  ];
+
+
   ngOnInit(): void {
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
     this.initializeValidation()

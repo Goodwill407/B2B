@@ -3,6 +3,7 @@
   import { FormsModule } from '@angular/forms';
   import { Router, RouterModule } from '@angular/router';
   import { AuthService, CommunicationService } from '@core';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
   import { AccordionModule } from 'primeng/accordion';
   import { TableModule } from 'primeng/table';
 
@@ -16,7 +17,8 @@
       FormsModule,
       RouterModule,
       TableModule,
-      AccordionModule
+      AccordionModule,
+      BottomSideAdvertiseComponent
     ],
   })
   export class CartProduct2Component {
@@ -25,7 +27,11 @@
     filteredData: any;
     sizeHeaders: string[] = []; // To hold unique sizes dynamically
     priceHeaders: { [size: string]: number } = {}; 
-
+    bottomAdImage: string[] = [
+      'assets/images/adv/ads2.jpg',
+    'assets/images/adv/ads.jpg'
+    ];
+  
     constructor(
       public authService: AuthService,
       private router: Router,

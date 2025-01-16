@@ -33,7 +33,11 @@ export class RetailerBulkInviteComponent {
     'https://en.pimg.jp/087/336/183/1/87336183.jpg'
   ];
 
-  bottomAdImage: string = 'https://5.imimg.com/data5/QE/UV/YB/SELLER-56975382/i-will-create-10-sizes-html5-creative-banner-ads.jpg';
+  bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+  'assets/images/adv/ads.jpg'
+  ];
+
   altcountryCode: any;
 
   constructor(private fb: FormBuilder, private communicationService: CommunicationService, private auth: AuthService) { }

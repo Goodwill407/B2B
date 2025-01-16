@@ -57,7 +57,11 @@
 
         <!-- Display 'No data found' message if products array is empty -->
         <div *ngIf="!products || products.length === 0" class="no-data-found">
-            <p>No data found</p>
+            <p>No Product Added in Cart</p>
         </div>
+        <div class=" mb-3">
+            <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
+          </div>
+      
     </div>
 </section>

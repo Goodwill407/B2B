@@ -65,7 +65,11 @@ export class RequestToWholesalerComponent {
     'https://en.pimg.jp/087/336/183/1/87336183.jpg'
   ];
 
-  bottomAdImage: string = 'https://elmanawy.info/demo/gusto/cdn/ads/gusto-ads-banner.png';
+  bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+  'assets/images/adv/ads.jpg'
+  ];
+
 
   constructor(private authService:AuthService,private direction: DirectionService, private route:Router, private communicationService:CommunicationService, private elementRef: ElementRef ){
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
@@ -90,25 +94,51 @@ export class RequestToWholesalerComponent {
     }
   }
 
- searchByWholselers(): void {
-    if (this.SearchBrand) {         
-      const object={
-        brand :this.SearchBrand,
-        requestByEmail:this.userProfile.email  
-      }
-      this.authService.post(`wholesaler-products/filter-wholesaler-products-brands?page=${this.page}&limit=${this.limit}`,object).subscribe(
-        response => {    
-          this.productTypeWise=[]
-          this.wholesalerData=response.results
-          // Handle the response as needed, e.g., update the UI
+//  searchByWholselers(): void {
+//     if (this.SearchBrand) {         
+//       const object={
+//         brand :this.SearchBrand,
+//         requestByEmail:this.userProfile.email  
+//       }
+//       this.authService.post(`brand/search/brands-connected-to-wholesalers`,object).subscribe(
+//         response => {    
+//           this.productTypeWise=[]
+//           this.wholesalerData=response.results
+//           // Handle the response as needed, e.g., update the UI
+//         },
+//         error => {
+//           console.error('Error searching brand:', error);
+//           // Handle error accordingly
+//         }
+//       );
+//     }   
+//   }  
+ 
+//
+
+  searchByWholselers(): void {
+    if (this.SearchBrand) {
+      const object = {
+        brandName: this.SearchBrand,
+        requestByEmail: this.userProfile.email
+      };
+      this.authService.post(`brand/search/brands-connected-to-wholesalers`, object).subscribe(
+        (response: any) => {
+          this.productTypeWise = [];
+          this.wholesalerData = response.flatMap((brandItem: any) =>
+            brandItem.wholesalers.map((wholesaler: any) => ({
+              brandName: brandItem.brand.brandName,
+              brandLogo: brandItem.brand.brandLogo,
+              ...wholesaler
+            }))
+          );
         },
-        error => {
+        (error) => {
           console.error('Error searching brand:', error);
-          // Handle error accordingly
         }
       );
-    }   
-  }  
+    }
+  }
   
 
   // Filter Master
@@ -304,12 +334,13 @@ onTabChange(tabName: string) {
 onSearchBrandChange() {
   if (this.SearchBrand) {
     const object = {
-      brandName: this.SearchBrand
+      brandName: this.SearchBrand,
+      requestByEmail:this.userProfile.email
     };
 
-    this.authService.post('wholesaler-products/filter-wholesaler-products-brands', object).subscribe(
+    this.authService.post('brand/search/brands-connected-to-wholesalers', object).subscribe(
       (response) => { 
-       this.filteredSuggestions = response.results.map((item: any) => item.product.brand); // Extract 'brandName' from each item
+       this.filteredSuggestions = response.map((item: any) => item.brand.brandName); // Extract 'brandName' from each item
         // Handle the response as needed, e.g., update the UI
       },
       (error) => {

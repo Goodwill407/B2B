@@ -1,7 +1,7 @@
 <section class="content">
     <div class="content-block">
       <h4 class="title mt-3">
-        <i class="bi bi-person-vcard-fill icon"></i> View Brand And Send Request
+        <i class="bi bi-person-vcard-fill icon"></i> Retailer's Profile
       </h4>
   
       <div class="company-profile">
@@ -55,9 +55,12 @@
   
           <!-- Add Request Button -->
           <div class="button-container">
-            <button class="add-request-button" (click)="acceptWholselerRequest()">Accept Request</button>
+            <button class="add-request-button" (click)="acceptWholselerRequest()" [disabled]="btnHidden">Accept Request</button>
           </div>
       </div>
+      <div class=" mb-3">
+        <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
+      </div>  
     </div>
   </section>
   

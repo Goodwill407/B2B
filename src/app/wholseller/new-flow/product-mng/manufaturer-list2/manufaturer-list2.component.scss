@@ -1,55 +1,31 @@
-/* Right-side ads styling */
+/* General styles for the bottom-side advertisement */
+.app-bottom-side-advertise {
+  width: 100%;
+  height: 130px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9f9f9; /* Adjust the background color as needed */
+  border-top: 1px solid #ccc;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
 
-.ads-flex {
-    display: flex;
-    flex-wrap: nowrap;
+/* Additional padding and margin to adjust positioning */
+.ads-bottom {
+  padding: 15px;
+  margin-top: 20px;
+}
+
+/* Responsive styling to ensure proper display on smaller screens */
+@media (max-width: 768px) {
+  .app-bottom-side-advertise {
+    height: auto;
+    padding: 10px;
   }
   
-  .ads-right {
-    margin: 24px;
-    margin-right: 0;
-    flex-shrink: 0;
-    width: 175px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px; /* Space between ads */
-    // justify-content: space-around;
-  }
-  
-  
-  /* Bottom ads styling */
   .ads-bottom {
-    height: 130px;
-    width: 100%;   
-    bottom: 0;
-    left: 0;
-    z-index: 1000;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center; 
+    padding: 10px;
+    margin-top: 10px;
   }
-  
-  /* Responsive styling */
-  @media (max-width: 768px) {
-    .ads-flex {
-      flex-direction: column;
-    }
-  
-    .ads-right {
-      margin-left: 0;
-      margin-top: 20px;
-      width: 100%;
-      flex-direction: row;
-      gap: 10px; /* Space between ads for row layout */
-    }
-    .ads-bottom {
-      position: static;
-      height: auto;
-    }
-  
-   
-  }
-  
-  
-  
+}
