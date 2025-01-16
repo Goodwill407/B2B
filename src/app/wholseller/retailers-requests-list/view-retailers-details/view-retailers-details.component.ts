@@ -2,11 +2,14 @@ import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 
 @Component({
   selector: 'app-view-retailers-details',
   standalone: true,
-  imports: [],
+  imports: [
+    BottomSideAdvertiseComponent
+  ],
   templateUrl: './view-retailers-details.component.html',
   styleUrl: './view-retailers-details.component.scss'
 })
@@ -18,6 +21,11 @@ export class ViewRetailersDetailsComponent {
   data:any
   btnHidden:boolean=false;
   datePipe: DatePipe = new DatePipe('en-US'); // Create a DatePipe instance with 'en-US' locale
+  bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+  'assets/images/adv/ads.jpg'
+  ];
+
   constructor(private route:ActivatedRoute , private authService:AuthService, private communicationService:CommunicationService){
 
   }

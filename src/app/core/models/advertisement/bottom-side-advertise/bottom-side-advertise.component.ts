@@ -16,7 +16,7 @@ export class BottomSideAdvertiseComponent {
     if (this.imageUrl.length > 1) {
       setInterval(() => {
         this.currentImageIndex = (this.currentImageIndex + 1) % this.imageUrl.length;
-      }, 10000); // Change image every 10 seconds
+      }, 5000); // Change image every 5 seconds
     }
   }
 
