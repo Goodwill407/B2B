@@ -18,9 +18,25 @@
   margin-right: 20px;
 }
 
-.main-image img {
-  height: 495px;
-  width: 380px;
+.zoom-container {
+  position: relative;
+  overflow: hidden;
+  /* Hide the overflow when the image is zoomed */
+  width: 380px !important;
+  height: 495px !important;
+}
+
+.zoom-image {
+  transition: transform 0.2s ease;
+  /* Smooth zoom transition */
+  width: 100%;
+  height: 100%;
+}
+
+/* Zoom effect class */
+.zoomed {
+  transform: scale(2);
+  /* Adjust the scale to your preference */
 }
 
 .thumbnail-images {
@@ -111,8 +127,7 @@ small {
 }
 
 .btn-wishlist {
-  border: #767474 2px solid;
-  box-shadow: #504e4e 2px 1px;
+ 
   font-size: 14px !important;
   padding-left: 25px;
   padding-right: 25px;
@@ -120,8 +135,7 @@ small {
 }
 
 .btn-wishlist-true {
-  border: #767474 2px solid;
-  box-shadow: #504e4e 2px 1px;
+ 
   font-size: 14px !important;
   padding-left: 25px;
   padding-right: 25px;

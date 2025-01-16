@@ -12,25 +12,29 @@
             <hr class="mt-0">
             <div class="product-details-content">
                 <div class="product-images">
-                    <div class="main-image">
-                        <img *ngIf="selectedMediaType === 'image'" [src]="authService.cdnPath + selectedMedia"
-                            alt="Main Product Image">
-                        <video *ngIf="selectedMediaType === 'video'" style="width: 380px; height: 495px;"
-                            [src]="authService.cdnPath + selectedMedia" controls></video>
+                    <div class="zoom-container">
+                      <img #mainImage *ngIf="selectedMediaType === 'image'" [src]="authService.cdnPath + selectedMedia"
+                        (mousemove)="zoomImage($event)" (mouseleave)="resetZoom($event)" alt="Main Product Image"
+                        class="zoom-image">
+          
+                      <video *ngIf="selectedMediaType === 'video'" style="width: 380px; height: 495px;"
+                        [src]="authService.cdnPath + selectedMedia" controls>
+                      </video>
+                      <button *ngIf="selectedMediaType === 'image'" (click)="openImg(authService.cdnPath + selectedMedia,1400)"
+                        class="action-button"><i class="bi bi-zoom-in"></i></button>
                     </div>
                     <div class="thumbnail-images">
-                        <div class="thumbnail" *ngFor="let media of product?.media" (click)="changeMainMedia(media)"
-                            [class.active]="media.src === selectedMedia">
-                            <img *ngIf="media.type === 'image'" [src]="authService.cdnPath + media.src"
-                                alt="Product Thumbnail">
-                            <div *ngIf="media.type === 'video'" class="video-thumbnail">
-                                <i class="bi bi-play-circle-fill"></i>
-                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgcAFN3D0j48KEiZtXy9H8Z-brml1fSzLUAQ&s"
-                                    style="width: 55px; height: 75px;" alt="Product Thumbnail">
-                            </div>
+                      <div class="thumbnail" *ngFor="let media of product?.media" (click)="changeMainMedia(media)"
+                        [class.active]="media.src === selectedMedia">
+                        <img *ngIf="media.type === 'image'" [src]="authService.cdnPath + media.src" alt="Product Thumbnail">
+                        <div *ngIf="media.type === 'video'" class="video-thumbnail">
+                          <i class="bi bi-play-circle-fill"></i>
+                          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgcAFN3D0j48KEiZtXy9H8Z-brml1fSzLUAQ&s"
+                            style="width: 55px; height: 75px;" alt="Product Thumbnail">
                         </div>
+                      </div>
                     </div>
-                </div>
+                  </div>
 
                 <div class="product-info">
                     <div class="">
@@ -117,6 +121,7 @@
                         <div class="size-header3 me-3"></div>
                         <div class="size-header3 me-3">Sizes</div>
                         <div class="size-header3 me-3">Manufacturer Price</div>
+                        <div class="size-header3 me-3">Single MRP</div>
                         <div class="size-header3 me-3">Wholesaler Price</div>
                       </div>
                       <hr class="mt-0 mb-1" />
@@ -133,6 +138,8 @@
     <div class="size-input3 me-3">
       {{ size.size }}
     </div>
+
+    <div class="size-input3 me-3">{{ size.MRP }}</div>
   
     <div class="size-input3 me-3">
       {{ size.price }}
