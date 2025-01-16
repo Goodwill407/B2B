@@ -32,7 +32,7 @@
                 <div class="image-carousel">
                   <img 
                     class="main-img" 
-                    [src]="authService.cdnPath + product.selectedImageUrl" 
+                    [src]="product.selectedImageUrl" 
                     alt="{{ product.title }}" 
                     [routerLink]="['/wholesaler/new/Price/Priceproedit', { id: product.id }]">
                   <div *ngIf="product.status === 'Done'" class="verified-badge">

@@ -16,7 +16,7 @@
                             Design No : {{product.designNo}}
                           </div>
                           <div class="image-carousel">
-                            <img class="main-img" [src]="authService.cdnPath + product.selectedImageUrl" alt="{{product.title}}" [routerLink]="['/wholesaler/new/product/view-wishlistproduct',{id: product.productId}]">
+                            <img class="main-img" [src]=" product.selectedImageUrl" alt="{{product.title}}" [routerLink]="['/wholesaler/new/product/view-wishlistproduct',{id: product.productId}]">
                             <div class="carousel-dots">
                               <span *ngFor="let img of product.selectedImageUrls; let i = index" [class.active]="i === product.hoverIndex" (click)="navigateToImage(product, i)"></span>
                             </div>

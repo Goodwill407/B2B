@@ -1118,7 +1118,7 @@
                             <div class="color-box-container3">
                               <!-- Check if 'colourImage' is available. If true, display the image; otherwise, display the color box. -->
                               <div *ngIf="color.colourImage; else noImage">
-                                <img [src]="CloudPath+color.colourImage" alt="{{ color.colourName }}" class="color-image3" title="{{ color.colourName }}" />
+                                <img [src]="color.colourImage" alt="{{ color.colourName }}" class="color-image3" title="{{ color.colourName }}" />
                               </div>
                               <!-- Fallback to color box if 'colourImage' is not available -->
                               <ng-template #noImage>

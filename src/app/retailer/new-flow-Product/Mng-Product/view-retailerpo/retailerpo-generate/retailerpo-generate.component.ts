@@ -78,7 +78,7 @@ export class RetailerpoGenerateComponent {
           supplierContact: `${res.wholesaler.mobNumber}`,
           supplierGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
           buyerName: res.retailer.companyName,
-          logoUrl: this.authService.cdnPath + res.retailer.profileImg,
+          logoUrl: res.retailer.profileImg,
           buyerAddress: `${res.retailer.address}, ${res.retailer.city}, ${res.retailer.state} - ${res.retailer.pinCode}`,
           buyerPhone: res.retailer.mobNumber,
           buyerEmail: res.retailer.email,
