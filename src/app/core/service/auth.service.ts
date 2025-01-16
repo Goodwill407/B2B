@@ -21,7 +21,7 @@ export class AuthService {
   token = '';
   headerToken: any;
   loginDetails: any;
-  cdnPath:string = 'https://lmscontent-cdn.blr1.digitaloceanspaces.com';
+  // cdnPath:string = 'https://lmscontent-cdn.blr1.digitaloceanspaces.com';
 
   constructor(private http: HttpClient,private route:Router,private directionService:DirectionService) {
     this.currentUserSubject = new BehaviorSubject<User>(
