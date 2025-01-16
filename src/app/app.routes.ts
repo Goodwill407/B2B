@@ -4,6 +4,7 @@ import { AuthGuard } from '@core/guard/auth.guard';
 import { AuthLayoutComponent } from './layout/app-layout/auth-layout/auth-layout.component';
 import { Page404Component } from './authentication/page404/page404.component';
 import { Role } from '@core';
+import { SA_Auth } from './super-admin/super-admin.routes';
 
 export const APP_ROUTE: Route[] = [
   {
@@ -20,6 +21,14 @@ export const APP_ROUTE: Route[] = [
       {
         path: 'common',
         loadChildren: () => import('./common/view-profile.route').then((m) => m.Common_Route),
+      },
+      
+      {
+        path: 'super',
+        canActivate:[AuthGuard],
+        data:{role:Role.Superadmin},
+        loadChildren: () =>
+          import('./super-admin/super-admin.routes').then((m) => SA_Auth),
       },
       {
         path: 'mnf',

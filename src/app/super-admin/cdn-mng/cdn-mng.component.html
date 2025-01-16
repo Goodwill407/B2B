@@ -1,0 +1,78 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="default" color="#fff" type="square-jelly-box" [fullScreen]="true">
+    <p style="color: rgb(242, 94, 94)"> Loading... </p>
+</ngx-spinner>
+<section class="content">
+    <div class="content-block">
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> CDN</h4>
+        <div class="card p-3 add-brand-form">
+            <h5 class="">CDN Management</h5>
+            <hr class="mt-0">
+            <form [formGroup]="brandForm" (ngSubmit)="onSubmit()">
+                <div class="w-75">
+                    <label for="brandName" class="label-input">CDN Name<span>*</span>:</label>
+                    <input type="text" id="Name" formControlName="name" class="form-control" />
+                    <div *ngIf="brandForm.get('Name')?.touched && brandForm.get('name')?.invalid"
+                        class="text-danger">
+                        CDN Name is required.
+                    </div>
+                </div>
+
+            
+
+                <div class="form-group text-center mt-3">
+                    <button type="submit" class="btn submit-btn" [disabled]="brandForm.invalid">
+                        {{formType}}
+                    </button>
+                    <button type="button" class="btn cancel-btn ms-2" (click)="resetForm()">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- table -->
+        <div class="card p-3">
+            <h5 class="mt-2">CDN List:</h5>
+            <hr>
+            <div class="p-grid p-fluid ">
+                <div class="p-col-12 text-center">
+                    <p-table [value]="distributors">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>CDN Name</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-distributors>
+                            <tr>
+                                <td class="text-center py-0">{{distributors.name}}</td>
+                                <td class="text-center py-0"> <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider round"></span>
+                                  </label></td>
+                               
+                                <td class="py-0">
+                                    <div class="button-container text-center">
+                                        <!-- <button class="btn btn-icon p-2" pTooltip="Edit"
+                                            (click)="editForm(distributors)" tooltipPosition="top"
+                                            [disabled]="isEditing">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </button> -->
+
+                                        <button class="btn btn-icon p-2" (click)="deleteData(distributors.id)"
+                                            pTooltip="Delete" tooltipPosition="top" [disabled]="isEditing">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    <p-paginator *ngIf="distributors && distributors.length > 5" (onPageChange)="onPageChange($event)"
+                        [first]="first" [rows]="rows" [totalRecords]="totalResults"
+                        [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
