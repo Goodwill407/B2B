@@ -70,7 +70,7 @@ export class AddRetailerComponent {
       fullName: ['', Validators.required],
       companyName: ['', Validators.required],
       role: ['retailer', Validators.required],
-      code: ['+91', Validators.required],
+      contryCode: ['+91', Validators.required],
       mobileNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       email: ['', [Validators.required, Validators.email]],
     });

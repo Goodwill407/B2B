@@ -1,11 +1,11 @@
 <section class="content">
     <div class="content-block">
-        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i>&nbsp; Add To Cart Products</h4>
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i>&nbsp; Retailer-Manufacturer PO List</h4>
 
         <!-- If products are available, display the accordion -->
         <p-accordion [activeIndex]="0" class="card" *ngIf="products && products.length > 0">
             <ng-container *ngFor="let prod of products; let distIndex = index">
-                <p-accordionTab class="px-0" [header]="prod.manufacturer.fullName">
+                <p-accordionTab class="px-0" [header]="prod.manufacturer.companyName">
                     <div *ngFor="let group of processGroupedProducts(prod.set)" class="mb-4">
                         <p-table [value]="group.rows">
                             <ng-template pTemplate="header">
@@ -60,7 +60,7 @@
 
         <!-- Display 'No data found' message if products array is empty -->
         <div *ngIf="!products || products.length === 0" class="no-data-found">
-            <p>No data found</p>
+            <p>PO List is Empty</p>
         </div>
         <div class=" mb-3">
             <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>

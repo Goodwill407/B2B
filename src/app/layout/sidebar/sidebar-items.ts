@@ -2137,7 +2137,7 @@ export const ROUTES2: RouteInfo[] = [
       },  
       {
         path: '/wholesaler/order-mng/retailormanpo',
-        title: 'Retailer-Manifacturer-Po',
+        title: 'Retailer-Manufacturer-Po',
         iconType: '',
         icon: '',
         class: 'ml-menu',

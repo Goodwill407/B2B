@@ -8,7 +8,7 @@
         @if(products && products.length >0){
         <p-accordion [activeIndex]="0" class="card">
           <ng-container *ngFor="let distributor of products; let distIndex = index">
-            <p-accordionTab class="px-0" [header]="'Manufacturer: ' + distributor.fullName">
+            <p-accordionTab class="px-0" [header]="'Manufacturer: ' + distributor.companyName">
               <!-- Table for Products of Each Manufacturer -->
               <p-table [value]="distributor.products">
                 <ng-template pTemplate="header">

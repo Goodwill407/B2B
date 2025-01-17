@@ -2,140 +2,142 @@
     <div class="content-block">
         <div class="registration-form p-4 mt-4">
             <form [formGroup]="mgfRegistrationForm" *ngIf="!showFlag">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                </div>
+                <div class="d-flex justify-content-between align-items-center mb-2"></div>
                 <div class="card p-4 pt-2">
-                    <h5 class="mb-0 flex-grow-1"><button class="btn text-start" (click)="navigateFun()">
-                        <i class="bi bi-arrow-left-circle h4"></i>
-                      </button> <span class="text-center" style="margin-left: 474px;">{{user | titlecase}}'s Profile</span></h5>
+                    <h5 class="mb-0 flex-grow-1">
+                        <button class="btn text-start" (click)="navigateFun()">
+                            <i class="bi bi-arrow-left-circle h4"></i>
+                        </button>
+                        <span class="text-center" style="margin-left: 474px;">{{user | titlecase}}'s Profile</span>
+                    </h5>
                     <hr class="mt-2">
                     <div class="row">
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
-                            <label class="label-input" for="fullName">Full Name :</label>
-                            <input type="text" id="fullName" formControlName="fullName" class="form-control">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                            <label class="label-input">Company/Firm Name :- </label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('companyName')?.value}}</span>
                         </div>
-
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
-                            <label class="label-input" for="comName">Company/Firm Name :</label>
-                            <input type="text" id="comName" formControlName="companyName" class="form-control">
+                            <label class="label-input">Full Name :- </label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('fullName')?.value}}</span>
+                        </div>
+                        
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ">
+                            <label class="label-input">Company Establishment Date :- </label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('establishDate')?.value}}</span>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ">
+                            <label class="label-input">Registered On FTH :</label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('registerOnFTH')?.value}}</span>
+                        </div>
+                        
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ">
+                            <label class="label-input">Legal Status of Firm :-</label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('leagalStatusOfFirm')?.value}}</span>
+                        </div>
+                        
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6  ">
+                            <label class="label-input">GSTIN :-</label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('GSTIN')?.value}}</span>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ">
+                            <label class="label-input">PAN :- </label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('pan')?.value}}</span>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ">
+                            <label class="label-input">Primary Mobile Number :-</label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('mobNumber')?.value}}</span>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6  ">
+                            <label class="label-input">Alternative Mobile Number :-</label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('mobNumber2')?.value}}</span>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ">
+                            <label class="label-input">Primary Email :-</label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('email')?.value}}</span>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ">
+                            <label class="label-input">Alternative Email :-</label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('email2')?.value}}</span>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                            <label class="label-input">City :- </label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('city')?.value}}</span>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                            <label class="label-input">State :- </label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('state')?.value}}</span>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                            <label class="label-input">Zip / Pin Code :- </label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('pinCode')?.value}}</span>
+                        </div>
+                        <div class="col-xl-6 col-lg-3 col-md-3 col-sm-3">
+                            <label class="label-input">Country :- </label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('country')?.value}}</span>
                         </div>
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                            <label class="label-input" for="address">Address :</label>
-                            <input type="text" id="address" formControlName="address" class="form-control">
-                        </div>
-                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                            <label class="label-input" for="country">Country :</label>
-                            <input type="text" id="country" formControlName="country" class="form-control">
-                            
-                        </div>
-                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                            <label class="label-input" for="state">State :</label>
-                            <input type="text" id="state" formControlName="state" class="form-control">                                                     
-                        </div>
-                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                            <label class="label-input" for="city">City :</label>
-                            <input type="text" id="city" formControlName="city" class="form-control">                                                      
-                        </div>
-                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                            <label class="label-input" for="pincode">Zip / Pin Code :</label>
-                            <input type="text" id="pincode" formControlName="pinCode" class="form-control">
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="label-input" for="mobNumber">Primary Mobile Number :</label>
-                            <input type="text" id="mobNumber" formControlName="mobNumber" class="form-control">
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
-                            <label class="label-input" for="mobNumberAlt">Alternative Mobile Number :</label>
-                            <input type="text" id="mobNumberAlt" formControlName="mobNumber2" class="form-control">
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="label-input" for="leagalStatusOfFirm">Legal Status of Firm</label>                           
-                            <input type="text" id="leagalStatusOfFirm" formControlName="leagalStatusOfFirm" class="form-control">
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
-                            <label class="label-input" for="email">Primary Email :</label>
-                            <input type="text" id="email" formControlName="email" class="form-control">
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="label-input" for="emailAlt">Alternative Email :</label>
-                            <input type="text" id="emailAlt" formControlName="email2" class="form-control">
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
-                            <label class="label-input" for="gstin">GSTIN :</label>
-                            <input type="text" id="gstin" formControlName="GSTIN" class="form-control">
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="label-input" for="pan">PAN :</label>
-                            <input type="text" id="pan" formControlName="pan" class="form-control">
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
-                            <label class="label-input" for="establishDate">Company Establishment Date :</label>
-                            <input type="text" id="establishDate" formControlName="establishDate" class="form-control">
-                        </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="label-input" for="registerOnFTH">Registered On FTH :</label>
-                            <input type="text" id="registerOnFTH" formControlName="registerOnFTH" class="form-control">
+                            <label class="label-input">Address :- </label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('address')?.value}}</span>
                         </div>
                     </div>
             
-                    <h5 class="text-center mb-0 mt-2">Social Media</h5>
-                    <hr class="my-2">
+                    <h5 class=" mb-0 mt-4">Social Media</h5>
+                    <!-- <hr class="my-2"> -->
                     <div class="row" formGroupName="socialMedia">
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="label-input" for="fb">Facebook :</label>
-                            <input type="text" id="fb" formControlName="facebook" class="form-control">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ">
+                            <label class="label-input">Facebook :- </label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('socialMedia.facebook')?.value}}</span>
                         </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
-                            <label class="label-input" for="linkedin">Linkedin :</label>
-                            <input type="text" id="linkedin" formControlName="linkedIn" class="form-control">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6  ">
+                            <label class="label-input">LinkedIn :- </label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('socialMedia.linkedIn')?.value}}</span>
                         </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="label-input" for="insta">Instagram :</label>
-                            <input type="text" id="insta" formControlName="instagram" class="form-control">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ">
+                            <label class="label-input">Instagram :- </label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('socialMedia.instagram')?.value}}</span>
                         </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
-                            <label class="label-input" for="web">Company Website :</label>
-                            <input type="text" id="web" formControlName="webSite" class="form-control">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6  ">
+                            <label class="label-input">Company Website :- </label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('socialMedia.webSite')?.value}}</span>
                         </div>
                     </div>
-               
-                    <h5 class="text-center mb-0 mt-2">Bank Account Details</h5>
-                    <hr class="my-2">
+            
+                    <h5 class="mb-0 mt-4">Bank Account Details</h5>
+                    <!-- <hr class="my-2"> -->
                     <div class="row" formGroupName="BankDetails">
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="label-input" for="acNo">Account Number :</label>
-                            <input type="text" id="acNo" formControlName="accountNumber" class="form-control">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ">
+                            <label class="label-input">Account Number </label>
+                            <span class="form-control-static">:- {{mgfRegistrationForm.get('BankDetails.accountNumber')?.value}}</span>
                         </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
-                            <label class="label-input" for="acType">Account Type :</label>
-                            <input type="text" id="acType" formControlName="accountType" class="form-control">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6  ">
+                            <label class="label-input">Account Type :- </label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('BankDetails.accountType')?.value}}</span>
                         </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 pe-4">
-                            <label class="label-input" for="bankName">Bank Name :</label>
-                            <input type="text" id="bankName" formControlName="bankName" class="form-control">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ">
+                            <label class="label-input">Bank Name :-</label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('BankDetails.bankName')?.value}}</span>
                         </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ps-4">
-                            <label class="label-input" for="ifsc">IFSC Code :</label>
-                            <input type="text" id="ifsc" formControlName="IFSCcode" class="form-control">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6  ">
+                            <label class="label-input">IFSC Code :- </label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('BankDetails.IFSCcode')?.value}}</span>
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
-                            <label class="label-input" for="acType">Country</label>   
-                            <input type="text" id="country" formControlName="country" class="form-control">                                                                               
+                            <label class="label-input">Country :-</label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('BankDetails.country')?.value}}</span>
                         </div>
-                        
-                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 ps-4">
-                            <label class="label-input" for="acType">City</label>                           
-                            <input type="text" id="city" formControlName="city" class="form-control">
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4  ">
+                            <label class="label-input">City :-</label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('BankDetails.city')?.value}}</span>
                         </div>
-
-                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 ps-4">
-                            <label class="label-input" for="acNo">Branch Name</label>
-                            <input type="text" id="acNo" formControlName="branch" class="form-control">
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4  ">
+                            <label class="label-input">Branch Name :-</label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('BankDetails.branch')?.value}}</span>
                         </div>
                     </div>
                 </div>
-                
             </form>
+            
+            
             <!-- for descount Part -->
             <!-- Discount Section -->
 <!-- Discount Section -->

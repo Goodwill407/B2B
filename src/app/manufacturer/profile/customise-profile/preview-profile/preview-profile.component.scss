@@ -1,266 +1,214 @@
-/* General Styles */
-.company-profile {
-  padding: 30px;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e0e0e0;
-  position: relative;
-
-  .navigate {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    padding: 0;
-  }
+/* General Styling */
+body {
+  // font-family: Arial, sans-serif;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  background-color: #f9f9f9;
 }
 
-.company-head {
-  display: flex;
-  align-items: center;
+.profile-preview {
+  max-width: 1200px;
+  margin: 20px auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
 
-  img {
-    height: 185px;
-    width: 200px;
-  }
+/* Profile Header Section */
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+img {
+  height: 150px;
+  width: 150px;
+}
+
+.profile-logo img {
+  height: 150px;
+  width: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.profile-details {
+  flex: 1;
+  margin-left: 20px;
 }
 
 .company-name {
   font-size: 1.8rem;
   color: #2c3e50;
-  margin-bottom: 20px;
-  text-align: start;
-  font-weight: 700;
+  margin-bottom: 10px;
 }
 
-.introduction {
-  font-size: 0.95rem;
-  color: #7f8c8d;
-  margin-bottom: 25px;
-  text-align: justify;
-  padding: 15px;
-  border-radius: 6px;
-  // background-color: #f4f4f4;
-  border: 1px solid #dcdcdc;
+.registration-info {
+  font-size: 1rem;
+  color: #555;
 }
 
-/* Section Headings */
-.section-title {
-  font-size: 1.5rem;
-  color: #2c3e50;
-  border-bottom: 2px solid #2c3e50;
-  padding-bottom: 6px;
-  margin-bottom: 20px;
-  display: inline-block;
+.registered-brands {
+  width: 40%;
 }
 
-/* Fact Sheet Styling */
-.fact-sheet {
-  background-color: #ffffff;
-  border: 1px solid #dcdcdc;
-  padding: 15px;
-  border-radius: 6px;
-  margin-bottom: 25px;
-}
-
-.fact-sheet p {
-  margin-bottom: 12px;
-  font-size: 0.95rem;
-  color: #2c3e50;
-  display: flex;
-  align-items: center;
-}
-
-.fact-sheet p strong {
-  min-width: 180px;
-  color: #34495e;
-  font-weight: 600;
-}
-
-
-/* Contact Details Styling */
-.contact-details {
-  background-color: #ffffff;
-  border: 1px solid #dcdcdc;
-  padding: 15px;
-  border-radius: 6px;
-  margin-bottom: 25px;
-}
-
-.contact-details p {
-  margin-bottom: 12px;
-  font-size: 0.95rem;
-  color: #2c3e50;
-  display: flex;
-  align-items: center;
-}
-
-.contact-details p strong {
-  min-width: 110px;
-  color: #34495e;
-  font-weight: 600;
-}
-
-.contact-details a {
-  color: #3498db;
-  text-decoration: none;
-}
-
-.contact-details a:hover {
-  text-decoration: underline;
-}
-
-/* Social Media Styling */
-.social-media {
-  background-color: #ffffff;
-  border: 1px solid #dcdcdc;
-  padding: 15px;
-  border-radius: 6px;
-  margin-bottom: 25px;
-}
-
-.social-media h2 {
-  font-size: 1.5rem;
-  color: #3498db;
-  border-bottom: 2px solid #3498db;
-  padding-bottom: 6px;
-  margin-bottom: 20px;
-  display: inline-block;
-}
-
-.social-media p {
-  margin: 0;
-  padding: 8px 0;
-  font-size: 0.95rem;
-}
-
-.social-media a {
-  color: #3498db;
-  text-decoration: none;
-}
-
-.social-media a:hover {
-  text-decoration: underline;
-}
-
-/* Brands Section */
-
-.brands-section h4 {
-  font-size: 1.4rem;
-  /* Slightly smaller font size */
-  margin-bottom: 15px;
+.registered-brands h4 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
   text-align: center;
-  border-bottom: 2px solid #dcdcdc;
-  padding-bottom: 6px;
 }
 
-/* Brand List Styling */
+.brand-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.brand-box {
+  background: #000;
+  color: #fff;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 10px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+/* Introduction Section */
+.profile-introduction {
+  margin-bottom: 20px;
+}
+
+.profile-introduction h4 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  // color: #2c3e50;
+}
+
+.profile-introduction p {
+  // background: #f4f4f4;
+  padding: 15px;
+  // border-radius: 6px;
+  // border: 1px solid #ddd;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Company Profile Section */
+.company-profile {
+  margin-bottom: 20px;
+}
+
+.company-profile h4 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.company-profile table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.company-profile td {
+  padding: 8px 10px;
+  vertical-align: top;
+  font-size: 0.95rem;
+}
+
+.company-profile td strong {
+  min-width: 150px;
+  display: inline-block;
+}
+
+/* Bank Details Section */
+.bank-details {
+  margin-top: 20px;
+}
+
+.bank-details h4 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.bank-details table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.bank-details td {
+  padding: 8px 10px;
+  vertical-align: top;
+  font-size: 0.95rem;
+}
+
+.bank-details td strong {
+  min-width: 150px;
+  display: inline-block;
+}
+
+/* Sticky back button */
+.sticky-back-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: transparent;
+  border: none;
+  color: #333;
+  font-size: 1.5rem;
+  z-index: 1000;
+  cursor: pointer;
+}
+
+.sticky-back-button:hover {
+  color: #007bff;
+}
+
+/* Horizontal scrolling container */
+/* Fixed size for the scrolling container */
+
+
+
+/* Individual brand item */
+.brand-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 120px; /* Fixed width for horizontal alignment */
+}
+
+.brand-item img {
+  height: 100px;
+  width: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.brand-name {
+  font-size: 0.9rem;
+  color: #333;
+  margin-top: 5px;
+}
+
+/* Title for the brands section */
+.brands-title {
+  // font-size: 1.2rem;
+  text-align: left;
+  color: #333;
+  margin-bottom: 10px;
+}
 .brand-list {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   /* Reduced gap */
-  justify-content: center;
-}
-
-.brand-item {
-  width: 140px;
-  /* Reduced width */
-  height: 160px;
-  /* Reduced height */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: #2c3e50;
-  font-size: 0.8rem;
-  /* Slightly smaller font size */
-  background-color: #f9f9f9;
-  border: 1px solid #dcdcdc;
-  border-radius: 6px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.brand-item img {
-  max-width: 100px;
-  /* Reduced logo size */
-  max-height: 100px;
-  /* Reduced logo size */
-  margin-bottom: 8px;
-  object-fit: contain;
-}
-
-.brand-name {
-  font-size: 0.8rem;
-  /* Slightly smaller font size */
-  color: #2c3e50;
-}
-
-/* Button Container Styling */
-.button-container {
-  text-align: center;
-  margin-top: 20px;
-}
-
-/* Add Request Button Styling */
-.add-request-button {
-  background-color: #3498db;
-  /* Primary button color */
-  color: #ffffff;
-  /* Text color */
-  border: none;
-  border-radius: 6px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.add-request-button:hover {
-  background-color: #2980b9;
-  /* Darker shade on hover */
-}
-
-.add-request-button:focus {
-  outline: none;
-}
-
-.share-options {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.share-icon {
-  text-decoration: none;
-  font-size: 24px !important;
-  color: #000;
-  /* Default icon color */
-  transition: color 0.3s ease, transform 0.3s ease;
-  /* Add transition for color and transform */
-}
-
-.facebook {
-  color: #316FF6;
-
-}
-
-.whatsapp {
-  color: #25D366;
-}
-
-.instagram {
-  color: #F56040;
-}
-
-.twitter {
-  color: #1DA1F2;
-}
-
-.share-icon:hover {
-
-  transform: scale(1.5);
-  /* Scale up the icon */
+  // justify-content: center;
 }
