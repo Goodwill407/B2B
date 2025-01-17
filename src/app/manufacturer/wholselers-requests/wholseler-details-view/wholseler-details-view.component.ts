@@ -13,7 +13,6 @@ export class WholselerDetailsViewComponent {
 
   email:any;
   CompanyData:any;
-  cdnPath :any
   data:any
   constructor(private route:ActivatedRoute , private authService:AuthService, private communicationService:CommunicationService){
 
@@ -26,7 +25,6 @@ export class WholselerDetailsViewComponent {
         
       }
     });
-    this.cdnPath =this.authService.cdnPath
     this.getSavedProfileData()
   }
 

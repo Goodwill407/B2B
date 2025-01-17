@@ -78,7 +78,7 @@ export class OrderedProductComponent {
   extractColorFromImage(product: any): void {
     const image = new Image();
     image.crossOrigin = 'Anonymous';
-    image.src = this.authService.cdnPath + product.selectedImageUrl;
+    image.src = product.selectedImageUrl;
 
     image.onload = () => {
       const colorThief = new ColorThief();

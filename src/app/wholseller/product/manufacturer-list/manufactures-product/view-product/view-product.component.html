@@ -15,15 +15,15 @@
       <div class="product-details-content">
         <div class="product-images">
           <div class="main-image">
-            <img *ngIf="selectedMediaType === 'image'" [src]="authService.cdnPath + selectedMedia"
+            <img *ngIf="selectedMediaType === 'image'" [src]="selectedMedia"
               alt="Main Product Image">
             <video *ngIf="selectedMediaType === 'video'" style="width: 380px; height: 495px;"
-              [src]="authService.cdnPath + selectedMedia" controls></video>
+              [src]="selectedMedia" controls></video>
           </div>
           <div class="thumbnail-images">
             <div class="thumbnail" *ngFor="let media of product?.media" (click)="changeMainMedia(media)"
               [class.active]="media.src === selectedMedia">
-              <img *ngIf="media.type === 'image'" [src]="authService.cdnPath + media.src" alt="Product Thumbnail">
+              <img *ngIf="media.type === 'image'" [src]="media.src" alt="Product Thumbnail">
               <div *ngIf="media.type === 'video'" class="video-thumbnail">
                 <i class="bi bi-play-circle-fill"></i>
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgcAFN3D0j48KEiZtXy9H8Z-brml1fSzLUAQ&s"
@@ -94,7 +94,7 @@
                 (mouseleave)="onLeaveColour()" style="cursor: pointer; display: flex;">
                 <div class="colour-info">
                   <span *ngIf="colour.image; else colourBox">
-                    <img [src]="authService.cdnPath + colour.image" alt="Colour Image" class="colour-image">
+                    <img [src]="colour.image" alt="Colour Image" class="colour-image">
                   </span>
                   <ng-template #colourBox>
                     <span [style.background]="colour.hex" class="colour-hex"></span>

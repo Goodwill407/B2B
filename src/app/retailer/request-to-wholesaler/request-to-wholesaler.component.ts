@@ -46,7 +46,6 @@ export class RequestToWholesalerComponent {
 
 
   brandData:any[]=[];
-  cdnPath:any
   SearchBrand:any;
   dataType:any;
   productTypeWise:any[]=[];
@@ -76,7 +75,6 @@ export class RequestToWholesalerComponent {
   }
 
   ngOnInit(){
-    this.cdnPath = this.authService.cdnPath;
    this.getRetailerProfileData()
     this.getAllBrands()
     this.getProductType()

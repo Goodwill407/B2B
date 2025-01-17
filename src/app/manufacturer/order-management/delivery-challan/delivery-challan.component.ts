@@ -25,7 +25,7 @@ export class DeliveryChallanComponent {
   ngOnInit(): void {
     debugger
     this.authService.get('dilevery-order/get/challan/number?email=' + this.authService.currentUserValue.email).subscribe((res: any) => {
-      this.challan.logoUrl = res.profileImg ? this.authService.cdnPath + res.profileImg : 'assets/images/user/person.png';
+      this.challan.logoUrl = res.profileImg ? res.profileImg : 'assets/images/user/person.png';
       this.challan.challanNo = res.challanNo;
     }, (err: any) => {
       this.communicationService.customError(err.error.message);

@@ -17,7 +17,6 @@ export class ViewRetailersDetailsComponent {
 
   email:any;
   CompanyData:any;
-  cdnPath :any
   data:any
   btnHidden:boolean=false;
   datePipe: DatePipe = new DatePipe('en-US'); // Create a DatePipe instance with 'en-US' locale
@@ -37,7 +36,6 @@ export class ViewRetailersDetailsComponent {
         
       }
     });
-    this.cdnPath =this.authService.cdnPath
     this.getSavedProfileData()
   }
 

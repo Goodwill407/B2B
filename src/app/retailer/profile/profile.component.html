@@ -231,10 +231,10 @@
                                 <label class="label-input"> <b>Company Logo : <span
                                             class="text-success">Uploaded</span></b> </label>
                                 <span class="ms-3"><button class="btn"
-                                        (click)="openImg(authService.cdnPath+allData.profileImg,400)"><i
+                                        (click)="openImg(allData.profileImg,400)"><i
                                             class="bi bi-eye-fill h5"></i></button> </span>
                                 <!-- <img " class="ms-2"
-                                    [src]="authService.cdnPath + allData.profileImg" height="180px" width="180px"
+                                    [src]="allData.profileImg" height="180px" width="180px"
                                     alt="Document Img"> -->
                                 }
                                 @else {
@@ -247,9 +247,9 @@
                                 <label class="label-input"> <b>KYC Documents : {{allData?.fileName}}</b> <span
                                         class="required"><small>&nbsp; ( Approval Pending )</small></span></label>
                                 <span class="ms-3"><button class="btn"
-                                        (click)="openImg(authService.cdnPath +allData.file,800)"><i
+                                        (click)="openImg(allData.file,800)"><i
                                             class="bi bi-eye-fill h5"></i></button> </span>
-                                <!-- <img (click)="openImg(allData.file)" [src]="authService.cdnPath + allData.file"
+                                <!-- <img (click)="openImg(allData.file)" [src]="allData.file"
                                     height="180px" width="200px" alt="Document Img"> -->
                                 }
                                 @else {

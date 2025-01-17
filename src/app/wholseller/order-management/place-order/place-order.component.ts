@@ -75,7 +75,7 @@ export class PlaceOrderComponent {
               supplierEmail: `${response.manufacturer.email}`,
               supplierGSTIN: response.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
               buyerName: response.wholesaler.companyName,
-              logoUrl: this.authService.cdnPath + response.wholesaler.profileImg,
+              logoUrl: response.wholesaler.profileImg,
               buyerAddress: response.wholesaler.address + ', ' + response.wholesaler.city + ', ' + response.wholesaler.state + ' - ' + response.wholesaler.pinCode,
               buyerPhone: response.wholesaler.mobNumber,
               buyerEmail: response.wholesaler.email,

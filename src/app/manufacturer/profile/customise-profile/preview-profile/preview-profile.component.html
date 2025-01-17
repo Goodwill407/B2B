@@ -19,7 +19,7 @@
                                        allVisabilityData?.visibilitySettings?.email || 
                                        allVisabilityData?.visibilitySettings?.mobNumber || 
                                        allVisabilityData?.visibilitySettings?.socialMedia">
-        <img *ngIf="allVisabilityData?.visibilitySettings?.logo" src="{{cdnPath+allVisabilityData?.profileImg}}" alt="">
+        <img *ngIf="allVisabilityData?.visibilitySettings?.logo" src="{{allVisabilityData?.profileImg}}" alt="">
         <div class="ms-4">
           <h3 class="company-name mb-1" *ngIf="allVisabilityData?.visibilitySettings?.companyName">
             {{ allVisabilityData?.companyName }}
@@ -115,7 +115,7 @@
         <p *ngIf="allVisabilityData?.visibilitySettings?.fileName">
           <strong>KYC Document :</strong> {{ allVisabilityData?.fileName }}
           <span class="ms-3" *ngIf="allVisabilityData?.visibilitySettings?.file">
-            <button class="btn" (click)="openImg(authService.cdnPath +allVisabilityData?.file,800)">
+            <button class="btn" (click)="openImg(allVisabilityData?.file,800)">
               <i class="bi bi-eye-fill h5"></i>
             </button>
           </span>
@@ -148,7 +148,7 @@
         <div class="brand-list">
           <div *ngFor="let brand of brandsDetails">
             <div class="brand-item">
-              <img [src]="cdnPath + brand.brandLogo" [alt]="brand.brandName" />
+              <img [src]="brand.brandLogo" [alt]="brand.brandName" />
             </div>
             <div class="brand-name text-center mt-2">
               <strong>{{ brand.brandName }}</strong>

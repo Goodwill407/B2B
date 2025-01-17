@@ -35,7 +35,6 @@ export class BrandComponent {
   page: number = 1
   first: number = 0;
   rows: number = 10;
-  cdnPath: string = '';
   userProfile: any;
   isEditing = false;
   actionName = "Add"
@@ -44,7 +43,6 @@ export class BrandComponent {
   constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private router: Router, private spinner: NgxSpinnerService) { }
 
   ngOnInit() {
-    this.cdnPath = this.authService.cdnPath;
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
     this.initializeForm();
     this.getAllBrands();
@@ -162,7 +160,7 @@ export class BrandComponent {
     this.brandForm.patchValue(data);
     this.formType = 'Update';
     this.actionName = "Edit";
-    this.imagePreview = this.cdnPath + data.brandLogo;
+    this.imagePreview =  data.brandLogo;
     this.brandForm.get('brandLogo')?.setValidators(null); // Remove validators for editing
     this.brandForm.get('brandLogo')?.updateValueAndValidity();
   }

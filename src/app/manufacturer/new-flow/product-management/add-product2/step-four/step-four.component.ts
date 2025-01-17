@@ -21,8 +21,7 @@ export class StepFourComponent {
   @Input() productId: any;
   @Output() next = new EventEmitter<any>();
   stepThree: FormGroup = this.fb.group({});
-  submittedStep2: boolean = false; 
-  CloudPath: string = '';   
+  submittedStep2: boolean = false;   
   userProfile: any;
   productDetails: any;
   selectedSizes: string[] = [];
@@ -36,7 +35,7 @@ export class StepFourComponent {
     private communicationService:CommunicationService
 
   ) {
-    this.CloudPath = this.authService.cdnPath;
+    
   }
 
   ngOnInit() {

@@ -38,7 +38,7 @@ export class StepTwoComponent {
   displayProductImageDialog: boolean = false;
   selectedColorGroupIndex: number | null = null;
   @ViewChild('fileInput') fileInput!: ElementRef;
-  CloudPath: string = ''
+ 
   
   showFlag2: boolean = false;
   videoSizeError: string = '';
@@ -69,7 +69,7 @@ export class StepTwoComponent {
     
 
     // set cdn path
-    this.CloudPath = this.authService.cdnPath 
+    
     
   }
 
@@ -280,14 +280,14 @@ export class StepTwoComponent {
   }
 
   getProductImagePath(Image: any) {
-    return this.CloudPath + Image;
+    return Image;
   }
 
   getColorIconPath(Image: any) {
-    return this.CloudPath + Image;
+    return Image;
   }
   getVideoPath(video: any) {
-    return this.CloudPath + video;
+    return video;
   }
 
   deleteColorCollection(CollectionData: any) {

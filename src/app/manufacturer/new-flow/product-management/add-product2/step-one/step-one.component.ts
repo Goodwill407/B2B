@@ -35,7 +35,6 @@ export class StepOneComponent {
   displayProductImageDialog: boolean = false;
   selectedColorGroupIndex: number | null = null;
   @ViewChild('fileInput') fileInput!: ElementRef;
-  CloudPath: string = '' 
   sizeSet: any
   sizeChart: any;
   sizeChartdata:any[]=[]
@@ -139,7 +138,7 @@ export class StepOneComponent {
       }),
 
     // set cdn path
-    this.CloudPath = this.authService.cdnPath
+    
 
     // get product id from view
     this.route.queryParamMap.subscribe(params => {

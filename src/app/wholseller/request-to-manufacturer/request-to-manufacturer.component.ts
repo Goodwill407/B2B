@@ -44,7 +44,6 @@ export class RequestToManufacturerComponent {
 
 
   brandData:any[]=[];
-  cdnPath:any
   SearchBrand:any;
   dataType:any;
   productTypeWise: any[] = [];
@@ -68,7 +67,6 @@ export class RequestToManufacturerComponent {
   }
 
   ngOnInit(){
-    this.cdnPath = this.authService.cdnPath;
     this.getAllBrands()
     this.getProductType()
     this.getProductType()

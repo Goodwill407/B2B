@@ -20,7 +20,6 @@ export class ViewManufacturerDetailsComponent implements OnInit {
   email: any;
   CompanyData: any;
   brandsDetails: any;
-  cdnPath: any;
   userProfile: any;
   WholsellerData: any;
   allVisabilityData: any;
@@ -36,7 +35,6 @@ export class ViewManufacturerDetailsComponent implements OnInit {
     private dialog: MatDialog,
     private location: Location
   ) {
-    this.cdnPath = authService.cdnPath;
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
   }
 

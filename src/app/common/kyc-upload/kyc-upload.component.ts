@@ -40,13 +40,13 @@ export class KycUploadComponent implements OnInit {
     if (this.formData.file) {
       this.selectedFileName = this.formData.file;
       this.kycForm.patchValue({ file: this.formData.file });
-      this.imagePreviewUrl = `${this.authService.cdnPath + this.formData.file}`;
+      this.imagePreviewUrl = `${this.formData.file}`;
     }
 
     if (this.formData.profileImg) {
       this.selectedProfileImgName = this.formData.profileImg;
       this.kycForm.patchValue({ profileImg: this.formData.profileImg });
-      this.profileImgPreviewUrl = `${this.authService.cdnPath + this.formData.profileImg}`;
+      this.profileImgPreviewUrl = `${this.formData.profileImg}`;
     }
   }
 

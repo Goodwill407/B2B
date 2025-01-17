@@ -20,7 +20,6 @@ export class ViewWholesalerDetailsComponent {
     email:any
     CompanyData:any
     brandsDetails:any
-    cdnPath:any
     userProfile:any;
     WholsellerData:any; 
     RetailserData:any
@@ -31,7 +30,6 @@ export class ViewWholesalerDetailsComponent {
     isRequestSent = false;
   
     constructor(private route: ActivatedRoute, private authService:AuthService,private communicationService:CommunicationService) {
-      this.cdnPath=authService.cdnPath
       this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
     }
   

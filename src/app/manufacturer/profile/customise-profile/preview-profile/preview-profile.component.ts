@@ -24,12 +24,12 @@ export class PreviewProfileComponent {
   email: any
   CompanyData: any
   brandsDetails: any
-  cdnPath: any
+
   allVisabilityData: any;
   id: any
 
   constructor(private route: ActivatedRoute, public authService: AuthService, private location: Location, private spinner: NgxSpinnerService, private dialog: MatDialog) {
-    this.cdnPath = authService.cdnPath;
+    
   }
 
   // Initialize the company data in ngOnInit
