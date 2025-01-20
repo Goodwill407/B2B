@@ -40,6 +40,7 @@ export class EditReProductPriceComponent {
   ngOnInit(): void {
     this.stepThree = this.fb.group({});
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
+    console.log(this.userProfile.email, this.userProfile);
     this.route.params.subscribe(params => {
       const id = params['id'];
       this.ProductId = id;
@@ -114,7 +115,7 @@ export class EditReProductPriceComponent {
     });
   }
   async getpriceDetails(id: any) {
-    this.authService.get('wholesaler-price-type2/' + id).subscribe((res: any) => {
+    this.authService.get(`/wholesaler-price-type2/retailer-product/wholesaler/wise?productId=${id}&wholesalerEmail=${this.userProfile.email}`).subscribe((res: any) => {
       if (res) {
         this.designno = res.designNumber; // Store the design number
   

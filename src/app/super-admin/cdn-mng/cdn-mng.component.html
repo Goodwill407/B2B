@@ -9,11 +9,35 @@
             <hr class="mt-0">
             <form [formGroup]="brandForm" (ngSubmit)="onSubmit()">
                 <div class="w-75">
-                    <label for="brandName" class="label-input">CDN Name<span>*</span>:</label>
-                    <input type="text" id="Name" formControlName="name" class="form-control" />
-                    <div *ngIf="brandForm.get('Name')?.touched && brandForm.get('name')?.invalid"
+                    <label for="bucketName" class="label-input">Bucket Name<span>*</span>:</label>
+                    <input type="text" id="bucketName" formControlName="bucketName" class="form-control" />
+                    <div *ngIf="brandForm.get('bucketName')?.touched && brandForm.get('bucketName')?.invalid"
                         class="text-danger">
-                        CDN Name is required.
+                        bucketName is required.
+                    </div>
+                </div>
+                <div class="w-75">
+                    <label for="region" class="label-input">Region<span>*</span>:</label>
+                    <input type="text" id="region" formControlName="region" class="form-control" />
+                    <div *ngIf="brandForm.get('region')?.touched && brandForm.get('region')?.invalid"
+                        class="text-danger">
+                        region is required.
+                    </div>
+                </div>
+                <div class="w-75">
+                    <label for="accessKey" class="label-input">Access Key<span>*</span>:</label>
+                    <input type="text" id="accessKey" formControlName="accessKey" class="form-control" />
+                    <div *ngIf="brandForm.get('accessKey')?.touched && brandForm.get('accessKey')?.invalid"
+                        class="text-danger">
+                        accessKey is required.
+                    </div>
+                </div>
+                <div class="w-75">
+                    <label for="secreteKey" class="label-input">Secrete Key<span>*</span>:</label>
+                    <input type="text" id="secreteKey" formControlName="secreteKey" class="form-control" />
+                    <div *ngIf="brandForm.get('secreteKey')?.touched && brandForm.get('secreteKey')?.invalid"
+                        class="text-danger">
+                        secreteKey is required.
                     </div>
                 </div>
 
@@ -35,37 +59,80 @@
             <div class="p-grid p-fluid ">
                 <div class="p-col-12 text-center">
                     <p-table [value]="distributors">
-                        <ng-template pTemplate="header">
+                        <ng-template pTemplate="header">    
                             <tr>
                                 <th>CDN Name</th>
+                                <th>Region</th>
+                                <th>Usage</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </ng-template>
-                        <ng-template pTemplate="body" let-distributors>
+                        <br>
+                        <ng-template pTemplate="body" let-distributor>
                             <tr>
-                                <td class="text-center py-0">{{distributors.name}}</td>
-                                <td class="text-center py-0"> <label class="switch">
-                                    <input type="checkbox">
-                                    <span class="slider round"></span>
-                                  </label></td>
-                               
-                                <td class="py-0">
-                                    <div class="button-container text-center">
-                                        <!-- <button class="btn btn-icon p-2" pTooltip="Edit"
-                                            (click)="editForm(distributors)" tooltipPosition="top"
-                                            [disabled]="isEditing">
-                                            <i class="bi bi-pencil-fill"></i>
-                                        </button> -->
-
-                                        <button class="btn btn-icon p-2" (click)="deleteData(distributors.id)"
-                                            pTooltip="Delete" tooltipPosition="top" [disabled]="isEditing">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </div>
+                                <td class="text-center py-0">
+                                  <input
+                                    type="text"
+                                    class="form-control-sm"
+                                    [(ngModel)]="distributor.bucketName"
+                                    name="bucketName"
+                                    style="width: 160px; height: 25px;"
+                                  />
                                 </td>
-                            </tr>
-                        </ng-template>
+                                <td class="text-center py-0">
+                                  <input
+                                    type="text"
+                                    class="form-control-sm"
+                                    [(ngModel)]="distributor.region"
+                                    name="region"
+                                    style="width: 160px; height: 25px;"
+                                  />
+                                </td>
+                                <td>
+                                  <div class="progress-bar-container">
+                                    <div
+                                      class="progress-bar-used"
+                                      [style.width]="getUsedPercentage(distributor.bucketDetails) + '%'"
+                                    ></div>
+                                    <div class="progress-bar-text">
+                                      {{ distributor.bucketDetails.usedSizeInGB | number: '1.0-2' }} GB /
+                                      {{ distributor.bucketDetails.totalSizeInGB | number: '1.0-2' }} GB
+                                    </div>
+                                  </div>
+                                </td>
+                                <td class="text-center py-0">
+                                  <label class="switch">
+                                    <input
+                                      type="checkbox"
+                                      [checked]="distributor.status === 'active'"
+                                      (change)="toggleStatus(distributor)"
+                                    />
+                                    <span class="slider round"></span>
+                                  </label>
+                                </td>
+                                <td class="py-0">
+                                    <button
+                                    class="btn btn-icon p-2"
+                                    (click)="deleteData(distributor.id)"
+                                    pTooltip="Delete"
+                                    tooltipPosition="top">
+                                    <i class="fas fa-trash-alt"></i>
+                                  </button>
+                                  <button
+                                    class="btn btn-icon p-2"
+                                    (click)="updateData(distributor)"
+                                    pTooltip="Save Changes"
+                                    tooltipPosition="top"
+                                  >
+                                    <i class="fas fa-check"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                              
+                          </ng-template>
+                          
+                          
                     </p-table>
                     <p-paginator *ngIf="distributors && distributors.length > 5" (onPageChange)="onPageChange($event)"
                         [first]="first" [rows]="rows" [totalRecords]="totalResults"

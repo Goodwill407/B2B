@@ -174,3 +174,39 @@ $btn-secondary-color: #8595eb;
   .slider.round:before {
     border-radius: 50%;
   }
+  /* Progress bar container */
+.progress-bar-container {
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 25px;
+    width: 100%;
+    position: relative;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Progress bar (used portion) */
+  .progress-bar-used {
+    background-color: #4caf50;
+    height: 100%;
+    transition: width 0.3s ease-in-out;
+    position: absolute; /* Position inside the container */
+    top: 0;
+    left: 0;
+    border-radius: 10px;
+  }
+  
+  /* Progress bar text (centered and red) */
+  .progress-bar-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    color: red; /* Red color for the text */
+    font-size: 0.9rem;
+    z-index: 1; /* Ensure text stays on top */
+    pointer-events: none; /* Prevent the text from interfering with interactions */
+  }
+  
