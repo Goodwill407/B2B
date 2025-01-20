@@ -54,7 +54,7 @@ getPendingInvitesWholseler(searchKey: string = '') {
     .subscribe((res: any) => {
       this.distributors = res.results;
       this.totalResults = res.totalResults;
-      console.log(res,"wholsalers");
+      // console.log(res,"wholsalers");
 
       // Process discounts for each distributor
       this.distributors.forEach((distributor: any) => {
@@ -82,7 +82,7 @@ getPendingInvitesRetailers(searchKey: string = '') {
     )
     .subscribe((res: any) => {
       this.retailers = res.results;
-      console.log(res,"retailers");
+      // console.log(res,"retailers");
       this.totalResults = res.totalResults;
 
       // Process discounts for each retailer
