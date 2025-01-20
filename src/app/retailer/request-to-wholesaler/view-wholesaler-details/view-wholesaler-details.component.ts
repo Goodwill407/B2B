@@ -39,7 +39,7 @@ export class ViewWholesalerDetailsComponent {
        this.route.queryParams.subscribe(params => {
         this.id = params['id']; 
         this.email=params['email']    
-        const wholesalerEmail = this.email; // Replace with dynamic value
+        const wholesalerEmail = this.email; // wholsaler value
         const requestByEmail = this.userProfile.email; // Assume userProfile is already available
         this.checkRequestStatus(wholesalerEmail, requestByEmail);
         // if (params['RequestDetails']) {
@@ -164,7 +164,7 @@ export class ViewWholesalerDetailsComponent {
    
 
     checkRequestStatus(wholesalerEmail: string, requestByEmail: string): void {
-      const url = `request/check/status-request?wholsalerEmail=${wholesalerEmail}&requestByEmail=${requestByEmail}`;
+      const url = `request/check/status-request?wholsalerEmail=${wholesalerEmail}&requestByEmail=${requestByEmail}`; 
       this.authService.get(url).subscribe(
         (response: any) => {
           this.requestDetails = response.status;

@@ -31,7 +31,10 @@
                     {{request.status}}
                   </td>
                   <td class="text-center">
-                    <!-- Accept Button -->                    
+                    <!-- Accept Button -->    
+                    <button class="btn btn-icon p-2" pTooltip="View Profile" (click)="navigateToViewPage(request)"  tooltipPosition="top">
+                      <i class="fas fa-eye"></i>
+                  </button>                
                     <button class="btn btn-icon p-2" pTooltip="Accept" tooltipPosition="top" (click)="requestAcceptOrRejectChange(request, 'accepted')">
                       <i class="bi bi-check2-circle text-success"></i>
                    </button>

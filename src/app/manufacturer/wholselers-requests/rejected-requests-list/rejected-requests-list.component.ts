@@ -66,7 +66,7 @@ export class RejectedRequestsListComponent {
   requestAcceptOrRejectChange(data: any, status: string): void {
     // Construct the API endpoint URL dynamically
     const endpoint = `request/accept/${data.id}/${data.requestByEmail}/${data.email}`;
-  
+
     // Create the request payload with the updated status
     const payload = {
       status: status
@@ -88,5 +88,11 @@ export class RejectedRequestsListComponent {
         this.communicationService.showNotification('snackbar-error', 'An error occurred while processing the request', 'bottom', 'center');
       }
     });
+  }
+
+  navigateToViewPage(data:any){
+    const queryParams = { data: JSON.stringify(data) };
+    this.router.navigate(['/mnf/Wholseler-Details'], { queryParams });
+    // this.router.navigate(['/mnf/Wholseler-Details'], { queryParams: { data: data } });
   }
 }

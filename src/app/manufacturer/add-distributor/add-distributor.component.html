@@ -1,5 +1,5 @@
 <section class="content">
-    <div class="content-block">
+    <div class="content-block ">
         <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="default" color="#fff" type="square-jelly-box"
             [fullScreen]="true">
             <p style="color: rgb(242, 94, 94)"> Sending Invitation By Mail ... </p>
@@ -7,7 +7,7 @@
 
         <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Invite New Distributor</h4>
 
-        <div class="registration-form px-4 mt-4">
+        <div class="registration-form px-4 mt-4" style="border-radius: 10px;">
             <form [formGroup]="mgfRegistrationForm" (ngSubmit)="onSubmit()">
                 <div class="d-flex">
                     <h5>Invite Single Distributor</h5>
@@ -80,8 +80,8 @@
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
-                                    <input type="number" id="mobileNumber" formControlName="mobileNumber"
-                                        placeholder="Number" class="form-control w-75" />
+                                    <input type="text" id="mobileNumber" formControlName="mobileNumber"
+                                        placeholder="Number" class="form-control w-75" maxlength="10" style="height: 34px;" />
                                 </div>
                                 <div *ngIf="mgfRegistrationForm.get('mobileNumber')?.touched && mgfRegistrationForm.get('mobileNumber')?.invalid"
                                     class="text-danger" style="margin-top: -22px;">
