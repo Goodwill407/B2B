@@ -155,7 +155,12 @@
       <div class="form-group">
         <label for="discountCategory" class="discount-label">Select Category</label>
         <select class="form-control discount-dropdown" [(ngModel)]="SelectedCategory" [disabled]="isDropdownDisabled">
-          <option [ngValue]="null">Select Category</option>
+            <option [ngValue]="null">Select Category</option>
+            <!-- If exsitingCategory is available, display it -->
+            <!-- <option [ngValue]="null" *ngIf="!exsitingCategory || exsitingCategory == 'No Discounts'" >Select Category</option>
+            <option *ngIf="exsitingCategory" [hidden]="editBtn" [ngValue]="exsitingCategory">
+                {{ exsitingCategory }}
+            </option> -->
           <option *ngFor="let category of wholesalerCategory" [ngValue]="category">
             {{ category.category }}
           </option>

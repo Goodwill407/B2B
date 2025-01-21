@@ -104,9 +104,13 @@ export class ManageRetailerComponent {
       this.communicationService.showNotification('snackbar-success', 'User status updated successfully','bottom','center');
     });
   }
-  viewProfile(distributor: any) {
+  viewProfile(distributor: any) {  // discountCategories: any
     this.router.navigate(['/common/view-profile'], {
-      queryParams: { email: distributor.email, role: 'retailer' },
+      queryParams: { 
+        email: distributor.email, 
+        role: 'retailer',
+        // discountCategories: discountCategories // Pass discountCategories as a query parameter
+       },
     });
   }
  
