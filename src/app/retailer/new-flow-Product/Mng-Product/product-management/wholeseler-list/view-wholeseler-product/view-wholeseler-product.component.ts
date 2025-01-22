@@ -57,7 +57,7 @@ export class ViewWholeselerProductComponent {
   }
 
   getProductDetails(id: any) {
-    this.authService.get('wholesaler-price-type2/retailer-product/' + id).subscribe((res: any) => {
+    this.authService.get(`wholesaler-price-type2/retailer-product/wholesaler-wise?productId=${id}&wholesalerEmail=${this.WholeselerEmail}`).subscribe((res: any) => {
       this.designno = res.product.designNumber;
       console.log(res);
       if (res) {
