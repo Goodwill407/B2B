@@ -1,185 +1,216 @@
-
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="default" color="#fff" type="square-jelly-box" [fullScreen]="true">
+  <p style="color: rgb(242, 94, 94)">Loading...</p>
+</ngx-spinner>
 
 <section class="content">
   <div class="content-block">
     <h4 class="title mt-2">
-      <i class="bi bi-person-vcard-fill icon"></i> Manufacturer's Profile
+      <i class="bi bi-person-vcard-fill icon"></i> Manufacturers Preview
     </h4>
 
-    <div class="company-profile">
-      <!-- Company Name -->
-      <button class="btn navigate" (click)="navigateFun()">
-        <i class="bi bi-arrow-left-circle h4"></i>
-      </button>
-      <div class="company-head">
-        <img *ngIf="allVisabilityData?.visibilitySettings?.profileImg" src="{{allVisabilityData?.profileImg }}" alt="">
-        <div class="ms-4">
-          <h3 class="company-name mb-1">{{ allVisabilityData?.companyName }}</h3>
-          <p class="mb-1">{{ allVisabilityData?.address }}</p>
-          <p class="mb-1"><a href="mailto:{{ allVisabilityData?.email }}">{{ allVisabilityData?.email }}</a></p>
-          <p class="mb-1">{{ allVisabilityData?.mobNumber }}</p>
-          <a *ngIf="allVisabilityData?.visibilitySettings?.socialMedia?.webSite" href="{{ allVisabilityData?.socialMedia?.webSite }}" target="_blank" class="facebook">
-            {{ allVisabilityData?.socialMedia?.webSite}}
-          </a>
-          <div class="share-options">
-            <a *ngIf="allVisabilityData?.visibilitySettings?.socialMedia?.facebook" href="{{ allVisabilityData?.socialMedia?.facebook }}" target="_blank" class="share-icon facebook">
-              <i class="fab fa-facebook"></i>
-            </a>
-            <a  *ngIf="allVisabilityData?.visibilitySettings?.socialMedia?.instagram" href="{{ allVisabilityData?.socialMedia?.instagram }}" target="_blank" class="share-icon instagram">
-              <i class="fab fa-instagram"></i>
-            </a>
-            <a *ngIf="allVisabilityData?.visibilitySettings?.socialMedia?.linkedIn" href="{{ allVisabilityData?.socialMedia?.linkedin }}" target="_blank" class="share-icon twitter">
-              <i class="bi bi-linkedin"></i>
-            </a>
-          </div>
+
+    <section class="profile-preview">
+      <div class="profile-header">
+        <!-- Profile Logo -->
+        <div class="profile-logo">
+          <button class="btn navigate" (click)="navigateFun()">
+            <i class="bi bi-arrow-left-circle h4"></i>
+          </button>
+          <img *ngIf="allVisabilityData?.visibilitySettings?.logo" [src]="allVisabilityData?.profileImg"
+            alt="Company Logo"
+            onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';">
         </div>
+
+        <!-- Profile Details -->
+        <div class="profile-details">
+          <h1 class="company-name" *ngIf="allVisabilityData?.visibilitySettings?.companyName">
+            {{ allVisabilityData?.companyName }}
+          </h1>
+          <p class="registration-info">
+            <!-- Registered As: {{ allVisabilityData?.visibilitySettings?.registerOnFTH || 'Manufacturer' }}<br> -->
+            <label style="font-size: medium;">Registered As: {{ 'Manufacturer' }}</label><br>
+            <label style="font-size: medium;" *ngIf="allVisabilityData?.visibilitySettings?.registerOnFTH">Registered on
+              FTH: {{ allVisabilityData?.registerOnFTH | date: 'MMM d, y' }}</label>
+          </p>
+        </div>
+
+
+
       </div>
-      <hr>
 
-      <!-- Introduction -->
-      <p class="introduction" *ngIf="allVisabilityData?.visibilitySettings?.introduction">{{ allVisabilityData?.introduction }}</p>
-  
-      <!-- Fact Sheet -->
-      <div class="fact-sheet">
-          <h4>Fact Sheet</h4>
-        
-          <!-- Established Date -->
-          <p *ngIf="allVisabilityData?.visibilitySettings?.establishDate">
-            <strong>Established :</strong> {{ allVisabilityData?.establishDate | customDate:'MMM d, y' }}
-          </p>
-        
-          <!-- Founder Name -->
-          <p *ngIf="allVisabilityData?.visibilitySettings?.fullName">
-            <strong>Founder :</strong> {{ allVisabilityData?.fullName }}
-          </p>
-        
-          <!-- Legal Status of Firm -->
-          <p *ngIf="allVisabilityData?.visibilitySettings?.leagalStatusOfFirm">
-            <strong>Legal Status of Firm :</strong> {{ allVisabilityData?.leagalStatusOfFirm }}
-          </p>
-        
-          <!-- GST Number -->
-          <p *ngIf="allVisabilityData?.visibilitySettings?.GSTIN">
-            <strong>GST No :</strong> {{ allVisabilityData?.GSTIN }}
-          </p>
-        
-          <!-- State -->
-          <p *ngIf="allVisabilityData?.visibilitySettings?.state">
-            <strong>State :</strong> {{ allVisabilityData?.state }}
-          </p>
-        
-          <!-- City -->
-          <p *ngIf="allVisabilityData?.visibilitySettings?.city">
-            <strong>City :</strong> {{ allVisabilityData?.city }}
-          </p>
-        
-          <!-- Country -->
-          <p *ngIf="allVisabilityData?.visibilitySettings?.country">
-            <strong>Country :</strong> {{ allVisabilityData?.country }}
-          </p>
-        
-          <!-- PIN Code -->
-          <p *ngIf="allVisabilityData?.visibilitySettings?.pinCode">
-            <strong>PIN Code :</strong> {{ allVisabilityData?.pinCode }}
-          </p>
-        
-          <!-- Turnover -->
-          <!-- <p *ngIf="allVisabilityData?.visibilitySettings?.turnover">
-            <strong>Turnover :</strong> {{ allVisabilityData?.turnover }}
-          </p>           -->
-        
-          <!-- Mobile Number 2 -->
-          <p *ngIf="allVisabilityData?.visibilitySettings?.mobNumber2">
-            <strong>Alternate Mobile Number :</strong> {{ allVisabilityData?.mobNumber2 }}
-          </p>
-        
-          <!-- Alternate Email -->
-          <p *ngIf="allVisabilityData?.visibilitySettings?.email2">
-            <strong>Alternate Email :</strong> <a href="mailto:{{ allVisabilityData?.email2 }}">{{ allVisabilityData?.email2 }}</a>
-          </p>
-        
-          <!-- PAN -->
-          <p *ngIf="allVisabilityData?.visibilitySettings?.pan">
-            <strong>PAN :</strong> {{ allVisabilityData?.pan }}
-          </p>
-        
-          <!-- Code -->
-          <p *ngIf="allVisabilityData?.visibilitySettings?.code">
-            <strong>Country Code :</strong> {{ allVisabilityData?.code }}
-          </p>
-          <p *ngIf="allVisabilityData?.visibilitySettings?.fileName"><strong>KYC Document :</strong> {{
-            allVisabilityData?.fileName }} <span class="ms-3" *ngIf="allVisabilityData?.visibilitySettings?.file"><button class="btn"
-                (click)="openImg(allVisabilityData?.file,800)"><i class="bi bi-eye-fill h5"></i></button>
-            </span></p>
-        </div>
-        
-        
-
-      <!-- Contact Details -->
-      <div class="contact-details" >
-        <h4>Contact Details</h4>
-        <p *ngIf="allVisabilityData?.visibilitySettings?.address"><strong>Address :</strong> {{ allVisabilityData?.address }}</p>
-        <p *ngIf="allVisabilityData?.visibilitySettings?.mobNumber"><strong>Phone :</strong> {{ allVisabilityData?.mobNumber }}</p>
-        <p *ngIf="allVisabilityData?.visibilitySettings?.email"><strong>Email :</strong> <a href="mailto:{{ allVisabilityData?.email }}">{{ allVisabilityData?.email }}</a>
+      <!-- Introduction Section -->
+      <div class="profile-introduction" *ngIf="allVisabilityData?.visibilitySettings?.introduction">
+        <h4>Introduction</h4>
+        <p>
+          {{ allVisabilityData?.introduction }}
         </p>
       </div>
-      
-      <!-- Contact Details -->
-      <div class="contact-details" *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.bankName||
-      allVisabilityData?.visibilitySettings?.BankDetails?.branch||
-      allVisabilityData?.visibilitySettings?.BankDetails?.accountNumber||
-      allVisabilityData?.visibilitySettings?.BankDetails?.IFSCcode">
-        <h4>Bank Details</h4>
-        <p *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.bankName"><strong>Bank Name :</strong> {{
-          allVisabilityData?.BankDetails?.bankName }}</p>
-        <p *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.branch"><strong>Branch :</strong> {{
-          allVisabilityData?.BankDetails?.branch }}</p>
-        <p *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.accountNumber"><strong>Ac. No :</strong>{{
-          allVisabilityData?.BankDetails?.accountNumber }}</p>
-        <p *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.IFSCcode"><strong>IFSC code :</strong>{{
-          allVisabilityData?.BankDetails?.IFSCcode }}</p>
+
+      <!-- Company Profile Section -->
+      <div class="company-profile" *ngIf="
+        allVisabilityData?.visibilitySettings?.fullName || 
+        allVisabilityData?.visibilitySettings?.establishDate || 
+        allVisabilityData?.visibilitySettings?.fileName || 
+        allVisabilityData?.visibilitySettings?.leagalStatusOfFirm ||
+        allVisabilityData?.visibilitySettings?.GSTIN || 
+        allVisabilityData?.visibilitySettings?.pan ||
+        allVisabilityData?.visibilitySettings?.city || 
+        allVisabilityData?.visibilitySettings?.state ||
+        allVisabilityData?.visibilitySettings?.country ||
+        allVisabilityData?.visibilitySettings?.pinCode ||
+        allVisabilityData?.visibilitySettings?.mobNumber1 ||
+        allVisabilityData?.visibilitySettings?.mobNumber2 ||
+        allVisabilityData?.visibilitySettings?.email 
+          ">
+        <h4>Company Profile</h4>
+        <table>
+          <tr>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.fullName"> Founder :- {{ allVisabilityData?.fullName ||
+              'N/A' }}</td>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.establishDate"> Establishment Date :- {{
+              allVisabilityData?.establishDate | date: 'MMM d, y' }}</td>
+          </tr>
+
+          <tr>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.fileName"> KYC Document :- {{ allVisabilityData?.fileName
+              || 'Not Verified' }}</td>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.leagalStatusOfFirm"> Legal Status of Firm :- {{
+              allVisabilityData?.leagalStatusOfFirm || 'N/A' }}</td>
+          </tr>
+          <tr>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.GSTIN"> GST No. :- {{ allVisabilityData?.GSTIN || 'N/A' }}
+            </td>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.pan"> PAN :- {{ allVisabilityData?.pan || 'N/A' }}</td>
+          </tr>
+          <tr>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.mobNumber"> Mobile No. :- {{ allVisabilityData?.mobNumber
+              || 'N/A' }}</td>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.mobNumber2"> Alt Mobile No. :- {{
+              allVisabilityData?.mobNumber2 || 'N/A' }}</td>
+          </tr>
+          <tr>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.email"> Email :- {{ allVisabilityData?.email || 'N/A' }}
+            </td>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.email2"> Alt Email :- {{ allVisabilityData?.email2 ||
+              'N/A' }}</td>
+          </tr>
+          <tr>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.city"> City :- {{ allVisabilityData?.city || 'N/A' }}</td>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.state"> State :- {{ allVisabilityData?.state || 'N/A' }}
+            </td>
+          </tr>
+          <tr>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.pinCode"> Pin Code :- {{ allVisabilityData?.pinCode ||
+              'N/A' }}</td>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.country"> Country :- {{ allVisabilityData?.country ||
+              'N/A' }}</td>
+          </tr>
+
+          <tr>
+            <td colspan="2" *ngIf="allVisabilityData?.visibilitySettings?.address">Address :- {{
+              allVisabilityData?.address || 'N/A' }}</td>
+          </tr>
+        </table>
       </div>
 
-      <!-- Social Media -->
-      <div class="social-media" *ngIf="allVisabilityData?.uniqueProducts && allVisabilityData?.uniqueProducts?.length > 0">
-        <h4>Dealing In</h4>
-        <div class="d-flex justify-content-between">
-          <p><span class="fw-medium">Product Type</span><br>{{allVisabilityData?.dealingIn?.productType}}</p>
-          <p><span class="fw-medium">Gender</span><br>{{allVisabilityData?.dealingIn?.gender}}</p>
-          <p><span class="fw-medium">Category</span><br>{{allVisabilityData?.dealingIn?.clothing}}</p>
-          <p><span class="fw-medium">Sub Category</span><br>{{allVisabilityData?.dealingIn?.subCategory}}</p>
-        </div>
-      </div>
-
-      <!-- Brands Section -->
-      <div class="brands-section" *ngIf="brandsDetails && brandsDetails?.length > 0">
+      <!-- Registered Brands -->
+      <div class="brands-section mb-2" *ngIf="brandsDetails && brandsDetails?.length > 0">
         <h4>Our Brands</h4>
         <div class="brand-list">
           <div *ngFor="let brand of brandsDetails">
-            <div class="brand-item">
-              <img [src]="brand.brandLogo" [alt]="brand.brandName" />
+            <div class="brand-item mt-2">
+              <img [src]="brand.brandLogo" [alt]="brand.brandName" onerror="this.onerror=null; this.src='assets/images/brandlogo.jpg';" />
             </div>
-            <div class="brand-name text-center mt-2"><strong>{{ brand.brandName }}</strong></div>
+            <div class="brand-name text-center mt-2">
+              <h6>{{ brand.brandName }}</h6>
+            </div>
           </div>
         </div>
       </div>
-      <hr>
 
-      <!-- Add Request Button -->
-      <!-- <div class="button-container">
-        <button class="add-request-button" (click)="sendRequestToManufacturer()">Request To Add</button>
-      </div> -->
-       <!-- Request Button -->
-       <!-- *ngIf="!OnlyForView"  -->
-       <div class="button-container">     
-       <button *ngIf="RequestDetails?.status" hidden  class="btn btn-outline-primary request-btn" (click)="sendRequestToManufacturer()">
-        {{ RequestDetails.status === 'accepted' ? 'Accepted' : ' Request to Add' }} 
+      <!-- Bank Details Section -->
+      <div class="bank-details" *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.bankName || 
+        allVisabilityData?.visibilitySettings?.BankDetails?.branch || 
+        allVisabilityData?.visibilitySettings?.BankDetails?.accountNumber || 
+        allVisabilityData?.visibilitySettings?.BankDetails?.IFSCcode">
+        <h4>Bank Details</h4>
+        <table>
+          <tr>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.BankDetails.accountNumber">
+              Bank Account No. :- {{ allVisabilityData?.BankDetails?.accountNumber || 'N/A' }}
+            </td>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.BankDetails.bankName">
+              Bank Name :- {{ allVisabilityData?.BankDetails?.bankName || 'N/A' }}
+            </td>
+          </tr>
+          <tr>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.BankDetails.IFSCcode">
+              IFSC Code :- {{ allVisabilityData?.BankDetails?.IFSCcode || 'N/A' }}
+            </td>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.BankDetails.branch">
+              Branch :- {{ allVisabilityData?.BankDetails?.branch || 'N/A' }}
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Bank Details Section -->
+      <div class="bank-details" *ngIf="allVisabilityData?.visibilitySettings?.socialMedia?.webSite || 
+        allVisabilityData?.visibilitySettings?.socialMedia?.facebook  ||
+        allVisabilityData?.visibilitySettings?.socialMedia?.instagram ||
+        allVisabilityData?.visibilitySettings?.socialMedia.linkedIn ">
+        <h4>Social Media</h4>
+        <table>
+          <tr>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.socialMedia?.webSite">
+              Web Site :-
+              <a href="{{ allVisabilityData?.socialMedia?.webSite }}" target="_blank" class="facebook">
+                {{ allVisabilityData?.socialMedia?.webSite }}
+              </a>
+            </td>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.socialMedia?.facebook">
+              Facebook :-
+              <a href="{{ allVisabilityData?.socialMedia?.facebook }}" target="_blank">
+                {{ allVisabilityData?.socialMedia?.facebook }}
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.socialMedia?.instagram">
+              Instagram :-
+              <a href="{{ allVisabilityData?.socialMedia?.instagram }}" target="_blank">
+                {{ allVisabilityData?.socialMedia?.instagram }}
+              </a>
+            </td>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.socialMedia.linkedIn">
+              LinkedIn :-
+              <a href="{{ allVisabilityData?.socialMedia?.linkedin }}" target="_blank" class="share-icon twitter">
+                {{ allVisabilityData?.socialMedia?.linkedIn }}
+              </a>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+    </section>
+    
+    <!-- Add Request Button -->
+    <div class="d-flex justify-content-center mb-3 mt-3">
+      <!-- Show Request to Add button if status is empty -->
+      <button *ngIf="!requestDetails" class="btn btn-outline-primary request-btn" [disabled]="isRequestSent"
+        (click)="sendRequestToManufacturer()">
+        Request to Add
       </button>
-      <button *ngIf="RequestDetails?.status" class="btn btn-outline-primary request-btn" disabled>
-        {{ RequestDetails.status === 'accepted' ? 'Accepted' : 'Requested' }}
+      <!-- Disable button if status is 'pending' or 'rejected' -->
+      <button *ngIf="requestDetails === 'pending' || requestDetails === 'rejected'"
+        class="btn btn-outline-primary request-btn" disabled>
+        Pending
+      </button>
+      <!-- Hide button if status is 'accepted' -->
+      <button *ngIf="requestDetails === 'accepted'" class="btn btn-outline-primary request-btn" hidden>
+        Accepted
       </button>
     </div>
 
-    </div>
   </div>
 </section>

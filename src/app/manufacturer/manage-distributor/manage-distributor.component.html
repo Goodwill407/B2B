@@ -61,7 +61,10 @@
                             
                         </div>
                     </div>
-                
+                    <!-- No Data Message -->
+                  <div *ngIf="distributors.length === 0" class="text-center mt-4">
+                    <p>No data found. Try a different search.</p>
+                  </div>
                     <!-- Pagination moved to the bottom of the card -->
                     <div class="text-center mt-3">
                         <p-paginator *ngIf="distributors && distributors.length > 0" 
@@ -79,7 +82,7 @@
             <div class="table-header mt-3">
                 <h5 class="mb-0">Retailer's List</h5>
                 <div class="search-container">
-                    <input type="text" class="form-control search-box" placeholder="Search Retailer's..." (input)="onSearchChange($event)">
+                    <input type="text" class="form-control search-box" placeholder="Search Retailer's..." (input)="onSearchChangeR($event)">
                     <i class="fas fa-search search-icon"></i>
                 </div>
             </div>
@@ -125,11 +128,14 @@
                     </p-table>
                 </div>
             </div>
-        
+            <!-- No Data Message -->
+            <div *ngIf="retailers.length === 0" class="text-center mt-4">
+                <p>No data found. Try a different search.</p>
+              </div>
             <!-- Pagination moved to the bottom of the card -->
             <div class="text-center mt-3">
                 <p-paginator *ngIf="retailers && retailers.length > 0" 
-                    (onPageChange)="onPageChange($event)"
+                    (onPageChange)="onPageChangeR($event)"
                     [first]="first" [rows]="rows" 
                     [totalRecords]="totalResults"
                     [rowsPerPageOptions]="[10, 20, 30]">                   

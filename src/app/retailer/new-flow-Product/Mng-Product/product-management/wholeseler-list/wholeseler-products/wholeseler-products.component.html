@@ -1,6 +1,6 @@
 <section class="content">
     <div class="content-block">
-      <h4 class="mt-4">View Products</h4>
+      <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"> </i> View Products</h4>
       <div class="ads-flex">
         <div class="flex-grow-1">
       <div class="card p-4">
@@ -59,8 +59,7 @@
               <h6 class="title" [routerLink]="['/retailer/new/view-product2', { id: product.id }]">{{ product.productTitle }}</h6>
         
               <!-- Product Description -->
-              <p>{{ product.productDescription | slice:0:20 }}...</p>
-
+              <p>{{ product.productDescription | slice:0:40 }}...</p>
 
             
         
@@ -88,13 +87,13 @@
        </div>              
 
        <!-- Right-Side Ads Container -->
-       <div class="ads-right mt-0">
+       <!-- <div class="ads-right mt-0">
         <app-right-side-advertise [imageUrls]="rightAdImages"></app-right-side-advertise>
-    </div>
+    </div> -->
 </div>
 
 <!-- Bottom-Side Ad Container -->
-<div class="ads-bottom mb-3">
+<div class=" mb-3">
     <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
 </div>
     </div>

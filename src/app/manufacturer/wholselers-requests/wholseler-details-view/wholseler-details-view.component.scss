@@ -197,4 +197,48 @@
     outline: none;
   }
   
-  
+  /* General styling for labels and static form fields */
+.label-input {
+  margin-top: 15px;
+}
+
+.form-control-static {
+  font-weight: 600;
+  color: #555;
+  display: block;
+  padding-top: 8px;
+}
+
+/* Button Styling */
+.add-request-button {
+  padding: 12px 24px;
+  background-color: #f0ad4e;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s ease;
+}
+
+.add-request-button:hover {
+  background-color: #d08e2d;
+}
+
+/* For Disabled Fields */
+input:disabled,
+select:disabled {
+  background-color: #f0f0f0;
+  color: #666;
+  border-color: #ddd;
+}
+
+/* Additional styling for link colors */
+a {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
