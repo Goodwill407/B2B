@@ -47,7 +47,7 @@ export class ViewManufacturerDetailsComponent implements OnInit {
     // Access the query parameters
     this.route.queryParams.subscribe(params => {
       
-      console.log('Received query params:', params);
+      // console.log('Received query params:', params);
       
       this.id = params['id'];
       this.email = params['email'];
@@ -180,6 +180,7 @@ export class ViewManufacturerDetailsComponent implements OnInit {
       console.log('Received visibility data:', res);
       if (res) {
         this.allVisabilityData = res;
+        console.log('allVisabilityData:', this.allVisabilityData);
 
         // Handle unique products and grouping product types, gender, etc.
         const uniqueValues = {
