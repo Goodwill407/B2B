@@ -83,6 +83,7 @@ export class CustomiseProfileComponent {
       companyName: [false],
       email: [false],
       address: [false],
+      kycVerified:[false],
       state: [false],
       introduction: [false],
       city: [false],

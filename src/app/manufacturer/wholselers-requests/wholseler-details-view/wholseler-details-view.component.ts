@@ -1,17 +1,18 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
-import { Location } from '@angular/common';
+import { CommonModule, Location, NgFor } from '@angular/common';
+import { CustomDatePipe } from 'app/common/custom-pipe.pipe';
 
 @Component({
   selector: 'app-wholseler-details-view',
   standalone: true,
-  imports: [],
+  imports: [NgFor, CommonModule, CustomDatePipe],
   templateUrl: './wholseler-details-view.component.html',
   styleUrl: './wholseler-details-view.component.scss'
 })
 export class WholselerDetailsViewComponent {
-
+ 
   email:any;
   CompanyData:any;
   data:any

@@ -17,7 +17,8 @@
             <i class="bi bi-arrow-left-circle h4"></i>
           </button>
           <img *ngIf="allVisabilityData?.visibilitySettings?.logo" [src]="allVisabilityData?.profileImg"
-            alt="Company Logo">
+            alt="Company Logo"
+            onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';">
         </div>
 
         <!-- Profile Details -->
@@ -118,7 +119,7 @@
         <div class="brand-list">
           <div *ngFor="let brand of brandsDetails">
             <div class="brand-item mt-2">
-              <img [src]="brand.brandLogo" [alt]="brand.brandName" />
+              <img [src]="brand.brandLogo" [alt]="brand.brandName" onerror="this.onerror=null; this.src='assets/images/brandlogo.jpg';" />
             </div>
             <div class="brand-name text-center mt-2">
               <h6>{{ brand.brandName }}</h6>

@@ -107,7 +107,8 @@
             <div *ngFor="let wholesaler of wholesalerData" class="brand-box">
               <!-- Brand Logo and Name -->
               <div class="brand-logo-container">
-                <img [src]="wholesaler.brandLogo" alt="{{ wholesaler.brandName }}" class="brand-logo" />
+                <img [src]="wholesaler.brandLogo" alt="{{ wholesaler.brandName }}" class="brand-logo"
+                 onerror="this.onerror=null; this.src='assets/images/brandlogo.jpg';"/>
               </div>
               <h5 class="brand-name">{{ wholesaler.brandName }}</h5>
           
@@ -133,7 +134,7 @@
               <!-- Product Brand Logo -->
               <div class="brand-logo-container">
                 <img [src]="product.wholesaler.profileImg" alt="{{ product.wholesaler.companyName }}"
-                  class="brand-logo" />
+                  class="brand-logo" onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';"/>
               </div>
               <!-- Product Details -->
               <h5 class="brand-name">{{ product.wholesaler.companyName }}</h5>

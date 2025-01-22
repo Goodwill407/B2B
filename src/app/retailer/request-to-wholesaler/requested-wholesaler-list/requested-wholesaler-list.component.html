@@ -25,6 +25,9 @@
                       <td class="text-center">{{allWholesaler.mobileNumber}}</td>
                       <td class="text-center">{{allWholesaler.email}}</td>                     
                       <td class="text-center text-warning">
+                        <button class="btn btn-icon p-2" pTooltip="View Profile" (click)="navigateToProfile(allWholesaler.id, allWholesaler.email, allWholesaler.requestDetails)"  tooltipPosition="top">
+                          <i class="fas fa-eye"></i>
+                        </button> 
                         {{allWholesaler.status == 'rejected'?'Pending':"Pending"}}
                       </td>
                     </tr>

@@ -3,8 +3,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import { CustomDatePipe } from 'app/common/custom-pipe.pipe';
-
-
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-view-wholesaler-details',
@@ -29,7 +28,7 @@ export class ViewWholesalerDetailsComponent {
     requestDetails:any;
     isRequestSent = false;
   
-    constructor(private route: ActivatedRoute, private authService:AuthService,private communicationService:CommunicationService) {
+    constructor(private route: ActivatedRoute, private authService:AuthService,private location: Location,private communicationService:CommunicationService) {
       this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
     }
   
@@ -162,6 +161,9 @@ export class ViewWholesalerDetailsComponent {
       })
     }
    
+    navigateFun() {
+      this.location.back();
+    } 
 
     checkRequestStatus(wholesalerEmail: string, requestByEmail: string): void {
       const url = `request/check/status-request?wholsalerEmail=${wholesalerEmail}&requestByEmail=${requestByEmail}`; 
