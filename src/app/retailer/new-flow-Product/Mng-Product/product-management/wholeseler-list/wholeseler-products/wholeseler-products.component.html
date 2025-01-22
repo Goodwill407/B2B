@@ -59,7 +59,8 @@
               <h6 class="title" [routerLink]="['/retailer/new/view-product2', { id: product.id }]">{{ product.productTitle }}</h6>
         
               <!-- Product Description -->
-              <p>{{ product.productDescription }}</p> 
+              <p>{{ product.productDescription | slice:0:20 }}...</p>
+
 
             
         
