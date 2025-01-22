@@ -2,6 +2,7 @@ import { CommonModule, NgFor } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { PaginatorModule } from 'primeng/paginator';
@@ -14,6 +15,7 @@ import { TableModule } from 'primeng/table';
     CommonModule,
     TableModule,
     PaginatorModule,
+    BottomSideAdvertiseComponent
   ],
   templateUrl: './place-order.component.html',
   styleUrls: ['./place-order.component.scss']
@@ -47,6 +49,11 @@ export class PlaceOrderComponent {
   first: number = 0;
   rows: number = 10;
   isNewPO: boolean = false;
+  bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+  'assets/images/adv/ads.jpg'
+  ];
+
 
   constructor(private route: ActivatedRoute, private authService: AuthService, private communicationService: CommunicationService) { }
 
@@ -68,7 +75,7 @@ export class PlaceOrderComponent {
               supplierEmail: `${response.manufacturer.email}`,
               supplierGSTIN: response.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
               buyerName: response.wholesaler.companyName,
-              logoUrl: this.authService.cdnPath + response.wholesaler.profileImg,
+              logoUrl: response.wholesaler.profileImg,
               buyerAddress: response.wholesaler.address + ', ' + response.wholesaler.city + ', ' + response.wholesaler.state + ' - ' + response.wholesaler.pinCode,
               buyerPhone: response.wholesaler.mobNumber,
               buyerEmail: response.wholesaler.email,

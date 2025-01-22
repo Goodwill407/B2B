@@ -83,8 +83,8 @@ export class SigninComponent
                 localStorage.setItem('currentUser', JSON.stringify(res.user));
                 this.authService.currentUserSubject.next(res.user);
                 const role = this.authService.currentUserValue.role;
-                if (res.user.role === Role.Superadmin || res.user.role === Role.State) {
-                  this.router.navigate(['/mnf/dashboard']);
+                if (res.user.role === Role.Superadmin) {
+                  this.router.navigate(['/super/Super-dashboard']);
                 } else if (role == Role.Manufacture) {
                   this.router.navigate(['/mnf/dashboard']);
                 } else if (role === Role.Wholesaler) {

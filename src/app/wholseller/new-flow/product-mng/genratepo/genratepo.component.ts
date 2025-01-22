@@ -78,7 +78,7 @@ import jsPDF from 'jspdf';
             supplierContact: `${res.manufacturer.mobNumber}`,
             supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
             buyerName: res.wholesaler.companyName,
-            logoUrl: this.authService.cdnPath + res.wholesaler.profileImg,
+            logoUrl: res.wholesaler.profileImg,
             buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
             buyerPhone: res.wholesaler.mobNumber,
             buyerEmail: res.wholesaler.email,

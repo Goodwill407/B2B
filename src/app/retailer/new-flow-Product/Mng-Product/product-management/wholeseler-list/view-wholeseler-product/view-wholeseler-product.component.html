@@ -11,26 +11,30 @@
             <h5 class="text-center mb">Product Details</h5>
             <hr class="mt-0">
             <div class="product-details-content">
-                <div class="product-images">
-                    <div class="main-image">
-                        <img *ngIf="selectedMediaType === 'image'" [src]="authService.cdnPath + selectedMedia"
-                            alt="Main Product Image">
-                        <video *ngIf="selectedMediaType === 'video'" style="width: 380px; height: 495px;"
-                            [src]="authService.cdnPath + selectedMedia" controls></video>
-                    </div>
-                    <div class="thumbnail-images">
-                        <div class="thumbnail" *ngFor="let media of product?.media" (click)="changeMainMedia(media)"
-                            [class.active]="media.src === selectedMedia">
-                            <img *ngIf="media.type === 'image'" [src]="authService.cdnPath + media.src"
-                                alt="Product Thumbnail">
-                            <div *ngIf="media.type === 'video'" class="video-thumbnail">
-                                <i class="bi bi-play-circle-fill"></i>
-                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgcAFN3D0j48KEiZtXy9H8Z-brml1fSzLUAQ&s"
-                                    style="width: 55px; height: 75px;" alt="Product Thumbnail">
-                            </div>
-                        </div>
-                    </div>
+              <div class="product-images">
+                <div class="zoom-container">
+                  <img #mainImage *ngIf="selectedMediaType === 'image'" [src]="selectedMedia"
+                    (mousemove)="zoomImage($event)" (mouseleave)="resetZoom($event)" alt="Main Product Image"
+                    class="zoom-image">
+      
+                  <video *ngIf="selectedMediaType === 'video'" style="width: 380px; height: 495px;"
+                    [src]="selectedMedia" controls>
+                  </video>
+                  <button *ngIf="selectedMediaType === 'image'" (click)="openImg(selectedMedia,1400)"
+                    class="action-button"><i class="bi bi-zoom-in"></i></button>
                 </div>
+                <div class="thumbnail-images">
+                  <div class="thumbnail" *ngFor="let media of product?.media" (click)="changeMainMedia(media)"
+                    [class.active]="media.src === selectedMedia">
+                    <img *ngIf="media.type === 'image'" [src]="media.src" alt="Product Thumbnail">
+                    <div *ngIf="media.type === 'video'" class="video-thumbnail">
+                      <i class="bi bi-play-circle-fill"></i>
+                      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgcAFN3D0j48KEiZtXy9H8Z-brml1fSzLUAQ&s"
+                        style="width: 55px; height: 75px;" alt="Product Thumbnail">
+                    </div>
+                  </div>
+                </div>
+              </div>
 
                 <div class="product-info">
                     <div class="">
@@ -93,7 +97,7 @@
                                 (mouseleave)="onLeaveColour()" style="cursor: pointer; display: flex;">
                                 <div class="colour-info">
                                     <span *ngIf="colour.image; else colourBox">
-                                        <img [src]="authService.cdnPath + colour.image" alt="Colour Image"
+                                        <img [src]="colour.image" alt="Colour Image"
                                             class="colour-image">
                                     </span>
                                     <ng-template #colourBox>
@@ -112,7 +116,10 @@
                 <form [formGroup]="stepThree" (ngSubmit)="saveStepThree()">
                     <div class="inventory-container3">
                       <div class="header3">
-                        <div class="size-label3">Order Form:</div>
+                        <div class="size-label3">Sizes:
+                          <br />
+                          Price:
+                        </div>
                         <div class="size-headers3">
                           <div *ngFor="let size of selectedSizes" class="size-header3">
                             {{ size.size }} <br />
@@ -126,7 +133,7 @@
                         <div class="color-box-container3">
                           <div *ngIf="color.image; else noImage">
                             <img
-                              [src]="authService.cdnPath + color.image"
+                              [src]="color.image"
                               alt="{{ color.name }}"
                               class="color-image3"
                               title="{{ color.name }}"
@@ -159,16 +166,11 @@
                     </div>
                     <div class="d-flex justify-content-center">
                       <button type="submit" class="btn submit-btn mt-3 me-2">Add to Cart</button>
+                      <button type="submit" class="btn submit-btn mt-3 me-2"[disabled]="wishlist"
+                      [ngClass]="wishlist?'btn-wishlist-true':'btn-wishlist'" (click)="WishlistAdd()"><i
+                          class="bi bi-heart"></i>&nbsp; WISHLIST</button>
                     </div>
                   </form>                  
-            </div>
-  
-            <hr>
-            <div class="add-to-card">
-                <p class="col-md-3 col-sm-4 mb-0"><small>Date of Listing</small> <br> {{ product?.dateAvailable }}</p>
-                <button type="button" class="btn" [disabled]="wishlist"
-                    [ngClass]="wishlist?'btn-wishlist-true':'btn-wishlist'" (click)="WishlistAdd()"><i
-                        class="bi bi-heart"></i>&nbsp; WISHLIST</button>
             </div>
         </div>
     </div>

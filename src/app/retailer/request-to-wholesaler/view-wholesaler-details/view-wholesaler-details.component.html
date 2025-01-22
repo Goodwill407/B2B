@@ -1,77 +1,192 @@
 <section class="content">
     <div class="content-block">
       <h4 class="title mt-2">
-        <i class="bi bi-person-vcard-fill icon"></i> View Wholeseler And Send Request
+        <i class="bi bi-person-vcard-fill icon"></i> Wholesaler's Profile
       </h4>
   
       <div class="company-profile">
-        <!-- Company Name -->
-        <h3 class="company-name">{{ WholsellerData?.companyName }}</h3>
-        <hr>
-  
-        <!-- Introduction -->
-        <p class="introduction">{{ WholsellerData?.introduction }}</p>
-        
-        <!-- Fact Sheet -->
-        <div class="fact-sheet">
-          <h4>Fact Sheet</h4>      
-          <!-- Conditionally display fields based on the object's values -->
-          <p *ngIf="WholsellerData?.establishDate"><strong>Established :</strong> {{ WholsellerData?.establishDate }}</p>
-          <p *ngIf="WholsellerData?.fullName"><strong>Founder :</strong> {{ WholsellerData?.fullName }}</p>
-          <p *ngIf="WholsellerData?.leagalStatusOfFirm"><strong>Legal Status of Firm :</strong> {{ WholsellerData?.leagalStatusOfFirm }}</p>
-          <p *ngIf="WholsellerData?.registerOnFTH"><strong>Registered On FTH :</strong> {{ WholsellerData?.registerOnFTH | customDate:'MMM d, y' }}</p>
-          <p *ngIf="WholsellerData?.GSTIN"><strong>GST No :</strong> {{ WholsellerData?.GSTIN }}</p>
-          <p *ngIf="WholsellerData?.code"><strong>Mobile No. :</strong> {{ WholsellerData?.code }} {{WholsellerData?.mobNumber}}</p>
-          <p *ngIf="WholsellerData?.companyName"><strong>Company Name :</strong> {{ WholsellerData?.companyName }}</p>
-          <p *ngIf="WholsellerData?.address"><strong>Address :</strong> {{ WholsellerData?.address }}</p>
-          <p *ngIf="WholsellerData?.state"><strong>State :</strong> {{ WholsellerData?.state }}</p>
-          <p *ngIf="WholsellerData?.city"><strong>City :</strong> {{ WholsellerData?.city }}</p>
-          <p *ngIf="WholsellerData?.country"><strong>Country :</strong> {{ WholsellerData?.country }}</p>
-          <p *ngIf="WholsellerData?.pinCode"><strong>PIN Code :</strong> {{ WholsellerData?.pinCode }}</p>
-          <p *ngIf="WholsellerData?.turnover"><strong>Turnover :</strong> {{ WholsellerData?.turnover }}</p>
-        </div>
-  
-        <!-- Contact Details -->
-        <div class="contact-details">
-          <h4>Contact Details</h4>
-          <p><strong>Address :</strong> {{ WholsellerData?.address }}</p>
-          <p><strong>Phone :</strong> {{ WholsellerData?.mobNumber }}</p>
-          <p><strong>Email :</strong> <a href="mailto:{{ WholsellerData.email }}">{{ WholsellerData?.email }}</a></p>
-        </div>
-  
-        <!-- Social Media -->
-        <div class="social-media">
-          <h4>Social Media</h4>
-          <p><a href="{{ WholsellerData?.socialMedia?.facebook }}" target="_blank">Facebook</a></p>
-          <p><a href="{{ WholsellerData?.socialMedia?.instagram }}" target="_blank">Instagram</a></p>
-          <p><a href="{{ WholsellerData?.socialMedia?.linkedin }}" target="_blank">LinkedIn</a></p>
-        </div>
-  
-        <!-- Brands Section -->
-        <div class="brands-section">
-          <h4>Our Brands</h4>
-          <div class="brand-list">
-            <div *ngFor="let brand of brandsDetails">
-              <div class="brand-item">
-                <img [src]="cdnPath + brand.brandLogo" [alt]="brand.brandName" />            
-              </div>
-              <div class="brand-name text-center mt-2"><strong>{{ brand.brandName }}</strong></div>
+        <!-- Company Profile Card -->
+        <!-- <div class="card p-4 pt-2"> -->
+            <h5 class="mb-0 flex-grow-1">
+                <button class="btn text-start" (click)="navigateFun()">
+                    <i class="bi bi-arrow-left-circle h4"></i>
+                </button>
+                <span class="text-center" style="margin-left: 474px;">{{  WholsellerData?.companyName }}</span>
+            </h5>
+            <hr class="mt-2">
+            <h5 class="mb-0 mt-4">Company Profile</h5>
+            <div class="row">
+                <!-- Company Name -->
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                    <label class="label-input">Company/Firm Name :- {{  WholsellerData?.companyName }}</label>
+                </div>
+    
+                <!-- Founder Name -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Founder :- {{  WholsellerData?.fullName }}</label>
+                </div>
+    
+                <!-- Establishment Date -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Established :- {{  WholsellerData?.establishDate | date: 'MMM d, y'  }}</label>
+                    <!-- <span class="form-control-static"></span> -->
+                </div>
+    
+                <!-- Legal Status -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Legal Status of Firm :- {{  WholsellerData?.leagalStatusOfFirm }}</label>
+                    <!-- <span class="form-control-static">{{  WholsellerData?.leagalStatusOfFirm }}</span> -->
+                </div>
+    
+                <!-- Registered on FTH -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Registered On FTH :- {{  WholsellerData?.registerOnFTH | date: 'MMM d, y'  }}</label>
+                    <!-- <span class="form-control-static">{{  WholsellerData?.registerOnFTH }}</span> -->
+                </div>
+    
+                <!-- GST Number -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">GST No :- {{  WholsellerData?.GSTIN }}</label>
+                    <!-- <span class="form-control-static">{{  WholsellerData?.GSTIN }}</span> -->
+                </div>
+    
+                <!-- Pan Number -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">PAN No :- {{  WholsellerData?.pan }}</label>
+                    
+                </div>
+                <!-- Phone -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Phone :- {{  WholsellerData?.mobNumber }} </label>
+                    <!-- <span class="form-control-static"></span> -->
+                </div>
+    
+                <!-- Email -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Email :-  <a href="mailto:{{  WholsellerData?.email }}">
+                        {{  WholsellerData?.email }}</a></label>               
+                </div>
+                <!-- Phone -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Alt Phone :- {{  WholsellerData?.mobNumber2 }} </label>
+                    <!-- <span class="form-control-static"></span> -->
+                </div>
+    
+                <!-- Email -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Alt Email :-  <a href="mailto:{{  WholsellerData?.email }}">
+                        {{  WholsellerData?.email2 }}</a></label>               
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">City :- {{  WholsellerData?.city }} </label>
+                    <!-- <span class="form-control-static"></span> -->
+                </div>
+    
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">State :-  {{  WholsellerData?.state }}</label>               
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Zip / Pin Code :-  {{  WholsellerData?.pinCode }}</label>               
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Country  :-  {{  WholsellerData?.country }}</label>               
+                </div>
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                    <label class="label-input">Address :- {{  WholsellerData?.address }}</label>
+                    <!-- <span class="form-control-static">{{  WholsellerData?.address }}</span> -->
+                </div>
             </div>
-          </div>
-        </div>    
-        <hr>
-  
-          <!-- Add Request Button -->
+    
+            <!-- Contact Details Section -->
+           
+    
+            <!-- Social Media Section -->
+            <h5 class="mb-0 mt-4">Social Media</h5>
+            <div class="row">
+                <!-- Facebook -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                        <label class="label-input">Facebook :- <a href="{{  WholsellerData?.socialMedia.facebook }}" target="_blank">Facebook</a> </label>
+                </div>
+    
+                <!-- Instagram -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                        <label class="label-input">Instagram :- <a href="{{  WholsellerData?.socialMedia.instagram }}" target="_blank">Instagram</a></label>
+                </div>
+    
+                <!-- LinkedIn -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">LinkedIn :- <a href="{{  WholsellerData?.socialMedia.linkedIn }}" target="_blank">LinkedIn</a></label>
+                </div>
+    
+                <!-- Company Website -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Company Website :- <a href="{{  WholsellerData?.socialMedia.webSite }}" target="_blank">{{  WholsellerData?.socialMedia.webSite }}</a></label>
+                </div>
+            </div>
+
+            <h5 class="mb-0 mt-4">Bank Account Details</h5>
+            <div class="row">
+
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                        <label class="label-input">Account Number :- {{  WholsellerData?.BankDetails.accountNumber }}</label>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Account Type :- {{  WholsellerData?.BankDetails.accountType }}</label>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Bank Name :- {{  WholsellerData?.BankDetails.bankName }}</label>
+                 </div>
+                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">IFSC Code :- {{  WholsellerData?.BankDetails.IFSCcode }}</label>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                    <label class="label-input">Country :- {{  WholsellerData?.BankDetails.country }}</label>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                    <label class="label-input">City  :- {{  WholsellerData?.BankDetails.city }}</label>
+                 </div>
+                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                    <label class="label-input">Branch Name :- {{  WholsellerData?.BankDetails.branch }}</label>
+                </div>
+            </div>
+    
+            <!-- Brands Section -->
+            <!-- <h5 class="mb-0 mt-4">Our Brands</h5> -->
+            <!-- <div class="row">  -->
+                <!-- Add brand details if available -->
+                <!-- <div class="brand-list"> -->
+                    <!-- Iterate over brands if available -->
+                    <!-- <div *ngFor="let brand of brandsDetails">
+                        <div class="brand-item">
+                            <img [src]="brand.brandLogo" [alt]="brand.brandName" />            
+                        </div>
+                        <div class="brand-name text-center mt-2"><strong>{{ brand.brandName }}</strong></div>
+                    </div>
+                </div>
+            </div> -->
+    
+            <hr>
+    
+            <!-- Action Button -->
+            <!-- Add Request Button -->
           <div class="button-container">
-            <!-- <button class="add-request-button" (click)="sendRequestToWholesaler()">Request To Add</button> -->
-            <button *ngIf="!RequestDetails" class="btn btn-outline-primary request-btn" (click)="sendRequestToWholesaler()">
+            <!-- Show Request to Add button if status is empty -->
+            <button *ngIf="!requestDetails" class="btn btn-outline-primary request-btn" [disabled]="isRequestSent" (click)="sendRequestToWholesaler()">
               Request to Add
             </button>
-            <button *ngIf="RequestDetails?.status || isRequestSend" class="btn btn-outline-primary request-btn" disabled>
-              {{RequestDetails.status === 'accepted' ? 'Accepted' : 'Requested' }}
+            <!-- Disable button if status is 'pending' or 'rejected' -->
+            <button *ngIf="requestDetails === 'pending' || requestDetails === 'rejected'" class="btn btn-outline-primary request-btn" disabled>
+              <!-- {{ requestDetails === 'pending' ? 'Requested' : 'Rejected' }} -->
+                Pending
+            </button>
+            <!-- Hide button if status is 'accepted' -->
+            <button *ngIf="requestDetails === 'accepted'" class="btn btn-outline-primary request-btn" hidden>
+              Accepted
             </button>
           </div>
-      </div>
+        <!-- </div> -->
+    </div>
+      
     </div>
   </section>
   

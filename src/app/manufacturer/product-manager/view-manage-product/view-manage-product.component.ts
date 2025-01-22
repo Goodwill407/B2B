@@ -155,7 +155,7 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
   extractColorFromImage(product: any): void {
     const image = new Image();
     image.crossOrigin = 'Anonymous';
-    image.src = this.authService.cdnPath + (product.selectedImageUrl||'/b2b/1727183682898-no-image.png');
+    image.src = (product.selectedImageUrl||'/b2b/1727183682898-no-image.png');
 
     image.onload = () => {
       const colorThief = new ColorThief();

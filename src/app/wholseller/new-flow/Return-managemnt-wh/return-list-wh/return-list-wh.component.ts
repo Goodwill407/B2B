@@ -9,6 +9,7 @@ import { TableModule } from 'primeng/table';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AccordionModule } from 'primeng/accordion';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 @Component({
   selector: 'app-return-list-wh',
   standalone: true,
@@ -18,7 +19,8 @@ import { AccordionModule } from 'primeng/accordion';
     AccordionModule,
     CommonModule,
     RouterModule,
-    PaginatorModule
+    PaginatorModule,
+    BottomSideAdvertiseComponent
   ],
   templateUrl: './return-list-wh.component.html',
   styleUrl: './return-list-wh.component.scss'
@@ -53,6 +55,11 @@ export class ReturnListWhComponent {
   first: number = 0;
   rows: number = 10;
   isNewPO: boolean = false;
+  bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+  'assets/images/adv/ads.jpg'
+  ];
+
 
   constructor(private route: ActivatedRoute, private authService: AuthService, private communicationService: CommunicationService) { }
 

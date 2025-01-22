@@ -105,36 +105,36 @@
           <div class="brand-list">
             <!-- Section for Brand Data -->
             <div *ngFor="let wholesaler of wholesalerData" class="brand-box">
-              <!-- Brand Logo -->
+              <!-- Brand Logo and Name -->
               <div class="brand-logo-container">
-                <img [src]="cdnPath + wholesaler.wholesaler.profileImg" alt="{{ wholesaler.wholesaler.companyName }}"
-                  class="brand-logo" />
+                <img [src]="wholesaler.brandLogo" alt="{{ wholesaler.brandName }}" class="brand-logo"
+                 onerror="this.onerror=null; this.src='assets/images/brandlogo.jpg';"/>
               </div>
-              <!-- Brand Details -->
-              <h5 class="brand-name">{{ wholesaler.wholesaler.companyName }}</h5>
-              <p class="brand-location">{{ wholesaler.wholesaler.city }}, {{ wholesaler.wholesaler.state }}</p>
-              <button class="btn btn-link"
-                (click)="navigateToProfile(wholesaler.wholesaler.id,wholesaler.wholesaler.email,wholesaler.requestDetails)">View
-                Profile</button>
-              <!-- <button class="btn btn-outline-primary request-btn"
-                (click)="sendRequestToWholesaler(wholesaler)">Request to Add
-              </button> -->
-              <!-- Request Button -->
-              <button *ngIf="!wholesaler.requestDetails" class="btn btn-outline-primary request-btn"
-                (click)="sendRequestToWholesaler(wholesaler.wholesaler)">
-                Request to Add
-              </button>
-              <button *ngIf="wholesaler.requestDetails?.status" class="btn btn-outline-primary request-btn" disabled>
-                {{ wholesaler.requestDetails.status === 'accepted' ? 'Accepted' : 'Requested' }}
-              </button>
+              <h5 class="brand-name">{{ wholesaler.brandName }}</h5>
+          
+              <!-- Wholesaler Details -->
+              <div class="wholesaler-details">
+                <h6 class="wholesaler-name">{{ wholesaler.companyName }}</h6>
+                <!-- <p class="wholesaler-location">{{ wholesaler.city }}, {{ wholesaler.state }}</p> -->
+                <button class="btn btn-link" (click)="navigateToProfile(wholesaler.id, wholesaler.email, wholesaler.requestDetails)">
+                  View Profile
+                </button>
+                <!-- <button *ngIf="!wholesaler.requestDetails" class="btn btn-outline-primary request-btn" 
+                        (click)="sendRequestToWholesaler(wholesaler)">
+                  Request to Add
+                </button>
+                <button *ngIf="wholesaler.requestDetails?.status" class="btn btn-outline-primary request-btn" disabled>
+                  {{ wholesaler.requestDetails.status === 'accepted' ? 'Accepted' : 'Requested' }}
+                </button> -->
+              </div>
             </div>
 
             <!-- Section for Product Data -->
             <div *ngFor="let product of productTypeWise" class="brand-box">
               <!-- Product Brand Logo -->
               <div class="brand-logo-container">
-                <img [src]="cdnPath + product.wholesaler.profileImg" alt="{{ product.wholesaler.companyName }}"
-                  class="brand-logo" />
+                <img [src]="product.wholesaler.profileImg" alt="{{ product.wholesaler.companyName }}"
+                  class="brand-logo" onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';"/>
               </div>
               <!-- Product Details -->
               <h5 class="brand-name">{{ product.wholesaler.companyName }}</h5>
@@ -165,7 +165,7 @@
     </div>
 
     <!-- Bottom-Side Ad Container -->
-    <div class="ads-bottom mb-3">
+    <div class="mb-3">
       <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
     </div>
   </div>

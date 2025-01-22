@@ -197,4 +197,10 @@
     outline: none;
   }
   
+  .add-request-button:disabled {
+    background-color: #d3d3d3;  /* Light gray background */
+    color: #a9a9a9;  /* Gray text */
+    cursor: not-allowed;  /* Change the cursor to indicate it's disabled */
+    opacity: 0.6;  /* Make it look faded */
+  }
   

@@ -9,6 +9,15 @@ import { Component, Input } from '@angular/core';
 })
 export class BottomSideAdvertiseComponent {
   
-  @Input() imageUrl: string = '';
+  @Input() imageUrl: string[] = [];
+  currentImageIndex: number = 0;
+
+  ngOnInit() {
+    if (this.imageUrl.length > 1) {
+      setInterval(() => {
+        this.currentImageIndex = (this.currentImageIndex + 1) % this.imageUrl.length;
+      }, 5000); // Change image every 5 seconds
+    }
+  }
 
 }

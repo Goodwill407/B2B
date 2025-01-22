@@ -87,7 +87,8 @@
             <div *ngFor="let brand of brandData" class="brand-box">
               <!-- Brand Logo -->
               <div class="brand-logo-container">
-                <img [src]="cdnPath + brand.brandLogo" alt="{{ brand.brandName }}" class="brand-logo" />
+                <img [src]="brand.brandLogo" alt="{{ brand.brandName }}" class="brand-logo"
+                onerror="this.onerror=null; this.src='assets/images/brandlogo.jpg';" />
               </div>
               <!-- Brand Details -->
               <h5 class="brand-name">{{ brand.brandName }}</h5>
@@ -109,7 +110,8 @@
             <div *ngFor="let product of productTypeWise" class="brand-box">
               <!-- Product Brand Logo -->
               <div class="brand-logo-container" *ngIf="product.brand?.brandLogo">
-                <img [src]="cdnPath + product.brand.brandLogo" alt="{{ product.brand.brandName || 'Brand' }}" class="brand-logo" />
+                <img [src]="product.brand.brandLogo" alt="{{ product.brand.brandName || 'Brand' }}" class="brand-logo"
+                onerror="this.onerror=null; this.src='assets/images/brandlogo.jpg';" />
               </div>
             
               <!-- Product Details -->
@@ -138,13 +140,13 @@
       
       
       <!-- Right-Side Ads Container -->
-      <div class="ads-right mt-0">
+      <!-- <div class="ads-right mt-0">
         <app-right-side-advertise [imageUrls]="rightAdImages"></app-right-side-advertise>
-      </div>
+      </div> -->
     </div>
 
     <!-- Bottom-Side Ad Container -->
-    <div class="ads-bottom mb-3">
+    <div class=" mb-3">
       <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
     </div>
   </div>

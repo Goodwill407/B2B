@@ -54,6 +54,7 @@ getPendingInvitesWholseler(searchKey: string = '') {
     .subscribe((res: any) => {
       this.distributors = res.results;
       this.totalResults = res.totalResults;
+      // console.log(res,"wholsalers");
 
       // Process discounts for each distributor
       this.distributors.forEach((distributor: any) => {
@@ -81,6 +82,7 @@ getPendingInvitesRetailers(searchKey: string = '') {
     )
     .subscribe((res: any) => {
       this.retailers = res.results;
+      // console.log(res,"retailers");
       this.totalResults = res.totalResults;
 
       // Process discounts for each retailer
@@ -109,9 +111,15 @@ getPendingInvitesRetailers(searchKey: string = '') {
     this.page = event.page + 1;
     this.limit = event.rows;
     this.getPendingInvitesWholseler();
+    // this.getPendingInvitesRetailers()
+  }
+
+  onPageChangeR(event: any) {
+    this.page = event.page + 1;
+    this.limit = event.rows;
+    // this.getPendingInvitesWholseler();
     this.getPendingInvitesRetailers()
   }
-  
   
   changeUserStatus(user: any){
     this.authService.patchWithEmail(`invitations/${user}`,{status:'accepted'}).subscribe((res)=>{
@@ -127,7 +135,13 @@ getPendingInvitesRetailers(searchKey: string = '') {
   onSearchChange(event: any) {
     const searchKey = event.target.value;
     this.getPendingInvitesWholseler(searchKey);
-    this.getPendingInvitesRetailers(searchKey);
+    // this.getPendingInvitesRetailers(searchKey);
+}
+
+onSearchChangeR(event: any) {
+  const searchKey = event.target.value;
+  // this.getPendingInvitesWholseler(searchKey);
+  this.getPendingInvitesRetailers(searchKey);
 }
 
 }

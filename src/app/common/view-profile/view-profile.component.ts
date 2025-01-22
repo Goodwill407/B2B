@@ -31,6 +31,8 @@ export class ViewProfileComponent {
   addDiscountBtnHide=true;
   isDropdownDisabled:boolean=false;
   retailerDiscount:any
+  // exsitingCategory: any;
+  // editBtn: any;
 
 
   constructor(private fb: FormBuilder, private route: ActivatedRoute, private authService: AuthService, private location: Location,private datePipe: DatePipe
@@ -48,6 +50,7 @@ export class ViewProfileComponent {
       this.email = params['email'];
       const role = params['role'];
       this.user= params['role'];
+      // this.exsitingCategory = params['discountCategories'];
       this.showFlagForDiscount=params['showFlag'];
       if (this.email) {
         this.authService.get(`${role}/${this.email}`).subscribe((res: any) => {
@@ -126,7 +129,15 @@ export class ViewProfileComponent {
   getAllWholesalerCategoryOrRetailerCategory() {
     const email=this.userEmail.email
     this.authService.get(`${this.user}-category?categoryBy=${this.authService.currentUserValue.email}`).subscribe((res: any) => {
-      this.wholesalerCategory = res.results;     
+      this.wholesalerCategory = res.results;
+      //console.log(this.wholesalerCategory);
+      // this.exsitingCategory= res.results[0].category;
+      // console.log(this.exsitingCategory);
+      // if ( this.wholesalerCategory.length > 0) {
+      //   this.exsitingCategory = res.results.category;
+      //   this.isDropdownDisabled = false; // Enable the dropdown if categories are available
+      //   console.log(this.exsitingCategory);
+      // }    
     });
   }
  
@@ -227,6 +238,7 @@ export class ViewProfileComponent {
   } 
   
   editDiscountCategory(){
+    // this.editBtn=true;
     this.addDiscountBtnHide=true;   
     this.isDropdownDisabled = false;     
   }

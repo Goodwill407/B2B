@@ -3,8 +3,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import { CustomDatePipe } from 'app/common/custom-pipe.pipe';
-
-
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-view-wholesaler-details',
@@ -20,16 +19,16 @@ export class ViewWholesalerDetailsComponent {
     email:any
     CompanyData:any
     brandsDetails:any
-    cdnPath:any
     userProfile:any;
     WholsellerData:any; 
     RetailserData:any
     id:any
-    RequestDetails:any
+    // RequestDetails:any
     isRequestSend:boolean=false;
+    requestDetails:any;
+    isRequestSent = false;
   
-    constructor(private route: ActivatedRoute, private authService:AuthService,private communicationService:CommunicationService) {
-      this.cdnPath=authService.cdnPath
+    constructor(private route: ActivatedRoute, private authService:AuthService,private location: Location,private communicationService:CommunicationService) {
       this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
     }
   
@@ -39,19 +38,21 @@ export class ViewWholesalerDetailsComponent {
        this.route.queryParams.subscribe(params => {
         this.id = params['id']; 
         this.email=params['email']    
-        
-        if (params['RequestDetails']) {
-          console.log('RequestDetails before parsing:', params['RequestDetails']);
-          try {
-            this.RequestDetails = JSON.parse(params['RequestDetails']); // Try parsing
-            console.log('Parsed RequestDetails:', this.RequestDetails); // Log the parsed object
-          } catch (error) {
-            console.error('Error parsing RequestDetails:', error);
-            this.RequestDetails = null; // Handle error
-          }
-        } else {
-          this.RequestDetails = null;
-        }
+        const wholesalerEmail = this.email; // wholsaler value
+        const requestByEmail = this.userProfile.email; // Assume userProfile is already available
+        this.checkRequestStatus(wholesalerEmail, requestByEmail);
+        // if (params['RequestDetails']) {
+        //   console.log('RequestDetails before parsing:', params['RequestDetails']);
+        //   try {
+        //     this.RequestDetails = JSON.parse(params['RequestDetails']); // Try parsing
+        //     console.log('Parsed RequestDetails:', this.RequestDetails); // Log the parsed object
+        //   } catch (error) {
+        //     console.error('Error parsing RequestDetails:', error);
+        //     this.RequestDetails = null; // Handle error
+        //   }
+        // } else {
+        //   this.RequestDetails = null;
+        // }
         // this.getBrandsOfManufacturer()
         this.getWholesalerProfileData()
        this.getRetailerProfileData() 
@@ -97,6 +98,7 @@ export class ViewWholesalerDetailsComponent {
       }
   
       sendRequestToWholesaler(){  
+        this.isRequestSent = true; // Disable the button immediately
         const requestBody={
           fullName : this.WholsellerData.fullName ,
           companyName: this.WholsellerData.companyName,
@@ -149,7 +151,6 @@ export class ViewWholesalerDetailsComponent {
       this.authService.get(`wholesaler/${this.email}`).subscribe((res: any) => {
         if (res) {
          this.WholsellerData=res
-          
         } else {
           // Handle the case where there's no datap
         }
@@ -160,5 +161,22 @@ export class ViewWholesalerDetailsComponent {
       })
     }
    
+    navigateFun() {
+      this.location.back();
+    } 
+
+    checkRequestStatus(wholesalerEmail: string, requestByEmail: string): void {
+      const url = `request/check/status-request?wholsalerEmail=${wholesalerEmail}&requestByEmail=${requestByEmail}`; 
+      this.authService.get(url).subscribe(
+        (response: any) => {
+          this.requestDetails = response.status;
+        },
+        (error) => {
+          console.error('Error checking request status:', error);
+          this.requestDetails = null; // Handle error accordingly
+        }
+      );
+    }
+    
 
 }

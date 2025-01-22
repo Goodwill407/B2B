@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angula
 import { MatTabsModule } from '@angular/material/tabs';
 import { Router } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
@@ -18,7 +19,8 @@ import { TooltipModule } from 'primeng/tooltip';
     PaginatorModule,
     TooltipModule,
     TableModule,
-    MatTabsModule
+    MatTabsModule,
+    BottomSideAdvertiseComponent
   ],
   templateUrl: './wholesaler-discount.component.html',
   styleUrl: './wholesaler-discount.component.scss'
@@ -39,6 +41,11 @@ export class WholesalerDiscountComponent {
   deleteBtnDisabled: boolean = false;
   activeTab: string = 'wholesaler'; // Track active tab
   userProfile: any;
+  bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+  'assets/images/adv/ads.jpg'
+  ];
+
 
   constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private router: Router) { }
 

@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { TableModule } from 'primeng/table';
 import { AccordionModule } from 'primeng/accordion';
 import { CommonModule } from '@angular/common';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 
 @Component({
   selector: 'app-mnf-list-challan',
@@ -13,13 +14,18 @@ import { CommonModule } from '@angular/common';
     RouterModule,
     TableModule,
     AccordionModule,
-    CommonModule
+    CommonModule,
+    BottomSideAdvertiseComponent
   ],
   templateUrl: './mnf-list-challan.component.html',
   styleUrl: './mnf-list-challan.component.scss'
 })
 export class MnfListChallanComponent {
   challan: { [key: string]: any[] } = {};  // Define the type explicitly
+  bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+  'assets/images/adv/ads.jpg'
+  ];
 
   constructor(private authService: AuthService, private route: Router, private communicationService: CommunicationService) {}
 

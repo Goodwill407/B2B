@@ -35,7 +35,11 @@ export class RequestedWholesalerListComponent {
     'https://en.pimg.jp/087/336/183/1/87336183.jpg'
   ];
 
-  bottomAdImage: string = 'https://5.imimg.com/data5/QE/UV/YB/SELLER-56975382/i-will-create-10-sizes-html5-creative-banner-ads.jpg';
+  bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+  'assets/images/adv/ads.jpg'
+  ];
+
   constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
@@ -65,5 +69,10 @@ export class RequestedWholesalerListComponent {
     this.page = event.page + 1;
     this.limit = event.rows;
     this.getAllWholesaler();
+  }
+
+  navigateToProfile(id: string,email:any,requestDetailsObject:any) {
+    // Navigate to the target route with email as query parameter
+    this.router.navigate(['/retailer/view-wholesaler-details'], { queryParams: { id: id ,email:email,RequestDetails: JSON.stringify(requestDetailsObject)} });
   }
 }

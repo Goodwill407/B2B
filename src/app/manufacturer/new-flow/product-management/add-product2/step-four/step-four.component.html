@@ -16,7 +16,7 @@
         <div *ngFor="let color of colourCollections" class="color-row3">
           <div class="color-box-container3">
             <div *ngIf="color.colourImage; else noImage">
-              <img [src]="CloudPath + color.colourImage" alt="{{ color.colourName }}" class="color-image3" title="{{ color.colourName }}" />
+              <img [src]="color.colourImage" alt="{{ color.colourName }}" class="color-image3" title="{{ color.colourName }}" />
             </div>
             <ng-template #noImage>
               <div class="color-box3" [ngStyle]="{'background-color': color.colour}" title="{{ color.colourName }}"></div>

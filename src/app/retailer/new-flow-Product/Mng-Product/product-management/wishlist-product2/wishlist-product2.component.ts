@@ -41,7 +41,11 @@ export class WishlistProduct2Component {
     'https://en.pimg.jp/087/336/183/1/87336183.jpg'
   ];
 
-  bottomAdImage: string = 'https://elmanawy.info/demo/gusto/cdn/ads/gusto-ads-banner.png';
+  bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+  'assets/images/adv/ads.jpg'
+  ];
+
   
   ngOnInit(): void {
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
@@ -95,7 +99,7 @@ export class WishlistProduct2Component {
   extractColorFromImage(product: any): void {
     const image = new Image();
     image.crossOrigin = 'Anonymous';
-    image.src = this.authService.cdnPath + product.selectedImageUrl;
+    image.src =  product.selectedImageUrl;
 
     image.onload = () => {
       const colorThief = new ColorThief();

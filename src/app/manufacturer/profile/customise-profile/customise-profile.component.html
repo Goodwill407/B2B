@@ -8,7 +8,7 @@
                         <button class="btn btn-outline-success" (click)="navigateToProfile()"><i class="bi bi-eye-fill "></i> View Profile</button>
                     </div>
                     <div class="card p-4 pt-2">
-                        <h5 class="text-center mb-0 flex-grow-1">Manufacturer's Profile</h5>
+                        <h5 class="text-center mb-0 flex-grow-1">Customize Manufacturer's Profile</h5>
                         <hr class="my-2">
                         <div class="required">*Select from the below that you want your customers to see when they
                             view your profile</div>
@@ -33,7 +33,9 @@
                                     Legal Status of Firm
                                 </div>
                                 
-                                
+                                <div class="form-check">
+                                    <input type="checkbox" formControlName="kycVerified"> KYC Status
+                                </div>
                                 <div class="form-check">
                                     <input type="checkbox" formControlName="address"> Address
                                 </div>

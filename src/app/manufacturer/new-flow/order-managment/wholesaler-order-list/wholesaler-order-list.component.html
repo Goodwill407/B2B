@@ -5,7 +5,7 @@
       <!-- If products are available, display the accordion -->
       <p-accordion [activeIndex]="0" class="card" *ngIf="products && products.length > 0">
           <ng-container *ngFor="let prod of products; let distIndex = index">
-              <p-accordionTab class="px-0" [header]="prod.wholesaler.fullName">
+              <p-accordionTab class="px-0" [header]="prod.wholesaler.companyName">
                   <div *ngFor="let group of processGroupedProducts(filteredData.set)" class="mb-4">
                       <p-table [value]="group.rows">
                           <ng-template pTemplate="header">

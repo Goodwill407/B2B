@@ -12,7 +12,7 @@
         <div class="header">
           <!-- Logo Section -->
           <div class="logo">
-              <img [src]="purchaseOrder.logoUrl" alt="Company Logo" />
+              <img [src]="purchaseOrder.logoUrl" alt="Company Logo" onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';" />
           </div>
       
           <!-- Buyer Information Container -->
@@ -106,7 +106,7 @@
         <div class="col-12">
           <div class="text-center my-3">  
             
-            <button class="btn btn-success ms-auto" (click)="addpo()">Generate Dilivery Challan </button> &nbsp;
+            <button class="btn btn-success ms-auto" (click)="addpo()">Generate Delivery Challan </button> &nbsp;
             <button class="btn btn-success ms-auto" (click)="printPurchaseOrder()">Download Purchase Order</button>
           </div>
         </div>

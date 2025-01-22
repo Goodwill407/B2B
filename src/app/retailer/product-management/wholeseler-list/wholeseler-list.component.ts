@@ -38,7 +38,7 @@ export class WholeselerListComponent {
     'https://en.pimg.jp/087/336/183/1/87336183.jpg'
   ];
 
-  bottomAdImage: string = 'https://5.imimg.com/data5/QE/UV/YB/SELLER-56975382/i-will-create-10-sizes-html5-creative-banner-ads.jpg';
+  bottomAdImage: string[] = ['https://5.imimg.com/data5/QE/UV/YB/SELLER-56975382/i-will-create-10-sizes-html5-creative-banner-ads.jpg'];
   constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {

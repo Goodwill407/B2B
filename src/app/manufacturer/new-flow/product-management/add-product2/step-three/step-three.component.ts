@@ -23,7 +23,6 @@ export class StepThreeComponent {
   @Output() next = new EventEmitter<any>();
   stepThree: FormGroup = this.fb.group({});
   submittedStep2: boolean = false; 
-  CloudPath: string = '';   
   userProfile: any;
   productDetails: any;
   selectedSizes: string[] = [];
@@ -36,9 +35,7 @@ export class StepThreeComponent {
     private router: Router,
     private communicationService:CommunicationService
 
-  ) {
-    this.CloudPath = this.authService.cdnPath;
-  }
+  ) {}
 
   ngOnInit() {
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);   

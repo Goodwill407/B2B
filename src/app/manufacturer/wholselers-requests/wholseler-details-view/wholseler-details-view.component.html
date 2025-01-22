@@ -1,63 +1,179 @@
 <section class="content">
     <div class="content-block">
       <h4 class="title mt-3">
-        <i class="bi bi-person-vcard-fill icon"></i> View Brand And Send Request
+        <i class="bi bi-person-vcard-fill icon"></i> Wholesaler's Profile
       </h4>
   
       <div class="company-profile">
-        <!-- Company Name -->
-        <h3 class="company-name">{{ CompanyData.companyName }}</h3>
-        <hr>
-  
-        <!-- Introduction -->
-        <p class="introduction">{{ CompanyData.introduction }}</p>
-        
-        <!-- Fact Sheet -->
-        <div class="fact-sheet">
-          <h4>Fact Sheet</h4>
-          <p><strong>Established :</strong> {{ CompanyData.establishDate }}</p>
-          <p><strong>Founder :</strong> {{ CompanyData.fullName }}</p>
-          <p><strong>Legal Status of Firm :</strong> {{ CompanyData.leagalStatusOfFirm }}</p>
-          <p><strong>Registered On FTH :</strong> {{ CompanyData.registerOnFTH }}</p>
-          <p><strong>GST No :</strong> {{ CompanyData.GSTIN }}</p>
-          <p><strong>CIN No :</strong> 12345</p>
-        </div>
-  
-        <!-- Contact Details -->
-        <div class="contact-details">
-          <h4>Contact Details</h4>
-          <p><strong>Address :</strong> {{ CompanyData.address }}</p>
-          <p><strong>Phone :</strong> {{ CompanyData.mobNumber }}</p>
-          <p><strong>Email :</strong> <a href="mailto:{{ CompanyData.email }}">{{ CompanyData.email }}</a></p>
-        </div>
-  
-        <!-- Social Media -->
-        <div class="social-media">
-          <h4>Social Media</h4>
-          <p><a href="{{ CompanyData.socialMedia.facebook }}" target="_blank">Facebook</a></p>
-          <p><a href="{{ CompanyData.socialMedia.instagram }}" target="_blank">Instagram</a></p>
-          <p><a href="{{ CompanyData.socialMedia.linkedin }}" target="_blank">LinkedIn</a></p>
-        </div>
-  
-        <!-- Brands Section -->
-        <div class="brands-section">
-          <h4>Our Brands</h4>
-          <div class="brand-list">
-            <!-- <div *ngFor="let brand of brandsDetails">
-              <div class="brand-item">
-                <img [src]="cdnPath + brand.brandLogo" [alt]="brand.brandName" />            
-              </div>
-              <div class="brand-name text-center mt-2"><strong>{{ brand.brandName }}</strong></div>
-            </div> -->
-          </div>
-        </div>    
-        <hr>
-  
-          <!-- Add Request Button -->
-          <div class="button-container">
-            <button class="add-request-button" (click)="acceptWholselerRequest()">Accept Request</button>
-          </div>
-      </div>
+        <!-- Company Profile Card -->
+        <!-- <div class="card p-4 pt-2"> -->
+            <h5 class="mb-0 flex-grow-1">
+                <button class="btn text-start" (click)="navigateFun()">
+                    <i class="bi bi-arrow-left-circle h4"></i>
+                </button>
+                <span class="text-center" style="margin-left: 474px;">{{ CompanyData.companyName }}</span>
+            </h5>
+            <hr class="mt-2">
+    
+            <div class="row">
+                <!-- Company Name -->
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                    <label class="label-input">Company/Firm Name :- {{ CompanyData.companyName }}</label>
+                </div>
+    
+                <!-- Founder Name -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Founder :- {{ CompanyData.fullName }}</label>
+                </div>
+    
+                <!-- Establishment Date -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Established :- {{ CompanyData.establishDate | date: 'MMM d, y'  }}</label>
+                    <!-- <span class="form-control-static"></span> -->
+                </div>
+    
+                <!-- Legal Status -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Legal Status of Firm :- {{ CompanyData.leagalStatusOfFirm }}</label>
+                    <!-- <span class="form-control-static">{{ CompanyData.leagalStatusOfFirm }}</span> -->
+                </div>
+    
+                <!-- Registered on FTH -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Registered On FTH :- {{ CompanyData.registerOnFTH | date: 'MMM d, y'  }}</label>
+                    <!-- <span class="form-control-static">{{ CompanyData.registerOnFTH }}</span> -->
+                </div>
+    
+                <!-- GST Number -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">GST No :- {{ CompanyData.GSTIN }}</label>
+                    <!-- <span class="form-control-static">{{ CompanyData.GSTIN }}</span> -->
+                </div>
+    
+                <!-- Pan Number -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">PAN No :- {{ CompanyData.pan }}</label>
+                    
+                </div>
+                <!-- Phone -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Phone :- {{ CompanyData.mobNumber }} </label>
+                    <!-- <span class="form-control-static"></span> -->
+                </div>
+    
+                <!-- Email -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Email :-  <a href="mailto:{{ CompanyData.email }}">
+                        {{ CompanyData.email }}</a></label>               
+                </div>
+                <!-- Phone -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Alt Phone :- {{ CompanyData.mobNumber2 }} </label>
+                    <!-- <span class="form-control-static"></span> -->
+                </div>
+    
+                <!-- Email -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Alt Email :-  <a href="mailto:{{ CompanyData.email }}">
+                        {{ CompanyData.email2 }}</a></label>               
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">City :- {{ CompanyData.city }} </label>
+                    <!-- <span class="form-control-static"></span> -->
+                </div>
+    
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">State :-  {{ CompanyData.state }}</label>               
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Zip / Pin Code :-  {{ CompanyData.pinCode }}</label>               
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Country  :-  {{ CompanyData.country }}</label>               
+                </div>
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                    <label class="label-input">Address :- {{ CompanyData.address }}</label>
+                    <!-- <span class="form-control-static">{{ CompanyData.address }}</span> -->
+                </div>
+            </div>
+    
+            <!-- Contact Details Section -->
+           
+    
+            <!-- Social Media Section -->
+            <h5 class="mb-0 mt-4">Social Media</h5>
+            <div class="row">
+                <!-- Facebook -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                        <label class="label-input">Facebook :- <a href="{{ CompanyData.socialMedia.facebook }}" target="_blank">Facebook</a> </label>
+                </div>
+    
+                <!-- Instagram -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                        <label class="label-input">Instagram :- <a href="{{ CompanyData.socialMedia.instagram }}" target="_blank">Instagram</a></label>
+                </div>
+    
+                <!-- LinkedIn -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">LinkedIn :- <a href="{{ CompanyData.socialMedia.linkedIn }}" target="_blank">LinkedIn</a></label>
+                </div>
+    
+                <!-- Company Website -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Company Website :- <a href="{{ CompanyData.socialMedia.webSite }}" target="_blank">{{ CompanyData.socialMedia.webSite }}</a></label>
+                </div>
+            </div>
+
+            <h5 class="mb-0 mt-4">Bank Account Details</h5>
+            <div class="row">
+
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                        <label class="label-input">Account Number :- {{ CompanyData.BankDetails.accountNumber }}</label>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Account Type :- {{ CompanyData.BankDetails.accountType }}</label>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">Bank Name :- {{ CompanyData.BankDetails.bankName }}</label>
+                 </div>
+                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">IFSC Code :- {{ CompanyData.BankDetails.IFSCcode }}</label>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                    <label class="label-input">Country :- {{ CompanyData.BankDetails.country }}</label>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                    <label class="label-input">City  :- {{ CompanyData.BankDetails.city }}</label>
+                 </div>
+                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                    <label class="label-input">Branch Name :- {{ CompanyData.BankDetails.branch }}</label>
+                </div>
+            </div>
+    
+            <!-- Brands Section -->
+            <!-- <h5 class="mb-0 mt-4">Our Brands</h5>
+            <div class="row"> -->
+                <!-- Add brand details if available -->
+                <!-- <div class="brand-list"> -->
+                    <!-- Iterate over brands if available -->
+                    <!-- <div *ngFor="let brand of brandsDetails">
+                        <div class="brand-item">
+                            <img [src]="brand.brandLogo" [alt]="brand.brandName" />            
+                        </div>
+                        <div class="brand-name text-center mt-2"><strong>{{ brand.brandName }}</strong></div>
+                    </div> -->
+                <!-- </div> -->
+            <!-- </div> -->
+    
+            <hr>
+    
+            <!-- Action Button -->
+            <div class="button-container">
+                <button class="add-request-button" [hidden]="btnHidden" (click)="acceptWholselerRequest()">Accept Request</button>
+            </div>
+        <!-- </div> -->
+    </div>    
+    
     </div>
   </section>
   

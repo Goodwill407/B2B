@@ -1,8 +1,10 @@
 import { CommonModule,Location, NgFor, NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
+import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.component';
 
 @Component({
   selector: 'app-view-wholeseler-product',
@@ -21,7 +23,9 @@ export class ViewWholeselerProductComponent {
   wishlist: boolean = false;
   quantity: any;
   hoveredColourName: string = '';
-  constructor(private location: Location, private route: ActivatedRoute, public authService: AuthService, private fb: FormBuilder, private communicationService: CommunicationService) { }
+  constructor(private location: Location,private renderer: Renderer2, private route: ActivatedRoute, public authService: AuthService, private fb: FormBuilder, private communicationService: CommunicationService,private dialog: MatDialog) { }
+ @ViewChild('mainImage') mainImage!: ElementRef; // Reference to the main image element
+   zoomed: boolean = false;
   WholeselerEmail: any;
   product: any;
   selectedMedia: any;
@@ -53,9 +57,9 @@ export class ViewWholeselerProductComponent {
   }
 
   getProductDetails(id: any) {
-    this.authService.get('wholesaler-price-type2/retailer-product/' + id).subscribe((res: any) => {
+    this.authService.get(`wholesaler-price-type2/retailer-product/wholesaler-wise?productId=${id}&wholesalerEmail=${this.WholeselerEmail}`).subscribe((res: any) => {
       this.designno = res.product.designNumber;
-  
+      console.log(res);
       if (res) {
         const productData = res.product;
         const retailerPriceData = res.retailerPrice;
@@ -68,6 +72,7 @@ export class ViewWholeselerProductComponent {
           subCategory: productData.subCategory,
           gender: productData.gender,
           title: productData.productTitle,
+          FSIN: res.product.FSIN,
           description: productData.productDescription,
           material: productData.material,
           materialVariety: productData.materialvariety,
@@ -297,12 +302,46 @@ export class ViewWholeselerProductComponent {
     )
   }
 
-  onHoverColour(colour: any) {
-    this.hoveredColourName = this.selectedColourName; // Save the current selected name to revert later
-    this.selectedColourName = colour.name; // Set the name to the hovered color name
-  }
-
-  onLeaveColour() {
-    this.selectedColourName = this.hoveredColourName; // Revert to the original selected name when hover is removed
-  }
+   zoomImage(event: MouseEvent) {
+       const imageElement = this.mainImage?.nativeElement; // Get the native image element
+   
+       if (!imageElement) {
+         console.error('Image element not found.');
+         return;
+       }
+       this.renderer.setStyle(imageElement, 'transform', `scale(1.8)`);
+       this.renderer.setStyle(imageElement, 'cursor', 'zoom-in');
+       this.renderer.setStyle(imageElement, 'transform-origin', `${event.offsetX}px ${event.offsetY}px`);
+     }
+   
+     resetZoom(event: MouseEvent) {
+       const imageElement = this.mainImage?.nativeElement; // Get the native image element
+   
+       if (!imageElement) {
+         console.error('Image element not found.');
+         return;
+       }
+   
+       this.renderer.setStyle(imageElement, 'transform', 'none');
+       this.renderer.setStyle(imageElement, 'cursor', 'default');
+     }
+   
+     openImg(path: any, size: number) {
+       const dialogRef = this.dialog.open(ImageDialogComponent, {
+         // width: size+'px',
+         data: { path: path, width: size },  // Pass the current product data
+         width: '90%', // Set the desired width
+         height: '90%', // Set the desired height
+         maxWidth: '90vw', // Maximum width to prevent overflow
+         maxHeight: '90vh' // Maximum height to prevent overflow
+       });
+     }
+     onHoverColour(colour: any) {
+       this.hoveredColourName = this.selectedColourName; // Save the current selected name to revert later
+       this.selectedColourName = colour.name; // Set the name to the hovered color name
+     }
+   
+     onLeaveColour() {
+       this.selectedColourName = this.hoveredColourName; // Revert to the original selected name when hover is removed
+     }
 }

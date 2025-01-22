@@ -7,12 +7,15 @@ import jsPDF from 'jspdf';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 import {  RouterModule } from '@angular/router';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 @Component({
   selector: 'app-retailor-po',
   standalone: true,
   imports: [ CommonModule,
     TableModule,
-    PaginatorModule,RouterModule],
+    PaginatorModule,RouterModule,
+    BottomSideAdvertiseComponent
+  ],
   templateUrl: './retailor-po.component.html',
   styleUrl: './retailor-po.component.scss'
 })
@@ -46,6 +49,11 @@ export class RetailorPoComponent {
   first: number = 0;
   rows: number = 10;
   isNewPO: boolean = false;
+  bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+  'assets/images/adv/ads.jpg'
+  ];
+
 
   constructor(private route: ActivatedRoute, private authService: AuthService, private communicationService: CommunicationService) { }
 
@@ -66,7 +74,7 @@ export class RetailorPoComponent {
               supplierContact: `${res.wholesaler.mobNumber}`,
               supplierGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
               buyerName: res.retailer.companyName,
-              logoUrl: this.authService.cdnPath + res.retailer.profileImg,
+              logoUrl: res.retailer.profileImg,
               buyerAddress: `${res.retailer.address}, ${res.retailer.city}, ${res.retailer.state} - ${res.retailer.pinCode}`,
               buyerPhone: res.retailer.mobNumber,
               buyerEmail: res.retailer.email,

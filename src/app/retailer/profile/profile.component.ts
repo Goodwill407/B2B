@@ -21,7 +21,7 @@ import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.com
     BottomSideAdvertiseComponent,
     RightSideAdvertiseComponent,
     DatePipe,
-    KycUploadComponent
+    KycUploadComponent,
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
@@ -61,6 +61,11 @@ export class ProfileComponent {
     "Private Limited",
     "Limited"
   ]
+
+  bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+  'assets/images/adv/ads.jpg'
+  ];
 
   ngOnInit(): void {
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);

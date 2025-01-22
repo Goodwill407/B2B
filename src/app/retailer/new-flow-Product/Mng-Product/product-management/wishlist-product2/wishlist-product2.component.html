@@ -16,7 +16,7 @@
                             Design No : {{product.designNo}}
                           </div>
                           <div class="image-carousel">
-                            <img class="main-img" [src]="authService.cdnPath + product.selectedImageUrl" alt="{{product.title}}"   [routerLink]="['/retailer/new/wishlistproducts',{id: product.productId}]">
+                            <img class="main-img" [src]="product.selectedImageUrl" alt="{{product.title}}"   [routerLink]="['/retailer/new/wishlistproducts',{id: product.productId}]">
                             <div class="carousel-dots">
                               <span *ngFor="let img of product.selectedImageUrls; let i = index" [class.active]="i === product.hoverIndex" (click)="navigateToImage(product, i)"></span>
                             </div>
@@ -44,13 +44,13 @@
           </div>
 
             <!-- Right-Side Ads Container -->
-            <div class="ads-right mt-0">
+            <!-- <div class="ads-right mt-0">
                 <app-right-side-advertise [imageUrls]="rightAdImages"></app-right-side-advertise>
-            </div>
+            </div> -->
         </div>
 
         <!-- Bottom-Side Ad Container -->
-        <div class="ads-bottom mb-3">
+        <div class=" mb-3">
             <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
         </div>
     </div>

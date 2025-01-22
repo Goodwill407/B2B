@@ -32,9 +32,9 @@
                 <div class="image-carousel">
                   <img 
                     class="main-img" 
-                    [src]="authService.cdnPath + product.selectedImageUrl" 
+                    [src]="product.selectedImageUrl" 
                     alt="{{ product.title }}" 
-                    [routerLink]="['/wholesaler/new/product/view-product', { id: product.id }]">
+                    [routerLink]="['/wholesaler/new/Price/Priceproedit', { id: product.id }]">
                   <div *ngIf="product.status === 'Done'" class="verified-badge">
                     Price Added
                   </div>
@@ -46,7 +46,7 @@
                     </span>
                   </div>
                 </div>
-                <div class="product-details">
+                <div class="product-details">`  
                   <div class="color-options mt-0">
                     <button 
                       *ngFor="let color of product.colors"

@@ -25,6 +25,9 @@
                       <td class="text-center">{{allWholesaler.mobileNumber}}</td>
                       <td class="text-center">{{allWholesaler.email}}</td>                     
                       <td class="text-center text-warning">
+                        <button class="btn btn-icon p-2" pTooltip="View Profile" (click)="navigateToProfile(allWholesaler.id, allWholesaler.email, allWholesaler.requestDetails)"  tooltipPosition="top">
+                          <i class="fas fa-eye"></i>
+                        </button> 
                         {{allWholesaler.status == 'rejected'?'Pending':"Pending"}}
                       </td>
                     </tr>
@@ -42,13 +45,13 @@
         </div>
 
            <!-- Right-Side Ads Container -->
-      <div class="ads-right">
+      <!-- <div class="ads-right">
         <app-right-side-advertise [imageUrls]="rightAdImages"></app-right-side-advertise>
-      </div>
+      </div> -->
     </div>
 
     <!-- Bottom-Side Ad Container -->
-    <div class="ads-bottom mb-3">
+    <div class="mb-3">
       <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
     </div>
 

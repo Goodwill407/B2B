@@ -8,7 +8,7 @@
             <div class="header">
               <!-- Logo Section -->
               <div class="logo">
-                  <img [src]="purchaseOrder.logoUrl" alt="Company Logo" />
+                  <img [src]="purchaseOrder.logoUrl" alt="Company Logo" onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';"/>
               </div>
           
               <!-- Buyer Information Container -->
@@ -103,13 +103,13 @@
             
           </div>
   
-      <div class="row">
+      <!-- <div class="row">
         <div class="col-12">
           <div class="text-center my-3">
             <button class="btn btn-success" (click)="addpo()">Generate Purchase Order</button>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </section>
   

@@ -44,7 +44,6 @@ export class RequestToManufacturerComponent {
 
 
   brandData:any[]=[];
-  cdnPath:any
   SearchBrand:any;
   dataType:any;
   productTypeWise: any[] = [];
@@ -57,14 +56,17 @@ export class RequestToManufacturerComponent {
     'https://en.pimg.jp/087/336/183/1/87336183.jpg'
   ];
 
-  bottomAdImage: string = 'https://elmanawy.info/demo/gusto/cdn/ads/gusto-ads-banner.png';
+  bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+  'assets/images/adv/ads.jpg'
+  ];
+
 
   constructor(private authService:AuthService, private route:Router, private communicationService:CommunicationService, private elementRef: ElementRef,private spinner: NgxSpinnerService ){
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
   }
 
   ngOnInit(){
-    this.cdnPath = this.authService.cdnPath;
     this.getAllBrands()
     this.getProductType()
     this.getProductType()

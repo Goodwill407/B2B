@@ -1,0 +1,145 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="default" color="#fff" type="square-jelly-box" [fullScreen]="true">
+    <p style="color: rgb(242, 94, 94)"> Loading... </p>
+</ngx-spinner>
+<section class="content">
+    <div class="content-block">
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> CDN</h4>
+        <div class="card p-3 add-brand-form">
+            <h5 class="">CDN Management</h5>
+            <hr class="mt-0">
+            <form [formGroup]="brandForm" (ngSubmit)="onSubmit()">
+                <div class="w-75">
+                    <label for="bucketName" class="label-input">Bucket Name<span>*</span>:</label>
+                    <input type="text" id="bucketName" formControlName="bucketName" class="form-control" />
+                    <div *ngIf="brandForm.get('bucketName')?.touched && brandForm.get('bucketName')?.invalid"
+                        class="text-danger">
+                        bucketName is required.
+                    </div>
+                </div>
+                <div class="w-75">
+                    <label for="region" class="label-input">Region<span>*</span>:</label>
+                    <input type="text" id="region" formControlName="region" class="form-control" />
+                    <div *ngIf="brandForm.get('region')?.touched && brandForm.get('region')?.invalid"
+                        class="text-danger">
+                        region is required.
+                    </div>
+                </div>
+                <div class="w-75">
+                    <label for="accessKey" class="label-input">Access Key<span>*</span>:</label>
+                    <input type="text" id="accessKey" formControlName="accessKey" class="form-control" />
+                    <div *ngIf="brandForm.get('accessKey')?.touched && brandForm.get('accessKey')?.invalid"
+                        class="text-danger">
+                        accessKey is required.
+                    </div>
+                </div>
+                <div class="w-75">
+                    <label for="secreteKey" class="label-input">Secrete Key<span>*</span>:</label>
+                    <input type="text" id="secreteKey" formControlName="secreteKey" class="form-control" />
+                    <div *ngIf="brandForm.get('secreteKey')?.touched && brandForm.get('secreteKey')?.invalid"
+                        class="text-danger">
+                        secreteKey is required.
+                    </div>
+                </div>
+
+            
+
+                <div class="form-group text-center mt-3">
+                    <button type="submit" class="btn submit-btn" [disabled]="brandForm.invalid">
+                        {{formType}}
+                    </button>
+                    <button type="button" class="btn cancel-btn ms-2" (click)="resetForm()">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- table -->
+        <div class="card p-3">
+            <h5 class="mt-2">CDN List:</h5>
+            <hr>
+            <div class="p-grid p-fluid ">
+                <div class="p-col-12 text-center">
+                    <p-table [value]="distributors">
+                        <ng-template pTemplate="header">    
+                            <tr>
+                                <th>CDN Name</th>
+                                <th>Region</th>
+                                <th>Usage</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </ng-template>
+                        <br>
+                        <ng-template pTemplate="body" let-distributor>
+                            <tr>
+                                <td class="text-center py-0">
+                                  <input
+                                    type="text"
+                                    class="form-control-sm"
+                                    [(ngModel)]="distributor.bucketName"
+                                    name="bucketName"
+                                    style="width: 160px; height: 25px;"
+                                  />
+                                </td>
+                                <td class="text-center py-0">
+                                  <input
+                                    type="text"
+                                    class="form-control-sm"
+                                    [(ngModel)]="distributor.region"
+                                    name="region"
+                                    style="width: 160px; height: 25px;"
+                                  />
+                                </td>
+                                <td>
+                                  <div class="progress-bar-container">
+                                    <div
+                                      class="progress-bar-used"
+                                      [style.width]="getUsedPercentage(distributor.bucketDetails) + '%'"
+                                    ></div>
+                                    <div class="progress-bar-text">
+                                      {{ distributor.bucketDetails.usedSizeInGB | number: '1.0-2' }} GB /
+                                      {{ distributor.bucketDetails.totalSizeInGB | number: '1.0-2' }} GB
+                                    </div>
+                                  </div>
+                                </td>
+                                <td class="text-center py-0">
+                                  <label class="switch">
+                                    <input
+                                      type="checkbox"
+                                      [checked]="distributor.status === 'active'"
+                                      (change)="toggleStatus(distributor)"
+                                    />
+                                    <span class="slider round"></span>
+                                  </label>
+                                </td>
+                                <td class="py-0">
+                                    <button
+                                    class="btn btn-icon p-2"
+                                    (click)="deleteData(distributor.id)"
+                                    pTooltip="Delete"
+                                    tooltipPosition="top">
+                                    <i class="fas fa-trash-alt"></i>
+                                  </button>
+                                  <button
+                                    class="btn btn-icon p-2"
+                                    (click)="updateData(distributor)"
+                                    pTooltip="Save Changes"
+                                    tooltipPosition="top"
+                                  >
+                                    <i class="fas fa-check"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                              
+                          </ng-template>
+                          
+                          
+                    </p-table>
+                    <p-paginator *ngIf="distributors && distributors.length > 5" (onPageChange)="onPageChange($event)"
+                        [first]="first" [rows]="rows" [totalRecords]="totalResults"
+                        [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

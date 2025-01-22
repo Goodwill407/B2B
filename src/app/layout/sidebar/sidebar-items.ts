@@ -1094,68 +1094,7 @@ export const ROUTES: RouteInfo[] = [
   // ----------------------- Student Modules ---------------------
 
  
-  // {
-  //   path: '',
-  //   title: 'User Management',
-  //   iconType: 'material-icons-outlined',
-  //   icon: 'group_add',
-  //   class: 'menu-toggle',
-  //   groupTitle: false,
-  //   badge: '',
-  //   badgeClass: '',
-  //   role: ['superadmin'],
-  //   submenu: [
-      
-  //     {
-  //       path: '/users/cluster',
-  //       title: 'Cluster Users',
-  //       iconType: '',
-  //       icon: '',
-  //       class: 'ml-menu',
-  //       groupTitle: false,
-  //       badge: '',
-  //       badgeClass: '',
-  //       role: [],
-  //       submenu: [],
-  //     },
-  //     // {
-  //     //   path: '/users/district',
-  //     //   title: 'District Users',
-  //     //   iconType: '',
-  //     //   icon: '',
-  //     //   class: 'ml-menu',
-  //     //   groupTitle: false,
-  //     //   badge: '',
-  //     //   badgeClass: '',
-  //     //   role: [''],
-  //     //   submenu: [],
-  //     // },
-  //     {
-  //       path: '/users/trainer',
-  //       title: 'Career Counsellor',
-  //       iconType: '',
-  //       icon: '',
-  //       class: 'ml-menu',
-  //       groupTitle: false,
-  //       badge: '',
-  //       badgeClass: '',
-  //       role: [''],
-  //       submenu: [],
-  //     },
-  //     {
-  //       path: '/users/skill-trainer',
-  //       title: 'Life Skill Trainer',
-  //       iconType: '',
-  //       icon: '',
-  //       class: 'ml-menu',
-  //       groupTitle: false,
-  //       badge: '',
-  //       badgeClass: '',
-  //       role: [''],
-  //       submenu: [],
-  //     },
-  //   ],
-  // },
+ 
   
 ];
 export const ROUTES2: RouteInfo[] = [
@@ -2198,7 +2137,7 @@ export const ROUTES2: RouteInfo[] = [
       },  
       {
         path: '/wholesaler/order-mng/retailormanpo',
-        title: 'Retailer-Manifacturer-Po',
+        title: 'Retailer-Manufacturer-Po',
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -2321,6 +2260,29 @@ export const ROUTES2: RouteInfo[] = [
       }, 
     ],
   },
- 
+  {
+    path: '/super/Super-dashboard',
+    title: `Dashboard`,
+    iconType: 'material-icons-outlined',
+    icon: 'space_dashboard',
+    class: '',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['superadmin'],
+    submenu: []
+  }, 
+  {
+    path: '/super/CDN-Mng',
+    title: `CDN Management`,
+    iconType: 'material-icons-outlined',
+    icon: 'space_dashboard',
+    class: '',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['superadmin'],
+    submenu: []
+  }, 
   
 ];

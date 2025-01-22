@@ -1,6 +1,6 @@
 <section class="content">
     <div class="content-block">
-        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> {{isNewPO?'Generate PO':'PO List'}}</h4>
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> {{isNewPO?'Generate PO':'Retailer PO List'}}</h4>
         <div class="card mt-3 p-4">
             <div class="p-grid p-fluid">
                 <div class="p-col-12 text-center">
@@ -35,5 +35,8 @@
                 </div>
             </div>
         </div>
+        <div class=" mb-3">
+            <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
+          </div>      
     </div>
 </section>

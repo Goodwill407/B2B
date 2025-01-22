@@ -15,7 +15,7 @@
         <div id="purchase-order" class="challan-container card my-2">
             <div class="header">
                 <div class="logo">
-                    <img [src]="purchaseOrder.logoUrl" alt="Company Logo">
+                    <img [src]="purchaseOrder.logoUrl" alt="Company Logo" onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';">
                 </div>
                 <div class="company-info ms-4">
                     <h1>{{ purchaseOrder.buyerName }}</h1>
@@ -145,5 +145,9 @@
             </div>
         </div>
         }
+        <div class=" mb-3">
+            <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
+          </div>
+      
     </div>
 </section>

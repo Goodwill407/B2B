@@ -1,63 +1,91 @@
 <section class="content">
-    <div class="content-block">
-        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i>&nbsp; Add To Cart Products</h4>
+  <div class="content-block">
+    <h4 class="mt-4">
+      <i class="bi bi-person-vcard-fill h3"></i>&nbsp; Add To Cart Products
+    </h4>
 
-        <!-- If products are available, display the accordion -->
-        <p-accordion [activeIndex]="0" class="card" *ngIf="products && products.length > 0">
-            <ng-container *ngFor="let prod of products; let distIndex = index">
-                <p-accordionTab class="px-0" [header]="prod.wholesaler.fullName">
-                    <div *ngFor="let group of processGroupedProducts(prod.set)" class="mb-4">
-                        <p-table [value]="group.rows">
-                            <ng-template pTemplate="header">
-                                <tr>
-                                    <th>Design No</th>
-                                    <th>Colour</th>
-                                    <th *ngFor="let size of sizeHeaders">
-                                        {{ size }} <br>
-                                        <span *ngIf="isSizeAvailable(group.rows, size)">
-                                            {{ priceHeaders[size] | currency: 'INR' }}
-                                        </span>
-                                        <span *ngIf="!isSizeAvailable(group.rows, size)">
-                                            N/A
-                                        </span>
-                                    </th>
-                                    <th>Price</th>
-                                </tr>
-                            </ng-template>
-                            <ng-template pTemplate="body" let-row>
-                                <tr>
-                                    <td>{{ group.designNumber }}</td>
-                                    <td>
-                                        <img *ngIf="row.colourImage" [src]="'https://lmscontent-cdn.blr1.digitaloceanspaces.com' + row.colourImage" alt="Colour Image" width="50" height="50" />
-                                        <span *ngIf="!row.colourImage" [ngStyle]="{'background-color': row.colour || '#ffffff'}" style="width: 50px; height: 50px; display: inline-block; text-align: center; line-height: 50px; color: #fff; border-radius: 4px;">
-                                        </span>
-                                    </td>
-                                    <td *ngFor="let size of sizeHeaders">
-                                        {{ row.quantities[size] > 0 ? row.quantities[size] : 'N/A' }}
-                                    </td>
-                                    <td>{{ calculateTotalPrice(row) | currency: 'INR' }}</td>
-                                </tr>
-                            </ng-template>
-                        </p-table>
-                    </div>
-                    <hr>
-                    <div class="d-flex align-items-center">
-                        <div class="totals">
-                            <p class="mb-1 fw-bold">Total Sub Total : {{ Totalsub | currency: 'INR' }}</p>
-                            <p class="mb-1 fw-bold">Total GST (18%) : {{ gst | currency: 'INR' }}</p>
-                            <p class="mb-1 fw-bold">Total Grand Total : {{ totalGrandTotal | currency: 'INR' }}</p>
-                        </div>
-                        <button class="btn btn-success mx-auto" (click)="placeOrder(prod)">
-                            <i class="bi bi-cart-check"></i> Purchase Order
-                        </button>
-                    </div>
-                </p-accordionTab>
-            </ng-container>
-        </p-accordion>
+    <!-- If products are available, display the accordion -->
+    <p-accordion [activeIndex]="0" class="card" *ngIf="products && products.length > 0">
+      <ng-container *ngFor="let prod of products">
+        <p-accordionTab class="px-0" [header]="prod.wholesaler.fullName">
+          <div *ngFor="let group of prod.groupedProducts" class="mb-4">
+            <p-table [value]="group.rows">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Design No</th>
+                  <th>Colour</th>
+                  <th *ngFor="let size of sizeHeaders">
+                  {{ size }} <br />
+                  <span *ngIf="priceHeaders[prod.wholesaler.fullName] && priceHeaders[prod.wholesaler.fullName][group.designNumber] && priceHeaders[prod.wholesaler.fullName][group.designNumber][size]">
+                    ₹{{ priceHeaders[prod.wholesaler.fullName][group.designNumber][size] | number:'1.2-2' }}
+                  </span>
+                  <span *ngIf="!priceHeaders[prod.wholesaler.fullName] || !priceHeaders[prod.wholesaler.fullName][group.designNumber][size]">
+                    N/A
+                  </span>
+                </th>
+                  <th>Price</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-row>
+                <tr>
+                  <td>{{ group.designNumber }}</td>
+                  <td>
+                    <img *ngIf="row.colourImage" [src]="row.colourImage" alt="Colour Image" width="50" height="50" />
+                    <span
+                      *ngIf="!row.colourImage"
+                      [ngStyle]="{ 'background-color': row.colour || '#ffffff' }"
+                      style="width: 50px; height: 50px; display: inline-block; text-align: center; line-height: 50px; color: #fff; border-radius: 4px;"
+                    ></span>
+                  </td>
+                  <td *ngFor="let size of sizeHeaders">
+                    {{ row.quantities[size] > 0 ? row.quantities[size] : 'N/A' }}
+                  </td>
+                  <td>{{ row.totalPrice | currency: 'INR' }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+          <hr />
+          <div class="d-flex align-items-center">
+            <div class="totals" *ngIf="wholesalerTotals[prod.wholesaler.fullName]">
+                <p class="mb-1 fw-bold">
+                    Total Sub Total: {{ wholesalerTotals[prod.wholesaler.fullName].subtotal | currency: 'INR' }}
+                </p>
+                <ng-container *ngIf="wholesalerTotals[prod.wholesaler.fullName].sgst !== undefined">
+                    <p class="mb-1 fw-bold">
+                        SGST (9%): {{ wholesalerTotals[prod.wholesaler.fullName].sgst | currency: 'INR' }}
+                    </p>
+                    <p class="mb-1 fw-bold">
+                        CGST (9%): {{ wholesalerTotals[prod.wholesaler.fullName].cgst | currency: 'INR' }}
+                    </p>
+                </ng-container>
+                <ng-container *ngIf="wholesalerTotals[prod.wholesaler.fullName].igst !== undefined">
+                    <p class="mb-1 fw-bold">
+                        IGST (18%): {{ wholesalerTotals[prod.wholesaler.fullName].igst | currency: 'INR' }}
+                    </p>
+                </ng-container>
+                <p class="mb-1 fw-bold">
+                    Total GST: {{ wholesalerTotals[prod.wholesaler.fullName].gst | currency: 'INR' }}
+                </p>
+                <p class="mb-1 fw-bold">
+                    Total Grand Total: {{ wholesalerTotals[prod.wholesaler.fullName].grandTotal | currency: 'INR' }}
+                </p>
+            </div>
+            
+            <button class="btn btn-success mx-auto" (click)="placeOrder(prod)">
+              <i class="bi bi-cart-check"></i> Purchase Order
+            </button>
+          </div>
+        </p-accordionTab>
+      </ng-container>
+    </p-accordion>
 
-        <!-- Display 'No data found' message if products array is empty -->
-        <div *ngIf="!products || products.length === 0" class="no-data-found">
-            <p>No data found</p>
-        </div>
+    <!-- Display 'No data found' message if products array is empty -->
+    <div *ngIf="!products || products.length === 0" class="no-data-found">
+      <p>No Product Added in Cart</p>
     </div>
+    <div class="mb-3">
+      <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
+    </div>
+  </div>
 </section>

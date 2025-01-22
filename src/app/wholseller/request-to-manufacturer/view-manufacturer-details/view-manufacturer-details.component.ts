@@ -20,13 +20,17 @@ export class ViewManufacturerDetailsComponent implements OnInit {
   email: any;
   CompanyData: any;
   brandsDetails: any;
-  cdnPath: any;
   userProfile: any;
+  requestByEmail:any;
   WholsellerData: any;
   allVisabilityData: any;
   id: any;
-  RequestDetails: any;
+  manufacturerEmail: any;
+  // RequestDetails: any;
   OnlyForView: any;
+  isRequestSent: boolean = false; // Disable button after a request is sent
+  requestDetails: string | null = null; // Tracks the request status ('pending', 'rejected', or 'accepted')
+
 
   constructor(
     private spinner: NgxSpinnerService,
@@ -36,31 +40,41 @@ export class ViewManufacturerDetailsComponent implements OnInit {
     private dialog: MatDialog,
     private location: Location
   ) {
-    this.cdnPath = authService.cdnPath;
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
   }
 
   ngOnInit(): void {
     // Access the query parameters
     this.route.queryParams.subscribe(params => {
+      
       console.log('Received query params:', params);
-
+      
       this.id = params['id'];
       this.email = params['email'];
       this.OnlyForView = params['isForView'];
-
+      const manufacturerEmail = this.email; // wholsaler value
+      const requestByEmail = this.userProfile.email; // Assume userProfile is already available
       // Parse RequestDetails
-      if (params['RequestDetails']) {
-        try {
-          this.RequestDetails = JSON.parse(params['RequestDetails']);
-          console.log('Parsed RequestDetails:', this.RequestDetails);
-        } catch (error) {
-          console.error('Error parsing RequestDetails:', error);
-          this.RequestDetails = null;
+      // if (params['RequestDetails']) {
+      //   try {
+      //     this.requestDetails = JSON.parse(params['RequestDetails']);
+      //     console.log('Parsed RequestDetails:', this.requestDetails);
+      //   } catch (error) {
+      //     console.error('Error parsing RequestDetails:', error);
+      //     this.requestDetails = null;
+      //   }
+      // } else {
+      //   this.requestDetails = null;
+      // }
+
+      this.route.queryParams.subscribe(params => {
+        const requestDetailsString = params['RequestDetails'];
+        if (requestDetailsString) {
+          const requestDetailsObject = JSON.parse(requestDetailsString); // Parse the JSON string
+          this.requestDetails = requestDetailsObject.status;
+          console.log(' RequestDetails:', this.requestDetails);
         }
-      } else {
-        this.RequestDetails = null;
-      }
+      });
 
       this.getManufacturerData();
       this.getBrandsOfManufacturer();
@@ -71,6 +85,11 @@ export class ViewManufacturerDetailsComponent implements OnInit {
       } else {
         this.getMnfIdForData();
       }
+      
+     
+    this.checkRequestStatus(manufacturerEmail,requestByEmail);
+      // console.log("mfgemail",manufacturerEmail)
+      // console.log("email",requestByEmail)
     });
   }
 
@@ -83,6 +102,22 @@ export class ViewManufacturerDetailsComponent implements OnInit {
     }, error => {
       console.error('Error fetching manufacturer data:', error);
     });
+  }
+
+  // Method to check the current request status (mock implementation)
+  checkRequestStatus(manufacturerEmail: string, requestByEmail: string): void {
+    const url = `request/check/status-request?wholsalerEmail=${manufacturerEmail}&requestByEmail=${requestByEmail}`;
+    console.log("mfgemail",manufacturerEmail)
+    console.log("email",requestByEmail)
+    this.authService.get(url).subscribe(
+      (response: any) => {
+        this.requestDetails = response.status; // 'pending', 'accepted', 'rejected', or null
+      },
+      (error) => {
+        console.error('Error fetching request status:', error);
+        this.requestDetails = null; // Handle error accordingly
+      }
+    );
   }
 
   // Fetch brands data for the manufacturer

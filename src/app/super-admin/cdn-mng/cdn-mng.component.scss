@@ -1,0 +1,212 @@
+$btn-primary-color: #5061bc;
+$btn-secondary-color: #8595eb;
+
+.file-upload-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 20px;
+    gap: 15px;
+  
+    .form-control {
+      height: fit-content;
+    }
+  
+    button {
+      height: 42px;
+      width: 28%;
+      font-size: 13px !important;
+    }
+  }
+  
+  .download-template-container {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+  
+    button {
+      height: 42px;
+      width: 50%;
+      font-size: 13px !important;
+    }
+  }
+  
+  .buttons-container {
+    margin-top: 20px;
+  
+    .btn {
+      margin-right: 10px;
+    }
+  }
+  
+
+.btn-secondary-type {
+  border: 1px solid var(--gray-01);
+  background-color: $btn-primary-color;
+  color: #fff;
+}
+
+.btn-secondary-type:hover,
+.btn-secondary-type:active,
+:not(.btn-check)+.btn:active,
+.btn-secondary-type:first-child:active {
+  border: 1px solid var(--gray-01);
+  background-color: var(--white);
+  color: var(--black-01);
+  box-shadow: 2px 6px 4px 0px rgba(0, 0, 0, 0.12);
+}
+
+.form-control,
+.form-select {
+  height: 42px !important;
+}
+.form-label{
+  font-size: 14px;
+  line-height: 1.42857;
+  color: #4f4f50;
+  font-weight: 400;
+  margin-bottom: 3px !important;
+}
+
+.register-form{
+  width: 700px;
+}
+
+.form-control[type='file']{
+  line-height: 29px !important;
+}
+
+.btn-primary-type {
+  border: 1px solid var(--gray-01);
+  background-color: $btn-secondary-color;
+  color: #fff;
+}
+
+.btn-primary-type:hover,
+.btn-primary-type:active,
+:not(.btn-check)+.btn:active,
+.btn-primary-type:first-child:active {
+  border: 1px solid var(--gray-01);
+  background-color: var(--white);
+  color: var(--black-01);
+  box-shadow: 2px 6px 4px 0px rgba(0, 0, 0, 0.12);
+}
+
+.btn-download-template {
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+  width: 35px !important;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.btn-download-template i {
+  font-size: 15px;
+}
+
+.cc{
+  background-color: #f7971e    ;
+ color:black        
+}
+/* The switch - the box around the slider */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 20px;
+  }
+  
+  /* Hide default HTML checkbox */
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  /* The slider */
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 13px;
+    width: 13px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+  
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 34px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
+  /* Progress bar container */
+.progress-bar-container {
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 25px;
+    width: 100%;
+    position: relative;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Progress bar (used portion) */
+  .progress-bar-used {
+    background-color: #4caf50;
+    height: 100%;
+    transition: width 0.3s ease-in-out;
+    position: absolute; /* Position inside the container */
+    top: 0;
+    left: 0;
+    border-radius: 10px;
+  }
+  
+  /* Progress bar text (centered and red) */
+  .progress-bar-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    color: red; /* Red color for the text */
+    font-size: 0.9rem;
+    z-index: 1; /* Ensure text stays on top */
+    pointer-events: none; /* Prevent the text from interfering with interactions */
+  }
+  

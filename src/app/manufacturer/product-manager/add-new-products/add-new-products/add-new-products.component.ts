@@ -36,7 +36,6 @@ export class AddNewProductsComponent {
   displayProductImageDialog: boolean = false;
   selectedColorGroupIndex: number | null = null;
   @ViewChild('fileInput') fileInput!: ElementRef;
-  CloudPath: string = ''
   ProductId: any;
   sizeSet: any
   sizeChart: any;
@@ -171,7 +170,6 @@ export class AddNewProductsComponent {
     
 
     // set cdn path
-    this.CloudPath = this.authService.cdnPath
 
     // get product id from view
     this.route.queryParamMap.subscribe(params => {
@@ -738,14 +736,14 @@ export class AddNewProductsComponent {
   }
 
   getProductImagePath(Image: any) {
-    return this.CloudPath + Image;
+    return Image;
   }
 
   getColorIconPath(Image: any) {
-    return this.CloudPath + Image;
+    return Image;
   }
   getVideoPath(video: any) {
-    return this.CloudPath + video;
+    return video;
   }
 
 
@@ -1030,7 +1028,7 @@ export class AddNewProductsComponent {
   }
 
   getNoofpockets() {
-    this.authService.get('noofpockets').subscribe(res => {
+    this.authService.get('noOfpockets').subscribe(res => {
       if (res) {
         this.allNoofpockets = res.results
       }
