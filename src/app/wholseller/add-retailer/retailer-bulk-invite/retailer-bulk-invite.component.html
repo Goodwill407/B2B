@@ -5,7 +5,7 @@
         <div class="flex-grow-1">
           <div class="card-table p-3">
       <form [formGroup]="inviteForm" (ngSubmit)="onSubmit()" class="mt-0">
-        <div formArrayName="distributors">
+        <div formArrayName="invitations">
           <div class="d-flex mt-2">
             <h5>Invite Bulk Retailer</h5>
             <div class="ms-auto navigation-link-log">
@@ -31,7 +31,7 @@
             </div>
           </div>
           <hr>
-          <div *ngFor="let distributor of distributors.controls; let i = index" class="d-flex justify-content-between mb-3" [formGroupName]="i">
+          <div *ngFor="let distributor of invitations.controls; let i = index" class="d-flex justify-content-between mb-3" [formGroupName]="i">
             <div>
               <!-- <label>Distributor’s Name*</label> -->
               <input class="form-control" formControlName="distributorName" placeholder="Distributor's Name" type="text">
@@ -48,9 +48,9 @@
             </div>
             <div>
               <!-- <label>Mobile Number</label> -->
-              <span class="d-flex mat-select" style="width: 350px; height: 22px;">
+              <span class="d-flex mat-select" style="width: 350px; height: 22px;"> 
                 <mat-form-field appearance="outline" class="me-3">
-                  <mat-select formControlName="code">
+                  <mat-select formControlName="contryCode">
                       <mat-option *ngFor="let code of altcountryCode" [value]="'+' + code">
                           +{{ code }}
                       </mat-option> 
@@ -70,10 +70,10 @@
               </div>
             </div>
             <div class="d-flex align-items-center">
-              <button *ngIf="distributors.length > 1 && !(i === distributors.length - 1)" type="button" class="btn btn-outline-danger" (click)="removeDistributor(i)">
+              <button *ngIf="invitations.length > 1 && !(i === invitations.length - 1)" type="button" class="btn btn-outline-danger" (click)="removeDistributor(i)">
                 <i class="bi bi-trash"></i>
               </button>
-              <button *ngIf="i === distributors.length - 1" type="button" class="btn btn-outline-success" (click)="addDistributor()">
+              <button *ngIf="i === invitations.length - 1" type="button" class="btn btn-outline-success" (click)="addDistributor()">
                 <i class="bi bi-plus-lg"></i>
               </button>
             </div>

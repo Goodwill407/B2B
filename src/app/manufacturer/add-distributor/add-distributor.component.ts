@@ -33,12 +33,12 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 export class AddDistributorComponent {
   mgfRegistrationForm!: FormGroup;
 
-  countryCode = [
-    // { countryName: 'United States', flag: 'assets/images/flags/us.jpg', code: '+1' },
-    { countryName: 'India', flag: 'assets/images/flags/ind.png', code: '+91' },
-    // { countryName: 'United Kingdom', flag: 'assets/images/flags/uk.png', code: '+44' },
-    // { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
-  ];
+  // countryCode = [
+  //   // { countryName: 'United States', flag: 'assets/images/flags/us.jpg', code: '+1' },
+  //   { countryName: 'India', flag: 'assets/images/flags/ind.png', code: '+91' },
+  //   // { countryName: 'United Kingdom', flag: 'assets/images/flags/uk.png', code: '+44' },
+  //   // { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
+  // ];
   altcountryCode: any;
   identityType: any;
   filteredIdentityType: any; // This will store the filtered identity types
@@ -56,7 +56,7 @@ export class AddDistributorComponent {
       fullName: ['', Validators.required],
       companyName: ['',Validators.required],
       role: ['', Validators.required],
-      code: ['+91', Validators.required],
+      contryCode: ['+91', Validators.required],
       mobileNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       email: ['', [Validators.required, Validators.email]],
     });
@@ -92,7 +92,7 @@ export class AddDistributorComponent {
       
       // Optionally, set a default value (e.g., '+91') for altCode if needed
       if (this.altcountryCode.includes('91')) {
-        this.mgfRegistrationForm.controls['altCode'].setValue('+91');
+        this.mgfRegistrationForm.controls['contryCode'].setValue('+91');
       }
     });
   }

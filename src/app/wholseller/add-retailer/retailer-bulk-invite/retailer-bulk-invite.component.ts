@@ -39,25 +39,26 @@ export class RetailerBulkInviteComponent {
   ];
 
   altcountryCode: any;
+  resetForm: any;
 
   constructor(private fb: FormBuilder, private communicationService: CommunicationService, private auth: AuthService) { }
 
   ngOnInit(): void {
     this.inviteForm = this.fb.group({
-      distributors: this.fb.array([this.createDistributorFormGroup()])
+      invitations: this.fb.array([this.createDistributorFormGroup()])
     });
     this.getAllCountryCode()
   }
 
-  get distributors(): FormArray {
-    return this.inviteForm.get('distributors') as FormArray;
+  get invitations(): FormArray {
+    return this.inviteForm.get('invitations') as FormArray;
   }
 
   createDistributorFormGroup(): FormGroup {
     return this.fb.group({
       distributorName: ['', Validators.required],
       companyName: ['',Validators.required],
-      code: ['+91', Validators.required],
+      contryCode: ['+91', Validators.required],
       mobileNumber: ['', Validators.required],
       email: ['', [Validators.required, Validators.pattern(/^[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]],//A-Z removed
     });
@@ -67,12 +68,12 @@ export class RetailerBulkInviteComponent {
 
 
   addDistributor(): void {
-    this.distributors.push(this.createDistributorFormGroup());
+    this.invitations.push(this.createDistributorFormGroup());
   }
 
   removeDistributor(index: number): void {
-    if (this.distributors.length > 1) {
-      this.distributors.removeAt(index);
+    if (this.invitations.length > 1) {
+      this.invitations.removeAt(index);
     }
   }
 
@@ -82,17 +83,23 @@ export class RetailerBulkInviteComponent {
       this.inviteForm.markAllAsTouched();
       return;
     }
-    else {
-      this.communicationService.showNotification('snackbar-success', 'Invitation Sent Successfully', 'bottom', 'center');
-      alert(this.inviteForm.value.toString());
-      this.isSubmitted = false;
-      this.inviteForm.reset();
-    }
+    this.auth.post('invitations/array-upload', this.inviteForm.value).subscribe(
+      invite => {
+        this.communicationService.showNotification('snackbar-success', 'Invitation Sent Successfully', 'bottom', 'center');
+        this.isSubmitted = false;
+        this.resetForm();
+      }, 
+      error => {
+        this.communicationService.showNotification('snackbar-error', error.error.message, 'bottom', 'center');
+        this.isSubmitted = false;
+        this.resetForm();
+      }
+    );
     console.log(this.inviteForm.value);
   }
-
+  
   getErrorMessage(controlName: string, index: number): string {
-    const control = this.distributors.at(index).get(controlName);
+    const control = this.invitations.at(index).get(controlName);
     let errorMessage = '';
     if (control?.hasError('required')) {
       errorMessage =  `${controlName.replace(/([A-Z])/g, ' $1')} is required.`;
@@ -109,7 +116,7 @@ export class RetailerBulkInviteComponent {
       
       // Optionally, set a default value (e.g., '+91') for altCode if needed
       if (this.countryCode.includes('91')) {
-        this.inviteForm.controls['altCode'].setValue('+91');
+        this.inviteForm.controls['contryCode'].setValue('+91');
       }
     });
   }

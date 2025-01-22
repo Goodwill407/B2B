@@ -44,7 +44,7 @@ export class SignupComponent implements OnInit {
   emailInterval: any; // Interval for email timer
   mobileInterval: any; // Interval for mobile timer
   timeLeft: number = 180; // Unified timer for 3 minutes
-interval: any; // Interval for the timer
+  interval: any; // Interval for the timer
 
   isIndiaSelected: boolean = false; // Track whether India is selected
 
@@ -113,7 +113,7 @@ interval: any; // Interval for the timer
       fullName: ['', Validators.required],
       companyName: [''],
       role: ['', Validators.required],
-      contryCode: ['+91'],
+      contryCode: [Validators.required],
       mobileNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       email: [this.email, [Validators.required, Validators.pattern(/^[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]],//A-Z removed
       otp: [''], // For email OTP

@@ -44,18 +44,18 @@ export class BulkInviteSingleComponent {
       role:['',Validators.required],
       fullName: ['', Validators.required],
       companyName: ['', Validators.required],
-      code: ['+91', Validators.required],
+      contryCode: ['+91', Validators.required],
       mobileNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       email: ['', [Validators.required, Validators.email]]
     });
   }
 
-  countryCode = [
-    // { countryName: 'United States', flag: 'assets/images/flags/us.jpg', code: '+1' },
-    { countryName: 'India', flag: 'assets/images/flags/ind.png', code: '+91' },
-    // { countryName: 'United Kingdom', flag: 'assets/images/flags/uk.png', code: '+44' },
-    // { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
-  ];
+  // countryCode = [
+  //   // { countryName: 'United States', flag: 'assets/images/flags/us.jpg', code: '+1' },
+  //   { countryName: 'India', flag: 'assets/images/flags/ind.png', code: '+91' },
+  //   // { countryName: 'United Kingdom', flag: 'assets/images/flags/uk.png', code: '+44' },
+  //   // { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
+  // ];
 
   getIdentityType(){
     this.authService.get('entitytype').subscribe((res:any) =>{
@@ -107,7 +107,7 @@ export class BulkInviteSingleComponent {
         case 'role': return 'Identity is required.';
         case 'fullName': return 'Full Name is required.';
         case 'companyName': return 'Company/Firm Name is required.';
-        case 'code': return 'Country Code is required.';
+        case 'contryCode': return 'Country Code is required.';
         case'mobileNumber': return 'Mobile Number is required.';
         case 'email': return 'Email is required.';
         default: return '';
@@ -127,7 +127,7 @@ export class BulkInviteSingleComponent {
       
       // Optionally, set a default value (e.g., '+91') for altCode if needed
       if (this.altcountryCode.includes('91')) {
-        this.inviteForm.controls['altCode'].setValue('+91');
+        this.inviteForm.controls['contryCode'].setValue('+91');
       }
     });
   }
