@@ -190,12 +190,17 @@ export class ViewManufacturerDetailsComponent implements OnInit {
           subCategory: new Set<string>()
         };
 
-        res.uniqueProducts.forEach((product: any) => {
-          uniqueValues.productType.add(product.productType);
-          uniqueValues.gender.add(product.gender);
-          uniqueValues.clothing.add(product.clothing);
-          uniqueValues.subCategory.add(product.subCategory);
-        });
+        if (res && res.uniqueProducts && Array.isArray(res.uniqueProducts)) {
+          res.uniqueProducts.forEach((product: any) => {
+            uniqueValues.productType.add(product.productType);
+            uniqueValues.gender.add(product.gender);
+            uniqueValues.clothing.add(product.clothing);
+            uniqueValues.subCategory.add(product.subCategory);
+          });
+        } else {
+          console.error('Unique products data is missing or not an array');
+        }
+        
 
         this.allVisabilityData.dealingIn = {
           productType: Array.from(uniqueValues.productType).join(', '),

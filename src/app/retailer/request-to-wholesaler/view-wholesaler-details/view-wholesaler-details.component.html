@@ -17,7 +17,7 @@
             <h5 class="mb-0 mt-4">Company Profile</h5>
             <div class="row">
                 <!-- Company Name -->
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                     <label class="label-input">Company/Firm Name :- {{  WholsellerData?.companyName }}</label>
                 </div>
     
@@ -25,7 +25,13 @@
                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                     <label class="label-input">Founder :- {{  WholsellerData?.fullName }}</label>
                 </div>
-    
+                
+                <!-- KYC Status -->
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <label class="label-input">KYC Status :- {{ WholsellerData?.kycVerified ? 'Verified' :  WholsellerData?.kycVerified === false ? 'Not Verified' : 'N/A' }}</label>
+                    <!-- <span class="form-control-static">{{  WholsellerData?.leagalStatusOfFirm }}</span> -->
+                </div>
+                
                 <!-- Establishment Date -->
                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                     <label class="label-input">Established :- {{  WholsellerData?.establishDate | date: 'MMM d, y'  }}</label>

@@ -79,7 +79,7 @@ export class RetailerBulkUploadComponent {
         Full_Name: "",
         Company_Name: "",
         Role: "",
-        Code: "",
+        contryCode: "",
         Mobile_Number: "",
         Email: "",
       },

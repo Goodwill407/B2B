@@ -38,7 +38,7 @@
               <option value="" disabled>Select Identity</option>
               @for(type of identityType;track type){
               @if(type.name!=='manufacture'){
-              <option value="type.name" dis>{{type.name|titlecase}}</option>
+              <option [value]="type.name">{{type.name|titlecase}}</option>
               }
               }
             </select>

@@ -34,9 +34,9 @@
           <div *ngFor="let distributor of invitations.controls; let i = index" class="d-flex justify-content-between mb-3" [formGroupName]="i">
             <div>
               <!-- <label>Distributor’s Name*</label> -->
-              <input class="form-control" formControlName="distributorName" placeholder="Distributor's Name" type="text">
-              <div *ngIf="distributor.get('distributorName')?.invalid && (distributor.get('distributorName')?.touched || isSubmitted)" class="text-danger">
-                {{ getErrorMessage('distributorName', i) }}
+              <input class="form-control" formControlName="fullName" placeholder="Distributor's Name" type="text">
+              <div *ngIf="distributor.get('fullName')?.invalid && (distributor.get('fullName')?.touched || isSubmitted)" class="text-danger">
+                {{ getErrorMessage('fullName', i) }}
               </div>
             </div>
             <div>
