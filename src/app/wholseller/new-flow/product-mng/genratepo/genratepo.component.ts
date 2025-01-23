@@ -222,7 +222,7 @@ import jsPDF from 'jspdf';
       // Post the cleaned data to the backend
       this.authService.post('type2-purchaseorder', cartBody).subscribe(
         (res: any) => {
-          this.communicationService.customSuccess('Product Successfully Added in Cart');
+          this.communicationService.customSuccess('Purchace Order Genrated Succesfully');
         },
         (error) => {
           this.communicationService.customError1(error.error.message);

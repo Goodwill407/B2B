@@ -60,16 +60,55 @@ interval: any; // Interval for the timer
     this.getallIdentity()
     this.getAllCountry()
     if (this.email) {
-      this.authService.get(`invitations/${this.email}`).subscribe((res: any) => {
-        this.mgfRegistrationForm.patchValue(res);
-        // this.mgfRegistrationForm.get('role')?.disable();
-        // this.mgfRegistrationForm.get('email')?.disable();
-        this.invitedBy = res.invitedBy;
-      }, (err: any) => {
-        this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
+      this.authService.get(`invitations/${this.email}`).subscribe(
+        (res: any) => {
+          console.log('API Response:', res); // Log API response
+          
+          // Populate the form with fetched data
+          this.mgfRegistrationForm.patchValue({
+            fullName: res.fullName || '',
+            companyName: res.companyName || '',
+            role: res.role || '',
+            contryCode: res.contryCode || '+91', // Use country code from API, default to +91 only if missing
+            mobileNumber: res.mobileNumber || '',
+            email: res.email || '',
+          });
+    
+          console.log('Form Value After Patch:', this.mgfRegistrationForm.value); // Log form value
+    
+          // Save the inviter's email if available
+          this.invitedBy = res.invitedBy || [];
+          
+          // Trigger change detection to ensure UI updates
+          this.cdr.detectChanges();
+        },
+        (err: any) => {
+          // Handle error if email is not found
+          this.communicationService.showNotification(
+            'snackbar-danger',
+            'Email not found. Defaulting to +91',
+            'bottom',
+            'center'
+          );
+    
+          // Default country code to +91
+          this.mgfRegistrationForm.patchValue({
+            contryCode: '+91',
+          });
+    
+          console.log('Default Form Value After Error:', this.mgfRegistrationForm.value); // Debug default behavior
+        }
+      );
+    } else {
+      // No email in URL - default behavior
+      this.mgfRegistrationForm.patchValue({
+        contryCode: '+91',
       });
-
+      console.log('Default Form Value for No Email:', this.mgfRegistrationForm.value); // Debug default behavior
     }
+    
+    
+    
   }
   startEmailTimer() {
     this.emailTimeLeft = 180; // Reset timer to 3 minutes

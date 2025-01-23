@@ -245,7 +245,7 @@ export class GenraterpoComponent {
     // Post the cleaned data to the backend
     this.authService.post('retailer-purchase-order-type2', cartBody).subscribe(
       (res: any) => {
-        this.communicationService.customSuccess('Product Successfully Added in Cart');
+        this.communicationService.customSuccess('Purchace Order Genrated Succesfully');
       },
       (error) => {
         this.communicationService.customError1(error.error.message);
