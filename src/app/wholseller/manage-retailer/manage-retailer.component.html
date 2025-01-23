@@ -19,8 +19,9 @@
           <hr>
           <div class="p-grid p-fluid ">
             <div class="p-col-12 text-center">
-                <p-table *ngIf="distributors.length > 0" [value]="distributors">
-                    <ng-template pTemplate="header">
+                <p-table  [value]="distributors">
+                    <ng-template pTemplate="header"> 
+                      <!-- *ngIf="distributors.length > 0" -->
                       <tr>
                         <th>Retailer's Name</th>
                         <th>Company/Firm Name</th>
@@ -66,7 +67,7 @@
                   </p-table>
                   
                   <!-- No Data Message -->
-                  <div *ngIf="distributors.length === 0" class="text-center mt-4">
+                  <div *ngIf="searchPerformed && distributors.length === 0" class="text-center mt-4">
                     <p>No data found. Try a different search.</p>
                   </div>
                   

@@ -24,6 +24,7 @@ export class PreviewProfileComponent {
   email: any
   CompanyData: any
   brandsDetails: any
+  delingInView:any
 
   allVisabilityData: any;
   id: any
@@ -47,7 +48,7 @@ export class PreviewProfileComponent {
     this.authService.get(`brand/visible/brandlist/${this.email}/true`).subscribe((res: any) => {
       if (res) {
         this.brandsDetails = res
-        console.log(this.brandsDetails)
+        // console.log(this.brandsDetails)
       } else {
       }
     }, error => {
@@ -57,6 +58,7 @@ export class PreviewProfileComponent {
     })
   }
 
+  // getDelingInOfManufacturer(){}
   getProfileVisabilityData() {
     this.spinner.show(); 
     setTimeout(() => {

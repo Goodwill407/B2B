@@ -39,6 +39,7 @@ export class ManageRetailerComponent {
     'assets/images/adv/ads2.jpg',
   'assets/images/adv/ads.jpg'
   ];
+  searchPerformed: boolean = false;
 
 
   constructor(private authService: AuthService, private communicationService:CommunicationService,private router: Router) { }
@@ -115,6 +116,7 @@ export class ManageRetailerComponent {
   }
  
   onSearchChange(event: any) {
+    this.searchPerformed = true;
     const searchKey = event.target.value.trim();
     this.page = 1; // Reset to the first page on new search
     this.getPendingInvites(searchKey);

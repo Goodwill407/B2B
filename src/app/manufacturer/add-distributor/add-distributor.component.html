@@ -74,7 +74,7 @@
                                 <label class="lable-input" for="mobileNumber">Mobile Number<span>*</span>:</label>
                                 <div class="d-flex">
                                     <mat-form-field appearance="outline" class="me-1">
-                                        <mat-select formControlName="code">
+                                        <mat-select formControlName="contryCode">
                                             <mat-option *ngFor="let code of altcountryCode" [value]="'+' + code">
                                                 +{{ code }}
                                             </mat-option>

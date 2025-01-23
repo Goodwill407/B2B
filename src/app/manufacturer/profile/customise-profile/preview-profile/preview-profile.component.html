@@ -114,6 +114,30 @@
   </div>
 </div>
 
+<!-- Registered Products Section -->
+<div class="products-section mb-2" *ngIf="allVisabilityData?.uniqueProducts?.length > 0">
+  <h4>Dealing in</h4>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Product Type</th>
+        <th>Gender</th>
+        <th>Clothing</th>
+        <th>Sub Category</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let product of allVisabilityData?.uniqueProducts">
+        <td>{{ product.productType || 'N/A' }}</td>
+        <td>{{ product.gender || 'N/A' }}</td>
+        <td>{{ product.clothing || 'N/A' }}</td>
+        <td>{{ product.subCategory || 'N/A' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
   <!-- Bank Details Section -->
   <div class="bank-details" *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.bankName || 
         allVisabilityData?.visibilitySettings?.BankDetails?.branch || 

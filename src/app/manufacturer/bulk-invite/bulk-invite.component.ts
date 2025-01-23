@@ -62,7 +62,7 @@ export class BulkInviteComponent {
         Full_Name: "",
         Company_Name: "",
         Role: "",
-        Code: "",
+        contryCode: "",
         Mobile_Number: "",
         Email: "",
       },

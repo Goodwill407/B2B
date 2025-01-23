@@ -62,7 +62,7 @@
                         </div>
                     </div>
                     <!-- No Data Message -->
-                  <div *ngIf="distributors.length === 0" class="text-center mt-4">
+                  <div *ngIf="searchPerformed && distributors.length === 0" class="text-center mt-4">
                     <p>No data found. Try a different search.</p>
                   </div>
                     <!-- Pagination moved to the bottom of the card -->
@@ -129,7 +129,7 @@
                 </div>
             </div>
             <!-- No Data Message -->
-            <div *ngIf="retailers.length === 0" class="text-center mt-4">
+            <div *ngIf="searchPerformed && retailers.length === 0" class="text-center mt-4">
                 <p>No data found. Try a different search.</p>
               </div>
             <!-- Pagination moved to the bottom of the card -->

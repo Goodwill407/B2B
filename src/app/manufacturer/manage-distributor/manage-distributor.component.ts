@@ -34,6 +34,7 @@ export class ManageDistributorComponent {
   first: number = 0;
   rows: number = 10;
   retailers:any
+  searchPerformed:boolean = false;;
 
   constructor(private authService: AuthService, private communicationService:CommunicationService,private router: Router) { }
 
@@ -139,6 +140,7 @@ getPendingInvitesRetailers(searchKey: string = '') {
 }
 
 onSearchChangeR(event: any) {
+  this.searchPerformed = true;
   const searchKey = event.target.value;
   // this.getPendingInvitesWholseler(searchKey);
   this.getPendingInvitesRetailers(searchKey);

@@ -87,6 +87,7 @@ export class ViewProfileComponent {
   initializeValidation() {
     this.mgfRegistrationForm = this.fb.group({
       fullName: ['', Validators.required],
+      kycVerified:[''],
       companyName: ['', Validators.required],
       address: ['', Validators.required],
       contryCode: ['', Validators.required],
