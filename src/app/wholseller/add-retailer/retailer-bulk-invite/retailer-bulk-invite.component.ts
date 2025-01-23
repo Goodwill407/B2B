@@ -61,6 +61,7 @@ export class RetailerBulkInviteComponent {
       contryCode: ['+91', Validators.required],
       mobileNumber: ['', Validators.required],
       email: ['', [Validators.required, Validators.pattern(/^[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]],//A-Z removed
+      role: ['retailer']
     });
   }
 
