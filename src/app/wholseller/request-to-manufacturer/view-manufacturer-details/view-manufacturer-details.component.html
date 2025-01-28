@@ -154,7 +154,8 @@
       <div class="bank-details" *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.bankName || 
         allVisabilityData?.visibilitySettings?.BankDetails?.branch || 
         allVisabilityData?.visibilitySettings?.BankDetails?.accountNumber || 
-        allVisabilityData?.visibilitySettings?.BankDetails?.IFSCcode">
+        allVisabilityData?.visibilitySettings?.BankDetails?.IFSCcode ||
+        allVisabilityData?.visibilitySettings?.BankDetails?.swiftCode">
         <h4>Bank Details</h4>
         <table>
           <tr>
@@ -171,6 +172,11 @@
             </td>
             <td *ngIf="allVisabilityData?.visibilitySettings?.BankDetails.branch">
               Branch :- {{ allVisabilityData?.BankDetails?.branch || 'N/A' }}
+            </td>
+          </tr>
+          <tr>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.BankDetails.swiftCode">
+              Swift Code :- {{ allVisabilityData?.BankDetails?.swiftCode || 'N/A' }}
             </td>
           </tr>
         </table>

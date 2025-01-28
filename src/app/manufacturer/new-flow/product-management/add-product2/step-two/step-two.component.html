@@ -10,7 +10,7 @@
         <div class="col-2">
             <label for="colorCode">Color Code<span *ngIf="colourCollections.length > 0" class="required">*</span></label>
             <input type="color" id="colorCode" formControlName="colour" style="margin-bottom: 5px !important;" class="form-control color-input">
-            <p><small  style="color: brown;">note: click on color</small></p>
+            <p><small  style="color: brown;">Note: Click On Color</small></p>
             <div *ngIf="submittedStep2 && stepTwo.get('colour')?.invalid" class="text-danger">
                 Color Code is required
             </div>
@@ -52,7 +52,7 @@
     <div class="row mt-3">
         <div class="col-12">
             <label for="">Add Product Images<span *ngIf="colourCollections.length === 0" class="required">*</span> 
-                &nbsp;<small style="color: brown;">(max 5 images)</small>
+                &nbsp;<small style="color: brown;">(Max 5 Images)</small>
             </label>
             <div class="d-flex flex-wrap align-items-center product-box">
                 <div *ngFor="let image of productImages.controls; let i = index" class="position-relative m-1 image-container">

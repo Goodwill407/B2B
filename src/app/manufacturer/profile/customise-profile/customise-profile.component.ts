@@ -112,6 +112,7 @@ export class CustomiseProfileComponent {
         bankName: [false],
         branch: [false],
         IFSCcode: [false],
+        swiftCode: [false],
         country: [false],
         city: [false],
       }),
