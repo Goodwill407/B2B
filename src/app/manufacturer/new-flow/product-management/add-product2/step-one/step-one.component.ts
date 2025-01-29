@@ -8,6 +8,8 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { catchError, of } from 'rxjs';
+import Swal from 'sweetalert2';  // Import SweetAlert2
 
 @Component({
   selector: 'app-step-one',
@@ -44,7 +46,7 @@ export class StepOneComponent {
 
   videoSizeError: string = '';
   userProfile: any
-
+  brandErrorMessage: string = '';
   productDetails: any
 
   // form step
@@ -72,6 +74,7 @@ export class StepOneComponent {
   allSleeveLength: any;
   allSpecialFeature: any;
   allCareInstruction: any;
+  allSeasons: any;
   allSubCategory: any;
   allLifeStyle: any
   allBrands: any
@@ -79,8 +82,10 @@ export class StepOneComponent {
   locationData: any;
   showFlag: boolean = false;
   visibleFields: any = []
-
-  
+  layerCompression:any
+  allLayerCompression:any;
+  Waistband:any;
+  allWaistband:any;
   allTopstyle: any = []
   allEmbellishmentfeature: any = []
   allNoofpockets: any = []
@@ -90,6 +95,7 @@ export class StepOneComponent {
   allRisestyle: any = []
   allTrouserstyle: any = []
   allTrouserpocket: any = []
+  includedComponents:any;
   // for womens dropdown master
   allWomensleevetype: any = []
   AllfitType:any=[]
@@ -162,11 +168,15 @@ export class StepOneComponent {
     this.getSleeveLength()
     this.getSpecialFeature()
     this.getallCareInstruction()
+    this.getAllSeasons()
     this.getAllLifeStyle()
     this.getAllBrands()
     this.getAllCurrencyCode()
     // this.updateValidators()
     // this.disbledFields()
+    this.getAllLayerCompression();
+    this.getAllWaistband();
+
     this.getProfileData();
     this.getProductType();
     this.getTrouserstyle();
@@ -178,7 +188,7 @@ export class StepOneComponent {
     this.getCoinpocket()
     this.getTrouserfittype()
     this.getCoinpocket()
-    this.getTrouserpocket()
+    // this.getTrouserpocket()
     this.getTrouserstyle()
     this.getRisestyle()
     this.getAllSocksStyle()
@@ -683,7 +693,7 @@ export class StepOneComponent {
       }
 
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
@@ -695,7 +705,7 @@ export class StepOneComponent {
       }
 
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
@@ -707,7 +717,7 @@ export class StepOneComponent {
       }
 
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
@@ -718,7 +728,7 @@ export class StepOneComponent {
         this.allFabricPattern = res.results
       }
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
@@ -742,7 +752,7 @@ export class StepOneComponent {
         this.allFitStyle = res.results
       }
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
@@ -753,7 +763,7 @@ export class StepOneComponent {
         this.allNeckStyle = res.results
       }
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
@@ -765,7 +775,7 @@ export class StepOneComponent {
         this.allTopstyle = res.results
       }
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
@@ -776,7 +786,7 @@ export class StepOneComponent {
         this.allWomensleevetype = res.results
       }
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
@@ -787,7 +797,7 @@ export class StepOneComponent {
         this.allEmbellishmentfeature = res.results
       }
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
@@ -798,7 +808,7 @@ export class StepOneComponent {
         this.allNoofpockets = res.results
       }
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
@@ -809,7 +819,7 @@ export class StepOneComponent {
         this.allCoinpocket = res.results
       }
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
@@ -820,7 +830,7 @@ export class StepOneComponent {
         this.allWaistsizeset = res.results
       }
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
@@ -831,7 +841,7 @@ export class StepOneComponent {
         this.allTrouserfittype = res.results
       }
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
@@ -842,7 +852,7 @@ export class StepOneComponent {
         this.allRisestyle = res.results
       }
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
@@ -853,7 +863,7 @@ export class StepOneComponent {
         this.allTrouserstyle = res.results
       }
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
@@ -864,18 +874,40 @@ export class StepOneComponent {
         this.allTrouserpocket = res.results
       }
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
 
+  getAllLayerCompression(){
+    this.authService.get('layer-compression').subscribe(res => {
+      if (res) {
+        this.allLayerCompression = res.results
+        console.log(this.allLayerCompression);
+      }
+    },
+      error => {
+        console.log('error')
+      })
+  }
+
+  getAllWaistband(){
+    this.authService.get('waistband').subscribe(res => {
+      if (res) {
+        this.allWaistband = res.results
+      }
+    },
+      error => {
+        console.log('error')
+      })
+  }
   getAllClosureType() {
     this.authService.get('closure-type').subscribe(res => {
       if (res) {
         this.allClosureType = res.results
       }
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
@@ -886,7 +918,7 @@ export class StepOneComponent {
         this.allPocketDiscription = res.results
       }
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
@@ -897,7 +929,7 @@ export class StepOneComponent {
         this.allSleeveCutStyle = res.results
       }
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
@@ -908,7 +940,7 @@ export class StepOneComponent {
         this.allSleeveLength = res.results
       }
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
@@ -919,7 +951,7 @@ export class StepOneComponent {
         this.allSpecialFeature = res.results.map((item: any) => item.name);
       }
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
@@ -939,11 +971,21 @@ export class StepOneComponent {
         this.allCareInstruction = res.results
       }
     },
-      errpr => {
+      error => {
         console.log('error')
       })
   }
 
+  getAllSeasons(){
+    this.authService.get('season').subscribe(res => {
+      if (res) {
+        this.allSeasons = res.results
+      }
+    },
+      error => {
+        console.log('error')
+      })
+  }
   // master for womens data
 
 
@@ -1193,7 +1235,7 @@ getAllTrourserPocket() {
 getAllIncludedComponent() {
   this.authService.get('include-componenet').subscribe(res => {
       if (res) {
-          this.allTrourserPocket = res.results;
+          this.allIncludedComponent = res.results;
       }
   },
   error => {
@@ -1213,7 +1255,7 @@ getAllCollarStyle() {
 }
 
 getallItemLength() {
-  this.authService.get('length').subscribe(res => {
+  this.authService.get('length-women-dress').subscribe(res => {
       if (res) {
           this.allItemLength = res.results;
       }
@@ -1245,7 +1287,42 @@ error => {
 // });
 // }
 
- 
+onBrandChange() {
+  const designNumber = this.stepOne.get('designNumber')?.value;
+  const brand = this.stepOne.get('brand')?.value;
+
+  // If both design number and brand are filled, check if the product exists
+  if (designNumber && brand) {
+    // Use setTimeout to debounce the check
+    setTimeout(() => {
+      const requestBody = { designNumber, brand };
+
+      this.authService.post('/type2-products/check-product-existence', requestBody)
+        .pipe(
+          catchError(() => {
+            this.brandErrorMessage = '';  // Reset error message if no error occurs
+            return of(null);  // Continue with a safe fallback
+          })
+        )
+        .subscribe((response: any) => {
+          if (response && response.message === "Product exists") {
+            // If product exists for the selected brand, show SweetAlert popup
+            this.brandErrorMessage = `The Design No. ${designNumber} already exists for ${brand}.`;
+            Swal.fire({
+              title: 'Product Exists',
+              text: `The Design No. ${designNumber} already exists for ${brand}.`,
+              // icon: 'error'
+            });
+            this.stepOne.get('brand')?.setErrors({ 'exists': true });
+          } else if (response && response.message === "Product does not exist") {
+            // If the product does not exist, clear previous errors
+            this.stepOne.get('brand')?.setErrors(null);
+          }
+        });
+    });  // Debounce delay (500ms)
+  }
+}
+
 
   
 }

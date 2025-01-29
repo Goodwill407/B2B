@@ -22,7 +22,8 @@
         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
             <label class="label-input" for="brand">Brand<span class="required">*</span></label>
             <select name="brand" id="brand" class="form-select" formControlName="brand"
-                [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('brand')?.invalid}">
+                [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('brand')?.invalid}"
+                (change)="onBrandChange()" >
                 <option value="" disabled>Select</option>
                 <option *ngFor="let type of allBrands" [value]="type">
                     {{ type }}
@@ -72,7 +73,8 @@
             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                 <label class="label-input" for="productType">Product Type<span
                         class="required">*</span></label>
-                <select name="productType" id="productType" class="form-select" (change)="OnProductTypeChange()" (change)="getAllGender()"
+                <select name="productType" id="productType" class="form-select" (change)="OnProductTypeChange()"
+                (change)="onBrandChange()" (change)="getAllGender()" 
                     formControlName="productType"
                     [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('productType')?.invalid}">
                     <option value="" disabled selected>Select</option>
@@ -128,7 +130,7 @@
                 <label class="label-input" for="subCategory">Sub Category<span
                         class="required">*</span></label>
                 <select name="subCategory" id="subCategory" class="form-select"
-                    formControlName="subCategory" (change)="checkAllFieldsSelected()"
+                    formControlName="subCategory" (change)="checkAllFieldsSelected()" (change)  ="onBrandChange()"
                     [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('subCategory')?.invalid}">
                     <option value="" disabled selected>Select</option>
                     <option [value]="subCategory" *ngFor="let subCategory of allSubCategory">
@@ -347,7 +349,7 @@
                 <label class="label-input" for="seasons">Seasons</label>
                 <select name="seasons" id="seasons" class="form-select" formControlName="seasons">
                     <option value="" disabled selected>Select</option>
-                    <option [value]="type.name" *ngFor="let type of allCareInstruction">{{type.name}}
+                    <option [value]="type.name" *ngFor="let type of allSeasons">{{type.name}}
                     </option>
                 </select>
             </div>
@@ -376,12 +378,12 @@
 
             <div *ngIf="visibleFields.includes('troursePocketDescription')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="troursePocketDescription">Trourse Pocket Description
+                <label class="label-input" for="troursePocketDescription">Trourser Pocket Description
                 </label>
                 <select name="troursePocketDescription" id="troursePocketDescription"
                     class="form-select" formControlName="troursePocketDescription">
                     <option value="" disabled selected>Select</option>
-                    <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
+                    <option [value]="type.name.code" *ngFor="let type of allTrouserpocket">{{type.name}}
                     </option>
                 </select>
             </div>
@@ -391,7 +393,7 @@
                 <select name="layerCompression" id="layerCompression" class="form-select"
                     formControlName="layerCompression">
                     <option value="" disabled selected>Select</option>
-                    <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
+                    <option [value]="type.name.code" *ngFor="let type of allLayerCompression">{{type.name}}
                     </option>
                 </select>
             </div>
@@ -400,7 +402,7 @@
                 <label class="label-input" for="acb">Waistband </label>
                 <select name="Waistband" id="Waistband" class="form-select" formControlName="Waistband">
                     <option value="" disabled selected>Select</option>
-                    <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
+                    <option [value]="type.name.code" *ngFor="let type of allWaistband">{{type.name}}
                     </option>
                 </select>
             </div>
@@ -435,7 +437,7 @@
             </div>
             <div *ngIf="visibleFields.includes('troursePocket')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="acb">Trourse Pocket</label>
+                <label class="label-input" for="acb">Trourser Pocket</label>
                 <select name="troursePocket" id="troursePocket" class="form-select"
                     formControlName="troursePocket">
                     <option value="" disabled selected>Select</option>
@@ -445,17 +447,17 @@
             </div>
             <div *ngIf="visibleFields.includes('trourseRiseStyle')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="acb">Trourse Rise Style </label>
+                <label class="label-input" for="acb">Trourser Rise Style </label>
                 <select name="trourseRiseStyle" id="trourseRiseStyle" class="form-select"
                     formControlName="trourseRiseStyle">
                     <option value="" disabled selected>Select</option>
-                    <option [value]="type.name.code" *ngFor="let type of currencies">{{type.name.code}}
+                    <option [value]="type.name.code" *ngFor="let type of allRisestyle">{{type.name}}
                     </option>
                 </select>
             </div>
             <div *ngIf="visibleFields.includes('trourseStyle')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="acb">Select Trourse Style </label>
+                <label class="label-input" for="acb">Select Trourser Style </label>
                 <select name="trourseStyle" id="trourseStyle" class="form-select"
                     formControlName="trourseStyle">
                     <option value="" disabled selected>Select</option>
@@ -466,7 +468,7 @@
 
             <div *ngIf="visibleFields.includes('trourseLength')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="trourseLength"> Trourse Length <span
+                <label class="label-input" for="trourseLength"> Trourser Length <span
                         class="required">*</span>
                     (in Sets)</label>
                 <input type="text" id="trourseLength" formControlName="trourseLength"
@@ -669,16 +671,11 @@
             <div *ngIf="visibleFields.includes('bottomIncluded')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                 <label class="label-input" for="bottomIncluded">Bottom Included</label>
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" id="bottomIncludedYes"
-                        name="bottomIncluded" value="yes" formControlName="bottomIncluded">
-                    <label class="form-check-label" for="bottomIncludedYes">Yes</label>
-                </div>
-                <div class="form-check">
-                    <input type="radio" class="form-check-input" id="bottomIncludedNo"
-                        name="bottomIncluded" value="no" formControlName="bottomIncluded">
-                    <label class="form-check-label" for="bottomIncludedNo">No</label>
-                </div>
+                <select  class="form-select" id="bottomIncluded" name="bottomIncluded" formControlName="bottomIncluded">
+                    <option value="" disabled selected>Select</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
             </div>
 
 
@@ -886,7 +883,7 @@
     </div>
 
     <div class="d-flex justify-content-center  mt-4">
-        <button type="submit" class="btn submit-btn me-2">Save and Next >></button>
+        <button type="submit" class="btn submit-btn me-2" onclick="onBrandChange()">Save and Next >></button>
     </div>
 
   </form>
