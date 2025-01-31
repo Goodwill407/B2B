@@ -1260,7 +1260,7 @@ export const ROUTES2: RouteInfo[] = [
       },
       {
         path: '/mnf/new/manage-product2',
-        title: 'View And Manage Productq',
+        title: 'View And Manage Product',
         iconType: '',
         icon: '',
         class: 'ml-menu',
