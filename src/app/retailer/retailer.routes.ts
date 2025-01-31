@@ -9,6 +9,7 @@ import { WholeselerProductsComponent } from "./product-management/wholeseler-lis
 import { ViewWholeselerProductComponent } from "./product-management/wholeseler-list/view-wholeseler-product/view-wholeseler-product.component";
 import { RetailerMnfAssociatedListComponent } from "./retailer-mnf-associated-list/retailer-mnf-associated-list/retailer-mnf-associated-list.component";
 import { RetailerWholAssociatedListComponent } from "./retailer-whol-associated-list/retailer-whol-associated-list/retailer-whol-associated-list.component";
+import { ListOfAssoMfgComponent } from "./new-flow-Product/Mng-Product/product-management/product-list-of-mfg/list-of-asso-mfg/list-of-asso-mfg/list-of-asso-mfg.component";
 
 export const Retailer_Route :Route[]=[ 
     { path: 'new', loadChildren:()=> import('./new-flow-Product/new_flow.routes').then((m)=>m.NewFlow)},
@@ -23,5 +24,6 @@ export const Retailer_Route :Route[]=[
     {path:'wholeseler-list', component:WholeselerListComponent},
     {path:'wholeseler-Products', component:WholeselerProductsComponent},
     {path:'view-product', component:ViewWholeselerProductComponent},
+    {path:'product-list-of-mfg', component:ListOfAssoMfgComponent}
 
 ]

@@ -1260,7 +1260,7 @@ export const ROUTES2: RouteInfo[] = [
       },
       {
         path: '/mnf/new/manage-product2',
-        title: 'View And Manage Product',
+        title: 'View And Manage Productq',
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -1618,8 +1618,20 @@ export const ROUTES2: RouteInfo[] = [
     role: ['retailer'],
     submenu: [
       {
+        path: '/retailer/product-list-of-mfg',
+        title: "Product List of Manufacturer",
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+      {
         path: '/retailer/new/wholseller-list3',
-        title: "Wholesaler List",
+        title: "Product List of Wholesaler",
         iconType: '',
         icon: '',
         class: 'ml-menu',
