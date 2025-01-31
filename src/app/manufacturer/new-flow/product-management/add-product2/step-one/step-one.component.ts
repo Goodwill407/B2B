@@ -209,7 +209,7 @@ export class StepOneComponent {
     if (this.productId) {
       this.getProductDataById()
     }
-
+    
   } 
   // stepOne vlidation
   get f() {
@@ -219,6 +219,7 @@ export class StepOneComponent {
   submit(){
     if(this.productId){
       this.UpdateStepOne()
+      
     }
     else{
       this.saveStepOneData()
@@ -245,41 +246,41 @@ export class StepOneComponent {
   getSizeChartFields() {
 
     if (this.foundSizeSet === 'Size Set') {
-      this.sizeChartFields = []     
+      // this.sizeChartFields = []     
       this.sizeChartFields = [
-        { name: 'standardSize', label: 'Standard Size', required: false, type: 'Item_size' },
-        { name: 'brandSize', label: 'Brand Size', required: true, type: 'Item_size' },
-        { name: 'chestSize', label: 'Chest Size (in cm)', required: true, type: 'Item_size' },
-        { name: 'shoulderSize', label: 'Shoulder Size (in cm)', required: true, type: 'Item_size' },
-        { name: 'frontLength', label: 'Front Length (in cm)', required: true, type: 'Item_size' },
-        { name: 'neckSize', label: 'Neck Size (in cm)', type: 'Item_size' },
+        { name: 'standardSize', label: 'Standard Size', required: false, type: 'Item_size'},
+        { name: 'brandSize', label: 'Brand Size', required: true, type: 'Item_size'},
+        { name: 'chestSize', label: 'Chest Size (in cm)', required: true, type: 'Item_size',pattern: /^\d+$/ },
+        { name: 'shoulderSize', label: 'Shoulder Size (in cm)', required: true, type: 'Item_size',pattern: /^\d+$/ },
+        { name: 'frontLength', label: 'Front Length (in cm)', required: true, type: 'Item_size',pattern: /^\d+$/ },
+        { name: 'neckSize', label: 'Neck Size (in cm)', required: true, type: 'Item_size' ,pattern: /^\d+$/},
         // { name: 'length', label: 'Length (in cm)', required: false, type: 'item_dimention' },
         // { name: 'width', label: 'Width (in cm)', required: false, type: 'item_dimention' },
         // { name: 'height', label: 'Height (in cm)', required: true, type: 'item_dimention' },
         // { name: 'weight', label: 'Weight (in gm)', required: true, type: 'item_dimention' },
-        { name: 'manufacturerPrice', label: 'Wholesaler Price', required: true, type: 'price' },
-        { name: 'RtlPrice', label: 'Retailer Price', required: true, type: 'price' },
-        { name: 'singleMRP', label: 'MRP', required: true, type: 'price' }
+        { name: 'manufacturerPrice', label: 'Wholesaler Price', required: true, type: 'price', pattern: /\d+(\.\d{1,2})?/ },
+        { name: 'RtlPrice', label: 'Retailer Price', required: true, type: 'price', pattern: /\d+(\.\d{1,2})?/ },
+        { name: 'singleMRP', label: 'MRP', required: true, type: 'price' , pattern:/\d+(\.\d{1,2})?/ },
     ];
     
     }
     else if (this.foundSizeSet === "Waist Size Set") {
-      this.sizeChartFields = []
+      // this.sizeChartFields = []
       this.sizeChartFields = [
         { name: 'standardSize', label: 'Standard Size', required: false, type: 'Item_size' },
         { name: 'brandSize', label: 'Brand Size', required: true, type: 'Item_size' },
-        { name: 'waistSizeSetStandardSize', label: 'Waist Size Set', required: false, type: 'Item_size' },
-        { name: 'waist', label: 'Waist(in cm)', required: true, type: 'Item_size' },
-        { name: 'inseam', label: 'Inseam(in cm)', required: true, type: 'Item_size' },
-        { name: 'lengthIn', label: 'Length(in cm)', required: true, type: 'Item_size' },
-        { name: 'rise', label: 'Rise(in cm)', required: true, type: 'Item_size' },
+        { name: 'waistSizeSetStandardSize', label: 'Waist Size Set', required: false, type: 'Item_size' , pattern: /^\d+$/ },
+        { name: 'waist', label: 'Waist(in cm)', required: true, type: 'Item_size', pattern: /^\d+$/ },
+        { name: 'inseam', label: 'Inseam(in cm)', required: true, type: 'Item_size' , pattern: /^\d+$/ },
+        { name: 'lengthIn', label: 'Length(in cm)', required: true, type: 'Item_size' , pattern: /^\d+$/ },
+        { name: 'rise', label: 'Rise(in cm)', required: true, type: 'Item_size', pattern: /^\d+$/ },
         // { name: 'length', label: 'Length(in cm)', required: false, type: 'item_dimention' },
         // { name: 'width', label: 'Width(in cm)', required: false, type: 'item_dimention' },
         // { name: 'height', label: 'Height(in cm)', required: true, type: 'item_dimention' },
         // { name: 'weight', label: 'Weight(in Gm)', required: true, type: 'item_dimention' },
-        { name: 'manufacturerPrice', label: 'Wholesaler Price', required: true, type: 'price' },
-        { name: 'RtlPrice', label: 'Retailer Price', required: true, type: 'price' },
-        { name: 'singleMRP', label: 'MRP', required: true, type: 'price' }
+        { name: 'manufacturerPrice', label: 'Wholesaler Price', required: true, type: 'price', pattern: /\d+(\.\d{1,2})?/ },
+        { name: 'RtlPrice', label: 'Retailer Price', required: true, type: 'price', pattern: /\d+(\.\d{1,2})?/ },
+        { name: 'singleMRP', label: 'MRP', required: true, type: 'price', pattern: /\d+(\.\d{1,2})?/ }
     ];
     
     }
@@ -505,6 +506,8 @@ export class StepOneComponent {
   saveStepOneData() {
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
     this.submittedStep1 = true   
+    const designNumber = this.stepOne.get('designNumber')?.value;
+    const brand = this.stepOne.get('brand')?.value;  
 
     if (this.stepOne.valid) {
       const productBy = this.userProfile.email
@@ -537,7 +540,12 @@ export class StepOneComponent {
       },
         (error) => {
           this.spinner.hide();
-          console.log('error')
+          Swal.fire({
+            title: 'Product Exists',
+            text: `The Design No. ${designNumber} already exists for ${brand}.`,
+             icon: 'error'
+          });
+          console.log('error saveStepOneData')
         })
     }
   }
@@ -578,6 +586,7 @@ export class StepOneComponent {
       }
     } catch (error) {
       console.error('Error fetching product data:', error);
+
     } finally {
       this.spinner.hide();
     }
@@ -604,13 +613,13 @@ export class StepOneComponent {
         sizesArray.push(this.fb.group({
           standardSize: [size.standardSize],
           brandSize: [size.brandSize, Validators.required],
-          chestSize: [size.chestSize, Validators.required],
-          shoulderSize: [size.shoulderSize, Validators.required],
-          frontLength: [size.frontLength, Validators.required],
+          chestSize: [size.chestSize, [Validators.required, Validators.pattern(/^\d+$/)]],
+          shoulderSize: [size.shoulderSize, [Validators.required, Validators.pattern(/^\d+$/)]],
+          frontLength: [size.frontLength, [Validators.required, Validators.pattern(/^\d+$/)]],
           neckSize: [size.neckSize], // Removed Validators.required to make it optional
-          manufacturerPrice: [size.manufacturerPrice, Validators.required],
-          RtlPrice: [size.RtlPrice, Validators.required],
-          singleMRP: [size.singleMRP, Validators.required]
+          manufacturerPrice: [size.manufacturerPrice,[Validators.required, Validators.pattern(/^\d+$/)]],
+          RtlPrice: [size.RtlPrice, [Validators.required, Validators.pattern(/^\d+$/)]],
+          singleMRP: [size.singleMRP, [Validators.required, Validators.pattern(/^\d+$/)]]
         }));
         this.selectedSizes.push(size.standardSize); // Keep track of selected sizes
       });
@@ -621,18 +630,18 @@ export class StepOneComponent {
       sizesArray.push(this.fb.group({
         standardSize: [size.standardSize],
         brandSize: [size.brandSize, Validators.required],
-        waistSizeSetStandardSize: [size.waistSizeSetStandardSize, Validators.required],
-        waist: [size.waist, Validators.required],
-        inseam: [size.inseam, Validators.required],
-        lengthIn: [size.lengthIn, Validators.required],
-        rise: [size.rise, Validators.required],
+        waistSizeSetStandardSize: [size.waistSizeSetStandardSize, [Validators.required, Validators.pattern('^[0-9]*$')]],
+        waist: [size.waist, [Validators.required, Validators.pattern('^[0-9]*$')]],
+        inseam: [size.inseam, [Validators.required, Validators.pattern('^[0-9]*$')]],
+        lengthIn: [size.lengthIn,[Validators.required, Validators.pattern('^[0-9]*$')]],
+        rise: [size.rise,[Validators.required, Validators.pattern('^[0-9]*$')]],
         // length: [size.length],
         // width: [size.width],
         // height: [size.height],
         // weight: [size.weight, Validators.required],
-        manufacturerPrice: [size.manufacturerPrice, Validators.required],
-        RtlPrice:[size.RtlPrice, Validators.required],
-        singleMRP: [size.singleMRP, Validators.required]
+        manufacturerPrice: [size.manufacturerPrice, [Validators.required, Validators.pattern('^[0-9]*$')]],
+        RtlPrice:[size.RtlPrice, [Validators.required, Validators.pattern('^[0-9]*$')]],
+        singleMRP: [size.singleMRP, [Validators.required, Validators.pattern('^[0-9]*$')]]
       }));
       this.selectedSizes.push(size.standardSize); // Keep track of selected sizes
     });
@@ -642,7 +651,9 @@ export class StepOneComponent {
 
   // update step one data
   UpdateStepOne() {  
-    this.submittedStep1 = true;       
+    this.submittedStep1 = true;     
+    const designNumber = this.stepOne.get('designNumber')?.value;
+    const brand = this.stepOne.get('brand')?.value;  
     
     if (this.stepOne.invalid) {
       return;
@@ -670,7 +681,12 @@ export class StepOneComponent {
 
       },
         error => {
-          console.log('error')
+          Swal.fire({
+            title: 'Product Exists',
+            text: `The Design No. ${designNumber} already exists for ${brand}.`,
+             icon: 'error'
+          });
+          console.log('error UpdateStepOne')
         });
     }
   }
@@ -1076,6 +1092,7 @@ getAllApparelSilhouette() {
         console.log('error');
     });
 }
+
 
 getAllEthnicBottomsStyle() {
     this.authService.get('ethnic-bottoms-style').subscribe(res => {

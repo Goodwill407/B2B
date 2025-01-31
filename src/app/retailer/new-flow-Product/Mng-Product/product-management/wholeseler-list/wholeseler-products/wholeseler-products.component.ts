@@ -48,6 +48,7 @@ export class WholeselerProductsComponent {
   hoverIntervals: any = {}; // Track hover intervals for each product
   totalResults: any;
   WholeselerEmail: any;
+  CompanyName:any;
   wishlistItems: Set<string> = new Set();
 
   constructor(public authService: AuthService, private route:ActivatedRoute) { 
@@ -68,6 +69,7 @@ export class WholeselerProductsComponent {
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.WholeselerEmail = params['email'];
+      this.CompanyName = params['companyName'];
       if (this.WholeselerEmail) {
         this.getAllProducts();
       }

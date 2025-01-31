@@ -1,29 +1,29 @@
-import { CommonModule, NgIf, NgStyle } from '@angular/common';
-import { ChangeDetectorRef, Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { NgIf,Location } from '@angular/common';
+import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService, CommunicationService } from '@core';
+import { AuthService } from '@core';
 import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
-import { AccordionModule } from 'primeng/accordion';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 
+
 @Component({
-  selector: 'app-wholeseler-list',
+  selector: 'app-retailer-mnf-associated-list',
   standalone: true,
   imports: [
     TableModule,
     PaginatorModule,
     NgIf, RouterModule,
     BottomSideAdvertiseComponent,
-    RightSideAdvertiseComponent  
+    RightSideAdvertiseComponent
   ],
-  templateUrl: './wholeseler-list.component.html',
-  styleUrl: './wholeseler-list.component.scss'
+  templateUrl: './retailer-mnf-associated-list.component.html',
+  styleUrl: './retailer-mnf-associated-list.component.scss'
 })
-export class WholeselerListComponent {
-  allWholeselers: any;
+export class RetailerMnfAssociatedListComponent {
+
+  allMnf: any;
   totalResults: any;
   limit = 10;
   page: number = 1
@@ -42,28 +42,34 @@ export class WholeselerListComponent {
     'assets/images/adv/ads2.jpg',
   'assets/images/adv/ads.jpg'
   ];
-  constructor(private authService: AuthService, private router: Router) { }
+
+  constructor(private authService: AuthService, private router: Router,private location: Location) { }
 
   ngOnInit() {
     this.user = this.authService.currentUserValue;
-    this.getAllWholeseler();
+    this.getAllMnf();
   }
 
-  getAllWholeseler() {
-    this.authService.get(`retailer/wholesalerslist/${this.user.id}?page=${this.page}&limit=${this.limit}?userCategory=${this.user.userCategory}`).subscribe((res: any) => {
-      this.allWholeselers = res.docs
-      this.totalResults = res.totalDocs
+  getAllMnf() {
+    this.authService.get(`retailer/manufactureList/${this.user.id}?page=${this.page}&limit=${this.limit}&userCategory=orderwise`).subscribe((res: any) => {
+      this.allMnf = res.docs;
+      this.totalResults = res.totalDocs;
     })
   }
-
 
   onPageChange(event: any) {
     this.page = event.page + 1;
     this.limit = event.rows;
-    this.getAllWholeseler();
+    this.getAllMnf();
   }
 
-  navigateToProduct(email: string,companyName: string) {
-    this.router.navigate(['/retailer/new/wholeseler-Products4'], {queryParams:{ email: email, companyName: companyName}});
+  navigateToProfile(email:any,isForView:any) {
+    // Navigate to the target route with email as query parameter
+    this.router.navigate(['/wholesaler/mnf-details'],{ queryParams: {email:email,isForView:isForView} });
   }
+
+  navigateFun() {
+    this.location.back();
+  }
+
 }

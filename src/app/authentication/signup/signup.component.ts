@@ -49,7 +49,7 @@ export class SignupComponent implements OnInit {
   isIndiaSelected: boolean = false; // Track whether India is selected
   countryCode: any[] = [];
   invitedBy: any[] = [];
-
+  
   constructor(private fb: FormBuilder,private cdr: ChangeDetectorRef, private authService: AuthService, private communicationService: CommunicationService, private http: HttpClient, private router: Router, private spinner: NgxSpinnerService, private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -371,7 +371,7 @@ export class SignupComponent implements OnInit {
         this.http.get(verifyUrl).subscribe(
             (res: any) => {
                 if (res.Status === 'Success') {
-                    console.log('Mobile OTP verified successfully:', res);
+                    // console.log('Mobile OTP verified successfully:', res);
                     this.communicationService.showNotification(
                         'snackbar-success',
                         'Mobile OTP verified successfully',
@@ -380,7 +380,7 @@ export class SignupComponent implements OnInit {
                     );
                     resolve(true); // OTP verification succeeded
                 } else {
-                    console.log('Mobile OTP verification failed:', res);
+                    // console.log('Mobile OTP verification failed:', res);
                     this.communicationService.showNotification(
                         'snackbar-danger',
                         'Invalid Mobile OTP',
@@ -411,7 +411,7 @@ export class SignupComponent implements OnInit {
     return new Promise((resolve, reject) => {
       this.authService.post(`auth/verify-email?email=${email}&otp=${otp}`, {}).subscribe(
         (res: any) => {
-          console.log('Email OTP verified successfully:', res);
+          // console.log('Email OTP verified successfully:', res);
           this.communicationService.showNotification(
             'snackbar-success',
             'Email OTP verified successfully',
@@ -421,7 +421,7 @@ export class SignupComponent implements OnInit {
           resolve(true); // OTP verified successfully
         },
         (err: any) => {
-          console.log('Error verifying email OTP:', err);
+          // console.log('Error verifying email OTP:', err);
           this.communicationService.showNotification(
             'snackbar-danger',
             'Email OTP verification failed',
@@ -434,7 +434,7 @@ export class SignupComponent implements OnInit {
     });
   }
 
- 
+
   
   
 
@@ -480,12 +480,12 @@ export class SignupComponent implements OnInit {
     if (this.isIndiaSelected) {
       // For India, both OTPs are required
       return this.mgfRegistrationForm.invalid || 
-             !this.mgfRegistrationForm.controls['mobileOtp'].value || 
-             !this.mgfRegistrationForm.controls['otp'].value;
+            !this.mgfRegistrationForm.controls['mobileOtp'].value || 
+            !this.mgfRegistrationForm.controls['otp'].value;
     } else {
       // For other countries, only the email OTP is required
       return this.mgfRegistrationForm.invalid || 
-             !this.mgfRegistrationForm.controls['otp'].value;
+            !this.mgfRegistrationForm.controls['otp'].value;
     }
   }
   
@@ -585,6 +585,8 @@ export class SignupComponent implements OnInit {
         }
       }
     }
+
+    this.timeLeft = 0;
   }
   
   

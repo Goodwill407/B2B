@@ -1,17 +1,18 @@
+
 <section class="content">
     <div class="content-block">
       <div class="ads-flex">
         <div class="flex-grow-1">
-        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Product Management</h4>        
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Associated Manufacturer List </h4>        
         <div class="card-table p-3">
-            <h5 class="mt-2">Wholesaler's List</h5>
+            <h5 class="mt-2">Manufacture's List</h5>
             <hr>
             <div class="p-grid p-fluid ">
               <div class="p-col-12 text-center">
-                <p-table [value]="allWholeselers">
+                <p-table [value]="allMnf">
                   <ng-template pTemplate="header">
                     <tr>
-                      <th>Wholesaler's Name</th>
+                      <th>Manufacture's Name</th>
                       <th>Company/Firm Name</th>
                       <th>Mobile Number</th>
                       <th>Email</th>
@@ -37,14 +38,16 @@
                                         </div>
                                     </td> -->
                       <td class="text-center">
-                        <button class="btn btn-outline-success" (click)="navigateToProduct(allMnf.email,allMnf.companyName)"> <i class="fas fa-eye"></i> View Product</button>
+                        <button class="btn btn-icon p-2" pTooltip="View Profile" (click)="navigateToProfile(allMnf.email,true)"  tooltipPosition="top">
+                          <i class="fas fa-eye"></i>
+                      </button>
                     </td>
                     </tr>
                   </ng-template>
                 </p-table>
-                <span *ngIf="!allWholeselers || allWholeselers.length == 0"
+                <span *ngIf="!allMnf || allMnf.length == 0"
                   class="data-not-found d-flex justify-content-center align-items-center"> </span>
-                <p-paginator *ngIf="allWholeselers && allWholeselers.length > 5" (onPageChange)="onPageChange($event)"
+                <p-paginator *ngIf="allMnf && allMnf.length > 0" (onPageChange)="onPageChange($event)"
                   [first]="first" [rows]="rows" [totalRecords]="totalResults"
                   [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
               </div>

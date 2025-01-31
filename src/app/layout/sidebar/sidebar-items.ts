@@ -1522,6 +1522,29 @@ export const ROUTES2: RouteInfo[] = [
     role: ['retailer'],
     submenu: []
   },  
+  {
+    path: '/retailer/retailer-mnf-associated-list',
+    title: `Associated Manufacturer List`,
+    iconType: 'material-icons-outlined',
+    icon: 'group_add',
+    class: '',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['retailer'],
+    submenu: []
+  },  {
+    path: '/retailer/retailer-whol-associated-list',
+    title: `Associated Wholesaler List`,
+    iconType: 'material-icons-outlined',
+    icon: 'group_add',
+    class: '',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['retailer'],
+    submenu: []
+  },  
   // {
   //   path: '',
   //   title: `Retailer's Management`,

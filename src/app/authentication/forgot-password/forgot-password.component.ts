@@ -178,7 +178,7 @@ export class ForgotPasswordComponent implements OnInit {
     }
     else {
       this.spinner.hide();
-      this.communicationService.showNotification('snackbar-danger', 'Invalid email or mobile number.', 'bottom', 'center');
+      // this.communicationService.showNotification('snackbar-danger', 'Invalid email or mobile number.', 'bottom', 'center');
     }
   }
   
@@ -215,14 +215,18 @@ export class ForgotPasswordComponent implements OnInit {
   
   
   verifyEmailOtp(email: string, otp: string) {
-    this.authSer.post(`auth/verify-email?email=${email}&otp=${otp}`, {}).subscribe((res: any) => {
+  this.authSer.post(`auth/verify-email?email=${email}&otp=${otp}`, {}).subscribe((res: any) => {
+    if (res.message == "OTP verified successfully") {  // Check if response is successful based on your API structure
       this.showPasswordForm = true;
-      this.spinner.hide();
-    }, (err: any) => {
-      this.spinner.hide();
-      this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
-    });
-  }
+    } else {
+      this.communicationService.showNotification('snackbar-danger', res.message, 'bottom', 'center');
+    }
+    this.spinner.hide();
+  }, (err: any) => {
+    this.spinner.hide();
+    this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
+  });
+}
 
   maskEmail(email: string): string {
     const prefix = email.split('@')[0]; 

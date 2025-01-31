@@ -225,17 +225,17 @@
     <!-- Add Request Button -->
     <div class="d-flex justify-content-center mb-3 mt-3">
       <!-- Show Request to Add button if status is empty -->
-      <button *ngIf="!requestDetails" class="btn btn-outline-primary request-btn" [disabled]="isRequestSent"
+      <button *ngIf="!OnlyForView && !requestDetails" class="btn btn-outline-primary request-btn" [disabled]="isRequestSent"
         (click)="sendRequestToManufacturer()">
         Request to Add
       </button>
       <!-- Disable button if status is 'pending' or 'rejected' -->
-      <button *ngIf="requestDetails === 'pending' || requestDetails === 'rejected'"
+      <button *ngIf="!OnlyForView && (requestDetails === 'pending' || requestDetails === 'rejected')"
         class="btn btn-outline-primary request-btn" disabled>
         Pending
       </button>
       <!-- Hide button if status is 'accepted' -->
-      <button *ngIf="requestDetails === 'accepted'" class="btn btn-outline-primary request-btn" hidden>
+      <button *ngIf="!OnlyForView && requestDetails === 'accepted'" class="btn btn-outline-primary request-btn" hidden>
         Accepted
       </button>
     </div>

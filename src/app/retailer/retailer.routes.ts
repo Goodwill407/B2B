@@ -7,11 +7,15 @@ import { ViewWholesalerDetailsComponent } from "./request-to-wholesaler/view-who
 import { WholeselerListComponent } from "./product-management/wholeseler-list/wholeseler-list.component";
 import { WholeselerProductsComponent } from "./product-management/wholeseler-list/wholeseler-products/wholeseler-products.component";
 import { ViewWholeselerProductComponent } from "./product-management/wholeseler-list/view-wholeseler-product/view-wholeseler-product.component";
+import { RetailerMnfAssociatedListComponent } from "./retailer-mnf-associated-list/retailer-mnf-associated-list/retailer-mnf-associated-list.component";
+import { RetailerWholAssociatedListComponent } from "./retailer-whol-associated-list/retailer-whol-associated-list/retailer-whol-associated-list.component";
 
 export const Retailer_Route :Route[]=[ 
     { path: 'new', loadChildren:()=> import('./new-flow-Product/new_flow.routes').then((m)=>m.NewFlow)},
     {path:'dashboard', component:DashboardComponent},
     {path:'retailer-profile', component:ProfileComponent},
+    {path:'retailer-mnf-associated-list', component:RetailerMnfAssociatedListComponent},
+    {path:'retailer-whol-associated-list', component:RetailerWholAssociatedListComponent},
     {path:'request-to-wholesaler', component:RequestToWholesalerComponent},
     {path:'requested-wholesaler', component:RequestedWholesalerListComponent},
     {path:'view-wholesaler-details', component:ViewWholesalerDetailsComponent},

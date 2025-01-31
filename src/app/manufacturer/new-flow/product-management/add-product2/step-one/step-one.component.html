@@ -425,13 +425,13 @@
                     </option>
                 </select>
             </div>
-            <div *ngIf="visibleFields.includes('trouserFitType')"
+            <div *ngIf="visibleFields.includes('trouserFitStyle')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                 <label class="label-input" for="acb">Trouser Fit Type </label>
-                <select name="trouserFitType" id="trouserFitType" class="form-select"
-                    formControlName="trouserFitType">
+                <select name="trouserFitStyle" id="trouserFitStyle" class="form-select"
+                    formControlName="trouserFitStyle">
                     <option value="" disabled selected>Select</option>
-                    <option [value]="type.name" *ngFor="let type of allTrouserfittype">{{type.name}}
+                    <option [value]="type.name.code" *ngFor="let type of allTrouserfittype">{{type.name}}
                     </option>
                 </select>
             </div>
@@ -457,7 +457,7 @@
             </div>
             <div *ngIf="visibleFields.includes('trourseStyle')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="acb">Select Trourser Style </label>
+                <label class="label-input" for="acb">Trourser Style </label>
                 <select name="trourseStyle" id="trourseStyle" class="form-select"
                     formControlName="trourseStyle">
                     <option value="" disabled selected>Select</option>
@@ -497,7 +497,7 @@
             <!-- Women Sleeve Type Dropdown -->
             <div *ngIf="visibleFields.includes('womenSleeveType')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="womenSleeveType">Select Women Sleeve Type</label>
+                <label class="label-input" for="womenSleeveType">Women Sleeve Type</label>
                 <select name="womenSleeveType" id="womenSleeveType" class="form-select"
                     formControlName="womenSleeveType">
                     <option value="" disabled selected>Select</option>
@@ -508,7 +508,7 @@
 
             <!-- Fit Type Dropdown -->
             <div *ngIf="visibleFields.includes('fitType')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="fitType">Select Fit Type</label>
+                <label class="label-input" for="fitType">Fit Type</label>
                 <select name="fitType" id="fitType" class="form-select" formControlName="fitType">
                     <option value="" disabled selected>Select</option>
                     <option [value]="type.name" *ngFor="let type of allFitStyle">{{type.name}}</option>
@@ -517,7 +517,7 @@
 
             <!-- Neckline Dropdown -->
             <div *ngIf="visibleFields.includes('neckline')" class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="neckline">Select Neck Line</label>
+                <label class="label-input" for="neckline">Neck Line</label>
                 <select name="neckline" id="neckline" class="form-select" formControlName="neckline">
                     <option value="" disabled selected>Select</option>
                     <option [value]="type.name" *ngFor="let type of allNeckStyle">{{type.name}}</option>
@@ -527,7 +527,7 @@
             <!-- Elasticity Dropdown -->
             <div *ngIf="visibleFields.includes('elasticity')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="elasticity">Select Elasticity</label>
+                <label class="label-input" for="elasticity">Elasticity</label>
                 <select name="elasticity" id="elasticity" class="form-select"
                     formControlName="elasticity">
                     <option value="" disabled selected>Select</option>
@@ -593,7 +593,7 @@
             <!-- Item Style Dropdown -->
             <div *ngIf="visibleFields.includes('itemStyle')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="itemStyle">Select Style</label>
+                <label class="label-input" for="itemStyle">Style</label>
                 <select name="itemStyle" id="itemStyle" class="form-select" formControlName="itemStyle">
                     <option value="" disabled selected>Select</option>
                     <option [value]="type.name" *ngFor="let type of AllwomenStyle">{{type.name}}
@@ -604,7 +604,7 @@
             <!-- Waist Type Dropdown -->
             <div *ngIf="visibleFields.includes('waistType')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="waistType">Select Waist Type</label>
+                <label class="label-input" for="waistType">Waist Type</label>
                 <select name="waistType" id="waistType" class="form-select" formControlName="waistType">
                     <option value="" disabled selected>Select</option>
                     <option [value]="type.name" *ngFor="let type of AllwaistType">{{type.name}}</option>
@@ -614,7 +614,7 @@
             <!-- Waist Rise Dropdown -->
             <div *ngIf="visibleFields.includes('waistRise')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="waistRise">Select Waist Rise</label>
+                <label class="label-input" for="waistRise">Waist Rise</label>
                 <select name="waistRise" id="waistRise" class="form-select" formControlName="waistRise">
                     <option value="" disabled selected>Select</option>
                     <option [value]="type.name" *ngFor="let type of allRisestyle">{{type.name}}</option>
@@ -624,7 +624,7 @@
             <!-- Weave Type Dropdown -->
             <div *ngIf="visibleFields.includes('weaveType')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="weaveType">Select Weave Type</label>
+                <label class="label-input" for="weaveType">Weave Type</label>
                 <select name="weaveType" id="weaveType" class="form-select" formControlName="weaveType">
                     <option value="" disabled selected>Select</option>
                     <option [value]="type.name" *ngFor="let type of AllweaveType">{{type.name}}</option>
@@ -634,7 +634,7 @@
             <!-- Ethnic Design Dropdown -->
             <div *ngIf="visibleFields.includes('ethnicDesign')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="ethnicDesign">Select Ethnic Design</label>
+                <label class="label-input" for="ethnicDesign">Ethnic Design</label>
                 <select name="ethnicDesign" id="ethnicDesign" class="form-select"
                     formControlName="ethnicDesign">
                     <option value="" disabled selected>Select</option>
@@ -646,7 +646,7 @@
             <!-- Saree Style Dropdown -->
             <div *ngIf="visibleFields.includes('sareeStyle')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="sareeStyle">Select Saree Style</label>
+                <label class="label-input" for="sareeStyle">Saree Style</label>
                 <select name="sareeStyle" id="sareeStyle" class="form-select"
                     formControlName="sareeStyle">
                     <option value="" disabled selected>Select</option>
@@ -658,7 +658,7 @@
             <!-- Apparel Silhouette Dropdown -->
             <div *ngIf="visibleFields.includes('apparelSilhouette')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="apparelSilhouette">Select Apparel Silhouette</label>
+                <label class="label-input" for="apparelSilhouette">Apparel Silhouette</label>
                 <select name="apparelSilhouette" id="apparelSilhouette" class="form-select"
                     formControlName="apparelSilhouette">
                     <option value="" disabled selected>Select</option>
@@ -721,7 +721,7 @@
             <!-- Finish Type Dropdown -->
             <div *ngIf="visibleFields.includes('finishType')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="finishType">Select Finish Type</label>
+                <label class="label-input" for="finishType">Finish Type</label>
                 <select name="finishType" id="finishType" class="form-select"
                     formControlName="finishType">
                     <option value="" disabled selected>Select</option>
@@ -763,7 +763,7 @@
                                 <br>
                                 <small
                                     *ngIf="field.label.includes('(in cm)') || field.label.includes('(in gm)' )">
-                                    ({{ field.label.split('(')[1] }})
+                                    ({{ field.label.split('(')[1]?.replace(')', '').trim() }})
                                 </small>
                             </label>
                         </div>
@@ -776,7 +776,7 @@
                                 <br>
                                 <small
                                     *ngIf="field.label.includes('(in cm)') || field.label.includes('(in gm)' )">
-                                    ({{ field.label.split('(')[1] }})
+                                    ({{ field.label.split('(')[1]?.replace(')', '').trim() }})
                                 </small>
                             </label>
                         </div>
@@ -789,7 +789,7 @@
                                 <br>
                                 <small
                                     *ngIf="field.label.includes('(in cm)') || field.label.includes('(in gm)' )">
-                                    ({{ field.label.split('(')[1] }})
+                                    ({{ field.label.split('(')[1]?.replace(')', '').trim() }})
                                 </small>
                             </label>
                         </div>
@@ -803,6 +803,7 @@
                         <!-- First 4 fields under Size -->
                         <div class="col" *ngFor="let field of sizeChartFields.slice(0, 4)">
                             <input type="text" [formControlName]="field.name"
+                                [pattern]="field.pattern"
                                 class="form-control custom-input"
                                 [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get(field.name)?.invalid}"
                                 placeholder="">
@@ -810,7 +811,10 @@
                             <div *ngIf="submittedStep1 && sizeGroup.get(field.name)?.invalid"
                                 class="invalid-feedback">
                                 <div *ngIf="sizeGroup.get(field.name)?.hasError('required')">
-                                    {{ field.label }} is required
+                                    {{ field.label }} is required.
+                                </div>
+                                <div *ngIf="sizeGroup.get(field.name)?.hasError('pattern')">
+                                    {{ field.label }} must be a valid number.
                                 </div>
                             </div>
                         </div>
@@ -818,6 +822,7 @@
                         <!-- Next 5 fields under Item Dimension -->
                         <div class="col" *ngFor="let field of sizeChartFields.slice(4, 9)">
                             <input type="text" [formControlName]="field.name"
+                                [pattern]="field.pattern"
                                 class="form-control custom-input"
                                 [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get(field.name)?.invalid}"
                                 placeholder="">
@@ -825,7 +830,10 @@
                             <div *ngIf="submittedStep1 && sizeGroup.get(field.name)?.invalid"
                                 class="invalid-feedback">
                                 <div *ngIf="sizeGroup.get(field.name)?.hasError('required')">
-                                    {{ field.label }} is required
+                                    {{ field.label }} is required.
+                                </div>
+                                <div *ngIf="sizeGroup.get(field.name)?.hasError('pattern')">
+                                    {{ field.label }} must be a valid number.
                                 </div>
                             </div>
                         </div>
@@ -834,13 +842,17 @@
                         <div class="col" *ngFor="let field of sizeChartFields.slice(9)">
                             <input type="text" [formControlName]="field.name"
                                 class="form-control custom-input"
+                                [pattern]="field.pattern"
                                 [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get(field.name)?.invalid}"
                                 placeholder="">
                             <!-- Validation feedback -->
                             <div *ngIf="submittedStep1 && sizeGroup.get(field.name)?.invalid"
                                 class="invalid-feedback">
                                 <div *ngIf="sizeGroup.get(field.name)?.hasError('required')">
-                                    {{ field.label }} is required
+                                    {{ field.label }} is required.
+                                </div>
+                                <div *ngIf="sizeGroup.get(field.name)?.hasError('pattern')">
+                                    {{ field.label }} must be a valid number.
                                 </div>
                             </div>
                         </div>
