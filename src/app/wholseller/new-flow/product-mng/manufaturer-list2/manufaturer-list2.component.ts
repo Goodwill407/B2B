@@ -61,8 +61,8 @@ export class ManufaturerList2Component {
     this.getAllMnf();
   }
 
-  navigateToProduct(email: string) {
-    this.router.navigate(['/wholesaler/new/product/mnf-product'], {queryParams:{ email: email }});
+  navigateToProduct(email: string, CompanyName: string) {
+    this.router.navigate(['/wholesaler/new/product/mnf-product'], {queryParams:{ email: email, CompanyName: CompanyName}});
   }
 
   navigateFun() {

@@ -71,8 +71,8 @@ export class ProfileComponent {
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
     this.initializeValidation()
     this.getAllCountry()
-    this.getSavedProfileData()
     this.disabledFields();
+    this.getSavedProfileData()
     this.getAllCountryCode()
     
   }
@@ -183,7 +183,7 @@ export class ProfileComponent {
           await this.getAllState({ country_name: res.country });
           this.mgfRegistrationForm.patchValue({ state: res.state });
   
-          this.stateWiseCity(null, this.allData.state, this.allData.city);
+          // this.stateWiseCity(null, this.allData.state, this.allData.city);
           
           // If country is missing, set it to India and preload states
          if (!res.country) {
@@ -264,13 +264,13 @@ export class ProfileComponent {
 
  
 
-  stateWiseCity(event: any, stateName: any = '', cityName: any = '') {
-    const state = event === null ? stateName : event.target.value;
-    this.direction.getCities(`https://api.countrystatecity.in/v1/countries/IN/states/${state}/cities`).subscribe((res: any) => {
-      this.cityList = res;
-      this.mgfRegistrationForm.get('city')?.setValue(cityName);
-    });
-  }
+  // stateWiseCity(event: any, stateName: any = '', cityName: any = '') {
+  //   const state = event === null ? stateName : event.target.value;
+  //   this.direction.getCities(`https://api.countrystatecity.in/v1/countries/IN/states/${state}/cities`).subscribe((res: any) => {
+  //     this.cityList = res;
+  //     this.mgfRegistrationForm.get('city')?.setValue(cityName);
+  //   });
+  // }
   getAllCountry() {
     this.authService.get('newcountry').subscribe(
       (res: any) => {

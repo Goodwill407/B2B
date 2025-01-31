@@ -169,7 +169,7 @@
 
             <div *ngIf="visibleFields.includes('materialvariety')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="materialvariety">Material Variety of any</label>
+                <label class="label-input" for="materialvariety">Material Variety of Any</label>
                 <input type="text" id="materialvariety" formControlName="materialvariety"
                     class="form-control">
             </div>
@@ -199,14 +199,14 @@
             <div *ngIf="visibleFields.includes('selectedOccasion')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                 <label class="label-input" for="fitStyle">Occasion</label>
-                <p-multiSelect [options]="allOccasionType" placeholder="Select Occasion" optionLabel=""
+                <p-multiSelect [options]="allOccasionType" placeholder="Select" optionLabel=""
                     formControlName="selectedOccasion" class="custom-multiSelect"></p-multiSelect>
             </div>
 
             <div *ngIf="visibleFields.includes('selectedlifeStyle')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
                 <label class="label-input" for="lifeStyle">Life Style</label>
-                <p-multiSelect [options]="allLifeStyle" placeholder="Select Style" optionLabel=""
+                <p-multiSelect [options]="allLifeStyle" placeholder="Select" optionLabel=""
                     formControlName="selectedlifeStyle" class="custom-multiSelect"></p-multiSelect>
             </div>
 

@@ -61,8 +61,8 @@ export class ViewProductRePriceComponent {
     this.getAllMnf();
   }
 
-  navigateToProduct(email: string) {
-    this.router.navigate(['/wholesaler/new/Price/Priceedit'], {queryParams:{ email: email }});
+  navigateToProduct(email: string, CompanyName: string) {
+    this.router.navigate(['/wholesaler/new/Price/Priceedit'], {queryParams:{ email: email, CompanyName: CompanyName}});
   }
 
   navigateFun() {

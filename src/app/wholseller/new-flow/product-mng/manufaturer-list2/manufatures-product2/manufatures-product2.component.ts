@@ -40,7 +40,7 @@ export class ManufaturesProduct2Component {
   first: number = 0;
   rows: number = 10;
   userProfile: any;
-
+  mnfCompanyName:any;
   hoverIntervals: any = {}; // Track hover intervals for each product
   totalResults: any;
   mnfEmail: any;
@@ -53,6 +53,7 @@ export class ManufaturesProduct2Component {
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       this.mnfEmail = params['email'];
+      this.mnfCompanyName = params['CompanyName'];
       if (this.mnfEmail) {
         this.getAllProducts(this.mnfEmail);
       }

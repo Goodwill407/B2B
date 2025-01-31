@@ -222,13 +222,13 @@ export class CustomiseProfileComponent {
     });
   }
 
-  stateWiseCity(event: any, stateName: any = '', cityName: any = '') {
-    const state = event === null ? stateName : event.target.value;
-    this.direction.getCities(`https://api.countrystatecity.in/v1/countries/IN/states/${state}/cities`).subscribe((res: any) => {
-      this.cityList = res;
-      this.mgfRegistrationForm.get('city')?.setValue(cityName);
-    });
-  }
+  // stateWiseCity(event: any, stateName: any = '', cityName: any = '') {
+  //   const state = event === null ? stateName : event.target.value;
+  //   this.direction.getCities(`https://api.countrystatecity.in/v1/countries/IN/states/${state}/cities`).subscribe((res: any) => {
+  //     this.cityList = res;
+  //     this.mgfRegistrationForm.get('city')?.setValue(cityName);
+  //   });
+  // }
 
   getAllCountry() {
     this.direction.getAllCountry().subscribe((res: any) => {
