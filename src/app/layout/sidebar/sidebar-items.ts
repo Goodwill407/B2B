@@ -201,7 +201,7 @@ export const ROUTES: RouteInfo[] = [
     submenu: [
       {
         path: '/mnf/wholselers-Requests',
-        title: "Wholesaler's Request list",
+        title: "Wholesaler Request List",
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -213,7 +213,7 @@ export const ROUTES: RouteInfo[] = [
       },
       {
         path: '/mnf/Rejected-Requests',
-        title: "Rejected Request's List",
+        title: "Rejected Request List",
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -829,7 +829,7 @@ export const ROUTES: RouteInfo[] = [
       },    
       {
         path: '/wholesaler/rejected-retailsers-list',
-        title: 'Rejected Retailers List',
+        title: 'Rejected Retailer List',
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -1299,7 +1299,7 @@ export const ROUTES2: RouteInfo[] = [
     submenu: [
       {
         path: '/mnf/wholselers-Requests',
-        title: "Wholesaler's Request list",
+        title: "Wholesaler Request List",
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -1311,7 +1311,7 @@ export const ROUTES2: RouteInfo[] = [
       },
       {
         path: '/mnf/Rejected-Requests',
-        title: "Rejected Request's List",
+        title: "Rejected Request List",
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -1999,7 +1999,7 @@ export const ROUTES2: RouteInfo[] = [
       },    
       {
         path: '/wholesaler/rejected-retailsers-list',
-        title: 'Rejected Retailers List',
+        title: 'Rejected Retailer List',
         iconType: '',
         icon: '',
         class: 'ml-menu',
