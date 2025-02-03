@@ -63,7 +63,7 @@ export class ListOfAssoMfgComponent {
   }
 
   navigateToProduct(email: string,CompanyName: string) {
-    this.router.navigate(['/wholesaler/new/product/mnf-product'], {queryParams:{ email: email, CompanyName: CompanyName}});
+    this.router.navigate(['/retailer/new/view-product-ofMfg'], {queryParams:{ email: email, CompanyName: CompanyName}});
   }
 
   navigateFun() {

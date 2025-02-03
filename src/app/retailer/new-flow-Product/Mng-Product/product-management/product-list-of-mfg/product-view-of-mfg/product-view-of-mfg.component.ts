@@ -5,9 +5,8 @@ import { RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '@core';
 import ColorThief from 'colorthief';
 import { PaginatorModule } from 'primeng/paginator';
-
 @Component({
-  selector: 'app-manufatures-product2',
+  selector: 'app-product-view-of-mfg',
   standalone: true,
   imports: [
     CommonModule,
@@ -16,11 +15,11 @@ import { PaginatorModule } from 'primeng/paginator';
     RouterModule,
     PaginatorModule
   ],
-  templateUrl: './manufatures-product2.component.html',
-  styleUrls: ['./manufatures-product2.component.scss']
+  templateUrl: './product-view-of-mfg.component.html',
+  styleUrl: './product-view-of-mfg.component.scss'
 })
-export class ManufaturesProduct2Component {
-  filters = {
+export class ProductViewOfMfgComponent {
+filters = {
     brand: '',
     productType: '',
     gender: '',
@@ -251,4 +250,5 @@ export class ManufaturesProduct2Component {
       }
     );
   }
+
 }

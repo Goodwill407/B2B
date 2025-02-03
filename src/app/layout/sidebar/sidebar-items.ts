@@ -150,7 +150,7 @@ export const ROUTES: RouteInfo[] = [
     submenu: [
       {
         path: '/mnf/add-new-product',
-        title: 'Add new Product',
+        title: 'Add New Product',
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -1248,7 +1248,7 @@ export const ROUTES2: RouteInfo[] = [
     submenu: [
       {
         path: '/mnf/new/add-product2',
-        title: 'Add new Product',
+        title: 'Add New Product',
         iconType: '',
         icon: '',
         class: 'ml-menu',
