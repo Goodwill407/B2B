@@ -14,7 +14,9 @@
                 <div class="product-images">
                     <div class="main-image">
                         <img *ngIf="selectedMediaType === 'image'" [src]="selectedMedia"
+                        onerror="this.onerror=null; this.src='assets/images/Product_Alt.jpeg';"
                             alt="Main Product Image">
+                            <!-- alt image added for product -->
                         <video *ngIf="selectedMediaType === 'video'" style="width: 380px; height: 495px;"
                             [src]="selectedMedia" controls></video>
                     </div>

@@ -47,10 +47,9 @@ export class SignupComponent implements OnInit {
   interval: any; // Interval for the timer
 
   isIndiaSelected: boolean = false; // Track whether India is selected
-
   countryCode: any[] = [];
   invitedBy: any[] = [];
-
+  
   constructor(private fb: FormBuilder,private cdr: ChangeDetectorRef, private authService: AuthService, private communicationService: CommunicationService, private http: HttpClient, private router: Router, private spinner: NgxSpinnerService, private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -172,95 +171,95 @@ export class SignupComponent implements OnInit {
   onSubmit() {
     const data = this.mgfRegistrationForm.value;
     data.refByEmail = this.invitedBy ? this.invitedBy[0] : '';
-  
+
     if (this.otpStep) {
-      // OTP verification logic
-      if (this.isIndiaSelected) {
-        if (!this.mgfRegistrationForm.controls['otp'].valid || !this.mgfRegistrationForm.controls['mobileOtp'].valid) {
-          this.communicationService.showNotification(
-            'snackbar-danger',
-            'Please enter valid Email and Mobile OTPs',
-            'bottom',
-            'center'
-          );
-          return;
-        }
-  
-        // Verify both Email and Mobile OTPs
-        Promise.all([
-          this.verifyEmailOtp(data.email, data.otp),
-          this.verifyMobileOtp(data.mobileNumber, data.mobileOtp),
-        ])
-          .then(([emailVerified, mobileVerified]) => {
-            if (emailVerified && mobileVerified) {
-              console.log('Both OTPs verified successfully');
-              this.showPasswordForm = true; // Allow password form to be shown
+        if (this.isIndiaSelected) {
+            // Verify both Email and Mobile OTPs for India
+            if (!this.mgfRegistrationForm.controls['otp'].valid || !this.mgfRegistrationForm.controls['mobileOtp'].valid) {
+                this.communicationService.showNotification(
+                    'snackbar-danger',
+                    'Please enter valid Email and Mobile OTPs',
+                    'bottom',
+                    'center'
+                );
+                return;
             }
-          })
-          .catch(() => {
-            console.log('OTP verification failed');
-            this.showPasswordForm = false; // Prevent showing the password form
-          });
-  
-      } else {
-        // If not India, only verify Email OTP
-        if (!this.mgfRegistrationForm.controls['otp'].valid) {
-          this.communicationService.showNotification(
-            'snackbar-danger',
-            'Please enter a valid Email OTP',
-            'bottom',
-            'center'
-          );
-          return;
-        }
-  
-        this.verifyEmailOtp(data.email, data.otp)
-          .then((emailVerified) => {
-            if (emailVerified) {
-              console.log('Email OTP verified successfully');
-              this.showPasswordForm = true; // Allow password form to be shown
+
+            Promise.all([
+                this.verifyEmailOtp(data.email, data.otp),
+                this.verifyMobileOtp(data.mobileNumber, data.mobileOtp),
+            ])
+                .then(([emailVerified, mobileVerified]) => {
+                    if (emailVerified && mobileVerified) {
+                        console.log('Both OTPs verified successfully');
+                        this.showPasswordForm = true; // Allow password form to be shown
+                    }
+                })
+                .catch(() => {
+                    console.log('OTP verification failed');
+                    this.showPasswordForm = false; // Prevent showing the password form
+                });
+        } else {
+            // Verify only Email OTP for non-India countries
+            if (!this.mgfRegistrationForm.controls['otp'].valid) {
+                this.communicationService.showNotification(
+                    'snackbar-danger',
+                    'Please enter a valid Email OTP',
+                    'bottom',
+                    'center'
+                );
+                return;
             }
-          })
-          .catch(() => {
-            console.log('Email OTP verification failed');
-            this.showPasswordForm = false; // Prevent showing the password form
-          });
-      }
+
+            this.verifyEmailOtp(data.email, data.otp)
+                .then((emailVerified) => {
+                    if (emailVerified) {
+                        console.log('Email OTP verified successfully');
+                        this.showPasswordForm = true; // Allow password form to be shown
+                    }
+                })
+                .catch(() => {
+                    console.log('Email OTP verification failed');
+                    this.showPasswordForm = false; // Prevent showing the password form
+                });
+        }
     } else {
-      // First step - Registration
-      if (this.mgfRegistrationForm.valid) {
-        delete data.otp;
-        delete data.mobileOtp;
-        data.mobileNumber = String(data.mobileNumber);
-  
-        this.spinner.show();
-  
-        // Call registration API
-        this.authService.post('auth/register', data).subscribe(
-          (res: any) => {
-            this.sendEmailOtp(data.email, data.fullName);
-  
-            if (this.isIndiaSelected) {
-              this.sendMobileOtp(data.mobileNumber);
-            }
-  
-            this.otpStep = true; // Activate OTP step
-            this.startTimer(); // Start the unified timer
-            this.spinner.hide();
-          },
-          (err: any) => {
-            this.spinner.hide();
-            this.communicationService.showNotification(
-              'snackbar-danger',
-              err.error.message,
-              'bottom',
-              'center'
+        // Handle the first step (Registration)
+        if (this.mgfRegistrationForm.valid) {
+            delete data.otp;
+            delete data.mobileOtp;
+            data.mobileNumber = String(data.mobileNumber);
+
+            this.spinner.show();
+
+            // Call registration API
+            this.authService.post('auth/register', data).subscribe(
+                (res: any) => {
+                    this.sendEmailOtp(data.email, data.fullName);
+
+                    if (this.isIndiaSelected) {
+                        this.sendMobileOtp(data.mobileNumber);
+                    }
+
+                    this.otpStep = true; // Activate OTP step
+                    this.startTimer(); // Start the unified timer
+                    this.spinner.hide();
+                },
+                (err: any) => {
+                    this.spinner.hide();
+                    this.communicationService.showNotification(
+                        'snackbar-danger',
+                        err.error.message,
+                        'bottom',
+                        'center'
+                    );
+                }
             );
-          }
-        );
-      }
+        }
     }
-  }
+    this.clearOtpFields();
+}
+
   
 
   sendMobileOtp(mobileNumber: string) {
@@ -346,39 +345,65 @@ export class SignupComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     const nextInput = document.getElementById(`mobotp${index + 1}`) as HTMLInputElement;
     const prevInput = document.getElementById(`mobotp${index - 1}`) as HTMLInputElement;
-  
+
     if (value.length === 1) {
-      if (nextInput) {
-        nextInput.focus(); // Move to the next input field if it exists
-      }
+        if (nextInput) {
+            nextInput.focus(); // Move to the next input field if it exists
+        }
     } else if (value.length === 0 && prevInput) {
-      prevInput.focus(); // Move to the previous input field if backspace is pressed
+        prevInput.focus(); // Move to the previous input field if backspace is pressed
     }
-  
+
     // Update the corresponding OTP field value
     this.otpFields[index] = value;
-  
+
     // Set the concatenated OTP value to the form control
-    this.mgfRegistrationForm.controls['mobileOtp'].setValue(this.otpFields.join(''));
-  }
+    const fullOtp = this.otpFields.join('');
+    this.mgfRegistrationForm.controls['mobileOtp'].setValue(fullOtp);
+}
+
   
   
 
   verifyMobileOtp(mobileNumber: string, mobileOtp: string): Promise<boolean> {
     const verifyUrl = `https://2factor.in/API/V1/d5e40971-765b-11ef-8b17-0200cd936042/SMS/VERIFY3/+91${mobileNumber}/${mobileOtp}`;
     return new Promise((resolve, reject) => {
-      this.http.get(verifyUrl).subscribe(
-        (res: any) => {
-          console.log('Mobile OTP verified successfully:', res);
-          resolve(true); // OTP verification succeeded
-        },
-        (err: any) => {
-          console.log('Error verifying mobile OTP:', err);
-          reject(false); // OTP verification failed
-        }
-      );
+        this.http.get(verifyUrl).subscribe(
+            (res: any) => {
+                if (res.Status === 'Success') {
+                    // console.log('Mobile OTP verified successfully:', res);
+                    this.communicationService.showNotification(
+                        'snackbar-success',
+                        'Mobile OTP verified successfully',
+                        'bottom',
+                        'center'
+                    );
+                    resolve(true); // OTP verification succeeded
+                } else {
+                    // console.log('Mobile OTP verification failed:', res);
+                    this.communicationService.showNotification(
+                        'snackbar-danger',
+                        'Invalid Mobile OTP',
+                        'bottom',
+                        'center'
+                    );
+                    reject(false); // OTP verification failed
+                }
+            },
+            (err: any) => {
+                console.log('Error verifying mobile OTP:', err);
+                this.communicationService.showNotification(
+                    'snackbar-danger',
+                    'Failed to verify mobile OTP. Please try again.',
+                    'bottom',
+                    'center'
+                );
+                reject(false); // OTP verification failed
+            }
+        );
     });
-  }
+}
+
   
   
 
@@ -386,7 +411,7 @@ export class SignupComponent implements OnInit {
     return new Promise((resolve, reject) => {
       this.authService.post(`auth/verify-email?email=${email}&otp=${otp}`, {}).subscribe(
         (res: any) => {
-          console.log('Email OTP verified successfully:', res);
+          // console.log('Email OTP verified successfully:', res);
           this.communicationService.showNotification(
             'snackbar-success',
             'Email OTP verified successfully',
@@ -396,7 +421,7 @@ export class SignupComponent implements OnInit {
           resolve(true); // OTP verified successfully
         },
         (err: any) => {
-          console.log('Error verifying email OTP:', err);
+          // console.log('Error verifying email OTP:', err);
           this.communicationService.showNotification(
             'snackbar-danger',
             'Email OTP verification failed',
@@ -409,7 +434,7 @@ export class SignupComponent implements OnInit {
     });
   }
 
- 
+
   
   
 
@@ -448,18 +473,19 @@ export class SignupComponent implements OnInit {
       this.mgfRegistrationForm.controls['mobileOtp'].setValue(''); // Clear value if not needed
     }
     this.mgfRegistrationForm.controls['mobileOtp'].updateValueAndValidity();
+
   }
   
   isButtonDisabled(): boolean {
     if (this.isIndiaSelected) {
       // For India, both OTPs are required
       return this.mgfRegistrationForm.invalid || 
-             !this.mgfRegistrationForm.controls['mobileOtp'].value || 
-             !this.mgfRegistrationForm.controls['otp'].value;
+            !this.mgfRegistrationForm.controls['mobileOtp'].value || 
+            !this.mgfRegistrationForm.controls['otp'].value;
     } else {
       // For other countries, only the email OTP is required
       return this.mgfRegistrationForm.invalid || 
-             !this.mgfRegistrationForm.controls['otp'].value;
+            !this.mgfRegistrationForm.controls['otp'].value;
     }
   }
   
@@ -490,15 +516,30 @@ export class SignupComponent implements OnInit {
     }, 1000); // Decrease every second
   }
 
-  resendOtps() {
-    this.sendEmailOtp(this.mgfRegistrationForm.value.email, this.mgfRegistrationForm.value.fullName);
-
-    if (this.isIndiaSelected) {
-      this.sendMobileOtp(this.mgfRegistrationForm.value.mobileNumber);
+    resendOtps() {
+      // Clear the OTP input fields
+      this.clearOtpFields();
+    
+      // Resend the email OTP
+      this.sendEmailOtp(this.mgfRegistrationForm.value.email, this.mgfRegistrationForm.value.fullName);
+    
+      // Resend the mobile OTP if India is selected
+      if (this.isIndiaSelected) {
+        this.sendMobileOtp(this.mgfRegistrationForm.value.mobileNumber);
+      }
+    
+      // Restart the timer
+      this.startTimer();
+    
+      // Show a success notification
+      this.communicationService.showNotification(
+        'snackbar-success',
+        'OTP resent successfully',
+        'bottom',
+        'center'
+      );
     }
-
-    this.startTimer(); // Restart timer
-  }
+    
 
   moveFocus(event: KeyboardEvent, index: number, type: string): void {
     const target = event.target as HTMLInputElement;
@@ -512,5 +553,41 @@ export class SignupComponent implements OnInit {
     }
   }
 
+  clearOtpFields(): void {
+    // Clear the OTP fields array
+    this.otpFields = ['', '', '', '', '', ''];
+  
+    // Reset the form control value for 'otp'
+    this.mgfRegistrationForm.controls['otp'].setValue('');
+  
+    // Optionally focus on the first OTP input box
+    const firstOtpInput = document.getElementById('otp0') as HTMLInputElement;
+    if (firstOtpInput) {
+      firstOtpInput.focus();
+    }
     
+    // Clear email OTP fields
+    for (let i = 0; i < 6; i++) {
+        const otpField = document.getElementById(`otp${i}`) as HTMLInputElement;;
+        if (otpField) {
+            otpField.value = ''; // Clear the value
+        }
+    }
+
+
+    // If mobile OTP is enabled, clear it too
+    if (this.isIndiaSelected) {
+      this.mgfRegistrationForm.controls['mobileOtp'].setValue('');
+      for (let i = 0; i < 6; i++) {
+        const mobileOtpInput = document.getElementById(`mobotp${i}`) as HTMLInputElement;
+        if (mobileOtpInput) {
+          mobileOtpInput.value = '';
+        }
+      }
+    }
+
+    this.timeLeft = 0;
+  }
+  
+  
 }

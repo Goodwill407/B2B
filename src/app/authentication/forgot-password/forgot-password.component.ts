@@ -129,6 +129,7 @@ export class ForgotPasswordComponent implements OnInit {
   GetOtp() {
     const username = this.mobForm.get('username')?.value;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
     this.spinner.show();
     if (emailRegex.test(username)) {
       this.sendEmailOtp(username, this.userDetails?.fullName);
@@ -166,34 +167,66 @@ export class ForgotPasswordComponent implements OnInit {
     const username = this.mobForm.get('username')?.value;
     const otp = this.otpForm.get('otp')?.value;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const mobileRegx = /^[0-9]{10}$/;
     this.spinner.show();
     if (emailRegex.test(username)) {
       this.verifyEmailOtp(username, otp);
-    } else {
+    } 
+    if (mobileRegx.test(username)) {
       this.verifyMobileOtp(username, otp);
+     // console.log('Verified mobile ' + username);
+    }
+    else {
+      this.spinner.hide();
+      // this.communicationService.showNotification('snackbar-danger', 'Invalid email or mobile number.', 'bottom', 'center');
     }
   }
   
   verifyMobileOtp(mobileNumber: string, otp: string) {
-    const verifyUrl = `https://2factor.in/API/V1/d5e40971-765b-11ef-8b17-0200cd936042/SMS/VERIFY3/+91${mobileNumber}/${otp}`;
-    this.http.get(verifyUrl).subscribe((res: any) => {
-      this.showPasswordForm = true;
-      this.spinner.hide();
-    }, (err: any) => {
-      this.spinner.hide();
-      this.communicationService.showNotification('snackbar-danger', 'Mobile OTP verification failed', 'bottom', 'center');
-    });
+    // Format the mobile number with the country code +91
+    const formattedMobileNumber = `+91${mobileNumber}`;
+  
+    // Construct the API URL with mobile number and OTP as path parameters
+    const verifyUrl = `https://2factor.in/API/V1/d5e40971-765b-11ef-8b17-0200cd936042/SMS/VERIFY3/${formattedMobileNumber}/${otp}`;
+  
+    this.spinner.show();
+  
+    // Send a GET request with the constructed URL
+    this.http.get(verifyUrl).subscribe(
+      (res: any) => {
+        // Handle the success response
+        if (res.Status === 'Success') {
+          this.showPasswordForm = true;  // OTP verified, show the password form
+          this.spinner.hide();
+        } else {
+          // If OTP verification failed, show error message
+          this.spinner.hide();
+          this.communicationService.showNotification('snackbar-danger', 'Mobile OTP verification failed. Please try again.', 'bottom', 'center');
+        }
+      },
+      (err: any) => {
+        // Handle the error response (e.g., network failure)
+        this.spinner.hide();
+        this.communicationService.showNotification('snackbar-danger', 'An error occurred during mobile OTP verification. Please try again later.', 'bottom', 'center');
+      }
+    );
   }
   
+  
+  
   verifyEmailOtp(email: string, otp: string) {
-    this.authSer.post(`auth/verify-email?email=${email}&otp=${otp}`, {}).subscribe((res: any) => {
+  this.authSer.post(`auth/verify-email?email=${email}&otp=${otp}`, {}).subscribe((res: any) => {
+    if (res.message == "OTP verified successfully") {  // Check if response is successful based on your API structure
       this.showPasswordForm = true;
-      this.spinner.hide();
-    }, (err: any) => {
-      this.spinner.hide();
-      this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
-    });
-  }
+    } else {
+      this.communicationService.showNotification('snackbar-danger', res.message, 'bottom', 'center');
+    }
+    this.spinner.hide();
+  }, (err: any) => {
+    this.spinner.hide();
+    this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
+  });
+}
 
   maskEmail(email: string): string {
     const prefix = email.split('@')[0]; 

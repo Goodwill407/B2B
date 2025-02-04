@@ -126,24 +126,24 @@
                             <!-- Email OTP -->
                             <label class="lable-input"><b>Enter Email OTP</b><span>*</span> :</label>
                             <div class="otp-input mt-4">
-                              <input id="otp0" type="text" maxlength="1" (input)="onOtpChange(0, $event)" class="form-control otp-box" />
-                              <input id="otp1" type="text" maxlength="1" (input)="onOtpChange(1, $event)" class="form-control otp-box" />
-                              <input id="otp2" type="text" maxlength="1" (input)="onOtpChange(2, $event)" class="form-control otp-box" />
-                              <input id="otp3" type="text" maxlength="1" (input)="onOtpChange(3, $event)" class="form-control otp-box" />
-                              <input id="otp4" type="text" maxlength="1" (input)="onOtpChange(4, $event)" class="form-control otp-box" />
-                              <input id="otp5" type="text" maxlength="1" (input)="onOtpChange(5, $event)" class="form-control otp-box" />
+                              <input id="otp0" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onOtpChange(0, $event)" class="form-control otp-box" pattern="[0-9]" required/>
+                              <input id="otp1" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onOtpChange(1, $event)" class="form-control otp-box" pattern="[0-9]" required/>
+                              <input id="otp2" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onOtpChange(2, $event)" class="form-control otp-box" pattern="[0-9]" required/>
+                              <input id="otp3" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onOtpChange(3, $event)" class="form-control otp-box" pattern="[0-9]" required/>
+                              <input id="otp4" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onOtpChange(4, $event)" class="form-control otp-box" pattern="[0-9]" required/>
+                              <input id="otp5" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onOtpChange(5, $event)" class="form-control otp-box" pattern="[0-9]" required/>
                             </div>
-                            
+        
                             <!-- Mobile OTP -->
                             <label class="lable-input" *ngIf="isIndiaSelected"><b>Enter Mobile OTP</b><span>*</span>
                                 :</label>
                                 <div class="otp-input mt-4" *ngIf="isIndiaSelected">
-                                    <input id="mobotp0" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onMobileOtpChange(0, $event)" class="form-control otp-box" />
-                                    <input id="mobotp1" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onMobileOtpChange(1, $event)" class="form-control otp-box" />
-                                    <input id="mobotp2" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onMobileOtpChange(2, $event)" class="form-control otp-box" />
-                                    <input id="mobotp3" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onMobileOtpChange(3, $event)" class="form-control otp-box" />
-                                    <input id="mobotp4" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onMobileOtpChange(4, $event)" class="form-control otp-box" />
-                                    <input id="mobotp5" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onMobileOtpChange(5, $event)" class="form-control otp-box" />
+                                    <input id="mobotp0" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onMobileOtpChange(0, $event)" class="form-control otp-box" pattern="[0-9]" required/>
+                                    <input id="mobotp1" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onMobileOtpChange(1, $event)" class="form-control otp-box" pattern="[0-9]" required/>
+                                    <input id="mobotp2" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onMobileOtpChange(2, $event)" class="form-control otp-box" pattern="[0-9]" required/>
+                                    <input id="mobotp3" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onMobileOtpChange(3, $event)" class="form-control otp-box" pattern="[0-9]" required/>
+                                    <input id="mobotp4" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onMobileOtpChange(4, $event)" class="form-control otp-box" pattern="[0-9]" required/>
+                                    <input id="mobotp5" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 1);" type="text" maxlength="1" (input)="onMobileOtpChange(5, $event)" class="form-control otp-box" pattern="[0-9]" required/>
                                   </div>
                                   
                         </div>

@@ -10,6 +10,8 @@ import { WishlistProduct2Component } from "./Mng-Product/product-management/wish
 import { ViewDetailWishlistComponent } from "./Mng-Product/product-management/wishlist-product2/view-detail-wishlist/view-detail-wishlist.component";
 import { ViewRetailerpoComponent } from "./Mng-Product/view-retailerpo/view-retailerpo.component";
 import { RetailerpoGenerateComponent } from "./Mng-Product/view-retailerpo/retailerpo-generate/retailerpo-generate.component";
+import { ProductViewOfMfgComponent } from "./Mng-Product/product-management/product-list-of-mfg/product-view-of-mfg/product-view-of-mfg.component";
+import { ViewProductDetailsComponent } from "./Mng-Product/product-management/product-list-of-mfg/view-product-details/view-product-details.component";
 
 
 export const NewFlow:Route[]=[
@@ -22,6 +24,8 @@ export const NewFlow:Route[]=[
     {path:'wishlist-product2', component:WishlistProduct2Component},
     {path:'wishlistproducts', component:ViewDetailWishlistComponent},
     {path:'view-retailerpo',component:ViewRetailerpoComponent},
-    {path:'retailerpo-generate',component:RetailerpoGenerateComponent}
+    {path:'retailerpo-generate',component:RetailerpoGenerateComponent},
+    {path:'view-product-ofMfg' ,component:ProductViewOfMfgComponent},
+    {path:'view-product-details' ,component:ViewProductDetailsComponent}
     
 ]

@@ -151,6 +151,9 @@ export class ViewWholeselerProductComponent {
     });
   }
   
+  disableScroll(event: WheelEvent) {
+    event.preventDefault();
+  }
   
   
   

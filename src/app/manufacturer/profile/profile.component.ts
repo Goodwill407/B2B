@@ -64,8 +64,8 @@ export class ProfileComponent {
     this.initializeValidation()
     this.getAllCountry()
     this.getAllCountryCode()
-    this.getSavedProfileData()
     this.disabledFields();
+    this.getSavedProfileData()
     
   }
 
@@ -75,7 +75,7 @@ export class ProfileComponent {
       companyName: ['', Validators.required],
       address: ['', Validators.required],
       introduction: ['', [Validators.required, Validators.maxLength(4000)]],
-      country: ['', Validators.required],
+      country: ['India', Validators.required],
       state: ['', Validators.required],
       city: ['', Validators.required],
       code: [{ value: this.countryCode, disabled: true }, Validators.required],
@@ -102,6 +102,7 @@ export class ProfileComponent {
         accountType: ['', Validators.required],
         bankName: ['', Validators.required],
         IFSCcode: ['', [Validators.required, Validators.pattern(/^[A-Z]{4}0[A-Z0-9]{6}$/),]],
+        swiftCode: [''],
         country: ['', Validators.required],
         city: ['', Validators.required],
         branch: ['', Validators.required],
@@ -170,11 +171,22 @@ export class ProfileComponent {
         // Patch the country code
         this.mgfRegistrationForm.patchValue({ code: this.countryCode });
 
+       
+
         // Fetch states and patch the state value once loaded
         await this.getAllState({ country_name: res.country });
         this.mgfRegistrationForm.patchValue({ state: res.state });
 
-        this.stateWiseCity(null, this.allData.state, this.allData.city);
+        // this.stateWiseCity(null, this.allData.state, this.allData.city);
+
+         // If country is missing, set it to India and preload states
+         if (!res.country) {
+          this.mgfRegistrationForm.patchValue({ country: 'India' });
+          await this.getAllState({ country_name: 'India' });
+        } else {
+          // await this.getAllState({ country_name: res.country });
+          this.mgfRegistrationForm.patchValue({ state: res.state });
+        }
 
         this.mgfRegistrationForm.disable();
         this.currentStep = 1;
@@ -249,13 +261,13 @@ export class ProfileComponent {
 
  
 
-  stateWiseCity(event: any, stateName: any = '', cityName: any = '') {
-    const state = event === null ? stateName : event.target.value;
-    this.direction.getCities(`https://api.countrystatecity.in/v1/countries/IN/states/${state}/cities`).subscribe((res: any) => {
-      this.cityList = res;
-      this.mgfRegistrationForm.get('city')?.setValue(cityName);
-    });
-  }
+  // stateWiseCity(event: any, stateName: any = '', cityName: any = '') {
+  //   const state = event === null ? stateName : event.target.value;
+  //   this.direction.getCities(`https://api.countrystatecity.in/v1/countries/IN/states/${state}/cities`).subscribe((res: any) => {
+  //     this.cityList = res;
+  //     this.mgfRegistrationForm.get('city')?.setValue(cityName);
+  //   });
+  // }
   getAllCountry() {
     this.authService.get('newcountry').subscribe(
       (res: any) => {

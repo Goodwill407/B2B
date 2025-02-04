@@ -75,7 +75,8 @@ export class WishlistProduct2Component {
           colourCollections: product.colourCollections,
           stock: product.quantity, // Replace with actual stock value if available
           id: product.wishlistId,
-          productId: product.WishListType2SchemaId,
+          productId: product._id, // id to show product details
+          wishlistId: product.WishListType2SchemaId, // id to delete product from wishlist
           productBy: product.productBy,
           hoverIndex: 0
         }));
