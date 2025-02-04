@@ -35,7 +35,7 @@ export class UserCategoryComponent {
       this.authService.currentUserSubject.next(user);
       localStorage.setItem('currentUser', JSON.stringify(user));
       window.location.reload();
-      // console.log(res);
+      console.log(res);
     })
   }
 }

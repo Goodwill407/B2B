@@ -81,7 +81,7 @@ export class AddDistributorComponent {
       this.identityType = res.results;
       // Filter out the 'manufacture' option from the identityType list
       this.filteredIdentityType = this.identityType.filter((type: any) => type.name !== 'manufacture');
-      // console.log(this.filteredIdentityType);  // Log the filtered data
+      console.log(this.filteredIdentityType);  // Log the filtered data
     });
   }
   

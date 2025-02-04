@@ -105,7 +105,7 @@ export class RequestToWholesalerComponent {
 //           // Handle the response as needed, e.g., update the UI
 //         },
 //         error => {
-//           // console.error('Error searching brand:', error);
+//           console.error('Error searching brand:', error);
 //           // Handle error accordingly
 //         }
 //       );
@@ -132,7 +132,7 @@ export class RequestToWholesalerComponent {
           );
         },
         (error) => {
-          // console.error('Error searching brand:', error);
+          console.error('Error searching brand:', error);
         }
       );
     }
@@ -190,7 +190,7 @@ export class RequestToWholesalerComponent {
 
   GetProductTypeWiseWholesaler() {
     let url = `wholesaler-products/multiplefilters/filter-wholesalers`;
-    // // console.log('Selected state:', this.filters.state);
+    // console.log('Selected state:', this.filters.state);
 
     // Construct the body object dynamically
     const body: any = {}; // Initialize an empty object
@@ -228,7 +228,7 @@ export class RequestToWholesalerComponent {
        this.dataType="product"     
       },
       (error) => {
-        // console.log('Error:', error);
+        console.log('Error:', error);
       }
     );
 
@@ -247,7 +247,7 @@ export class RequestToWholesalerComponent {
         // Handle the response as needed, e.g., update the UI
       },
       error => {
-        // console.error('Error searching brand:', error);
+        console.error('Error searching brand:', error);
         // Handle error accordingly
       }
     );
@@ -342,7 +342,7 @@ onSearchBrandChange() {
         // Handle the response as needed, e.g., update the UI
       },
       (error) => {
-        // console.error('Error searching brand:', error);
+        console.error('Error searching brand:', error);
         // Handle error accordingly
       }
     );
@@ -362,7 +362,7 @@ onBrandSearchChange(): void {
         // Handle the response as needed, e.g., update the UI
       },
       error => {
-        // console.error('Error searching brand:', error);
+        console.error('Error searching brand:', error);
         // Handle error accordingly
       }
     );
@@ -439,7 +439,7 @@ getAllState(country: { country_name: string }): Promise<void> {
       },
       (error) => {
         // Log the error and reject the promise
-        // console.error('Error fetching states:', error);
+        console.error('Error fetching states:', error);
         reject(error);
       }
     );
@@ -462,7 +462,7 @@ onCountryChange(event: any): void {
 }
 
 // onStateChange(event: any) {
-//   // console.log('State selected:', this.filters.state);
+//   console.log('State selected:', this.filters.state);
 // }
 
 // stateWiseCity(event: any, stateName: string = '', cityName: string = '') {
@@ -477,7 +477,7 @@ onCountryChange(event: any): void {
 //         }
 //       },
 //       (error) => {
-//         // console.error('Error fetching cities:', error);
+//         console.error('Error fetching cities:', error);
 //       }
 //     );
 //   } else {

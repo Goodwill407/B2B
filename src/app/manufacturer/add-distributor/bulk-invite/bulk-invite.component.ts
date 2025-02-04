@@ -91,7 +91,7 @@ export class BulkInviteSingleComponent {
         this.resetForm();
       }
     );
-    // console.log(this.inviteForm.value);
+    console.log(this.inviteForm.value);
   }
 
   resetForm(): void {

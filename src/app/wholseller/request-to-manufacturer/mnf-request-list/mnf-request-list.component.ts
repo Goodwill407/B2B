@@ -62,7 +62,7 @@ export class MnfRequestListComponent {
       },
       error: (err: any) => {
         // Handle errors here
-        // console.error('Error fetching data:', err);
+        console.error('Error fetching data:', err);
       }
     });
   }

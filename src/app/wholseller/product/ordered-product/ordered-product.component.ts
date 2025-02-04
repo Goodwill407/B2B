@@ -163,7 +163,7 @@ export class OrderedProductComponent {
         this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
       }
     }, (error) => {
-      // console.log(error);
+      console.log(error);
     });
   }
 

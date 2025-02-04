@@ -150,12 +150,12 @@ export class HeaderComponent
 
   markNotificationRead(){
     const data = this.userDetail
-    this.authService.patch('notification',{id:data.role=='school'?data.username:data.id}).subscribe((res)=>{// console.log(res)});
+    this.authService.patch('notification',{id:data.role=='school'?data.username:data.id}).subscribe((res)=>{console.log(res)});
     this.getNotification();
   } 
 
   deleteNotification(id:any){
-    this.authService.delete('notification/delete',id).subscribe((res)=>{// console.log(res)});
+    this.authService.delete('notification/delete',id).subscribe((res)=>{console.log(res)});
     this.getNotification();
     if(this.userDetail.role == 'school'){
       this.router.navigate(['/school/assigned-counsellor']);
@@ -243,7 +243,7 @@ export class HeaderComponent
       this.visible = false;
     } else {
       // Handle form errors
-      // console.log('Form is invalid');
+      console.log('Form is invalid');
     }
   }
   override ngOnDestroy(): void {

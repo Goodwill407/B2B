@@ -50,7 +50,7 @@ export class RetailerManifacturerPoComponent {
           this.extractSizesAndPrices(this.products);
         }
       },
-      (error) => // console.error(error)
+      (error) => console.error(error)
     );
   }
 

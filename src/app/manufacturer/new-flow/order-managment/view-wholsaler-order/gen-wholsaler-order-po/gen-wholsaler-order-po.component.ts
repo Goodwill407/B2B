@@ -77,7 +77,7 @@
         (res: any) => {
         
           this.responseData = res; // Store the response in responseData
-          // console.log(res)
+          console.log(res)
           // Update purchaseOrder from the response
           this.purchaseOrder = {
             supplierName: res.manufacturer.companyName,
@@ -103,7 +103,7 @@
           const url2 = `mnf-delivery-challan/purchase-orders/genrate-chall-no?manufacturerEmail=${this.purchaseOrder.buyerEmail}`;
           this.authService.get(url2).subscribe(
             (res: any) => {
-              // console.log(res)
+              console.log(res)
     this.Deliverychllanid = res.deliveryChallanNumber
             })
 
@@ -260,8 +260,8 @@ calculateQuantities(original: any, updated: any) {
 }
 
 // addpo() {
-//   // console.log("Response Data:", this.responseData);
-//   // console.log("Merged Products:", this.mergedProducts);
+//   console.log("Response Data:", this.responseData);
+//   console.log("Merged Products:", this.mergedProducts);
 
 //   // Interface for product structure
 //   interface Product {
@@ -301,7 +301,7 @@ calculateQuantities(original: any, updated: any) {
 //     })
 //     .flat();
 
-//   // console.log("Updated Data:", updatedProducts);
+//   console.log("Updated Data:", updatedProducts);
 
 //   // Step 2: Calculate filtered data
 //   const filteredData = this.calculateQuantities(this.mergedProducts2, updatedProducts);
@@ -310,16 +310,16 @@ calculateQuantities(original: any, updated: any) {
 //   const updatedCartBody = this.createPayload("proceed", updatedProducts);
 //   const pendingCartBody = this.createPayload("pending", filteredData);
 
-//   // console.log("Updated Cart Body:", updatedCartBody);
-//   // console.log("Pending Cart Body:", pendingCartBody);
+//   console.log("Updated Cart Body:", updatedCartBody);
+//   console.log("Pending Cart Body:", pendingCartBody);
 
 //   // Step 4: Send payloads to the backend
 //   this.sendToBackend("mnf-delivery-challan", updatedCartBody, "Product Successfully Added in Cart");
 //   this.sendToBackend("mnf-delivery-challan", pendingCartBody, "Pending Quantities Updated Successfully");
 // }
 addpo() {
-  // console.log("Response Data:", this.responseData);
-  // console.log("Merged Products:", this.mergedProducts);
+  console.log("Response Data:", this.responseData);
+  console.log("Merged Products:", this.mergedProducts);
 
   // Interface for product structure
   interface Product {
@@ -359,7 +359,7 @@ addpo() {
     })
     .flat();
 
-  // console.log("Updated Data:", updatedProducts);
+  console.log("Updated Data:", updatedProducts);
 
   // Step 2: Calculate filtered data
   const filteredData = this.calculateQuantities(this.mergedProducts2, updatedProducts);
@@ -372,7 +372,7 @@ addpo() {
   // Step 3: Prepare the proceed cart payload
   const updatedCartBody = this.createPayload("proceed", updatedProducts, this.Deliverychllanid);
 
-  // console.log("Updated Cart Body:", updatedCartBody);
+  console.log("Updated Cart Body:", updatedCartBody);
 
   // Step 4: Send updated data to the backend
   this.sendToBackend("mnf-delivery-challan", updatedCartBody, "Product Successfully Added in Cart");
@@ -380,7 +380,7 @@ addpo() {
   // Step 5: Generate and send pending cart payload only if there are changes
   if (hasPendingChanges) {
     const pendingCartBody = this.createPayload("pending", filteredData , this.Deliverychllanid);
-    // console.log("Pending Cart Body:", pendingCartBody);
+    console.log("Pending Cart Body:", pendingCartBody);
 
     this.sendToBackend(
       "mnf-delivery-challan",
@@ -388,7 +388,7 @@ addpo() {
       "Pending Quantities Updated Successfully"
     );
   } else {
-    // console.log("No pending quantity changes detected. Skipping pending cart generation.");
+    console.log("No pending quantity changes detected. Skipping pending cart generation.");
   }
 }
 
@@ -511,10 +511,10 @@ getPendingQuantity(designNumber: string, size: string): number {
         // Save PDF file
         pdf.save('purchase-order.pdf');
       }).catch((error) => {
-        // console.error("Error generating PDF:", error);
+        console.error("Error generating PDF:", error);
       });
     } else {
-      // console.error("Element with id 'purchase-order' not found.");
+      console.error("Element with id 'purchase-order' not found.");
     }
   }
 

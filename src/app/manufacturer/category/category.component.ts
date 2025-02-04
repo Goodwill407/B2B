@@ -42,7 +42,7 @@ export class CategoryComponent {
   constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private router: Router) { }
 
   ngOnInit() {
-    // console.log(this.authService.currentUserValue.email);
+    console.log(this.authService.currentUserValue.email);
     
     this.initializeForms();
     this.getAllWholesalerCategory();

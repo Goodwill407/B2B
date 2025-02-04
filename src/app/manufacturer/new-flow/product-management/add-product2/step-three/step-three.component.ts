@@ -57,7 +57,7 @@ export class StepThreeComponent {
         this.patchInventoryData();
       }
     } catch (error) {
-      // console.error('Error fetching product data:', error);
+      console.error('Error fetching product data:', error);
     } finally {
       this.spinner.hide();
     }
@@ -168,7 +168,7 @@ export class StepThreeComponent {
          
         }
       } catch (error) {
-        // console.error('Error occurred while saving:', error); // Log the error for debugging
+        console.error('Error occurred while saving:', error); // Log the error for debugging
         this.communicationService.showNotification(
           'snackbar-error',
           'Error occurred while saving...!!!',

@@ -84,7 +84,7 @@ export class ManageRetailerComponent {
           });
         },
         (error) => {
-          // console.error('Error fetching retailers:', error);
+          console.error('Error fetching retailers:', error);
           this.distributors = [];
           this.totalResults = 0;
         }

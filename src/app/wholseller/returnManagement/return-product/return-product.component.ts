@@ -129,7 +129,7 @@ export class ReturnProductComponent {
   }
   postCourierCompany(data: any) {
     this.authService.post('courier', data).subscribe((data) => {
-      // console.log(data);
+      console.log(data);
     })
   }
 }

@@ -80,7 +80,7 @@ export class ViewDeliveryFinalComponent {
       (res: any) => {
        
         this.responseData = res; // Store the response in responseData
-        // console.log(res)
+        console.log(res)
         // Update purchaseOrder from the response
         this.purchaseOrder = {
           supplierName: res.manufacturer.companyName,
@@ -305,10 +305,10 @@ printPurchaseOrder(): void {
       // Save PDF file
       pdf.save('purchase-order.pdf');
     }).catch((error) => {
-      // console.error("Error generating PDF:", error);
+      console.error("Error generating PDF:", error);
     });
   } else {
-    // console.error("Element with id 'purchase-order' not found.");
+    console.error("Element with id 'purchase-order' not found.");
   }
 }
 

@@ -85,7 +85,7 @@ export class StepTwoComponent {
       this.productDetails = res;
       if (this.productDetails) this.colourCollections = this.productDetails.colourCollections;
     } catch (error) {
-      // console.error('Error fetching product data:', error);
+      console.error('Error fetching product data:', error);
     } finally {
       this.spinner.hide();
     }
@@ -166,12 +166,12 @@ export class StepTwoComponent {
           this.getProductDataById();
         }
       } catch (error) {
-        // console.log('Error', error);
+        console.log('Error', error);
         this.spinner.hide();
         this.getProductDataById();
       }
     } else {
-      // console.log('Form is invalid');
+      console.log('Form is invalid');
       this.spinner.hide();
       this.getProductDataById();
     }
@@ -287,7 +287,7 @@ export class StepTwoComponent {
           },
           (error) => {
             this.spinner.hide();
-            // console.error('Error during deletion:', error);
+            console.error('Error during deletion:', error);
             Swal.fire('Error!', 'An error occurred while deleting the color collection.', 'error');
           }
         );
@@ -346,7 +346,7 @@ export class StepTwoComponent {
       },
       (error) => {
         this.isUploading = false;
-        // console.error('Error uploading video:', error);
+        console.error('Error uploading video:', error);
         Swal.fire('Error!', 'Failed to upload product video.', 'error');
       }
     );
@@ -387,7 +387,7 @@ export class StepTwoComponent {
           },
           (error) => {
             this.spinner.hide(); // Hide loading spinner
-            // console.error('Error during deletion:', error);
+            console.error('Error during deletion:', error);
             Swal.fire('Error!', 'There was an error deleting the product video.', 'error'); // Show error message
           }
         );
@@ -401,7 +401,7 @@ export class StepTwoComponent {
       const file = new File([blob], fileName, { type: blob.type });
       return file;
     } catch (error) {
-      // console.error('Error converting URL to File:', error);
+      console.error('Error converting URL to File:', error);
       throw new Error('Error fetching image from URL');
     }
   }

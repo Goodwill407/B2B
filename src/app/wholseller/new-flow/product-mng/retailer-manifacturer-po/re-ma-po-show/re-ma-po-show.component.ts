@@ -76,7 +76,7 @@
         (res: any) => {
           this.responseData = res; // Store the response in responseData
     
-          // console.log(res);
+          console.log(res);
           // Update purchaseOrder from the response
           this.purchaseOrder = {
             supplierName: res.manufacturer.companyName,
@@ -114,7 +114,7 @@
           }
         },
         (error) => {
-          // console.error("Error fetching data:", error);
+          console.error("Error fetching data:", error);
         }
       );
     }
@@ -196,10 +196,10 @@
       // Store the final totals
       this.Totalsub = totalSub;
       this.totalGrandTotal = totalGrandTotal;
-      // console.log('Subtotal:', totalSub);
-      // console.log('Total Discounted:', totalDiscounted);  // This should be the final discounted total
-      // console.log('GST (SGST, CGST, IGST):', this.sgst, this.cgst, this.igst);
-      // console.log('Grand Total:', this.totalGrandTotal);
+      console.log('Subtotal:', totalSub);
+      console.log('Total Discounted:', totalDiscounted);  // This should be the final discounted total
+      console.log('GST (SGST, CGST, IGST):', this.sgst, this.cgst, this.igst);
+      console.log('Grand Total:', this.totalGrandTotal);
       
       return Object.values(groupedByDesignNumber);
     }
@@ -237,8 +237,8 @@
       const retailerState = this.purchaseOrder.buyerAddress.split(',')[1]?.trim();  // Check if it's the second part
       const wholesalerState = this.purchaseOrder.supplierAddress.split(',')[1]?.trim();  // Same here for wholesaler
     
-      // console.log('Retailer State:', retailerState);
-      // console.log('Wholesaler State:', wholesalerState);
+      console.log('Retailer State:', retailerState);
+      console.log('Wholesaler State:', wholesalerState);
     
       // Check if the states are different
       if (retailerState !== wholesalerState) {
@@ -247,26 +247,26 @@
         this.sgst = 0;
         this.cgst = 0;
         this.igst = (discountedTotal * gstRate) / 100;
-        // console.log('Applying IGST:', this.igst);
+        console.log('Applying IGST:', this.igst);
       } else {
         // States match, apply SGST and CGST
         const gstRate = 9; // SGST and CGST
         this.sgst = (discountedTotal * gstRate) / 100;
         this.cgst = (discountedTotal * gstRate) / 100;
         this.igst = 0;
-        // console.log('Applying SGST and CGST:', this.sgst, this.cgst);
+        console.log('Applying SGST and CGST:', this.sgst, this.cgst);
       }
 
-      // console.log('Retailer State:', retailerState);
-// console.log('Wholesaler State:', wholesalerState);
-// console.log('SGST:', this.sgst);
-// console.log('CGST:', this.cgst);
-// console.log('IGST:', this.igst);
+      console.log('Retailer State:', retailerState);
+console.log('Wholesaler State:', wholesalerState);
+console.log('SGST:', this.sgst);
+console.log('CGST:', this.cgst);
+console.log('IGST:', this.igst);
 
     
       // Calculate Grand Total
       this.totalGrandTotal = discountedTotal + this.sgst + this.cgst + this.igst;
-      // console.log('Grand Total:', this.totalGrandTotal);
+      console.log('Grand Total:', this.totalGrandTotal);
     }
     
     
@@ -380,10 +380,10 @@
         // Save PDF file
         pdf.save('purchase-order.pdf');
       }).catch((error) => {
-        // console.error("Error generating PDF:", error);
+        console.error("Error generating PDF:", error);
       });
     } else {
-      // console.error("Element with id 'purchase-order' not found.");
+      console.error("Element with id 'purchase-order' not found.");
     }
   }
 

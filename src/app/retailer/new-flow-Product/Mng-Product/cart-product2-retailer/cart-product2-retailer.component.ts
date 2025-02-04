@@ -102,7 +102,7 @@ export class CartProduct2RetailerComponent implements OnInit {
           this.extractSizesAndPrices(this.products); // Extract sizes and prices
         }
       },
-      (error) => // console.error(error)
+      (error) => console.error(error)
     );
   }
 
@@ -119,7 +119,7 @@ extractSizesAndPrices(products: Product[]): void {
     products.forEach((product) => {
         const wholesaler = product.wholesaler?.fullName;
         if (!wholesaler) {
-            // console.error('Wholesaler missing for product:', product);
+            console.error('Wholesaler missing for product:', product);
             return;
         }
 

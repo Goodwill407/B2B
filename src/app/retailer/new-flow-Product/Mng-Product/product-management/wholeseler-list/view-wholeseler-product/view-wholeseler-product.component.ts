@@ -59,7 +59,7 @@ export class ViewWholeselerProductComponent {
   getProductDetails(id: any) {
     this.authService.get(`wholesaler-price-type2/retailer-product/wholesaler-wise?productId=${id}&wholesalerEmail=${this.WholeselerEmail}`).subscribe((res: any) => {
       this.designno = res.product.designNumber;
-      // console.log(res);
+      console.log(res);
       if (res) {
         const productData = res.product;
         const retailerPriceData = res.retailerPrice;
@@ -309,7 +309,7 @@ export class ViewWholeselerProductComponent {
        const imageElement = this.mainImage?.nativeElement; // Get the native image element
    
        if (!imageElement) {
-         // console.error('Image element not found.');
+         console.error('Image element not found.');
          return;
        }
        this.renderer.setStyle(imageElement, 'transform', `scale(1.8)`);
@@ -321,7 +321,7 @@ export class ViewWholeselerProductComponent {
        const imageElement = this.mainImage?.nativeElement; // Get the native image element
    
        if (!imageElement) {
-         // console.error('Image element not found.');
+         console.error('Image element not found.');
          return;
        }
    

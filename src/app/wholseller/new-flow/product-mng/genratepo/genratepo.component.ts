@@ -71,9 +71,9 @@ import jsPDF from 'jspdf';
       const url = `type2-cart/place-order/products/${distributorId}`;
       this.authService.get(url).subscribe(
         (res: any) => {
-          // console.log('ProductDiscount:', res.wholesaler.ProductDiscount),
+          console.log('ProductDiscount:', res.wholesaler.ProductDiscount),
           this.responseData = res; // Store the response in responseData
-          // console.log(res)
+          console.log(res)
           // Update purchaseOrder from the response
           this.purchaseOrder = {
             supplierName: res.manufacturer.companyName,
@@ -202,10 +202,10 @@ import jsPDF from 'jspdf';
       // Store the final totals
       this.Totalsub = totalSub;
       this.totalGrandTotal = totalGrandTotal;
-      // console.log('Subtotal:', totalSub);
-      // console.log('Total Discounted:', totalDiscounted);  // This should be the final discounted total
-      // console.log('GST (SGST, CGST, IGST):', this.sgst, this.cgst, this.igst);
-      // console.log('Grand Total:', this.totalGrandTotal);
+      console.log('Subtotal:', totalSub);
+      console.log('Total Discounted:', totalDiscounted);  // This should be the final discounted total
+      console.log('GST (SGST, CGST, IGST):', this.sgst, this.cgst, this.igst);
+      console.log('Grand Total:', this.totalGrandTotal);
       
       return Object.values(groupedByDesignNumber);
     }
@@ -244,8 +244,8 @@ import jsPDF from 'jspdf';
       const retailerState = this.getStateFromAddress(this.purchaseOrder.buyerAddress);
       const wholesalerState = this.getStateFromAddress(this.purchaseOrder.supplierAddress);
     
-      // console.log('Retailer State:', retailerState);
-      // console.log('Wholesaler State:', wholesalerState);
+      console.log('Retailer State:', retailerState);
+      console.log('Wholesaler State:', wholesalerState);
     
       if (retailerState && wholesalerState) {
         if (retailerState !== wholesalerState) {
@@ -254,44 +254,44 @@ import jsPDF from 'jspdf';
           this.sgst = 0;
           this.cgst = 0;
           this.igst = (discountedTotal * gstRate) / 100;
-          // console.log('Applying IGST:', this.igst);
+          console.log('Applying IGST:', this.igst);
         } else {
           // States match, apply SGST and CGST
           const gstRate = 9; // SGST and CGST
           this.sgst = (discountedTotal * gstRate) / 100;
           this.cgst = (discountedTotal * gstRate) / 100;
           this.igst = 0;
-          // console.log('Applying SGST and CGST:', this.sgst, this.cgst);
+          console.log('Applying SGST and CGST:', this.sgst, this.cgst);
         }
       } else {
-        // console.error('Invalid state information. Cannot calculate GST.');
+        console.error('Invalid state information. Cannot calculate GST.');
         this.sgst = 0;
         this.cgst = 0;
         this.igst = 0;
       }
     
-      // console.log('SGST:', this.sgst);
-      // console.log('CGST:', this.cgst);
-      // console.log('IGST:', this.igst);
+      console.log('SGST:', this.sgst);
+      console.log('CGST:', this.cgst);
+      console.log('IGST:', this.igst);
     
       // Calculate Grand Total
       this.totalGrandTotal = discountedTotal + this.sgst + this.cgst + this.igst;
-      // console.log('Grand Total:', this.totalGrandTotal);
+      console.log('Grand Total:', this.totalGrandTotal);
     }
     
     
     getStateFromAddress(address: string): string | null {
       if (!address) {
-        // console.error('Address is empty or invalid:', address);
+        console.error('Address is empty or invalid:', address);
         return null;  // Address is missing or invalid
       }
     
-      // console.log('Address:', address);  // Debug the address string
+      console.log('Address:', address);  // Debug the address string
     
       // Split the address by commas to separate the components
       const addressParts = address.split(',');
     
-      // console.log('Address Parts:', addressParts);  // Log the parts for debugging
+      console.log('Address Parts:', addressParts);  // Log the parts for debugging
     
       // If there are at least two parts, assume the second to last part is the state
       if (addressParts.length >= 2) {
@@ -301,7 +301,7 @@ import jsPDF from 'jspdf';
         if (state && isNaN(parseInt(state))) {
           return state;
         } else {
-          // console.error('Invalid state detected:', state);
+          console.error('Invalid state detected:', state);
         }
       }
     
@@ -414,10 +414,10 @@ import jsPDF from 'jspdf';
         // Save PDF file
         pdf.save('purchase-order.pdf');
       }).catch((error) => {
-        // console.error("Error generating PDF:", error);
+        console.error("Error generating PDF:", error);
       });
     } else {
-      // console.error("Element with id 'purchase-order' not found.");
+      console.error("Element with id 'purchase-order' not found.");
     }
   }
   
@@ -453,10 +453,10 @@ import jsPDF from 'jspdf';
         // Save PDF file
         pdf.save('purchase-order.pdf');
       }).catch((error) => {
-        // console.error("Error generating PDF:", error);
+        console.error("Error generating PDF:", error);
       });
     } else {
-      // console.error("Element with id 'purchase-order' not found.");
+      console.error("Element with id 'purchase-order' not found.");
     }
   }
 

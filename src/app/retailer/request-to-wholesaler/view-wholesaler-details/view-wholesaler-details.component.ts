@@ -42,12 +42,12 @@ export class ViewWholesalerDetailsComponent {
         const requestByEmail = this.userProfile.email; // Assume userProfile is already available
         this.checkRequestStatus(wholesalerEmail, requestByEmail);
         // if (params['RequestDetails']) {
-        //   // console.log('RequestDetails before parsing:', params['RequestDetails']);
+        //   console.log('RequestDetails before parsing:', params['RequestDetails']);
         //   try {
         //     this.RequestDetails = JSON.parse(params['RequestDetails']); // Try parsing
-        //     // console.log('Parsed RequestDetails:', this.RequestDetails); // Log the parsed object
+        //     console.log('Parsed RequestDetails:', this.RequestDetails); // Log the parsed object
         //   } catch (error) {
-        //     // console.error('Error parsing RequestDetails:', error);
+        //     console.error('Error parsing RequestDetails:', error);
         //     this.RequestDetails = null; // Handle error
         //   }
         // } else {
@@ -172,7 +172,7 @@ export class ViewWholesalerDetailsComponent {
           this.requestDetails = response.status;
         },
         (error) => {
-          // console.error('Error checking request status:', error);
+          console.error('Error checking request status:', error);
           this.requestDetails = null; // Handle error accordingly
         }
       );

@@ -22,7 +22,7 @@ export class AssessmentService {
         this.headers = new HttpHeaders().set('token', this.token); // Update headers with token
       }),
       catchError((error) => {
-        // console.error('Error generating token:', error);
+        console.error('Error generating token:', error);
         return of(); // Return an empty observable on error
       })
     );

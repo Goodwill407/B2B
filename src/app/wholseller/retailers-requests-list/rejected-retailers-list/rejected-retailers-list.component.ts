@@ -68,7 +68,7 @@ export class RejectedRetailersListComponent {
       },
       error: (err: any) => {
         // Handle errors here
-        // console.error('Error fetching data:', err);
+        console.error('Error fetching data:', err);
       }
     });
   }
@@ -101,7 +101,7 @@ export class RejectedRetailersListComponent {
       },
       error: (err: any) => {
         // Handle errors gracefully
-        // console.error('Error processing request:', err);
+        console.error('Error processing request:', err);
         this.communicationService.showNotification('snackbar-error', 'An error occurred while processing the request', 'bottom', 'center');
       }
     });

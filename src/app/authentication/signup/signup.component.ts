@@ -61,7 +61,7 @@ export class SignupComponent implements OnInit {
     if (this.email) {
       this.authService.get(`invitations/${this.email}`).subscribe(
         (res: any) => {
-          // console.log('API Response:', res); // Log API response
+          console.log('API Response:', res); // Log API response
           
           // Populate the form with fetched data
           this.mgfRegistrationForm.patchValue({
@@ -73,7 +73,7 @@ export class SignupComponent implements OnInit {
             email: res.email || '',
           });
     
-          // console.log('Form Value After Patch:', this.mgfRegistrationForm.value); // Log form value
+          console.log('Form Value After Patch:', this.mgfRegistrationForm.value); // Log form value
     
           // Save the inviter's email if available
           this.invitedBy = res.invitedBy || [];
@@ -95,7 +95,7 @@ export class SignupComponent implements OnInit {
             contryCode: '+91',
           });
     
-          // console.log('Default Form Value After Error:', this.mgfRegistrationForm.value); // Debug default behavior
+          console.log('Default Form Value After Error:', this.mgfRegistrationForm.value); // Debug default behavior
         }
       );
     } else {
@@ -103,7 +103,7 @@ export class SignupComponent implements OnInit {
       this.mgfRegistrationForm.patchValue({
         contryCode: '+91',
       });
-      // console.log('Default Form Value for No Email:', this.mgfRegistrationForm.value); // Debug default behavior
+      console.log('Default Form Value for No Email:', this.mgfRegistrationForm.value); // Debug default behavior
     }
     
     
@@ -191,12 +191,12 @@ export class SignupComponent implements OnInit {
             ])
                 .then(([emailVerified, mobileVerified]) => {
                     if (emailVerified && mobileVerified) {
-                        // console.log('Both OTPs verified successfully');
+                        console.log('Both OTPs verified successfully');
                         this.showPasswordForm = true; // Allow password form to be shown
                     }
                 })
                 .catch(() => {
-                    // console.log('OTP verification failed');
+                    console.log('OTP verification failed');
                     this.showPasswordForm = false; // Prevent showing the password form
                 });
         } else {
@@ -214,12 +214,12 @@ export class SignupComponent implements OnInit {
             this.verifyEmailOtp(data.email, data.otp)
                 .then((emailVerified) => {
                     if (emailVerified) {
-                        // console.log('Email OTP verified successfully');
+                        console.log('Email OTP verified successfully');
                         this.showPasswordForm = true; // Allow password form to be shown
                     }
                 })
                 .catch(() => {
-                    // console.log('Email OTP verification failed');
+                    console.log('Email OTP verification failed');
                     this.showPasswordForm = false; // Prevent showing the password form
                 });
         }
@@ -265,16 +265,16 @@ export class SignupComponent implements OnInit {
   sendMobileOtp(mobileNumber: string) {
     const otpUrl = `https://2factor.in/API/V1/d5e40971-765b-11ef-8b17-0200cd936042/SMS/+91${mobileNumber}/AUTOGEN/OTP1`;
     this.http.get(otpUrl).subscribe((res: any) => {
-      // console.log('Mobile OTP sent successfully');
+      console.log('Mobile OTP sent successfully');
     }, (err: any) => {
-      // console.log('Error sending mobile OTP:', err);
+      console.log('Error sending mobile OTP:', err);
       this.communicationService.showNotification('snackbar-danger', 'Failed to send mobile OTP', 'bottom', 'center');
     });
   }
 
   sendEmailOtp(email: string, fullName: string) {
     this.authService.post(`auth/send-verification-email?email=${email}&fullName=${fullName}`, {}).subscribe((res: any) => {
-      // console.log('Verification email sent successfully');
+      console.log('Verification email sent successfully');
     }, (err: any) => {
       this.spinner.hide();
       this.communicationService.showNotification('snackbar-danger', err.error.message, 'bottom', 'center');
@@ -284,7 +284,7 @@ export class SignupComponent implements OnInit {
 
   passwordSubmit() {
     if (this.setPasswordFrom.valid) {
-      // console.log('Password Form Submitted:', this.setPasswordFrom.value);
+      console.log('Password Form Submitted:', this.setPasswordFrom.value);
       const data = this.setPasswordFrom.value;
       delete data.confirmPassword
       this.http.patch(`https://backend.fashiontradershub.com/v1/users/update-pass?email=${this.mgfRegistrationForm.value.email}`, data).subscribe((res: any) => {
@@ -371,7 +371,7 @@ export class SignupComponent implements OnInit {
         this.http.get(verifyUrl).subscribe(
             (res: any) => {
                 if (res.Status === 'Success') {
-                    // // console.log('Mobile OTP verified successfully:', res);
+                    // console.log('Mobile OTP verified successfully:', res);
                     this.communicationService.showNotification(
                         'snackbar-success',
                         'Mobile OTP verified successfully',
@@ -380,7 +380,7 @@ export class SignupComponent implements OnInit {
                     );
                     resolve(true); // OTP verification succeeded
                 } else {
-                    // // console.log('Mobile OTP verification failed:', res);
+                    // console.log('Mobile OTP verification failed:', res);
                     this.communicationService.showNotification(
                         'snackbar-danger',
                         'Invalid Mobile OTP',
@@ -391,7 +391,7 @@ export class SignupComponent implements OnInit {
                 }
             },
             (err: any) => {
-                // console.log('Error verifying mobile OTP:', err);
+                console.log('Error verifying mobile OTP:', err);
                 this.communicationService.showNotification(
                     'snackbar-danger',
                     'Failed to verify mobile OTP. Please try again.',
@@ -411,7 +411,7 @@ export class SignupComponent implements OnInit {
     return new Promise((resolve, reject) => {
       this.authService.post(`auth/verify-email?email=${email}&otp=${otp}`, {}).subscribe(
         (res: any) => {
-          // // console.log('Email OTP verified successfully:', res);
+          // console.log('Email OTP verified successfully:', res);
           this.communicationService.showNotification(
             'snackbar-success',
             'Email OTP verified successfully',
@@ -421,7 +421,7 @@ export class SignupComponent implements OnInit {
           resolve(true); // OTP verified successfully
         },
         (err: any) => {
-          // // console.log('Error verifying email OTP:', err);
+          // console.log('Error verifying email OTP:', err);
           this.communicationService.showNotification(
             'snackbar-danger',
             'Email OTP verification failed',

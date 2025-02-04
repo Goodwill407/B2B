@@ -132,13 +132,13 @@ export class ViewProfileComponent {
     const email=this.userEmail.email
     this.authService.get(`${this.user}-category?categoryBy=${this.authService.currentUserValue.email}`).subscribe((res: any) => {
       this.wholesalerCategory = res.results;
-      //// console.log(this.wholesalerCategory);
+      //console.log(this.wholesalerCategory);
       // this.exsitingCategory= res.results[0].category;
-      // // console.log(this.exsitingCategory);
+      // console.log(this.exsitingCategory);
       // if ( this.wholesalerCategory.length > 0) {
       //   this.exsitingCategory = res.results.category;
       //   this.isDropdownDisabled = false; // Enable the dropdown if categories are available
-      //   // console.log(this.exsitingCategory);
+      //   console.log(this.exsitingCategory);
       // }    
     });
   }
@@ -178,11 +178,11 @@ export class ViewProfileComponent {
         }
       },
       (error) => {
-        // console.error('Error:', error); // Handle error response
+        console.error('Error:', error); // Handle error response
       }
     );
   } else {
-    // console.error('Invalid user type for assigning discount'); // Error for undefined user type
+    console.error('Invalid user type for assigning discount'); // Error for undefined user type
   }
 }
 
@@ -208,7 +208,7 @@ export class ViewProfileComponent {
         }
       },
       (error) => {
-        // console.error("Error fetching discount data", error);
+        console.error("Error fetching discount data", error);
       }
     );
   } 
@@ -234,7 +234,7 @@ export class ViewProfileComponent {
         }
       },
       (error) => {
-        // console.error("Error fetching discount data", error);
+        console.error("Error fetching discount data", error);
       }
     );
   } 

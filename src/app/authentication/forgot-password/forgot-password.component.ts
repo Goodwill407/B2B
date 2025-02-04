@@ -174,7 +174,7 @@ export class ForgotPasswordComponent implements OnInit {
     } 
     if (mobileRegx.test(username)) {
       this.verifyMobileOtp(username, otp);
-     // // console.log('Verified mobile ' + username);
+     // console.log('Verified mobile ' + username);
     }
     else {
       this.spinner.hide();

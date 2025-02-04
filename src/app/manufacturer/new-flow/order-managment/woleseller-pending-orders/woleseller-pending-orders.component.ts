@@ -66,7 +66,7 @@ export class WolesellerPendingOrdersComponent {
     this.showFlag = false;
     this.authService.get(`/mnf-delivery-challan?productBy=${this.authService.currentUserValue.email}&status=pending&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
       this.tableData = res.results;
-      // console.log(res)
+      console.log(res)
       this.totalResults = res.totalResults;
     })
   }
@@ -162,10 +162,10 @@ export class WolesellerPendingOrdersComponent {
         // Save PDF file
         pdf.save('purchase-order.pdf');
       }).catch((error) => {
-        // console.error("Error generating PDF:", error);
+        console.error("Error generating PDF:", error);
       });
     } else {
-      // console.error("Element with id 'purchase-order' not found.");
+      console.error("Element with id 'purchase-order' not found.");
     }
   }
   

@@ -67,7 +67,7 @@ export class AssociatedMnfListComponent {
       error: (err: any) => {
         this.spinner.hide()
         // Handle errors here
-        // console.error('Error fetching data:', err);
+        console.error('Error fetching data:', err);
       }
     });
   }

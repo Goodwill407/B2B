@@ -58,7 +58,7 @@ export class WishlistProduct2Component {
     let url = `type2-wishlist/get/wishlist/${email}`;
 
     this.authService.get(url).subscribe((res: any) => {
-      // console.log(res);
+      console.log(res);
       if (res) {
         this.totalResults = res.totalResults;
         this.products = res.map((product: any) => ({
@@ -88,7 +88,7 @@ export class WishlistProduct2Component {
         });
       }
     }, (error) => {
-      // console.log(error);
+      console.log(error);
     });
   }
 
@@ -162,7 +162,7 @@ export class WishlistProduct2Component {
     "productId": data.productId,
     "quantity": 1
     }
-    // console.log(cartBody);
+    console.log(cartBody);
     this.authService.post('cart', cartBody).subscribe((res: any) => {
       this.communicationService.showNotification('snackbar-success','Product Successfully Added in Cart','bottom','center');
     },

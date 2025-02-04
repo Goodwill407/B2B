@@ -77,7 +77,7 @@ export class RetailerpoGenerateComponent {
       (res: any) => {
       
         this.responseData = res; // Store the response in responseData
-        // console.log(this.responseData)
+        console.log(this.responseData)
         // Update purchaseOrder from the response
         this.purchaseOrder = {
           supplierName: res.wholesaler.companyName,
@@ -206,10 +206,10 @@ export class RetailerpoGenerateComponent {
     // Store the final totals
     this.Totalsub = totalSub;
     this.totalGrandTotal = totalGrandTotal;
-    // console.log('Subtotal:', totalSub);
-    // console.log('Total Discounted:', totalDiscounted);  // This should be the final discounted total
-    // console.log('GST (SGST, CGST, IGST):', this.sgst, this.cgst, this.igst);
-    // console.log('Grand Total:', this.totalGrandTotal);
+    console.log('Subtotal:', totalSub);
+    console.log('Total Discounted:', totalDiscounted);  // This should be the final discounted total
+    console.log('GST (SGST, CGST, IGST):', this.sgst, this.cgst, this.igst);
+    console.log('Grand Total:', this.totalGrandTotal);
     
     return Object.values(groupedByDesignNumber);
   }
@@ -382,10 +382,10 @@ printPO(): void {
       // Save PDF file
       pdf.save('purchase-order.pdf');
     }).catch((error) => {
-      // console.error("Error generating PDF:", error);
+      console.error("Error generating PDF:", error);
     });
   } else {
-    // console.error("Element with id 'purchase-order' not found.");
+    console.error("Element with id 'purchase-order' not found.");
   }
 }
 

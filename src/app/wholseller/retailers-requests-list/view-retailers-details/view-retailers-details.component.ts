@@ -76,7 +76,7 @@ export class ViewRetailersDetailsComponent {
       },
       error: (err: any) => {
         // Handle errors gracefully and re-enable the button
-        // console.error('Error processing request:', err);
+        console.error('Error processing request:', err);
         this.communicationService.showNotification('snackbar-error', 'An error occurred while processing the request', 'bottom', 'center');
         this.btnHidden = false;  // Re-enable the button on error
       }

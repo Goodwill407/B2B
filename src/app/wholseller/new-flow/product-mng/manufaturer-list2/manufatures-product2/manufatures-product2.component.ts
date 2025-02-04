@@ -67,7 +67,7 @@ export class ManufaturesProduct2Component {
   }
 
   applyFilters(): void {
-    // console.log('Filters applied:', this.filters);
+    console.log('Filters applied:', this.filters);
   }
 
   getAllBrands() {
@@ -115,7 +115,7 @@ export class ManufaturesProduct2Component {
         }
       },
       (error) => {
-        // console.log(error);
+        console.log(error);
       }
     );
   }
@@ -127,7 +127,7 @@ export class ManufaturesProduct2Component {
         this.updateProductWishlistStatus(id, true); // Update product wishlist status
       },
       (err: any) => {
-        // console.log(err);
+        console.log(err);
       }
     );
   }
@@ -144,7 +144,7 @@ export class ManufaturesProduct2Component {
         }
       },
       (error) => {
-        // console.log(error);
+        console.log(error);
       }
     );
   }
@@ -247,7 +247,7 @@ export class ManufaturesProduct2Component {
         }
       },
       (error) => {
-        // console.log(error);
+        console.log(error);
       }
     );
   }

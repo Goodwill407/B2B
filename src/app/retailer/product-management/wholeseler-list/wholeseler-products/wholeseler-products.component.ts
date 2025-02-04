@@ -80,7 +80,7 @@ export class WholeselerProductsComponent {
   }
 
   applyFilters(): void {
-    // console.log('Filters applied:', this.filters);
+    console.log('Filters applied:', this.filters);
   }
 
   getAllBrands() {
@@ -144,7 +144,7 @@ export class WholeselerProductsComponent {
         }
       },
       (error) => {
-        // console.error('Error fetching products:', error);
+        console.error('Error fetching products:', error);
       }
     );
   }

@@ -51,7 +51,7 @@ export class WholesalerDiscountComponent {
 
   ngOnInit() {
     this.userProfile = JSON.parse(localStorage.getItem('currentUser')!);
-    // console.log(this.userProfile)
+    console.log(this.userProfile)
     this.initializeForms();
     this.getAllRetailerCategory();
   }
@@ -74,7 +74,7 @@ export class WholesalerDiscountComponent {
     if (this.formType === 'Save') {
       delete this.categoryForm2.value.id;
       this.authService.post('retailer-category', this.categoryForm2.value).subscribe((res: any) => {
-        // console.log(res);
+        console.log(res);
         this.communicationService.showNotification('snackbar-success', 'Retailer category created successfully', 'bottom', 'center');
         this.resetForm(this.categoryForm2);
         this.getAllRetailerCategory();

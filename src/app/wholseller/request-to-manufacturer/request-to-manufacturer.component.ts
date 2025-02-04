@@ -106,7 +106,7 @@ export class RequestToManufacturerComponent {
           // Handle the response as needed, e.g., update the UI
         },
         error => {
-          // console.error('Error searching brand:', error);
+          console.error('Error searching brand:', error);
           // Handle error accordingly
         }
       );
@@ -220,7 +220,7 @@ export class RequestToManufacturerComponent {
         this.brandData=response;               
       },
       error => {
-        // console.error('Error searching brand:', error);
+        console.error('Error searching brand:', error);
         // Handle error accordingly
       }
     );
@@ -297,7 +297,7 @@ onSearchBrandChange() {
         // Handle the response as needed, e.g., update the UI
       },
       (error) => {
-        // console.error('Error searching brand:', error);
+        console.error('Error searching brand:', error);
         // Handle error accordingly
       }
     );

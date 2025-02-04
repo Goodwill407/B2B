@@ -41,7 +41,7 @@ export class MnfListChallanComponent {
           return acc;
         }, {} as { [key: string]: any[] });
 
-        // console.log(this.challan);
+        console.log(this.challan);
       }, (err: any) => {
         this.communicationService.customError(err.error.message);
       });

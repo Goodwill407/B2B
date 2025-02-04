@@ -55,7 +55,7 @@ export class InventryStockComponent {
         this.products = res.results;
       }
     }, (error) => {
-      // console.log(error);
+      console.log(error);
     });
   }
 

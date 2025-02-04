@@ -118,7 +118,7 @@ export class PlaceOrderComponent {
   getAllData() {
     this.showFlag = false;
     this.authService.get(`type2-purchaseorder/get-po/by-wholesaler-email?wholesalerEmail=${this.authService.currentUserValue.email}&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
-     // console.log(res);
+     console.log(res);
       this.tableData = res;
       this.totalResults = res;
     })
@@ -215,10 +215,10 @@ export class PlaceOrderComponent {
         // Save PDF file
         pdf.save('purchase-order.pdf');
       }).catch((error) => {
-        // console.error("Error generating PDF:", error);
+        console.error("Error generating PDF:", error);
       });
     } else {
-      // console.error("Element with id 'purchase-order' not found.");
+      console.error("Element with id 'purchase-order' not found.");
     }
   }
   

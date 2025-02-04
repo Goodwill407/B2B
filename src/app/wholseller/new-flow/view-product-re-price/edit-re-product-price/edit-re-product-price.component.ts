@@ -40,7 +40,7 @@ export class EditReProductPriceComponent {
   ngOnInit(): void {
     this.stepThree = this.fb.group({});
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
-    // console.log(this.userProfile.email, this.userProfile);
+    console.log(this.userProfile.email, this.userProfile);
     this.route.params.subscribe(params => {
       const id = params['id'];
       this.ProductId = id;
@@ -56,9 +56,9 @@ export class EditReProductPriceComponent {
   getProductDetails(id: any) {
     this.authService.get('type2-products/' + id).subscribe((res: any) => {
       this.designno = res.designNumber;
-      // console.log(res)
+      console.log(res)
       if (res) {
-        // console.log(res);
+        console.log(res);
         this.product = {
           brand: res.brand,
           designNumber: this.designno,
@@ -130,9 +130,9 @@ export class EditReProductPriceComponent {
           });
         });
   
-        // console.log(res); // Check the response for debugging
+        console.log(res); // Check the response for debugging
       } else {
-        // console.log('No price details found for this ID');
+        console.log('No price details found for this ID');
       }
     });
   }
@@ -303,7 +303,7 @@ export class EditReProductPriceComponent {
      const imageElement = this.mainImage?.nativeElement; // Get the native image element
  
      if (!imageElement) {
-       // console.error('Image element not found.');
+       console.error('Image element not found.');
        return;
      }
      this.renderer.setStyle(imageElement, 'transform', `scale(1.8)`);
@@ -315,7 +315,7 @@ export class EditReProductPriceComponent {
      const imageElement = this.mainImage?.nativeElement; // Get the native image element
  
      if (!imageElement) {
-       // console.error('Image element not found.');
+       console.error('Image element not found.');
        return;
      }
  
