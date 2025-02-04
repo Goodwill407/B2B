@@ -1,13 +1,16 @@
-
-
-
-
 <section class="content">
     <div class="content-block">
+      <!-- Page Header -->
       <h4 class="mt-4">
-        <i class="bi bi-person-vcard-fill h3"></i> Generate Delivery Challan
+        <i class="bi bi-person-vcard-fill h3"></i> View Purchase Order
       </h4>
   
+      <!-- Button to Download PDF -->
+      <!-- <div class="d-flex justify-content-end">
+          <button class="btn btn-success" (click)="printPO()">Download PDF</button>
+        </div> -->
+  
+      <!-- Purchase Order Container -->
       <div id="purchase-order" class="challan-container card my-2">
         <!-- Header Section -->
         <div class="header d-flex justify-content-between align-items-center">
@@ -127,13 +130,14 @@
         </section>
       </div>
   
+      <!-- Footer Button -->
       <div class="row">
         <div class="col-12">
           <div class="text-center my-3">  
-            <button class="btn btn-success ms-auto" (click)="printPurchaseOrder()">Download Purchase Order</button>
+            
+            <button class="btn btn-success ms-auto" (click)="printPO()">Download Purchase Order</button>
           </div>
         </div>
       </div>
     </div>
   </section>
-  

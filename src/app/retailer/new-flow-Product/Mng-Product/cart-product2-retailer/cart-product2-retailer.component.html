@@ -55,7 +55,7 @@
           </div>
           <hr />
           <div class="d-flex align-items-center">
-            <div class="totals" *ngIf="wholesalerTotals[prod.wholesaler.fullName]">
+            <!-- <div class="totals" *ngIf="wholesalerTotals[prod.wholesaler.fullName]">
                 <p class="mb-1 fw-bold">
                     Total Sub Total: {{ wholesalerTotals[prod.wholesaler.fullName].subtotal | currency: 'INR' }}
                 </p>
@@ -78,7 +78,7 @@
                 <p class="mb-1 fw-bold">
                     Total Grand Total: {{ wholesalerTotals[prod.wholesaler.fullName].grandTotal | currency: 'INR' }}
                 </p>
-            </div>
+            </div> -->
             
             <button class="btn btn-success mx-auto" (click)="placeOrder(prod)">
               <i class="bi bi-cart-check"></i> Purchase Order

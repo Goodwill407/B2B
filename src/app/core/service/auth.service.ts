@@ -60,7 +60,13 @@ export class AuthService {
     }
     return this.http.patch<any>(this.apiURL + url + "/" + id, data, { headers: this.headerToken });
   }
+  patchpimage(url: string, data: any) {
+    // Dynamically construct the full URL with the base API URL
+    const fullUrl = this.apiURL + url;
 
+    // Make the PATCH request using the full URL
+    return this.http.patch<any>(fullUrl, data, { headers: this.headerToken });
+  }
   get(url: string) {
     return this.http.get<any>(this.apiURL + url, { headers: this.headerToken });
   }

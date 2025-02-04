@@ -436,7 +436,7 @@ export class SignupComponent implements OnInit {
   
   onCountryChange(event: any) {
     const selectedDialCode = event.value; // Get the selected country code
-    this.isIndiaSelected = selectedDialCode === '+91';
+    this.isIndiaSelected = selectedDialCode === '91';
   
     // Update form controls based on selection
     if (this.isIndiaSelected) {

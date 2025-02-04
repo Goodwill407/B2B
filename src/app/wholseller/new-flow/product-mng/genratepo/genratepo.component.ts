@@ -32,10 +32,13 @@ import jsPDF from 'jspdf';
       products: [],
       totalAmount: 0,
       totalInWords: '',
+      ProductDiscount:'',
     };
 
     mergedProducts: any[] = [];
-
+    sgst: any
+    igst: any
+    cgst: any
     responseData: any; // New variable to store response data
     distributorId: string;
     products: any[] = [];
@@ -61,13 +64,14 @@ import jsPDF from 'jspdf';
     ngOnInit(): void {
       this.userProfile = JSON.parse(localStorage.getItem('currentUser')!);
       this.getAllProducts(this.distributorId);
+    
     }
 
     getAllProducts(distributorId: string) {
       const url = `type2-cart/place-order/products/${distributorId}`;
       this.authService.get(url).subscribe(
         (res: any) => {
-         
+          console.log('ProductDiscount:', res.wholesaler.ProductDiscount),
           this.responseData = res; // Store the response in responseData
           console.log(res)
           // Update purchaseOrder from the response
@@ -87,7 +91,10 @@ import jsPDF from 'jspdf';
             poDate: new Date().toLocaleDateString(),
             poNumber: res.poNumber,
             products: res.products || [],
+            ProductDiscount: res.wholesaler.ProductDiscount !== undefined && res.wholesaler.ProductDiscount !== '' ? parseFloat(res.wholesaler.ProductDiscount) : 0,  // Ensure we handle undefined and empty values properly
           };
+          
+          
 
           if (res.set && Array.isArray(res.set) && res.set.length > 0) {
             this.extractSizesAndPrices(res.set); // <-- Ensure this is called
@@ -136,81 +143,193 @@ import jsPDF from 'jspdf';
     processGroupedProducts(productSet: any[]): any[] {
       const groupedByDesignNumber: any = {};
       let totalGrandTotal = 0;
-      let totalGST = 0;
       let totalSub = 0;
-
+      let totalDiscounted = 0;
+      let totalDiscounted2= 0;
+    
+      // Step 1: Group products by design number
       productSet.forEach((product) => {
         const designKey = product.designNumber;
-
+    
         if (!groupedByDesignNumber[designKey]) {
           groupedByDesignNumber[designKey] = {
             designNumber: product.designNumber,
             rows: [],
             subTotal: 0,
-            gst: 0,
+            discountedTotal: 0,
             grandTotal: 0,
           };
         }
-
+    
         let existingRow = groupedByDesignNumber[designKey].rows.find(
           (row: any) => row.colourName === product.colourName
         );
-
+    
         if (!existingRow) {
           existingRow = {
             colourName: product.colourName,
-            colourImage: product.colourImage,
-            colour: product.colour,
             quantities: {},
             totalPrice: 0,
           };
           groupedByDesignNumber[designKey].rows.push(existingRow);
         }
-
+    
         existingRow.quantities[product.size] = (existingRow.quantities[product.size] || 0) + product.quantity;
         existingRow.totalPrice += product.quantity * product.price;
       });
-
+    
+      // Step 2: Calculate totals for all products
       Object.values(groupedByDesignNumber).forEach((group: any) => {
-        group.subTotal = group.rows.reduce((acc: number, row: any) => acc + this.calculateTotalPrice(row), 0);
-        group.gst = this.calculateGST(group.subTotal);
-        totalGST += group.gst;
+        group.subTotal = group.rows.reduce((acc: number, row: any) => acc + this.calculateTotalPrice(row, false), 0);
+        group.discountedTotal = group.rows.reduce((acc: number, row: any) => acc + this.calculateTotalPrice(row, true), 0);
+    
         totalSub += group.subTotal;
-        group.grandTotal = this.calculateGrandTotal(group.subTotal, group.gst);
+        totalDiscounted +=group.discountedTotal;
+        group.discountedTotal;
+        totalDiscounted2 += group.discountedTotal;
+      });
+    
+      // Step 3: Calculate GST based on the total discounted value (not per product)
+      this.discountedTotal = totalDiscounted;  // Use final discounted total for all products
+      this.calculateGST();  // Calculate GST based on the final discounted total
+    
+      // Step 4: Calculate the Grand Total for each group
+      Object.values(groupedByDesignNumber).forEach((group: any) => {
+        group.grandTotal = group.discountedTotal + this.sgst + this.cgst + this.igst;
         totalGrandTotal += group.grandTotal;
       });
-
+    
+      // Store the final totals
       this.Totalsub = totalSub;
-      this.gst = totalGST;
       this.totalGrandTotal = totalGrandTotal;
-
+      console.log('Subtotal:', totalSub);
+      console.log('Total Discounted:', totalDiscounted);  // This should be the final discounted total
+      console.log('GST (SGST, CGST, IGST):', this.sgst, this.cgst, this.igst);
+      console.log('Grand Total:', this.totalGrandTotal);
+      
       return Object.values(groupedByDesignNumber);
     }
-
-    calculateTotalPrice(row: any): number {
+    
+    
+    
+    calculateTotalPrice(row: any, applyDiscount: boolean = true): number {
       let total = 0;
-
+    
+      // Loop through each size header and calculate the total price
       this.sizeHeaders.forEach((size) => {
+        // If there is a quantity for the current size, add to the total
         if (row.quantities[size] > 0) {
           total += row.quantities[size] * (this.priceHeaders[size] || 0);
         }
       });
-
-      return total;
+    
+      // Apply the discount if flag is true and discount is greater than 0
+      if (applyDiscount && this.purchaseOrder.ProductDiscount > 0) {
+        const discount = (total * this.purchaseOrder.ProductDiscount) / 100;
+        total -= discount;
+      }
+    
+      // Return the final calculated total price (round to 2 decimal places for consistency)
+      return parseFloat(total.toFixed(2));  // Optional: rounds off the value to 2 decimal points
     }
+    
+    
+    
+    discountedTotal: number = 0;
 
-    calculateGST(subTotal: number): number {
-      return (subTotal * 18) / 100; // 18% GST
+    calculateGST() {
+      const discountedTotal = this.discountedTotal; // Already discounted total
+    
+      // Now apply GST calculation logic as before
+      const retailerState = this.getStateFromAddress(this.purchaseOrder.buyerAddress);
+      const wholesalerState = this.getStateFromAddress(this.purchaseOrder.supplierAddress);
+    
+      console.log('Retailer State:', retailerState);
+      console.log('Wholesaler State:', wholesalerState);
+    
+      if (retailerState && wholesalerState) {
+        if (retailerState !== wholesalerState) {
+          // States don't match, apply IGST
+          const gstRate = 18; // IGST
+          this.sgst = 0;
+          this.cgst = 0;
+          this.igst = (discountedTotal * gstRate) / 100;
+          console.log('Applying IGST:', this.igst);
+        } else {
+          // States match, apply SGST and CGST
+          const gstRate = 9; // SGST and CGST
+          this.sgst = (discountedTotal * gstRate) / 100;
+          this.cgst = (discountedTotal * gstRate) / 100;
+          this.igst = 0;
+          console.log('Applying SGST and CGST:', this.sgst, this.cgst);
+        }
+      } else {
+        console.error('Invalid state information. Cannot calculate GST.');
+        this.sgst = 0;
+        this.cgst = 0;
+        this.igst = 0;
+      }
+    
+      console.log('SGST:', this.sgst);
+      console.log('CGST:', this.cgst);
+      console.log('IGST:', this.igst);
+    
+      // Calculate Grand Total
+      this.totalGrandTotal = discountedTotal + this.sgst + this.cgst + this.igst;
+      console.log('Grand Total:', this.totalGrandTotal);
     }
+    
+    
+    getStateFromAddress(address: string): string | null {
+      if (!address) {
+        console.error('Address is empty or invalid:', address);
+        return null;  // Address is missing or invalid
+      }
+    
+      console.log('Address:', address);  // Debug the address string
+    
+      // Split the address by commas to separate the components
+      const addressParts = address.split(',');
+    
+      console.log('Address Parts:', addressParts);  // Log the parts for debugging
+    
+      // If there are at least two parts, assume the second to last part is the state
+      if (addressParts.length >= 2) {
+        const state = addressParts[addressParts.length - 1]?.trim();  // Second last part should be the state
+    
+        // Ensure that the state is a valid non-numeric string
+        if (state && isNaN(parseInt(state))) {
+          return state;
+        } else {
+          console.error('Invalid state detected:', state);
+        }
+      }
+    
+      // If state is missing or invalid, return null
+      return null;
+    } 
+    dicountprice: number = 0;
+    calculateDiscountedTotal(subTotal: number): number {
+      // Apply discount (for example, 2% in this case)
+      const discount = (subTotal * 2) / 100;
+      const discountedTotal = subTotal - discount;
+    
+      // Store discount for display
+      this.dicountprice = discount;  
+    
+      return discountedTotal;
+    }
+    
 
-    calculateGrandTotal(subTotal: number, gst: number): number {
-      return subTotal + gst;
+    calculateGrandTotal(subTotal: number, discount: number, igst: number): number {
+      const discountedSubtotal = subTotal - discount;
+      const igstAmount = (discountedSubtotal * igst) / 100;  // Apply 18% IGST
+      return discountedSubtotal + igstAmount;
     }
 
     isSizeAvailable(rows: any[], size: string): boolean {
       return rows.some((row) => row.quantities[size] > 0);
     }
-
     addpo() {
       const cartBody = { ...this.responseData }; // Create a copy of the response data
     
@@ -302,5 +421,43 @@ import jsPDF from 'jspdf';
     }
   }
   
-    
+  printPO(): void {
+    const data = document.getElementById('purchase-order');
+    if (data) {
+      html2canvas(data, {
+        scale: 3,  // Adjust scale for better quality
+        useCORS: true,
+      }).then((canvas) => {
+        const imgWidth = 208;  // A4 page width in mm
+        const pageHeight = 295;  // A4 page height in mm
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+
+        const contentDataURL = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');  // Create new PDF
+        const margin = 10;  // Margin for PDF
+        let position = margin;
+
+        // Add first page
+        pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
+        heightLeft -= pageHeight;
+
+        // Loop over content to add remaining pages if content exceeds one page
+        while (heightLeft > 0) {
+          pdf.addPage();  // Add new page
+          position = margin - heightLeft;  // Position for the next page
+          pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
+          heightLeft -= pageHeight;
+        }
+
+        // Save PDF file
+        pdf.save('purchase-order.pdf');
+      }).catch((error) => {
+        console.error("Error generating PDF:", error);
+      });
+    } else {
+      console.error("Element with id 'purchase-order' not found.");
+    }
+  }
+
   }

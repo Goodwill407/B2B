@@ -1,6 +1,6 @@
 import { CommonModule, NgFor } from '@angular/common';
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 import html2canvas from 'html2canvas';
@@ -55,7 +55,7 @@ export class PlaceOrderComponent {
   ];
 
 
-  constructor(private route: ActivatedRoute, private authService: AuthService, private communicationService: CommunicationService) { }
+  constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService, private communicationService: CommunicationService) { }
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe(params => {
@@ -221,5 +221,13 @@ export class PlaceOrderComponent {
       console.error("Element with id 'purchase-order' not found.");
     }
   }
+  
+  placeOrder(data: any): void {
+
+    this.router.navigate(['/wholesaler/order-mng/View-place-order'], {
+      queryParams: { memail: data.manufacturer.email, wemail: data.wholesaler.email, poNumber: data.poNumber },
+    });
+  }
+
   
 }

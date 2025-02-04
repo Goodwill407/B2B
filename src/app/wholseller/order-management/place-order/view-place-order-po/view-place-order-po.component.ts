@@ -8,13 +8,13 @@ import { TableModule } from 'primeng/table';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 @Component({
-  selector: 'app-view-wholesaler-po',
+  selector: 'app-view-place-order-po',
   standalone: true,
   imports: [CommonModule, FormsModule, AccordionModule, TableModule],
-  templateUrl: './view-wholesaler-po.component.html',
-  styleUrl: './view-wholesaler-po.component.scss'
+  templateUrl: './view-place-order-po.component.html',
+  styleUrl: './view-place-order-po.component.scss'
 })
-export class ViewWholesalerPoComponent {
+export class ViewPlaceOrderPoComponent {
   purchaseOrder: any = {
     supplierName: '',
     supplierDetails: '',
@@ -32,10 +32,13 @@ export class ViewWholesalerPoComponent {
     products: [],
     totalAmount: 0,
     totalInWords: '',
+    ProductDiscount: '',
   };
 
   mergedProducts: any[] = [];
-
+  sgst: any
+  igst: any
+  cgst: any
   responseData: any; // New variable to store response data
   distributorId: string = '';
   distributorId2: string = '';
@@ -45,9 +48,7 @@ export class ViewWholesalerPoComponent {
   filteredData: any;
   sizeHeaders: string[] = [];
   priceHeaders: { [size: string]: number } = {};
-  sgst: any
-  igst: any
-  cgst: any
+
   totalGrandTotal: number = 0;
   gst: number = 0;
   Totalsub: number = 0;
@@ -56,74 +57,68 @@ export class ViewWholesalerPoComponent {
     public authService: AuthService,
     private router: Router,
     private communicationService: CommunicationService,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute
   ) 
   {
   }
 
   ngOnInit(): void {
-    this.distributorId = this.route.snapshot.paramMap.get('id') ?? '';
+    this.distributorId = this.route.snapshot.queryParamMap.get('memail') ?? '';
+    this.distributorId2 = this.route.snapshot.queryParamMap.get('wemail') ?? '';
+    this.pono = this.route.snapshot.queryParamMap.get('poNumber') ?? '';
     this.userProfile = JSON.parse(localStorage.getItem('currentUser')!);
     this.getAllProducts();
   }
 
   getAllProducts() {
-    const url = `type2-purchaseorder/${this.distributorId}`;
+    const url = `retailer-purchase-order-type2/purchase-orders/wholesaler-email/combined-order/single?wholesaleremail=${this.distributorId2}&productBy=${this.distributorId}`;
     this.authService.get(url).subscribe(
       (res: any) => {
-       
         this.responseData = res; // Store the response in responseData
-        console.log(res)
+  
+        console.log(res);
         // Update purchaseOrder from the response
         this.purchaseOrder = {
           supplierName: res.manufacturer.companyName,
           supplierDetails: res.manufacturer.fullName,
-          supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.city}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
+          supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
           supplierContact: `${res.manufacturer.mobNumber}`,
           supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
           buyerName: res.wholesaler.companyName,
-          logoUrl:res.wholesaler.profileImg,
-          buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
+          logoUrl: res.wholesaler.profileImg,
+          buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
           buyerPhone: res.wholesaler.mobNumber,
           buyerEmail: res.wholesaler.email,
           buyerDetails: res.wholesaler.fullName,
-          buyerDetails2: res.manufacturer.fullName,
           buyerGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
           poDate: new Date().toLocaleDateString(),
           poNumber: res.poNumber,
           products: res.products || [],
-          ProductDiscount: res.wholesaler.ProductDiscount !== undefined && res.wholesaler.ProductDiscount !== '' ? parseFloat(res.wholesaler.ProductDiscount) : 0,  // Ensure we handle undefined and empty values properly
+          ProductDiscount: res.discounts?.[0]?.productDiscount || 0,  // Set product discount
         };
-
+  
         if (res.set && Array.isArray(res.set) && res.set.length > 0) {
-          this.extractSizesAndPrices(res.set); // <-- Ensure this is called
+          this.extractSizesAndPrices(res.set); // Extract unique sizes and prices
   
           // Process grouped products and update mergedProducts
           this.mergedProducts = this.processGroupedProducts(res.set);
           this.filteredData = res.set[0];
-        
-      
-          // Proceed if filteredData is not empty
+  
+          // Flatten the set into mergedProducts
           if (this.filteredData) {
-              // Flatten the set into mergedProducts
-              this.mergedProducts = this.flattenProductData(res.set);  // Pass the entire set array
-              
+            this.mergedProducts = this.flattenProductData(res.set); // Pass the entire set array
           }
-        }
-
-       else {
-          
+        } else {
           this.filteredData = null;
           this.mergedProducts = [];
-      }
-      
-      
+        }
       },
       (error) => {
-        
+        console.error("Error fetching data:", error);
       }
     );
   }
+  
 
   extractSizesAndPrices(productSet: any[]): void {
     const uniqueSizes = new Set<string>();
@@ -228,50 +223,46 @@ export class ViewWholesalerPoComponent {
       total -= discount;
     }
   
-    // Return the final calculated total price (round to 2 decimal places for consistency)
-    return parseFloat(total.toFixed(2));  // Optional: rounds off the value to 2 decimal points
+    // Return the final calculated total price
+    return total;
   }
-  
   
   
   discountedTotal: number = 0;
 
   calculateGST() {
-    const discountedTotal = this.discountedTotal; // Already discounted total
+    const discountedTotal = this.discountedTotal;
   
-    // Now apply GST calculation logic as before
-    const retailerState = this.getStateFromAddress(this.purchaseOrder.buyerAddress);
-    const wholesalerState = this.getStateFromAddress(this.purchaseOrder.supplierAddress);
+    // Extract the state of wholesaler and manufacturer
+    const retailerState = this.purchaseOrder.buyerAddress.split(',')[1]?.trim();  // Check if it's the second part
+    const wholesalerState = this.purchaseOrder.supplierAddress.split(',')[1]?.trim();  // Same here for wholesaler
   
     console.log('Retailer State:', retailerState);
     console.log('Wholesaler State:', wholesalerState);
   
-    if (retailerState && wholesalerState) {
-      if (retailerState !== wholesalerState) {
-        // States don't match, apply IGST
-        const gstRate = 18; // IGST
-        this.sgst = 0;
-        this.cgst = 0;
-        this.igst = (discountedTotal * gstRate) / 100;
-        console.log('Applying IGST:', this.igst);
-      } else {
-        // States match, apply SGST and CGST
-        const gstRate = 9; // SGST and CGST
-        this.sgst = (discountedTotal * gstRate) / 100;
-        this.cgst = (discountedTotal * gstRate) / 100;
-        this.igst = 0;
-        console.log('Applying SGST and CGST:', this.sgst, this.cgst);
-      }
-    } else {
-      console.error('Invalid state information. Cannot calculate GST.');
+    // Check if the states are different
+    if (retailerState !== wholesalerState) {
+      // States don't match, apply IGST
+      const gstRate = 18; // IGST
       this.sgst = 0;
       this.cgst = 0;
+      this.igst = (discountedTotal * gstRate) / 100;
+      console.log('Applying IGST:', this.igst);
+    } else {
+      // States match, apply SGST and CGST
+      const gstRate = 9; // SGST and CGST
+      this.sgst = (discountedTotal * gstRate) / 100;
+      this.cgst = (discountedTotal * gstRate) / 100;
       this.igst = 0;
+      console.log('Applying SGST and CGST:', this.sgst, this.cgst);
     }
-  
-    console.log('SGST:', this.sgst);
-    console.log('CGST:', this.cgst);
-    console.log('IGST:', this.igst);
+
+    console.log('Retailer State:', retailerState);
+console.log('Wholesaler State:', wholesalerState);
+console.log('SGST:', this.sgst);
+console.log('CGST:', this.cgst);
+console.log('IGST:', this.igst);
+
   
     // Calculate Grand Total
     this.totalGrandTotal = discountedTotal + this.sgst + this.cgst + this.igst;
@@ -279,35 +270,10 @@ export class ViewWholesalerPoComponent {
   }
   
   
-  getStateFromAddress(address: string): string | null {
-    if (!address) {
-      console.error('Address is empty or invalid:', address);
-      return null;  // Address is missing or invalid
-    }
   
-    console.log('Address:', address);  // Debug the address string
-  
-    // Split the address by commas to separate the components
-    const addressParts = address.split(',');
-  
-    console.log('Address Parts:', addressParts);  // Log the parts for debugging
-  
-    // If there are at least two parts, assume the second to last part is the state
-    if (addressParts.length >= 2) {
-      const state = addressParts[addressParts.length - 1]?.trim();  // Second last part should be the state
-  
-      // Ensure that the state is a valid non-numeric string
-      if (state && isNaN(parseInt(state))) {
-        return state;
-      } else {
-        console.error('Invalid state detected:', state);
-      }
-    }
-  
-    // If state is missing or invalid, return null
-    return null;
-  } 
   dicountprice: number = 0;
+  
+  
   calculateDiscountedTotal(subTotal: number): number {
     // Apply discount (for example, 2% in this case)
     const discount = (subTotal * 2) / 100;
@@ -330,12 +296,13 @@ export class ViewWholesalerPoComponent {
     return rows.some((row) => row.quantities[size] > 0);
   }
 
-
   addpo() {
     const cartBody = { ...this.responseData }; // Create a copy of the response data
   
+    // Remove unwanted fields
+    delete cartBody.__v;
     delete cartBody._id;
-
+    delete cartBody.productId;
   
     // Post the cleaned data to the backend
     this.authService.post('type2-purchaseorder', cartBody).subscribe(
@@ -381,7 +348,7 @@ export class ViewWholesalerPoComponent {
     return flatList;
 }
 
-printPurchaseOrder(): void {
+printPO(): void {
   const data = document.getElementById('purchase-order');
   if (data) {
     html2canvas(data, {
