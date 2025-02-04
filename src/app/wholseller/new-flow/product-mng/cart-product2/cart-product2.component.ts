@@ -50,7 +50,7 @@ import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-
             this.processData();
           }
         },
-        (error) => console.error(error)
+        (error) => // console.error(error)
       );
     }
   
@@ -133,7 +133,7 @@ import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-
   
     placeOrder(prod: any): void {
       if (!prod || !prod._id) {
-        console.error('No distributor ID found:', prod);
+        // console.error('No distributor ID found:', prod);
         return;
       }
       this.authService.setOrderData({ distributorId: prod._id });

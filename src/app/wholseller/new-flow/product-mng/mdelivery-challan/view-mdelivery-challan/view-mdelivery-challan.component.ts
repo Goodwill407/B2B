@@ -84,7 +84,7 @@ export class ViewMdeliveryChallanComponent {
       (res: any) => {
        
         this.responseData = res; // Store the response in responseData
-        console.log(res)
+        // console.log(res)
         // Update purchaseOrder from the response
         this.purchaseOrder = {
           supplierName: res.manufacturer.companyName,
@@ -281,8 +281,8 @@ export class ViewMdeliveryChallanComponent {
       set: acceptedPayload, // Update the set with accepted items
     };
   
-    console.log('Defective Full Payload:', defectiveFullPayload);
-    console.log('Accepted Full Payload:', acceptedFullPayload);
+    // console.log('Defective Full Payload:', defectiveFullPayload);
+    // console.log('Accepted Full Payload:', acceptedFullPayload);
   
     // Send the defective full payload to `/wholesaler-return`
     if (defectivePayload.length > 0) {
@@ -319,11 +319,11 @@ export class ViewMdeliveryChallanComponent {
     this.authService.patch(`mnf-delivery-challan`, payload).subscribe(
       (res: any) => {
         this.communicationService.customSuccess('Status updated to checked successfully.');
-        console.log('Updated Response:', res);
+        // console.log('Updated Response:', res);
       },
       (error) => {
         this.communicationService.customError1('Failed to update status.');
-        console.error('Error:', error);
+        // console.error('Error:', error);
       }
     );
   }
@@ -402,10 +402,10 @@ printPurchaseOrder(): void {
       // Save PDF file
       pdf.save('purchase-order.pdf');
     }).catch((error) => {
-      console.error("Error generating PDF:", error);
+      // console.error("Error generating PDF:", error);
     });
   } else {
-    console.error("Element with id 'purchase-order' not found.");
+    // console.error("Element with id 'purchase-order' not found.");
   }
 }
 onDefectiveChange(row: any, size: string): void {
@@ -430,7 +430,7 @@ submitFeedback(): void {
   if (this.selectedRow) {
     // Store the returnReason in the specific size of the selected row
     this.selectedRow.feedback[this.selectedSize] = this.feedback;
-    console.log('Feedback submitted:', {
+    // console.log('Feedback submitted:', {
       designNumber: this.selectedRow.designNumber,
       size: this.selectedSize,
       returnReason: this.feedback, // Rename feedback to returnReason
@@ -479,8 +479,8 @@ processQuantitiesForResponses() {
     });
   });
 
-  console.log('Defective Response:', defectiveResponse);
-  console.log('Approved Response:', approvedResponse);
+  // console.log('Defective Response:', defectiveResponse);
+  // console.log('Approved Response:', approvedResponse);
 
   return { defectiveResponse, approvedResponse };
 }
@@ -488,7 +488,7 @@ processQuantitiesForResponses() {
 
 submitResponses() {
   const { defectiveResponse, approvedResponse } = this.processQuantitiesForResponses();
-console.log(defectiveResponse, approvedResponse)
+// console.log(defectiveResponse, approvedResponse)
   // Send defective response
   // this.authService.post('defective-api-endpoint', defectiveResponse).subscribe(
   //   (res: any) => {

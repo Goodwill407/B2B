@@ -84,14 +84,14 @@ export class WholeselerProductsComponent {
   }
 
   applyFilters(): void {
-    console.log('Filters applied:', this.filters);
+    // console.log('Filters applied:', this.filters);
   }
 
 
   getAllBrands() {
     this.authService.get(`brand`).subscribe((res: any) => {
       this.allBrand = res.results;
-      console.log(res.results)
+      // console.log(res.results)
     });
   }
   
@@ -155,7 +155,7 @@ export class WholeselerProductsComponent {
         }
       },
       (error) => {
-        console.error('Error fetching products:', error);
+        // console.error('Error fetching products:', error);
       }
     );
   }
@@ -266,13 +266,13 @@ export class WholeselerProductsComponent {
   WishlistAdd(id: string) {
     this.authService.post('type2-wishlist', { productId: id, email: this.userProfile.email }).subscribe(
       (res: any) => {
-        console.log(res);
+        // console.log(res);
         
         this.wishlistItems.add(id); // Add product ID to wishlistItems set
         this.updateProductWishlistStatus(id, true); // Update product wishlist status
       },
       (err: any) => {
-        console.log(err);
+        // console.log(err);
       }
     );
   }
@@ -288,7 +288,7 @@ export class WholeselerProductsComponent {
         }
       },
       (error) => {
-        console.log(error);
+        // console.log(error);
       }
     );
   }

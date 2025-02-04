@@ -50,7 +50,7 @@ export class WholesalerOrderListComponent {
 
   postCourierCompany(data: any) {
     this.authService.post('courier', data).subscribe((data) => {
-      console.log(data);
+      // console.log(data);
     })
   }
 
@@ -155,7 +155,7 @@ export class WholesalerOrderListComponent {
         }
       },
       (error) => {
-        console.log(error);
+        // console.log(error);
       }
     );
   }
@@ -273,11 +273,11 @@ export class WholesalerOrderListComponent {
 
   // Place Order
   placeOrder(prod: any) {
-    console.log(prod);
+    // console.log(prod);
 
     // Ensure distributor and _id exist
     if (!prod || !prod._id) {
-        console.error('No distributor ID found:', prod);
+        // console.error('No distributor ID found:', prod);
         return;
     }
 

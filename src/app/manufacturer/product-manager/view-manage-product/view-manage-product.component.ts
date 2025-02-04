@@ -58,7 +58,7 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
   }
 
   applyFilters(): void {
-    console.log('Filters applied:', this.filters);
+    // console.log('Filters applied:', this.filters);
   }
 
   getAllBrands() {
@@ -142,7 +142,7 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
         });
       }
     }, (error) => {
-      console.log(error);
+      // console.log(error);
     });
   }
 

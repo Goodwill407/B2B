@@ -48,7 +48,7 @@ export class PreviewProfileComponent {
     this.authService.get(`brand/visible/brandlist/${this.email}/true`).subscribe((res: any) => {
       if (res) {
         this.brandsDetails = res
-        // console.log(this.brandsDetails)
+        // // console.log(this.brandsDetails)
       } else {
       }
     }, error => {
@@ -67,7 +67,7 @@ export class PreviewProfileComponent {
     this.authService.get(`manufacturers/visible-profile/${this.id}`).subscribe((res: any) => {
       if (res) {
         this.allVisabilityData = res;
-        console.log(this.allVisabilityData)
+        // console.log(this.allVisabilityData)
         const uniqueValues = {
           productType: new Set<string>(),
           gender: new Set<string>(),

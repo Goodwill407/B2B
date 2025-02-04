@@ -59,7 +59,7 @@ export class ViewProductDetailsComponent {
 
   getProductDetails(id: any) {
     this.authService.get('type2-products/' + id).subscribe((res: any) => {
-      console.log(res);
+      // console.log(res);
       if (res) {
         this.product = {
           brand: res.brand,
@@ -155,7 +155,7 @@ export class ViewProductDetailsComponent {
     const controlName = this.getControlName(color, size);
     const controlValue = this.stepThree.get(controlName)?.value; // Get the value of the control
     
-    console.log(controlName, controlValue, size); // Debugging logs
+    // console.log(controlName, controlValue, size); // Debugging logs
   
     if (controlValue != null && !isNaN(controlValue)) {
       const sizePrice = this.product?.sizes.find((s: any) => s.standardSize === size)?.RtlPrice || 0;
@@ -177,18 +177,18 @@ getRowTotal(colorName: string): number {
   this.product?.sizes.forEach((size: any) => {
     const controlName = this.getControlName(colorName, size.standardSize);
     const quantity = this.stepThree.get(controlName)?.value || 0; // Default to 0 if value is not available
-    console.log(quantity, 'Quantity');
-    console.log(controlName, 'controlName');
+    // console.log(quantity, 'Quantity');
+    // console.log(controlName, 'controlName');
 
     // Find the price for the given size
     const sizePrice = this.product?.sizes.find((s: any) => s.standardSize === size.standardSize)?.RtlPrice || 0;
-    console.log(sizePrice, 'sizeprice');
+    // console.log(sizePrice, 'sizeprice');
     // Ensure valid data (sizePrice and quantity are valid numbers)
     if (sizePrice && !isNaN(quantity)) {
       total += quantity * sizePrice; // Calculate total for this size
     }
   });
-  console.log(total, 'total');
+  // console.log(total, 'total');
   return total; // Return the total for this color
 }
 
@@ -306,7 +306,7 @@ async saveStepThree() {
        const imageElement = this.mainImage?.nativeElement; // Get the native image element
    
        if (!imageElement) {
-         console.error('Image element not found.');
+         // console.error('Image element not found.');
          return;
        }
        this.renderer.setStyle(imageElement, 'transform', `scale(1.8)`);
@@ -318,7 +318,7 @@ async saveStepThree() {
        const imageElement = this.mainImage?.nativeElement; // Get the native image element
    
        if (!imageElement) {
-         console.error('Image element not found.');
+         // console.error('Image element not found.');
          return;
        }
    

@@ -87,7 +87,7 @@ brandForm!: FormGroup;
   
     this.authService.get('cdn-path').subscribe(
       (res: any) => {
-        console.log('Distributors Response:', res);
+        // console.log('Distributors Response:', res);
         this.distributors = res.results;
   
         const bucketNames = this.distributors.map((d: any) => d.bucketName);
@@ -99,21 +99,21 @@ brandForm!: FormGroup;
         Promise.all(bucketRequests)
           .then((bucketResponses: any[]) => {
             this.distributors = this.distributors.map((distributor: any, index: number) => {
-              console.log('Bucket Response for', distributor.bucketName, ':', bucketResponses[index]);
+              // console.log('Bucket Response for', distributor.bucketName, ':', bucketResponses[index]);
               const bucketData = bucketResponses[index] || [];
-              console.log('Bucket Data:', bucketData);
+              // console.log('Bucket Data:', bucketData);
               return {
                 ...distributor,
                 bucketDetails: bucketData,
               };
             });
   
-            console.log('Combined Distributors Data:', this.distributors);
+            // console.log('Combined Distributors Data:', this.distributors);
             this.spinner.hide();
           })
           .catch((err: any) => {
             this.spinner.hide();
-            console.error('Error fetching bucket details:', err);
+            // console.error('Error fetching bucket details:', err);
             this.communicationService.showNotification(
               'snackbar-danger',
               'Error fetching bucket details: ' + err.message,
@@ -124,7 +124,7 @@ brandForm!: FormGroup;
       },
       (err: any) => {
         this.spinner.hide();
-        console.error('Error fetching distributors:', err);
+        // console.error('Error fetching distributors:', err);
         this.communicationService.showNotification(
           'snackbar-danger',
           err.error.message,
@@ -164,7 +164,7 @@ brandForm!: FormGroup;
   }
   updateData(distributor: any) {
     if (!distributor || !distributor.id) {
-      console.error('Invalid distributor object or missing id:', distributor);
+      // console.error('Invalid distributor object or missing id:', distributor);
       return;
     }
   
@@ -187,7 +187,7 @@ brandForm!: FormGroup;
         this.getAllBrands(); // Refresh the data
       },
       (err: any) => {
-        console.error('Error updating CDN:', err);
+        // console.error('Error updating CDN:', err);
         this.communicationService.showNotification(
           'snackbar-danger',
           err.error.message,
@@ -228,7 +228,7 @@ brandForm!: FormGroup;
 
   toggleStatus(distributor: any) {
     if (!distributor || !distributor.id) {
-        console.error('Invalid distributor object or missing id:', distributor);
+        // console.error('Invalid distributor object or missing id:', distributor);
         return;
     }
 

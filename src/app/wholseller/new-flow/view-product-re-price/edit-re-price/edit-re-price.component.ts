@@ -52,7 +52,7 @@ export class EditRePriceComponent {
 
   ngOnInit(): void {
     this.user = this.authService.currentUserValue.email;
-    console.log(this.user);
+    // console.log(this.user);
     this.route.queryParams.subscribe((params) => {
       this.mnfEmail = params['email'];
       this.mnfCompanyName = params['CompanyName'];
@@ -69,7 +69,7 @@ export class EditRePriceComponent {
   }
 
   applyFilters(): void {
-    console.log('Filters applied:', this.filters);
+    // console.log('Filters applied:', this.filters);
   }
 
   getAllBrands() {
@@ -118,7 +118,7 @@ export class EditRePriceComponent {
         }
       },
       (error) => {
-        console.log(error);
+        // console.log(error);
       }
     );
   }
@@ -130,7 +130,7 @@ export class EditRePriceComponent {
         this.updateProductWishlistStatus(id, true); // Update product wishlist status
       },
       (err: any) => {
-        console.log(err);
+        // console.log(err);
       }
     );
   }
@@ -147,7 +147,7 @@ export class EditRePriceComponent {
         }
       },
       (error) => {
-        console.log(error);
+        // console.log(error);
       }
     );
   }
@@ -250,7 +250,7 @@ export class EditRePriceComponent {
         }
       },
       (error) => {
-        console.log(error);
+        // console.log(error);
       }
     );
   }

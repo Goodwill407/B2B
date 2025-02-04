@@ -66,7 +66,7 @@ filters = {
   }
 
   applyFilters(): void {
-    console.log('Filters applied:', this.filters);
+    // console.log('Filters applied:', this.filters);
   }
 
   getAllBrands() {
@@ -114,7 +114,7 @@ filters = {
         }
       },
       (error) => {
-        console.log(error);
+        // console.log(error);
       }
     );
   }
@@ -126,7 +126,7 @@ filters = {
         this.updateProductWishlistStatus(id, true); // Update product wishlist status
       },
       (err: any) => {
-        console.log(err);
+        // console.log(err);
       }
     );
   }
@@ -143,7 +143,7 @@ filters = {
         }
       },
       (error) => {
-        console.log(error);
+        // console.log(error);
       }
     );
   }
@@ -246,7 +246,7 @@ filters = {
         }
       },
       (error) => {
-        console.log(error);
+        // console.log(error);
       }
     );
   }

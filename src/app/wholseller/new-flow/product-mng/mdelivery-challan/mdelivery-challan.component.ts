@@ -86,7 +86,7 @@ export class MdeliveryChallanComponent {
     this.showFlag = false;
     this.authService.get(`/mnf-delivery-challan?email=${this.authService.currentUserValue.email}&status=proceed&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
       this.tableData = res.results;
-      console.log(res)
+      // console.log(res)
       this.totalResults = res.totalResults;
     })
   }
@@ -94,7 +94,7 @@ export class MdeliveryChallanComponent {
     this.showFlag = false;
     this.authService.get(`/mnf-delivery-challan?email=${this.authService.currentUserValue.email}&status=pending&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
       this.tableData2 = res.results;
-      console.log(res)
+      // console.log(res)
       this.totalResults2 = res.totalResults;
     })
   }
@@ -102,7 +102,7 @@ export class MdeliveryChallanComponent {
     this.showFlag = false;
     this.authService.get(`/mnf-delivery-challan?email=${this.authService.currentUserValue.email}&status=checked&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
       this.tableData3 = res.results;
-      console.log(res)
+      // console.log(res)
       this.totalResults3 = res.totalResults;
     })
   }
@@ -198,10 +198,10 @@ export class MdeliveryChallanComponent {
         // Save PDF file
         pdf.save('purchase-order.pdf');
       }).catch((error) => {
-        console.error("Error generating PDF:", error);
+        // console.error("Error generating PDF:", error);
       });
     } else {
-      console.error("Element with id 'purchase-order' not found.");
+      // console.error("Element with id 'purchase-order' not found.");
     }
   }
   

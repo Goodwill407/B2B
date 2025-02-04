@@ -64,7 +64,7 @@ export class ManufacturesProductComponent {
   }
 
   applyFilters(): void {
-    console.log('Filters applied:', this.filters);
+    // console.log('Filters applied:', this.filters);
   }
 
   getAllBrands() {
@@ -110,7 +110,7 @@ export class ManufacturesProductComponent {
         });
       }
     }, (error) => {
-      console.log(error);
+      // console.log(error);
     });
   }
 
@@ -203,7 +203,7 @@ export class ManufacturesProductComponent {
         this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
       }
     }, (error) => {
-      console.log(error);
+      // console.log(error);
     });
   }
 }

@@ -11,7 +11,7 @@ import { AuthService } from '../service/auth.service';
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
   constructor(private authenticationService: AuthService) {
-    console.log('Interceptor initialized');
+    // console.log('Interceptor initialized');
    }
 
   intercept(
@@ -21,7 +21,7 @@ export class JwtInterceptor implements HttpInterceptor {
     // add authorization header with jwt token if available
     const currentUser = this.authenticationService.currentUserValue;
     if (currentUser && currentUser.token) {
-      console.log('user token', currentUser);
+      // console.log('user token', currentUser);
       
       request = request.clone({
         setHeaders: {

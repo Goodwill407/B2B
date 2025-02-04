@@ -96,7 +96,7 @@ export class RetailerBulkInviteComponent {
         this.resetForm();
       }
     );
-    console.log(this.inviteForm.value);
+    // console.log(this.inviteForm.value);
   }
   
   getErrorMessage(controlName: string, index: number): string {

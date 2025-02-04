@@ -51,7 +51,7 @@ export class CartProductComponent implements OnInit {
         this.products.forEach(distributor => this.updateTotals(distributor));
       }
     }, error => {
-      console.log(error);
+      // console.log(error);
     });
   }
 
@@ -70,7 +70,7 @@ export class CartProductComponent implements OnInit {
         this.updateTotals(distributor);
         this.communicationService.showNotification('snackbar-success', 'Product Quantity Updated', 'bottom', 'center');
       }, error => {
-        console.log(error);
+        // console.log(error);
       });
   }
 

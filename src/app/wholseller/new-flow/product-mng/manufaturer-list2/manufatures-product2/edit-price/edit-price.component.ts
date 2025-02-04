@@ -52,7 +52,7 @@ export class EditPriceComponent {
   getProductDetails(id: any) {
     this.authService.get('type2-products/' + id).subscribe((res: any) => {
       this.designno = res.designNumber;
-      console.log(res)
+      // console.log(res)
       if (res) {
         this.product = {
           brand: res.brand,
@@ -123,9 +123,9 @@ export class EditPriceComponent {
           });
         });
   
-        console.log(res); // Check the response for debugging
+        // console.log(res); // Check the response for debugging
       } else {
-        console.log('No price details found for this ID');
+        // console.log('No price details found for this ID');
       }
     });
   }

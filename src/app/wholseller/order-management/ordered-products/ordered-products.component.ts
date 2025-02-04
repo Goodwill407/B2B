@@ -66,7 +66,7 @@ export class OrderedProductsComponent {
           };
         });
   
-        console.log(this.inwardStock);
+        // console.log(this.inwardStock);
       },
       (err: any) => {
         this.communicationService.customError(err.error.message);
@@ -83,7 +83,7 @@ export class OrderedProductsComponent {
       product.wholesalerEmail = `${this.authService.currentUserValue.email}`;
       this.authService.post('wholesaler-products', product).subscribe(
         (res: any) => {
-          console.log(`Product ${index + 1} of ${totalProducts} sent successfully`, res);
+          // console.log(`Product ${index + 1} of ${totalProducts} sent successfully`, res);
         
           counter++;
           if (counter === totalProducts) {
@@ -91,7 +91,7 @@ export class OrderedProductsComponent {
           }
         },
         (err: any) => {
-          console.error('Error sending product', product, err);
+          // console.error('Error sending product', product, err);
           this.communicationService.customError('Error sending product ' + product.designNumber);
         }
       );

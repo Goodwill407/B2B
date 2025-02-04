@@ -162,7 +162,7 @@ export class WholesalerProfileComponent {
   //   this.authService.get(`wholesaler/${this.userProfile.email}`).subscribe(
   //     (res: any) => {
   //       if (res) {
-  //         console.log(res);
+  //         // console.log(res);
   
   //         // Format dates
   //         res.establishDate = res.establishDate
@@ -213,7 +213,7 @@ export class WholesalerProfileComponent {
     this.authService.get(`wholesaler/${this.userProfile.email}`).subscribe(
       async (res: any) => {
         if (res) {
-          //console.log(res);
+          //// console.log(res);
   
           // Format dates
           res.establishDate = res.establishDate
@@ -357,7 +357,7 @@ export class WholesalerProfileComponent {
         },
         (error) => {
           // Log the error and reject the promise
-          console.error('Error fetching states:', error);
+          // console.error('Error fetching states:', error);
           reject(error);
         }
       );
@@ -380,7 +380,7 @@ export class WholesalerProfileComponent {
   //       }
   //     },
   //     (error) => {
-  //       console.error('Error fetching states:', error);
+  //       // console.error('Error fetching states:', error);
   //     }
   //   );
   // }

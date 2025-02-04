@@ -85,7 +85,7 @@ export class WishlistProductComponent {
         });
       }
     }, (error) => {
-      console.log(error);
+      // console.log(error);
     });
   }
 

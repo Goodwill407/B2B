@@ -160,7 +160,7 @@ export class CustomiseProfileComponent {
   saveProfileData() {
     // Retrieve the raw form data including all fields
     const formData = this.mgfRegistrationForm.getRawValue();
-    console.log(formData)
+    // console.log(formData)
     formData.id = this.allData.id
     
     this.authService.patch(`manufacturers/visibility`, formData).subscribe(
@@ -204,9 +204,9 @@ export class CustomiseProfileComponent {
   updateBrand(id: string, data: any) {
     const value = data.target.checked; // Get the checkbox value
     this.authService.patch(`brand/updatevisibility`, { id: id, visibility: value }).subscribe((data: any) => {
-      console.log(data); // Log the response for debugging
+      // console.log(data); // Log the response for debugging
     }, error => {
-      console.error('Error updating brand:', error); // Log error if any
+      // console.error('Error updating brand:', error); // Log error if any
     });
   }
 

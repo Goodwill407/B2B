@@ -382,12 +382,12 @@ export class StepOneComponent {
           this.allClothingType = [];
         }
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        // console.error('Error fetching categories:', error);
       }
 
       this.checkAllFieldsSelected();
     } else {
-      console.warn('ProductType or Gender is not defined');
+      // console.warn('ProductType or Gender is not defined');
       this.allClothingType = [];
     }
   }
@@ -420,7 +420,7 @@ export class StepOneComponent {
       }
       this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
     } catch (error) {
-      console.error('Error fetching subcategories:', error);
+      // console.error('Error fetching subcategories:', error);
     }
 
     this.checkAllFieldsSelected();
@@ -482,7 +482,7 @@ export class StepOneComponent {
         this.getSizeSetForProducts(this.foundSizeSet);
       }      
     } catch (error) {
-      console.error('Error mapping data:', error);
+      // console.error('Error mapping data:', error);
     }
   }
 
@@ -545,7 +545,7 @@ export class StepOneComponent {
             text: `The Design No. ${designNumber} already exists for ${brand}.`,
              icon: 'error'
           });
-          console.log('error saveStepOneData')
+          // console.log('error saveStepOneData')
         })
     }
   }
@@ -585,7 +585,7 @@ export class StepOneComponent {
         }
       }
     } catch (error) {
-      console.error('Error fetching product data:', error);
+      // console.error('Error fetching product data:', error);
 
     } finally {
       this.spinner.hide();
@@ -686,7 +686,7 @@ export class StepOneComponent {
             text: `The Design No. ${designNumber} already exists for ${brand}.`,
              icon: 'error'
           });
-          console.log('error UpdateStepOne')
+          // console.log('error UpdateStepOne')
         });
     }
   }
@@ -710,7 +710,7 @@ export class StepOneComponent {
 
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -722,7 +722,7 @@ export class StepOneComponent {
 
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -734,7 +734,7 @@ export class StepOneComponent {
 
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -745,7 +745,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -757,7 +757,7 @@ export class StepOneComponent {
         }
       },
       error => {
-        console.log('Error', error);
+        // console.log('Error', error);
       }
     );
   }
@@ -769,7 +769,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -780,7 +780,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -792,7 +792,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -803,7 +803,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -814,7 +814,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -825,7 +825,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -836,7 +836,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -847,7 +847,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -858,7 +858,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -869,7 +869,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -880,7 +880,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -891,7 +891,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -899,11 +899,11 @@ export class StepOneComponent {
     this.authService.get('layer-compression').subscribe(res => {
       if (res) {
         this.allLayerCompression = res.results
-        console.log(this.allLayerCompression);
+        // console.log(this.allLayerCompression);
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -914,7 +914,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
   getAllClosureType() {
@@ -924,7 +924,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -935,7 +935,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -946,7 +946,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -957,7 +957,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -968,7 +968,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -988,7 +988,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -999,7 +999,7 @@ export class StepOneComponent {
       }
     },
       error => {
-        console.log('error')
+        // console.log('error')
       })
   }
   // master for womens data
@@ -1012,7 +1012,7 @@ getAllWaistType() {
         }
     },
     error => {
-        console.log('error');
+        // console.log('error');
     });
 }
 
@@ -1023,7 +1023,7 @@ getAllWeaveType() {
         }
     },
     error => {
-        console.log('error');
+        // console.log('error');
     });
 }
 
@@ -1034,7 +1034,7 @@ getAllEthnicDesign() {
         }
     },
     error => {
-        console.log('error');
+        // console.log('error');
     });
 }
 
@@ -1045,7 +1045,7 @@ getAllSareeStyle() {
         }
     },
     error => {
-        console.log('error');
+        // console.log('error');
     });
 }
 
@@ -1056,7 +1056,7 @@ getAllWomenStyle() {
         }
     },
     error => {
-        console.log('error');
+        // console.log('error');
     });
 }
 
@@ -1067,7 +1067,7 @@ getAllWorkType() {
         }
     },
     error => {
-        console.log('error');
+        // console.log('error');
     });
 }
 
@@ -1078,7 +1078,7 @@ getAllFinishType() {
         }
     },
     error => {
-        console.log('error');
+        // console.log('error');
     });
 }
 
@@ -1089,7 +1089,7 @@ getAllApparelSilhouette() {
         }
     },
     error => {
-        console.log('error');
+        // console.log('error');
     });
 }
 
@@ -1101,7 +1101,7 @@ getAllEthnicBottomsStyle() {
         }
     },
     error => {
-        console.log('error');
+        // console.log('error');
     });
 }
 
@@ -1112,7 +1112,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1123,7 +1123,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1134,7 +1134,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1145,7 +1145,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1156,7 +1156,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1167,7 +1167,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1178,7 +1178,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1189,7 +1189,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1200,7 +1200,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1211,7 +1211,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1222,7 +1222,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1235,7 +1235,7 @@ getAllSocksStyle() {
         }
     },
     error => {
-        console.log('error');
+        // console.log('error');
     });
 }
 
@@ -1246,7 +1246,7 @@ getAllTrourserPocket() {
       }
   },
   error => {
-      console.log('error');
+      // console.log('error');
   });
 }
 getAllIncludedComponent() {
@@ -1256,7 +1256,7 @@ getAllIncludedComponent() {
       }
   },
   error => {
-      console.log('error');
+      // console.log('error');
   });
 }
 
@@ -1267,7 +1267,7 @@ getAllCollarStyle() {
       }
   },
   error => {
-      console.log('error');
+      // console.log('error');
   });
 }
 
@@ -1278,7 +1278,7 @@ getallItemLength() {
       }
   },
   error => {
-      console.log('error');
+      // console.log('error');
   });
 }
 
@@ -1289,7 +1289,7 @@ getAllelasticity(){
     }
 },
 error => {
-    console.log('error');
+    // console.log('error');
 });
 }
 
@@ -1300,7 +1300,7 @@ error => {
 //     }
 // },
 // error => {
-//     console.log('error');
+//     // console.log('error');
 // });
 // }
 

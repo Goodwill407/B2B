@@ -47,7 +47,7 @@ export class ViewManufacturerDetailsComponent implements OnInit {
     // Access the query parameters
     this.route.queryParams.subscribe(params => {
       
-      // console.log('Received query params:', params);
+      // // console.log('Received query params:', params);
       
       this.id = params['id'];
       this.email = params['email'];
@@ -58,9 +58,9 @@ export class ViewManufacturerDetailsComponent implements OnInit {
       // if (params['RequestDetails']) {
       //   try {
       //     this.requestDetails = JSON.parse(params['RequestDetails']);
-      //     console.log('Parsed RequestDetails:', this.requestDetails);
+      //     // console.log('Parsed RequestDetails:', this.requestDetails);
       //   } catch (error) {
-      //     console.error('Error parsing RequestDetails:', error);
+      //     // console.error('Error parsing RequestDetails:', error);
       //     this.requestDetails = null;
       //   }
       // } else {
@@ -72,7 +72,7 @@ export class ViewManufacturerDetailsComponent implements OnInit {
         if (requestDetailsString) {
           const requestDetailsObject = JSON.parse(requestDetailsString); // Parse the JSON string
           this.requestDetails = requestDetailsObject.status;
-          console.log(' RequestDetails:', this.requestDetails);
+          // console.log(' RequestDetails:', this.requestDetails);
         }
       });
 
@@ -88,8 +88,8 @@ export class ViewManufacturerDetailsComponent implements OnInit {
       
      
     this.checkRequestStatus(manufacturerEmail,requestByEmail);
-      // console.log("mfgemail",manufacturerEmail)
-      // console.log("email",requestByEmail)
+      // // console.log("mfgemail",manufacturerEmail)
+      // // console.log("email",requestByEmail)
     });
   }
 
@@ -100,21 +100,21 @@ export class ViewManufacturerDetailsComponent implements OnInit {
         this.CompanyData = res;
       }
     }, error => {
-      console.error('Error fetching manufacturer data:', error);
+      // console.error('Error fetching manufacturer data:', error);
     });
   }
 
   // Method to check the current request status (mock implementation)
   checkRequestStatus(manufacturerEmail: string, requestByEmail: string): void {
     const url = `request/check/status-request?wholsalerEmail=${manufacturerEmail}&requestByEmail=${requestByEmail}`;
-    console.log("mfgemail",manufacturerEmail)
-    console.log("email",requestByEmail)
+    // console.log("mfgemail",manufacturerEmail)
+    // console.log("email",requestByEmail)
     this.authService.get(url).subscribe(
       (response: any) => {
         this.requestDetails = response.status; // 'pending', 'accepted', 'rejected', or null
       },
       (error) => {
-        console.error('Error fetching request status:', error);
+        // console.error('Error fetching request status:', error);
         this.requestDetails = null; // Handle error accordingly
       }
     );
@@ -127,7 +127,7 @@ export class ViewManufacturerDetailsComponent implements OnInit {
         this.brandsDetails = res;
       }
     }, error => {
-      console.error('Error fetching brands data:', error);
+      // console.error('Error fetching brands data:', error);
     });
   }
 
@@ -158,7 +158,7 @@ export class ViewManufacturerDetailsComponent implements OnInit {
     this.authService.post('request', requestBody).subscribe(response => {
       this.communicationService.showNotification('snackbar-success', 'Request added successfully', 'bottom', 'center');
     }, error => {
-      console.error('Error sending request:', error);
+      // console.error('Error sending request:', error);
     });
   }
 
@@ -169,7 +169,7 @@ export class ViewManufacturerDetailsComponent implements OnInit {
         this.WholsellerData = res;
       }
     }, error => {
-      console.error('Error fetching wholesaler data:', error);
+      // console.error('Error fetching wholesaler data:', error);
     });
   }
 
@@ -177,10 +177,10 @@ export class ViewManufacturerDetailsComponent implements OnInit {
   GetProfileVisabilityData() {
     this.spinner.show();
     this.authService.get(`manufacturers/visible-profile/${this.id}`).subscribe((res: any) => {
-      console.log('Received visibility data:', res);
+      // console.log('Received visibility data:', res);
       if (res) {
         this.allVisabilityData = res;
-        console.log('allVisabilityData:', this.allVisabilityData);
+        // console.log('allVisabilityData:', this.allVisabilityData);
 
         // Handle unique products and grouping product types, gender, etc.
         const uniqueValues = {
@@ -198,7 +198,7 @@ export class ViewManufacturerDetailsComponent implements OnInit {
             uniqueValues.subCategory.add(product.subCategory);
           });
         } else {
-          console.error('Unique products data is missing or not an array');
+          // console.error('Unique products data is missing or not an array');
         }
         
 
@@ -212,7 +212,7 @@ export class ViewManufacturerDetailsComponent implements OnInit {
       this.spinner.hide();
     }, error => {
       this.spinner.hide();
-      console.error('Error fetching profile visibility data:', error);
+      // console.error('Error fetching profile visibility data:', error);
     });
   }
 

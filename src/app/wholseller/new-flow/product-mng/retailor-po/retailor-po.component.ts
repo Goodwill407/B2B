@@ -65,7 +65,7 @@ export class RetailorPoComponent {
       if (this.email && this.productBy) {
         this.authService.get(`retailer-purchase-order-type2?wholesalerEmail=${this.email}`)
           .subscribe((res: any) => {
-            console.log(res)
+            // console.log(res)
             const response = res[0];
             this.purchaseOrder = {
               supplierName: res.wholesaler.companyName,
@@ -102,7 +102,7 @@ export class RetailorPoComponent {
     this.showFlag = false;
     this.authService.get(`retailer-purchase-order-type2?wholesalerEmail=${this.authService.currentUserValue.email}&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
       this.tableData = res.results;
-      console.log(res)
+      // console.log(res)
       this.totalResults = res.totalResults;
     })
   }
@@ -198,10 +198,10 @@ export class RetailorPoComponent {
         // Save PDF file
         pdf.save('purchase-order.pdf');
       }).catch((error) => {
-        console.error("Error generating PDF:", error);
+        // console.error("Error generating PDF:", error);
       });
     } else {
-      console.error("Element with id 'purchase-order' not found.");
+      // console.error("Element with id 'purchase-order' not found.");
     }
   }
   

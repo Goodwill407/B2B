@@ -140,7 +140,7 @@ export class ViewProductOwnComponent {
     const imageElement = this.mainImage?.nativeElement; // Get the native image element
 
     if (!imageElement) {
-      console.error('Image element not found.');
+      // console.error('Image element not found.');
       return;
     }
     this.renderer.setStyle(imageElement, 'transform', `scale(1.8)`);
@@ -152,7 +152,7 @@ export class ViewProductOwnComponent {
     const imageElement = this.mainImage?.nativeElement; // Get the native image element
 
     if (!imageElement) {
-      console.error('Image element not found.');
+      // console.error('Image element not found.');
       return;
     }
 

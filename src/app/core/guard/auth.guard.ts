@@ -58,7 +58,7 @@ export class AuthGuard {
     if (token && token.access) {
       const tokenExpiration = new Date(token.access.expires);
       const currentTime = new Date();
-      // console.log('token '+tokenExpiration.getTime(), 'currentTime '+currentTime.getTime());      
+      // // console.log('token '+tokenExpiration.getTime(), 'currentTime '+currentTime.getTime());      
       return tokenExpiration.getTime() < currentTime.getTime();
     }
     return true;

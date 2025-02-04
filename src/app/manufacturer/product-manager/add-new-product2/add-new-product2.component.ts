@@ -407,12 +407,12 @@ export class AddNewProduct2Component {
           this.allClothingType = [];
         }
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        // console.error('Error fetching categories:', error);
       }
 
       this.checkAllFieldsSelected();
     } else {
-      console.warn('ProductType or Gender is not defined');
+      // console.warn('ProductType or Gender is not defined');
       this.allClothingType = [];
     }
   }
@@ -442,7 +442,7 @@ export class AddNewProduct2Component {
       }
       this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
     } catch (error) {
-      console.error('Error fetching subcategories:', error);
+      // console.error('Error fetching subcategories:', error);
     }
 
     this.checkAllFieldsSelected();
@@ -504,7 +504,7 @@ export class AddNewProduct2Component {
         this.getSizeSetForProducts(this.foundSizeSet);
       }      
     } catch (error) {
-      console.error('Error mapping data:', error);
+      // console.error('Error mapping data:', error);
     }
   }
 
@@ -565,7 +565,7 @@ export class AddNewProduct2Component {
       },
         (error) => {
           this.spinner.hide();
-          console.log('error')
+          // console.log('error')
         })
     }
   }
@@ -651,11 +651,11 @@ export class AddNewProduct2Component {
           }
         }
       } catch (error) {
-        console.log('Error', error);
+        // console.log('Error', error);
         this.spinner.hide();
       }
     } else {
-      console.log('Form is invalid');
+      // console.log('Form is invalid');
       this.spinner.hide();
     }
   }
@@ -787,7 +787,7 @@ export class AddNewProduct2Component {
         }
       }
     } catch (error) {
-      console.error('Error fetching product data:', error);
+      // console.error('Error fetching product data:', error);
     } finally {
       this.spinner.hide();
     }
@@ -883,7 +883,7 @@ export class AddNewProduct2Component {
 
       },
         error => {
-          console.log('error')
+          // console.log('error')
         });
     }
   }
@@ -905,7 +905,7 @@ export class AddNewProduct2Component {
     const symbol = event.value.name.symbol || '';
     const valueWithDash = `${symbol} -`;
     this.stepOne.get('MRP')?.setValue(valueWithDash, { emitEvent: false });
-    console.log('Selected currency:', this.selectedCurrency);
+    // console.log('Selected currency:', this.selectedCurrency);
   }
 
   // step Three
@@ -989,7 +989,7 @@ export class AddNewProduct2Component {
 
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1001,7 +1001,7 @@ export class AddNewProduct2Component {
 
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1013,7 +1013,7 @@ export class AddNewProduct2Component {
 
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1024,7 +1024,7 @@ export class AddNewProduct2Component {
       }
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1036,7 +1036,7 @@ export class AddNewProduct2Component {
         }
       },
       error => {
-        console.log('Error', error);
+        // console.log('Error', error);
       }
     );
   }
@@ -1048,7 +1048,7 @@ export class AddNewProduct2Component {
       }
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1059,7 +1059,7 @@ export class AddNewProduct2Component {
       }
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1071,7 +1071,7 @@ export class AddNewProduct2Component {
       }
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1082,7 +1082,7 @@ export class AddNewProduct2Component {
       }
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1093,7 +1093,7 @@ export class AddNewProduct2Component {
       }
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1104,7 +1104,7 @@ export class AddNewProduct2Component {
       }
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1115,7 +1115,7 @@ export class AddNewProduct2Component {
       }
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1126,7 +1126,7 @@ export class AddNewProduct2Component {
       }
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1137,7 +1137,7 @@ export class AddNewProduct2Component {
       }
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1148,7 +1148,7 @@ export class AddNewProduct2Component {
       }
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1159,7 +1159,7 @@ export class AddNewProduct2Component {
       }
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1170,7 +1170,7 @@ export class AddNewProduct2Component {
       }
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1181,7 +1181,7 @@ export class AddNewProduct2Component {
       }
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1192,7 +1192,7 @@ export class AddNewProduct2Component {
       }
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1203,7 +1203,7 @@ export class AddNewProduct2Component {
       }
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1214,7 +1214,7 @@ export class AddNewProduct2Component {
       }
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1225,7 +1225,7 @@ export class AddNewProduct2Component {
       }
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1245,7 +1245,7 @@ export class AddNewProduct2Component {
       }
     },
       errpr => {
-        console.log('error')
+        // console.log('error')
       })
   }
 
@@ -1259,7 +1259,7 @@ getAllWaistType() {
         }
     },
     error => {
-        console.log('error');
+        // console.log('error');
     });
 }
 
@@ -1270,7 +1270,7 @@ getAllWeaveType() {
         }
     },
     error => {
-        console.log('error');
+        // console.log('error');
     });
 }
 
@@ -1281,7 +1281,7 @@ getAllEthnicDesign() {
         }
     },
     error => {
-        console.log('error');
+        // console.log('error');
     });
 }
 
@@ -1292,7 +1292,7 @@ getAllSareeStyle() {
         }
     },
     error => {
-        console.log('error');
+        // console.log('error');
     });
 }
 
@@ -1303,7 +1303,7 @@ getAllWomenStyle() {
         }
     },
     error => {
-        console.log('error');
+        // console.log('error');
     });
 }
 
@@ -1314,7 +1314,7 @@ getAllWorkType() {
         }
     },
     error => {
-        console.log('error');
+        // console.log('error');
     });
 }
 
@@ -1325,7 +1325,7 @@ getAllFinishType() {
         }
     },
     error => {
-        console.log('error');
+        // console.log('error');
     });
 }
 
@@ -1336,7 +1336,7 @@ getAllApparelSilhouette() {
         }
     },
     error => {
-        console.log('error');
+        // console.log('error');
     });
 }
 
@@ -1347,7 +1347,7 @@ getAllEthnicBottomsStyle() {
         }
     },
     error => {
-        console.log('error');
+        // console.log('error');
     });
 }
 
@@ -1358,7 +1358,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1369,7 +1369,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1380,7 +1380,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1391,7 +1391,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1402,7 +1402,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1413,7 +1413,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1424,7 +1424,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1435,7 +1435,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1446,7 +1446,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1457,7 +1457,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1468,7 +1468,7 @@ getAllEthnicBottomsStyle() {
 //         }
 //     },
 //     error => {
-//         console.log('error');
+//         // console.log('error');
 //     });
 // }
 
@@ -1481,7 +1481,7 @@ getAllSocksStyle() {
         }
     },
     error => {
-        console.log('error');
+        // console.log('error');
     });
 }
 
@@ -1492,7 +1492,7 @@ getAllTrourserPocket() {
       }
   },
   error => {
-      console.log('error');
+      // console.log('error');
   });
 }
 getAllIncludedComponent() {
@@ -1502,7 +1502,7 @@ getAllIncludedComponent() {
       }
   },
   error => {
-      console.log('error');
+      // console.log('error');
   });
 }
 
@@ -1513,7 +1513,7 @@ getAllCollarStyle() {
       }
   },
   error => {
-      console.log('error');
+      // console.log('error');
   });
 }
 
@@ -1524,7 +1524,7 @@ getallItemLength() {
       }
   },
   error => {
-      console.log('error');
+      // console.log('error');
   });
 }
 
@@ -1535,7 +1535,7 @@ getAllelasticity(){
     }
 },
 error => {
-    console.log('error');
+    // console.log('error');
 });
 }
 
@@ -1546,7 +1546,7 @@ error => {
 //     }
 // },
 // error => {
-//     console.log('error');
+//     // console.log('error');
 // });
 // }
 }

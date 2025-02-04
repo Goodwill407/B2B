@@ -159,7 +159,7 @@ export class ProfileComponent {
     this.authService.get(`retailer/${this.userProfile.email}`).subscribe(
       async (res: any) => {
         if (res) {
-          //console.log(res);
+          //// console.log(res);
   
           // Format dates
           res.establishDate = res.establishDate
@@ -302,7 +302,7 @@ export class ProfileComponent {
         },
         (error) => {
           // Log the error and reject the promise
-          console.error('Error fetching states:', error);
+          // console.error('Error fetching states:', error);
           reject(error);
         }
       );

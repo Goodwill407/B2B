@@ -26,12 +26,12 @@ export class AuthServiceService {
         localStorage.setItem('data', JSON.stringify(JsonData));
 
         this.router.navigate(['dashboard']);
-        console.log(
+        // console.log(
           'You have been successfully logged in!' + result.user?.displayName
         );
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
       });
   }
 

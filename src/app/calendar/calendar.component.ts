@@ -144,7 +144,7 @@ export class CalendarComponent
     this.subs.sink = dialogRef.afterClosed().subscribe((result) => {
       if (result === 'submit') {
         this.calendarData = this.calendarService.getDialogData();
-        console.log(this.calendarData.startDate);
+        // console.log(this.calendarData.startDate);
         this.calendarEvents = this.calendarEvents?.concat({
           // add new event data. must create new array
           id: this.calendarData.id,
