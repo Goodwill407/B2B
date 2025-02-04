@@ -10,7 +10,7 @@
         <div class="col-2">
             <label for="colorCode">Color Code<span *ngIf="colourCollections.length > 0" class="required">*</span></label>
             <input type="color" id="colorCode" formControlName="colour" style="margin-bottom: 5px !important;" class="form-control color-input">
-            <p><small  style="color: brown;">note: click on color</small></p>
+            <p><small  style="color: brown;">Note: Click On Color</small></p>
             <div *ngIf="submittedStep2 && stepTwo.get('colour')?.invalid" class="text-danger">
                 Color Code is required
             </div>
@@ -35,7 +35,7 @@
         </div>
 
         <!-- Product Video -->
-        <div class="col-3">
+        <!-- <div class="col-3">
             <label for="videoUpload">Product Video</label>
             <input type="file" id="videoUpload" class="form-control file-input" (change)="onFileChange($event, 'productVideo')" accept="video/*">
             <div *ngIf="submittedStep2 && stepTwo.get('productVideo')?.invalid" class="text-danger">
@@ -44,7 +44,7 @@
             <div *ngIf="videoSizeError" class="text-danger">
                 {{ videoSizeError }}
             </div>
-        </div>
+        </div> -->
     </div>
     
 
@@ -52,7 +52,7 @@
     <div class="row mt-3">
         <div class="col-12">
             <label for="">Add Product Images<span *ngIf="colourCollections.length === 0" class="required">*</span> 
-                &nbsp;<small style="color: brown;">(max 5 images)</small>
+                &nbsp;<small style="color: brown;">(Max 5 Images)</small>
             </label>
             <div class="d-flex flex-wrap align-items-center product-box">
                 <div *ngFor="let image of productImages.controls; let i = index" class="position-relative m-1 image-container">
@@ -72,7 +72,7 @@
 
     <div class="d-flex justify-content-center mt-3">
         <button type="submit" class="btn submit-btn d-flex me-2">
-            <i class="bi bi-plus"></i> Add New Color
+            <i></i> Save
         </button>
         <!-- <button type="button" class="btn submit-btn d-flex me-2" (click)="goToNextStep()">
             Next
@@ -120,12 +120,37 @@
                         </td>
                         <td>
                             <ng-container *ngIf="collection.productVideo; else noVideo">
-                                <video controls [src]="getVideoPath(collection.productVideo)"></video>
+                              <!-- <video controls [src]="getVideoPath(collection.productVideo)"></video> -->
+                              <!-- Play Icon -->
+                              <button (click)="playVideo(collection.productVideo)" class="icon-button">
+                                <i class="fas fa-play"></i>
+                              </button>
+                              <!-- Delete Icon -->
+                              <button (click)="deleteVideo(collection._id)"  class="icon-button">
+                                <i class="fas fa-trash"></i>
+                              </button>
                             </ng-container>
                             <ng-template #noVideo>
-                                No Video
+                              <label for="video-upload" class="custom-file-input">Upload Video</label>
+                              <input
+                                id="video-upload"
+                                type="file"
+                                (change)="uploadDefaultVideo($event, collection._id)"
+                                accept="video/*"
+                              />
+                              <!-- Progress Bar -->
+                              <div *ngIf="isUploading">
+                                <div class="progress-container">
+                                  <div class="progress-bar" [style.width.%]="uploadProgress"></div>
+                                </div>
+                                <span class="upload-speed">{{ uploadSpeed }} KB/s</span>
+                              </div>
                             </ng-template>
-                        </td>
+                          </td>
+                          
+                          
+                          
+                          
                         <td>
                             <div class="product-images">
                                 <ng-container *ngIf="collection.productImages.length; else noImages">

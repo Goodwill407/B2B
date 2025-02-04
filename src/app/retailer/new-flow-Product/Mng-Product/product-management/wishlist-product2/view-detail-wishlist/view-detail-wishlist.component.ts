@@ -34,6 +34,7 @@ export class ViewDetailWishlistComponent {
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
     this.route.params.subscribe(params => {
       const id = params['id'];
+      console.log(id,"id");
       this.ProductId = id;
       if (id) {
         this.getProductDetails(id);
@@ -42,8 +43,13 @@ export class ViewDetailWishlistComponent {
     });
   }
 
+  disableScroll(event: WheelEvent) {
+    event.preventDefault();
+  }
+  
   getProductDetails(id: any) {
     this.authService.get('type2-products/' + id).subscribe((res: any) => {
+      console.log(res,"Product");
       if (res) {
         this.product = {
           brand: res.brand,

@@ -12,7 +12,7 @@
                 <div class="d-flex">
                     <h5>Invite Single Distributor</h5>
                     <div class="ms-auto navigation-link-log">
-                        <div type="button" class="" routerLink="/mnf/bulk-invite">Invite Bulk Distributor</div>
+                        <div type="button" class="" routerLink="/mnf/bulk-invite">Invite Bulk Distributors</div>
                     </div>
                 </div>
                 <div class="row ms-4">
@@ -74,7 +74,7 @@
                                 <label class="lable-input" for="mobileNumber">Mobile Number<span>*</span>:</label>
                                 <div class="d-flex">
                                     <mat-form-field appearance="outline" class="me-1">
-                                        <mat-select formControlName="code">
+                                        <mat-select formControlName="contryCode">
                                             <mat-option *ngFor="let code of altcountryCode" [value]="'+' + code">
                                                 +{{ code }}
                                             </mat-option>

@@ -3,7 +3,7 @@
         <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Invite Pending Status</h4>
         <div class="card-table2 p-3">
             <div class="table-header d-flex align-items-center">
-                <h5 class="mb-0">Distributor's List</h5>
+                <h5 class="mb-0">Distributors List</h5>
                 <div class="ms-auto">
                     <!-- Show the button only if more than one distributor is selected -->
                     <button *ngIf="selectedDistributors.length > 1" class="btn btn-outline-success" (click)="reInviteToAll()">Re-Invite To Selected</button>
@@ -20,6 +20,7 @@
                                 </th>
                                 <th>Distributor's Name</th>
                                 <th>Company Name/ Firm Name</th>
+                                <th>Role</th>
                                 <th>Mobile Number</th>
                                 <th>Email</th>
                                 <th>Status</th>
@@ -33,6 +34,7 @@
                                 </td>
                                 <td class="text-center">{{distributor.fullName}}</td>
                                 <td class="text-center">{{distributor.companyName}}</td>
+                                <td class="text-center">{{distributor.role}}</td>
                                 <td class="text-center">{{distributor.mobileNumber}}</td>
                                 <td class="text-center">{{distributor.email}}</td>
                                 <td class="text-center text-danger fw-bold">Pending</td>

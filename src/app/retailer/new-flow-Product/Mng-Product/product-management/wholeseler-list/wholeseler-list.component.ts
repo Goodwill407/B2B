@@ -17,7 +17,7 @@ import { TableModule } from 'primeng/table';
     PaginatorModule,
     NgIf, RouterModule,
     BottomSideAdvertiseComponent,
-    RightSideAdvertiseComponent
+    RightSideAdvertiseComponent  
   ],
   templateUrl: './wholeseler-list.component.html',
   styleUrl: './wholeseler-list.component.scss'
@@ -63,7 +63,7 @@ export class WholeselerListComponent {
     this.getAllWholeseler();
   }
 
-  navigateToProduct(email: string) {
-    this.router.navigate(['/retailer/new/wholeseler-Products4'], {queryParams:{ email: email }});
+  navigateToProduct(email: string,companyName: string) {
+    this.router.navigate(['/retailer/new/wholeseler-Products4'], {queryParams:{ email: email, companyName: companyName}});
   }
 }

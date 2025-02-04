@@ -38,7 +38,7 @@
               <option value="" disabled>Select Identity</option>
               @for(type of identityType;track type){
               @if(type.name!=='manufacture'){
-              <option value="type.name" dis>{{type.name|titlecase}}</option>
+              <option [value]="type.name">{{type.name|titlecase}}</option>
               }
               }
             </select>
@@ -61,10 +61,10 @@
               <small>{{ getErrorMessage('companyName', i) }}</small>
             </div>
           </div>
-          <div>
+          <div> 
             <span class="d-flex mat-select" style="width: 305px; height: 22px;">
               <mat-form-field appearance="outline" class="w-25 me-2">
-                <mat-select formControlName="code">
+                <mat-select formControlName="contryCode">
                   <mat-option *ngFor="let code of altcountryCode" [value]="'+' + code">
                       +{{ code }}
                   </mat-option>

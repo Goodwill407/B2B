@@ -14,9 +14,10 @@
                 <div class="product-images">
                     <div class="zoom-container">
                       <img #mainImage *ngIf="selectedMediaType === 'image'" [src]="selectedMedia"
+                      onerror="this.onerror=null; this.src='assets/images/Product_Alt.jpeg';"
                         (mousemove)="zoomImage($event)" (mouseleave)="resetZoom($event)" alt="Main Product Image"
                         class="zoom-image">
-          
+                        <!-- alt image added for product -->
                       <video *ngIf="selectedMediaType === 'video'" style="width: 380px; height: 495px;"
                         [src]="selectedMedia" controls>
                       </video>
@@ -139,10 +140,10 @@
       {{ size.size }}
     </div>
 
-    <div class="size-input3 me-3">{{ size.MRP }}</div>
+    <div class="size-input3 me-3">{{ size.price }}</div>
   
     <div class="size-input3 me-3">
-      {{ size.price }}
+      {{ size.MRP }}
     </div>
   
     <div class="size-input3 me-3">

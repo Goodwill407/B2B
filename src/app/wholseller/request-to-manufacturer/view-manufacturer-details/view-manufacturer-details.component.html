@@ -5,7 +5,7 @@
 <section class="content">
   <div class="content-block">
     <h4 class="title mt-2">
-      <i class="bi bi-person-vcard-fill icon"></i> Manufacturers Preview
+      <i class="bi bi-person-vcard-fill icon"></i> Manufacturer's Preview
     </h4>
 
 
@@ -72,8 +72,8 @@
           </tr>
 
           <tr>
-            <td *ngIf="allVisabilityData?.visibilitySettings?.fileName"> KYC Document :- {{ allVisabilityData?.fileName
-              || 'Not Verified' }}</td>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.kycVerified">
+               KYC Status :- {{ allVisabilityData?.kycVerified ? 'Verified' : (allVisabilityData?.kycVerified === false ? 'Not Verified' : 'N/A') }}</td>
             <td *ngIf="allVisabilityData?.visibilitySettings?.leagalStatusOfFirm"> Legal Status of Firm :- {{
               allVisabilityData?.leagalStatusOfFirm || 'N/A' }}</td>
           </tr>
@@ -128,11 +128,34 @@
         </div>
       </div>
 
+      <div class="products-section mb-2" *ngIf="allVisabilityData?.uniqueProducts?.length > 0">
+        <h4>Dealing in</h4>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Product Type</th>
+              <th>Gender</th>
+              <th>Clothing</th>
+              <th>Sub Category</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr  *ngFor="let product of allVisabilityData?.uniqueProducts">
+              <td>{{ product.productType || 'N/A' }}</td>
+              <td>{{ product.gender || 'N/A' }}</td>
+              <td>{{ product.clothing || 'N/A' }}</td>
+              <td>{{ product.subCategory || 'N/A' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <!-- Bank Details Section -->
       <div class="bank-details" *ngIf="allVisabilityData?.visibilitySettings?.BankDetails?.bankName || 
         allVisabilityData?.visibilitySettings?.BankDetails?.branch || 
         allVisabilityData?.visibilitySettings?.BankDetails?.accountNumber || 
-        allVisabilityData?.visibilitySettings?.BankDetails?.IFSCcode">
+        allVisabilityData?.visibilitySettings?.BankDetails?.IFSCcode ||
+        allVisabilityData?.visibilitySettings?.BankDetails?.swiftCode">
         <h4>Bank Details</h4>
         <table>
           <tr>
@@ -149,6 +172,11 @@
             </td>
             <td *ngIf="allVisabilityData?.visibilitySettings?.BankDetails.branch">
               Branch :- {{ allVisabilityData?.BankDetails?.branch || 'N/A' }}
+            </td>
+          </tr>
+          <tr>
+            <td *ngIf="allVisabilityData?.visibilitySettings?.BankDetails.swiftCode">
+              Swift Code :- {{ allVisabilityData?.BankDetails?.swiftCode || 'N/A' }}
             </td>
           </tr>
         </table>
@@ -197,17 +225,17 @@
     <!-- Add Request Button -->
     <div class="d-flex justify-content-center mb-3 mt-3">
       <!-- Show Request to Add button if status is empty -->
-      <button *ngIf="!requestDetails" class="btn btn-outline-primary request-btn" [disabled]="isRequestSent"
+      <button *ngIf="!OnlyForView && !requestDetails" class="btn btn-outline-primary request-btn" [disabled]="isRequestSent"
         (click)="sendRequestToManufacturer()">
         Request to Add
       </button>
       <!-- Disable button if status is 'pending' or 'rejected' -->
-      <button *ngIf="requestDetails === 'pending' || requestDetails === 'rejected'"
+      <button *ngIf="!OnlyForView && (requestDetails === 'pending' || requestDetails === 'rejected')"
         class="btn btn-outline-primary request-btn" disabled>
         Pending
       </button>
       <!-- Hide button if status is 'accepted' -->
-      <button *ngIf="requestDetails === 'accepted'" class="btn btn-outline-primary request-btn" hidden>
+      <button *ngIf="!OnlyForView && requestDetails === 'accepted'" class="btn btn-outline-primary request-btn" hidden>
         Accepted
       </button>
     </div>

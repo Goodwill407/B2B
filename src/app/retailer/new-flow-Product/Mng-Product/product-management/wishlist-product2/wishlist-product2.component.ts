@@ -58,6 +58,7 @@ export class WishlistProduct2Component {
     let url = `type2-wishlist/get/wishlist/${email}`;
 
     this.authService.get(url).subscribe((res: any) => {
+      console.log(res);
       if (res) {
         this.totalResults = res.totalResults;
         this.products = res.map((product: any) => ({
@@ -74,7 +75,8 @@ export class WishlistProduct2Component {
           colourCollections: product.colourCollections,
           stock: product.quantity, // Replace with actual stock value if available
           id: product.wishlistId,
-          productId: product._id,
+          productId: product._id, // id to show product details
+          wishlistId: product.WishListType2SchemaId, // id to delete product from wishlist
           productBy: product.productBy,
           hoverIndex: 0
         }));
@@ -147,7 +149,7 @@ export class WishlistProduct2Component {
   }
 
   deleteWishlistItem(item: any) {
-    this.authService.delete('wishlist', item).subscribe((res: any) => {
+    this.authService.delete('type2-wishlist', item).subscribe((res: any) => {
       this.getAllProducts(this.userProfile.email);
       this.communicationService.showNotification('snackbar-success','Product Removed From Wishlist','bottom','center');
     })
@@ -157,10 +159,10 @@ export class WishlistProduct2Component {
     const cartBody = {
     "email": this.userProfile.email,
     "productBy": data.productBy,
-    "productId": data.id,
+    "productId": data.productId,
     "quantity": 1
     }
-
+    console.log(cartBody);
     this.authService.post('cart', cartBody).subscribe((res: any) => {
       this.communicationService.showNotification('snackbar-success','Product Successfully Added in Cart','bottom','center');
     },

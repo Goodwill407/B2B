@@ -18,11 +18,12 @@
                         <img #mainImage 
                              *ngIf="selectedMediaType === 'image'" 
                              [src]="selectedMedia" 
+                             onerror="this.onerror=null; this.src='assets/images/Product_Alt.jpeg';"
                              (mousemove)="zoomImage($event)" 
                              (mouseleave)="resetZoom($event)" 
                              alt="Main Product Image" 
                              class="zoom-image">
-                        
+                                <!-- alt image added for product -->
                         <video *ngIf="selectedMediaType === 'video'" 
                                style="width: 380px; height: 495px;"
                                [src]="selectedMedia" 

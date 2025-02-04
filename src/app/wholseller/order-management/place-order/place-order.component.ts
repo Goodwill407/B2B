@@ -1,6 +1,6 @@
 import { CommonModule, NgFor } from '@angular/common';
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 import html2canvas from 'html2canvas';
@@ -55,7 +55,7 @@ export class PlaceOrderComponent {
   ];
 
 
-  constructor(private route: ActivatedRoute, private authService: AuthService, private communicationService: CommunicationService) { }
+  constructor(private route: ActivatedRoute, private router: Router, private authService: AuthService, private communicationService: CommunicationService) { }
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe(params => {
@@ -117,9 +117,10 @@ export class PlaceOrderComponent {
 
   getAllData() {
     this.showFlag = false;
-    this.authService.get(`type2-purchaseorder?=${this.authService.currentUserValue.email}&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
-      this.tableData = res.results;
-      this.totalResults = res.totalResults;
+    this.authService.get(`type2-purchaseorder/get-po/by-wholesaler-email?wholesalerEmail=${this.authService.currentUserValue.email}&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
+     console.log(res);
+      this.tableData = res;
+      this.totalResults = res;
     })
   }
 
@@ -220,5 +221,13 @@ export class PlaceOrderComponent {
       console.error("Element with id 'purchase-order' not found.");
     }
   }
+  
+  placeOrder(data: any): void {
+
+    this.router.navigate(['/wholesaler/order-mng/View-place-order'], {
+      queryParams: { memail: data.manufacturer.email, wemail: data.wholesaler.email, poNumber: data.poNumber },
+    });
+  }
+
   
 }

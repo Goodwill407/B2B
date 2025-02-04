@@ -12,7 +12,7 @@
                     </h5>
                     <hr class="mt-2">
                     <div class="row">
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                             <label class="label-input">Company/Firm Name :- </label>
                             <span class="form-control-static">{{mgfRegistrationForm.get('companyName')?.value}}</span>
                         </div>
@@ -20,7 +20,10 @@
                             <label class="label-input">Full Name :- </label>
                             <span class="form-control-static">{{mgfRegistrationForm.get('fullName')?.value}}</span>
                         </div>
-                        
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                            <label class="label-input">KYC Status :- </label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('kycVerified')?.value ? 'Verified' : (mgfRegistrationForm.get('kycVerified')?.value === false ? 'Not Verified' : 'N/A') }}</span>
+                        </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ">
                             <label class="label-input">Company Establishment Date :- </label>
                             <span class="form-control-static">{{mgfRegistrationForm.get('establishDate')?.value}}</span>
@@ -113,26 +116,31 @@
                             <label class="label-input">Account Type :- </label>
                             <span class="form-control-static">{{mgfRegistrationForm.get('BankDetails.accountType')?.value}}</span>
                         </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6  ">
+                            <label class="label-input">IFSC Code :- </label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('BankDetails.IFSCcode')?.value}}</span>
+                        </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 ">
                             <label class="label-input">Bank Name :-</label>
                             <span class="form-control-static">{{mgfRegistrationForm.get('BankDetails.bankName')?.value}}</span>
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6  ">
-                            <label class="label-input">IFSC Code :- </label>
-                            <span class="form-control-static">{{mgfRegistrationForm.get('BankDetails.IFSCcode')?.value}}</span>
+                            <label class="label-input">Swift Code :- </label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('BankDetails.swiftCode')?.value }}</span>
                         </div>
-                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
-                            <label class="label-input">Country :-</label>
-                            <span class="form-control-static">{{mgfRegistrationForm.get('BankDetails.country')?.value}}</span>
-                        </div>
-                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4  ">
-                            <label class="label-input">City :-</label>
-                            <span class="form-control-static">{{mgfRegistrationForm.get('BankDetails.city')?.value}}</span>
-                        </div>
-                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4  ">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6  ">
                             <label class="label-input">Branch Name :-</label>
                             <span class="form-control-static">{{mgfRegistrationForm.get('BankDetails.branch')?.value}}</span>
                         </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                            <label class="label-input">Country :-</label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('BankDetails.country')?.value}}</span>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6  ">
+                            <label class="label-input">City :-</label>
+                            <span class="form-control-static">{{mgfRegistrationForm.get('BankDetails.city')?.value}}</span>
+                        </div>
+                        
                     </div>
                 </div>
             </form>

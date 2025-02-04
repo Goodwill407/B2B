@@ -87,6 +87,7 @@ export class ViewProfileComponent {
   initializeValidation() {
     this.mgfRegistrationForm = this.fb.group({
       fullName: ['', Validators.required],
+      kycVerified:[''],
       companyName: ['', Validators.required],
       address: ['', Validators.required],
       contryCode: ['', Validators.required],
@@ -115,6 +116,7 @@ export class ViewProfileComponent {
         accountType: ['', Validators.required],
         bankName: ['', Validators.required],
         IFSCcode: ['', [Validators.required, Validators.pattern(/^[A-Z]{4}0[A-Z0-9]{6}$/),]],
+        swiftCode: ['',],
         country: ['', Validators.required],
         city: ['', Validators.required],
         branch: ['', Validators.required],

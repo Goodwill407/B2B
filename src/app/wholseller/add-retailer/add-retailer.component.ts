@@ -39,12 +39,12 @@ export class AddRetailerComponent {
 
   altcountryCode: any;
 
-  countryCode = [
-    // { countryName: 'United States', flag: 'assets/images/flags/us.jpg', code: '+1' },
-    { countryName: 'India', flag: 'assets/images/flags/ind.png', code: '+91' },
-    // { countryName: 'United Kingdom', flag: 'assets/images/flags/uk.png', code: '+44' },
-    // { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
-  ];
+  // countryCode = [
+  //   // { countryName: 'United States', flag: 'assets/images/flags/us.jpg', code: '+1' },
+  //   { countryName: 'India', flag: 'assets/images/flags/ind.png', code: '+91' },
+  //   // { countryName: 'United Kingdom', flag: 'assets/images/flags/uk.png', code: '+44' },
+  //   // { countryName: 'Australia', flag: 'assets/images/flags/aus.png', code: '+61' },
+  // ];
 
   // for ads
   rightAdImages: string[] = [
@@ -95,7 +95,7 @@ export class AddRetailerComponent {
       
       // Optionally, set a default value (e.g., '+91') for altCode if needed
       if (this.altcountryCode.includes('91')) {
-        this.mgfRegistrationForm.controls['altCode'].setValue('+91');
+        this.mgfRegistrationForm.controls['contryCode'].setValue('+91');
       }
     });
   }

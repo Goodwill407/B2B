@@ -531,12 +531,79 @@ background-color: #005f73;
 }
 
 
+/* Style the video element */
+td video {
+  width: 100%; /* Make the video responsive */
+  max-width: 300px; /* Limit the max width */
+  border-radius: 5px; /* Optional: add some rounded corners */
+}
+
+/* Hide the default file input appearance */
+td input[type="file"] {
+  display: none; /* Hide the default file input */
+}
+
+/* Custom button for file input */
+td .custom-file-input {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* Hover effect for the custom button */
+td .custom-file-input:hover {
+  background-color: #0056b3;
+}
 
 
 
 
+/* Progress Bar Container */
+.progress-container {
+  width: 100%;
+  height: 20px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
 
+/* Progress Bar */
+.progress-bar {
+  height: 100%;
+  background-color: #4caf50;
+  border-radius: 5px;
+  transition: width 0.2s ease-in-out;
+}
 
+/* Upload Speed Text */
+.upload-speed {
+  font-size: 12px;
+  color: #555;
+  font-weight: bold;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.icon-button i {
+  font-size: 24px;
+  color: #007bff;
+}
+
+.icon-button:hover i {
+  color: #0056b3;
+}
+  
 
 
 

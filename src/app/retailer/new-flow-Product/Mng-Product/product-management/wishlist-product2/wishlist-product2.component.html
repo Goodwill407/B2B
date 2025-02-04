@@ -1,6 +1,6 @@
 <section class="content">
     <div class="content-block">
-        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i>  Wishlist Products </h4>
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i>  Products in Your Wishlist </h4>
         <div class="ads-flex">
          <div class="flex-grow-1">
             <div class="card p-4">
@@ -32,8 +32,8 @@
                               <span *ngIf="product.stock === 0" class="out-of-stock">Out of stock</span>
                             </div>
                             <div class="wish-button d-flex justify-content-between">
-                              <button class="btn add-to-cart" (click)="addToCart(product)">Add To Cart</button>
-                              <button class="btn delete" (click)="deleteWishlistItem(product.id)"><i class="bi bi-trash-fill"></i></button>
+                              <button class="btn add-to-cart" [routerLink]="['/retailer/new/wishlistproducts',{id: product.productId}]">Add To Cart</button>
+                              <button class="btn delete" (click)="deleteWishlistItem(product.wishlistId)"><i class="bi bi-trash-fill"></i></button>
                             </div>
                           </div>
                           <small class="date">Item Added : {{product.createdAt | date:'dd MMM yyyy'}}</small>
