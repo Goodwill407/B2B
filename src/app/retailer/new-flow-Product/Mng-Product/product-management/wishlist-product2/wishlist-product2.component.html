@@ -33,7 +33,7 @@
                             </div>
                             <div class="wish-button d-flex justify-content-between">
                               <button class="btn add-to-cart" [routerLink]="['/retailer/new/wishlistproducts',{id: product.productId}]">Add To Cart</button>
-                              <button class="btn delete" (click)="deleteWishlistItem(product.productId)"><i class="bi bi-trash-fill"></i></button>
+                              <button class="btn delete" (click)="deleteWishlistItem(product.wishlistId)"><i class="bi bi-trash-fill"></i></button>
                             </div>
                           </div>
                           <small class="date">Item Added : {{product.createdAt | date:'dd MMM yyyy'}}</small>

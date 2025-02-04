@@ -1,6 +1,6 @@
 <section class="content">
     <div class="content-block">
-      <h4 class="mt-4">View Products of {{mnfCompanyName}} sk</h4>
+      <h4 class="mt-4">View Products of {{mnfCompanyName}}</h4>
       <div class="card p-4">
         <div class="search-bar">
           <select name="" class="form-select" [(ngModel)]="filters.brand" (change)="getAllSubCategory()">
@@ -30,7 +30,7 @@
           <div *ngFor="let product of products" class="product-card" (mouseenter)="onMouseEnter(product)" (mouseleave)="onMouseLeave(product)">
             <div class="design-no">Design No : {{product.designNo}}</div>
             <div class="image-carousel">
-              <img class="main-img" [src]="product.selectedImageUrl" alt="{{product.title}}" [routerLink]="['/wholesaler/new/product/view-product',{id: product.id}]">
+              <img class="main-img" [src]="product.selectedImageUrl" alt="{{product.title}}" [routerLink]="['/retailer/new/view-product-details',{id: product.id}]">
               <div class="carousel-dots">
                 <span *ngFor="let img of product.selectedImageUrls; let i = index" [class.active]="i === product.hoverIndex" (click)="navigateToImage(product, i)"></span>
               </div>
@@ -43,17 +43,17 @@
                         (click)="changeProductImage(product, color)">
                 </button>
               </div>
-              <h6 class="title" [routerLink]="['/wholesaler/new/product/view-product',{id: product.id}]">{{product.title}}</h6>
+              <h6 class="title" [routerLink]="['/retailer/new/view-product-details',{id: product.id}]">{{product.title}}</h6>
               <p class="truncate-text">{{ product.description }}</p>
               <!-- <button class="btn btn-light" [routerLink]="['/wholesaler/new/product/view-product-price',{id: product.id}]">Edit Price</button> -->
   
-  &nbsp;
-  <button type="button" class="btn" 
-    [disabled]="wishlistItems.has(product.id)" 
-    [ngClass]="wishlistItems.has(product.id) ? 'btn-wishlist-true' : 'btn-wishlist'" 
-    (click)="WishlistAdd(product.id)">
-    <i class="bi bi-heart"></i>
-  </button>
+              &nbsp;
+              <button type="button" class="btn" 
+                [disabled]="wishlistItems.has(product.id)" 
+                [ngClass]="wishlistItems.has(product.id) ? 'btn-wishlist-true' : 'btn-wishlist'" 
+                (click)="WishlistAdd(product.id)">
+                <i class="bi bi-heart"></i>
+              </button>
   
   
             </div>

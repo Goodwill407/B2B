@@ -157,6 +157,7 @@
                               placeholder="Qty"
                               min="0"
                               (input)="updateRowTotal(color.name, size.size)"
+                              (wheel)="disableScroll($event)"
                             />
                           </div>
                           <div class="size-input3">
