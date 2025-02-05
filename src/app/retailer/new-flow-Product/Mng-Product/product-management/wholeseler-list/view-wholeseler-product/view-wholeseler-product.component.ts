@@ -41,7 +41,6 @@ export class ViewWholeselerProductComponent {
   
   ngOnInit(): void {
 
-   
     this.stepThree = this.fb.group({});
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
     this.route.params.subscribe(params => {
@@ -54,6 +53,7 @@ export class ViewWholeselerProductComponent {
         // this.checkWishlist()
       }
     });
+    this.checkWishlist();
   }
 
   getProductDetails(id: any) {
@@ -258,14 +258,24 @@ export class ViewWholeselerProductComponent {
     this.selectedMediaType = media[0]?.type;
   }
 
+  
   WishlistAdd() {
-    this.authService.post('type2-wishlist', { productId: this.ProductId, email: this.userProfile.email }).subscribe((res: any) => {
-      this.checkWishlist();
-    }, (err: any) => {
-      this.wishlist = false;
-    })
+    this.authService.post('type2-wishlist', { productId: this.ProductId, email: this.userProfile.email }).subscribe(
+      (res: any) => {
+        // console.log(res);
+        this.checkWishlist();
+        this.communicationService.customSuccess1('Product Added to Wishlist'); // Display the success message
+        //this.wishlistItems.add(id); // Add product ID to wishlistItems set
+        //this.updateProductWishlistStatus(id, true); // Update product wishlist status
+      },
+      (err: any) => {
+        console.log(err);
+        this.communicationService.customError1('Error Adding Product to Wishlist'); // Handle error case
+      }
+    );
   }
 
+  
   checkWishlist() {
     this.authService.get('type2-wishlist/checkout/wishlist?productId=' + this.ProductId + '&email=' + this.userProfile.email).subscribe((res: any) => {
       if (res) {  

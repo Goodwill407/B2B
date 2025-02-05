@@ -90,7 +90,7 @@ filters = {
     this.authService.post(url, Object).subscribe(
       (res: any) => {
         if (res) {
-          this.totalResults = res.totalResults;
+          this.totalResults = res.totalPages;
           this.products = res.results.map((product: any) => ({
             designNo: product.designNumber,
             selectedImageUrl: product.colourCollections[0]?.productImages[0] || '',
