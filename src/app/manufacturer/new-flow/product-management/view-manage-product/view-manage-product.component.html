@@ -10,7 +10,7 @@
         </select>
 
         <!-- Product Type -->
-        <select name="" class="form-select" [(ngModel)]="filters.productType">
+        <select name="" class="form-select" [(ngModel)]="filters.productType" (change)="getCategoryByProductTypeAndGender()">
           <option value="">Select Product Type</option>
           <option *ngFor="let type of allProductType" [value]="type">{{type}}</option>
         </select>
@@ -23,11 +23,13 @@
         <select name="" class="form-select" [(ngModel)]="filters.category" (change)="getSubCategoryBYProductType_Gender_and_Category()">
           <option value="">Select Category</option>
           <option *ngFor="let category of allcategory" [value]="category">{{category}}</option>
+          <option *ngIf="allcategory.length === 0" disabled style="color: tomato;" >** Please Select Product Type and Gender first ** </option>
         </select>
         <!-- sub Category -->
         <select name="" class="form-select" [(ngModel)]="filters.subCategory">
           <option value="">Select Sub-Category</option>
           <option *ngFor="let subCategory of allSubCategory" [value]="subCategory">{{subCategory}}</option>
+          <option *ngIf="allSubCategory.length === 0" disabled style="color: tomato;" >** Please Select Category first ** </option>
         </select>
         <button class="btn btn-info" (click)="getAllProducts()">Display</button>
       </div>

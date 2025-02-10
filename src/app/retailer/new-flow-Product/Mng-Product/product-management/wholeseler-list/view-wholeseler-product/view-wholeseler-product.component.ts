@@ -38,7 +38,8 @@ export class ViewWholeselerProductComponent {
   colourCollections: any[] = [];
   designno:any;
   Prodnum:any;
-  
+  productUser:any='wholesaler';
+  wishlisted: boolean = false;
   ngOnInit(): void {
 
     this.stepThree = this.fb.group({});
@@ -46,6 +47,7 @@ export class ViewWholeselerProductComponent {
     this.route.params.subscribe(params => {
       const id = params['id'];
       const wemail = params['WholeselerEmail'];
+      this.wishlisted = params['wishlisted'];
       this.WholeselerEmail = wemail;
       this.ProductId = id;
       if (id) {
@@ -260,7 +262,7 @@ export class ViewWholeselerProductComponent {
 
   
   WishlistAdd() {
-    this.authService.post('type2-wishlist', { productId: this.ProductId, email: this.userProfile.email }).subscribe(
+    this.authService.post('type2-wishlist', { productId: this.ProductId, email: this.userProfile.email, productOwnerEmail:this.WholeselerEmail, productUser:this.productUser }).subscribe(
       (res: any) => {
         // console.log(res);
         this.checkWishlist();
@@ -277,7 +279,7 @@ export class ViewWholeselerProductComponent {
 
   
   checkWishlist() {
-    this.authService.get('type2-wishlist/checkout/wishlist?productId=' + this.ProductId + '&email=' + this.userProfile.email).subscribe((res: any) => {
+    this.authService.get('type2-wishlist/checkout/wishlist?productId=' + this.ProductId + '&email=' + this.userProfile.email + '&productOwnerEmail=' +this.WholeselerEmail).subscribe((res: any) => {
       if (res) {  
         this.wishlist = true;
       } else {

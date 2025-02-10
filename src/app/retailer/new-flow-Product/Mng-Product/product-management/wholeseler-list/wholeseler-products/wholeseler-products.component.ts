@@ -50,6 +50,7 @@ export class WholeselerProductsComponent {
   WholeselerEmail: any;
   CompanyName:any;
   wishlistItems: Set<string> = new Set();
+  productUser:any='wholesaler';  // flag for wishlist 
 
   constructor(public authService: AuthService, private route:ActivatedRoute) { 
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
@@ -264,7 +265,7 @@ export class WholeselerProductsComponent {
   
 
   WishlistAdd(id: string) {
-    this.authService.post('type2-wishlist', { productId: id, email: this.userProfile.email }).subscribe(
+    this.authService.post('type2-wishlist', { productId: id, email: this.userProfile.email, productOwnerEmail: this.WholeselerEmail, productUser:this.productUser }).subscribe(
       (res: any) => {
         console.log(res);
         
@@ -279,7 +280,7 @@ export class WholeselerProductsComponent {
 
 
   getWishlist() {
-    this.authService.get(`type2-wishlist?email=${this.userProfile.email}`).subscribe(
+    this.authService.get(`type2-wishlist?email=${this.userProfile.email}&productOwnerEmail=${this.WholeselerEmail}`).subscribe(
       (res: any) => {
         if (res) {
           // Store the product IDs of wishlist items in a Set

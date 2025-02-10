@@ -31,7 +31,7 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
   products: any[] = [];
   allBrand: any;  
   allGender = ['Men', 'Women', 'Boys', 'Girls'];
-  allProductType = ["Clothing"];
+  allProductType = [];
   allcategory = [];
   allSubCategory = [];
  
@@ -51,6 +51,7 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getAllBrands();   
     this.getAllProducts();
+    this.getallProductTypes();
   }
 
   ngOnDestroy(): void {
@@ -67,6 +68,13 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
     });
   }
 
+  getallProductTypes() {
+    this.authService.get(`sub-category`).subscribe((res: any) => {
+      if (res) {
+        this.allProductType = Array.from(new Set(res.results.map((item: any) => item.productType)));
+      }
+    });
+  }
 
   getCategoryByProductTypeAndGender() {
     const productType=this.filters.productType
@@ -105,10 +113,12 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
   }
   
   getAllProducts() {
-    let url = `type2-products/filter-products?limit=${this.limit}&page=${this.page}`;
+    let url = `type2-products/filter-products`;
    
     const Object={
       "productBy": this.userProfile.email,
+      "limit":this.limit,
+      "page":this.page,
       "brand":this.filters.brand,
       "productType":this.filters.productType,
       "gender": this.filters.gender,

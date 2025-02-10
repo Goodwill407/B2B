@@ -45,12 +45,15 @@ export class ManufaturesProduct2Component {
   totalResults: any;
   mnfEmail: any;
   wishlistItems: Set<string> = new Set(); // Set to store wishlist product IDs
+  allcategory: any;
 
   constructor(public authService: AuthService, private route: ActivatedRoute) {
     this.userProfile = JSON.parse(localStorage.getItem('currentUser')!);
   }
 
   ngOnInit(): void {
+
+    this.getallProductTypes();
     this.route.queryParams.subscribe((params) => {
       this.mnfEmail = params['email'];
       this.mnfCompanyName = params['CompanyName'];
@@ -60,6 +63,7 @@ export class ManufaturesProduct2Component {
     });
     this.getAllBrands();
     this.getWishlist(); // Fetch the wishlist items when component initializes
+    this.getCategoryByProductTypeAndGender();
   }
 
   ngOnDestroy(): void {
@@ -221,34 +225,78 @@ export class ManufaturesProduct2Component {
     }
   }
 
-  getAllSubCategory() {
-    const productType = this.filters.productType;
-    const gender = this.filters.gender;
-    const clothing = this.filters.category;
+  // getAllSubCategory() {
+  //   const productType = this.filters.productType;
+  //   const gender = this.filters.gender;
+  //   const clothing = this.filters.category;
 
-    let url = 'sub-category';
+  //   let url = 'sub-category';
 
-    if (productType) {
-      url += `?productType=${productType}`;
-    }
-    if (gender) {
-      url += url.includes('?') ? '&' : '?' + `gender=${gender}`;
-    }
-    if (clothing) {
-      url += url.includes('?') ? '&' : '?' + `clothing=${clothing}`;
-    }
+  //   if (productType) {
+  //     url += `?productType=${productType}`;
+  //   }
+  //   if (gender) {
+  //     url += url.includes('?') ? '&' : '?' + `gender=${gender}`;
+  //   }
+  //   if (clothing) {
+  //     url += url.includes('?') ? '&' : '?' + `clothing=${clothing}`;
+  //   }
 
-    this.authService.get(url).subscribe(
-      (res) => {
-        if (res) {
-          this.allProductType = Array.from(new Set(res.results.map((item: any) => item.productType)));
-          this.allClothingType = Array.from(new Set(res.results.map((item: any) => item.category)));
-          this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
-        }
-      },
-      (error) => {
-        console.log(error);
+  //   this.authService.get(url).subscribe(
+  //     (res) => {
+  //       if (res) {
+  //         this.allProductType = Array.from(new Set(res.results.map((item: any) => item.productType)));
+  //         this.allClothingType = Array.from(new Set(res.results.map((item: any) => item.category)));
+  //         this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
+  //       }
+  //     },
+  //     (error) => {
+  //       console.log(error);
+  //     }
+  //   );
+  // }
+
+  getallProductTypes() {
+    this.authService.get(`sub-category`).subscribe((res: any) => {
+      if (res) {
+        this.allProductType = Array.from(new Set(res.results.map((item: any) => item.productType)));
       }
-    );
+    });
   }
+
+  getCategoryByProductTypeAndGender() {
+    const productType=this.filters.productType
+    const gender=this.filters.gender
+
+    this.authService.get(`sub-category/get-category/by-gender?productType=${productType}&gender=${gender}`).subscribe((res: any) => {
+      if (res) {
+        this.allSubCategory = []
+      }
+      this.allcategory = Array.from(new Set(res.results.map((item: any) => item.category)));
+    }, error => {
+
+    });
+     }
+
+  getSubCategoryBYProductType_Gender_and_Category(){
+      const productType = this.filters.productType;
+      const gender = this.filters.gender;
+      const category = this.filters.category;
+      const object=
+        {
+          "productType":productType ,
+          "gender":gender ,
+          "category":category ,     
+        }
+     
+  
+      this.authService.post(`sub-category/filter`,object).subscribe((res: any) => {
+        if (res) {
+          this.allSubCategory = []
+        }
+        this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
+      }, error => {
+  
+      });   
+    }
 }
