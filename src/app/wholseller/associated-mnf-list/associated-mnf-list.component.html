@@ -38,7 +38,7 @@
                 </p-table>
                 <span *ngIf="!allMnf || allMnf.length == 0"
                   class="data-not-found d-flex justify-content-center align-items-center"> </span>
-                  <p-paginator  *ngIf="allMnf && allMnf.length > 10" (onPageChange)="onPageChange($event)"
+                <p-paginator *ngIf="allMnf && allMnf.length > 0" (onPageChange)="onPageChange($event)"
                   [first]="first" [rows]="rows" [totalRecords]="totalResults"
                   [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
               </div>

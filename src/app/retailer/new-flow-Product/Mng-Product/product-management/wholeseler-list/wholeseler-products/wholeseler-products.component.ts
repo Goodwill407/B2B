@@ -1,4 +1,4 @@
-import { CommonModule, NgStyle } from '@angular/common';
+import { CommonModule, Location, NgStyle } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -52,7 +52,7 @@ export class WholeselerProductsComponent {
   wishlistItems: Set<string> = new Set();
   productUser:any='wholesaler';  // flag for wishlist 
 
-  constructor(public authService: AuthService, private route:ActivatedRoute) { 
+  constructor(public authService: AuthService, private route:ActivatedRoute, private location: Location) { 
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
   }
 
@@ -301,4 +301,9 @@ export class WholeselerProductsComponent {
       product.isInWishlist = isInWishlist; // Update the isInWishlist flag for the product
     }
   }
+
+  navigateFun() {
+    this.location.back();
+  }
+
 }

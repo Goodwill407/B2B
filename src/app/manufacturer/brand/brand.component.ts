@@ -31,10 +31,10 @@ export class BrandComponent {
   imageFormatError: string = '';
   distributors: any;
   totalResults: any;
-  limit = 10;
+  limit = 5;
   page: number = 1
   first: number = 0;
-  rows: number = 10;
+  rows: number = 5;
   userProfile: any;
   isEditing = false;
   actionName = "Add"

@@ -45,7 +45,7 @@ export class WholesalerDiscountComponent {
     'assets/images/adv/ads2.jpg',
   'assets/images/adv/ads.jpg'
   ];
-
+  actionName:any = 'Add';
 
   constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private router: Router) { }
 
@@ -116,6 +116,7 @@ export class WholesalerDiscountComponent {
     this.categoryForm2.patchValue(data);
     this.deleteBtnDisabled = true;
     this.formType = 'Update';
+    this.actionName = 'Edit';
   }
 
   resetForm(form: FormGroup) {
@@ -127,8 +128,9 @@ export class WholesalerDiscountComponent {
       categoryBy: this.userProfile.email, // Keep default values if necessary
 
     });
-    this.formType = 'Save';
-    this.deleteBtnDisabled = false; // Reset delete button state
+    this.formType = 'Save'; // Reset form type to 'Save' (this makes the button text 'Add')
+    this.actionName = 'Add'; // Set action name to 'Add'
+    this.deleteBtnDisabled = false; // Reset delete button state to allow deletion again
   }
 
  

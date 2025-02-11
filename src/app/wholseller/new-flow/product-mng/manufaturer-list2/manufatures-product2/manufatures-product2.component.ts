@@ -1,4 +1,4 @@
-import { CommonModule, NgStyle } from '@angular/common';
+import { CommonModule, Location, NgStyle } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
@@ -47,7 +47,7 @@ export class ManufaturesProduct2Component {
   wishlistItems: Set<string> = new Set(); // Set to store wishlist product IDs
   allcategory: any;
 
-  constructor(public authService: AuthService, private route: ActivatedRoute) {
+  constructor(public authService: AuthService, private route: ActivatedRoute, private location: Location) {
     this.userProfile = JSON.parse(localStorage.getItem('currentUser')!);
   }
 
@@ -299,4 +299,9 @@ export class ManufaturesProduct2Component {
   
       });   
     }
+
+    navigateFun() {
+      this.location.back();
+    }
+  
 }

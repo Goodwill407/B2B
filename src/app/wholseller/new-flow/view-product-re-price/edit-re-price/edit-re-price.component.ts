@@ -1,4 +1,4 @@
-import { CommonModule, NgStyle } from '@angular/common';
+import { CommonModule, Location, NgStyle } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
@@ -47,7 +47,7 @@ export class EditRePriceComponent {
   user: any;
   allcategory:any;
 
-  constructor(public authService: AuthService, private route: ActivatedRoute) {
+  constructor(public authService: AuthService, private route: ActivatedRoute, private location: Location) {
     this.userProfile = JSON.parse(localStorage.getItem('currentUser')!);
   }
 
@@ -301,5 +301,10 @@ export class EditRePriceComponent {
   
       });   
     }
+
+    navigateFun() {
+      this.location.back();
+    }
+  
 }
 
