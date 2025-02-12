@@ -68,7 +68,8 @@ export class SignupComponent implements OnInit {
             fullName: res.fullName || '',
             companyName: res.companyName || '',
             role: res.role || '',
-            contryCode: res.contryCode || '+91', // Use country code from API, default to +91 only if missing
+            contryCode: res.contryCode != null ? res.contryCode : '+91',  // Only fallback to +91 if null or undefined
+            //contryCode: res.contryCode || '+91',
             mobileNumber: res.mobileNumber || '',
             email: res.email || '',
           });
@@ -103,7 +104,7 @@ export class SignupComponent implements OnInit {
       this.mgfRegistrationForm.patchValue({
         contryCode: '+91',
       });
-      console.log('Default Form Value for No Email:', this.mgfRegistrationForm.value); // Debug default behavior
+      // console.log('Default Form Value for No Email:', this.mgfRegistrationForm.value); // Debug default behavior
     }
     
     
