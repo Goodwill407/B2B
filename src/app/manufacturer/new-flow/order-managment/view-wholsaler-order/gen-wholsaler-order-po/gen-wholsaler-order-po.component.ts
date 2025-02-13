@@ -70,72 +70,85 @@
       this.getAllProducts();
     }
 
-    getAllProducts() {
-      const url = `type2-purchaseorder/${this.distributorId}`;
-     
-      this.authService.get(url).subscribe(
-        (res: any) => {
-        
-          this.responseData = res; // Store the response in responseData
-          console.log(res)
-          // Update purchaseOrder from the response
-          this.purchaseOrder = {
-            supplierName: res.manufacturer.companyName,
-            supplierDetails: res.manufacturer.fullName,
-            supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.city}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
-            supplierContact: `${res.manufacturer.mobNumber}`,
-            supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
-            buyerName: res.wholesaler.companyName,
-            logoUrl: res.wholesaler.profileImg,
-            buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
-            buyerPhone: res.wholesaler.mobNumber,
-            buyerEmail: res.wholesaler.email,
-            buyerDetails: res.wholesaler.fullName,
-            buyerDetails2: res.manufacturer.fullName,
-            buyerGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
-            poDate: new Date().toLocaleDateString(),
-            poNumber: res.poNumber,
-            status: res.status,
-            deliveryChallanNumber: this.Deliverychllanid,
-            products: res.products || [],
-            id: res.id,
-          };
-          const url2 = `mnf-delivery-challan/purchase-orders/genrate-chall-no?manufacturerEmail=${this.purchaseOrder.buyerEmail}`;
-          this.authService.get(url2).subscribe(
-            (res: any) => {
-              console.log(res)
-    this.Deliverychllanid = res.deliveryChallanNumber
-            })
+    orderedSet: any[] = [];  // Fixed data from API
+avilableSet: any[] = []; // Editable copy of `orderedSet`
+getAllProducts() {
+  const url = `type2-purchaseorder/${this.distributorId}`;
+  
+  this.authService.get(url).subscribe(
+    (res: any) => {
+      this.responseData = res; // Store the response in responseData
+      console.log(res);
 
-          if (res.set && Array.isArray(res.set) && res.set.length > 0) {
-            this.extractSizesAndPrices(res.set); // <-- Ensure this is called
-    
-            // Process grouped products and update mergedProducts
-            this.mergedProducts = this.processGroupedProducts(res.set);
-            this.filteredData = res.set[0];
-          
-        
-            // Proceed if filteredData is not empty
-            if (this.filteredData) {
-                // Flatten the set into mergedProducts
-                this.mergedProducts = this.flattenProductData(res.set);  // Pass the entire set array
-                this.mergedProducts2 = res.set;
-            }
-          }
+      // Update purchaseOrder from the response
+      this.purchaseOrder = {
+        supplierName: res.manufacturer.companyName,
+        supplierDetails: res.manufacturer.fullName,
+        supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.city}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
+        supplierContact: `${res.manufacturer.mobNumber}`,
+        supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
+        buyerName: res.wholesaler.companyName,
+        logoUrl: res.wholesaler.profileImg,
+        buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
+        buyerPhone: res.wholesaler.mobNumber,
+        buyerEmail: res.wholesaler.email,
+        buyerDetails: res.wholesaler.fullName,
+        buyerDetails2: res.manufacturer.fullName,
+        buyerGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
+        poDate: new Date().toLocaleDateString(),
+        poNumber: res.poNumber,
+        status: res.status,
+        deliveryChallanNumber: this.Deliverychllanid,
+        products: res.products || [],
+        id: res.id,
+      };
 
-        else {
-            
-            this.filteredData = null;
-            this.mergedProducts = [];
+      // Fetch Delivery Challan ID
+      const url2 = `mnf-delivery-challan/purchase-orders/genrate-chall-no?manufacturerEmail=${this.purchaseOrder.buyerEmail}`;
+      this.authService.get(url2).subscribe((res: any) => {
+        console.log(res);
+        this.Deliverychllanid = res.deliveryChallanNumber;
+      });
+
+      // Check if `set` exists and is not empty
+      if (res.set && Array.isArray(res.set) && res.set.length > 0) {
+        this.extractSizesAndPrices(res.set);
+
+        // **1️⃣ Store Ordered Set (Fixed Data)**
+        this.orderedSet = res.set.map((product: any) => ({
+          designNumber: product.designNumber,
+          colour: product.colour,
+          colourImage: product.colourImage,
+          colourName: product.colourName,
+          size: product.size,
+          quantity: product.quantity, // Original quantity (unchangeable)
+          price: product.price,
+          productBy: res.manufacturer.email,
+        }));
+
+        // **2️⃣ Create Available Set (Editable Copy)**
+        this.avilableSet = res.set.map((product: any) => ({ ...product })); 
+
+        // Process grouped products and update mergedProducts
+        this.mergedProducts = this.processGroupedProducts(res.set);
+        this.filteredData = res.set[0];
+
+        if (this.filteredData) {
+          this.mergedProducts = this.flattenProductData(res.set);  // Pass entire set array
+          this.mergedProducts2 = res.set;
         }
-        
-        
-        },
-        (error) => {
-          
-        }
-      );
+      } else {
+        this.filteredData = null;
+        this.mergedProducts = [];
+      }
+    },
+    (error) => {
+      console.error("Error fetching purchase order data:", error);
     }
+  );
+}
+
+    
 
     extractSizesAndPrices(productSet: any[]): void {
       const uniqueSizes = new Set<string>();
@@ -318,79 +331,35 @@ calculateQuantities(original: any, updated: any) {
 //   this.sendToBackend("mnf-delivery-challan", pendingCartBody, "Pending Quantities Updated Successfully");
 // }
 addpo() {
-  console.log("Response Data:", this.responseData);
-  console.log("Merged Products:", this.mergedProducts);
+  console.log("Ordered Set (Fixed Data):", this.orderedSet);
+  console.log("Available Set (Editable Data):", this.avilableSet);
+  console.log("Retailer POs:", this.responseData.retailerPOs);
 
-  // Interface for product structure
-  interface Product {
-    colour: string;
-    colourImage: string | null;
-    colourName: string;
-    designNumber: string;
-    price?: string;
-    totalPrice?: number;
-    productBy: string;
-    quantities: { [size: string]: number };
-  }
+  const payload = {
+    email: this.responseData.wholesaler.email,
+    productBy: this.responseData.manufacturer.email,
+    poNumber: this.responseData.poNumber,
+    deliveryChallanNumber: this.Deliverychllanid,
+    orderedSet: this.orderedSet,  // Fixed (original) data
+    avilableSet: this.avilableSet, // Modified (user-edited) data
+    retailerPOs: this.responseData.retailerPOs, // ✅ Now sending retailer POs
+    manufacturer: this.responseData.manufacturer,
+    wholesaler: this.responseData.wholesaler,
+  };
 
-  const productByEmail = this.responseData?.wholesaler?.email || "defaultEmail@example.com";
+  console.log("Final Payload:", payload);
 
-  // Step 1: Prepare updatedProducts
-  const updatedProducts = this.mergedProducts
-    .map((product: Product) => {
-      const qty = product.quantities;
-
-      return Object.entries(qty).map(([size, quantity]) => {
-        const pendingQuantity = this.getPendingQuantity(product.designNumber, size);
-
-        const updatedQuantity = Math.max(quantity - pendingQuantity, 0); // Prevent negative quantity
-
-        return {
-          colour: product.colour,
-          colourImage: product.colourImage,
-          colourName: product.colourName,
-          designNumber: product.designNumber,
-          price: product.price || this.calculatePrice(product, qty),
-          productBy: productByEmail,
-          quantity: updatedQuantity,
-          size: size,
-        };
-      });
-    })
-    .flat();
-
-  console.log("Updated Data:", updatedProducts);
-
-  // Step 2: Calculate filtered data
-  const filteredData = this.calculateQuantities(this.mergedProducts2, updatedProducts);
-
-  // Check if there are any changes in quantity for pending cart
-  const hasPendingChanges = filteredData.some(
-    (item: any) => item.quantity !== this.getPendingQuantity(item.designNumber, item.size)
+  this.authService.post("mnf-delivery-challan", payload).subscribe(
+    () => {
+      this.communicationService.customSuccess("Product Successfully Added in Cart");
+    },
+    (error) => {
+      this.communicationService.customError1(error.error.message);
+    }
   );
-
-  // Step 3: Prepare the proceed cart payload
-  const updatedCartBody = this.createPayload("proceed", updatedProducts, this.Deliverychllanid);
-
-  console.log("Updated Cart Body:", updatedCartBody);
-
-  // Step 4: Send updated data to the backend
-  this.sendToBackend("mnf-delivery-challan", updatedCartBody, "Product Successfully Added in Cart");
-
-  // Step 5: Generate and send pending cart payload only if there are changes
-  if (hasPendingChanges) {
-    const pendingCartBody = this.createPayload("pending", filteredData , this.Deliverychllanid);
-    console.log("Pending Cart Body:", pendingCartBody);
-
-    this.sendToBackend(
-      "mnf-delivery-challan",
-      pendingCartBody,
-      "Pending Quantities Updated Successfully"
-    );
-  } else {
-    console.log("No pending quantity changes detected. Skipping pending cart generation.");
-  }
 }
+
+
 
 
 // Function to calculate price per product
@@ -519,25 +488,27 @@ getPendingQuantity(designNumber: string, size: string): number {
   }
 
   onQuantityChange(row: any, size: string): void {
-    const previousQuantity = row.previousQuantities ? row.previousQuantities[size] : 0;
+    if (!row || !size) return; // Ensure valid input
+
     const newQuantity = row.quantities[size];
 
-    // Calculate the difference
-    const difference = newQuantity - previousQuantity;
-
-    // Save the difference (you can also choose to store it in another structure if required)
-    const key = `${row.designNumber}-${row.colourName}-${size}`;
-    this.quantityDifferences[key] = difference;
-
-    // Update previous quantities for future comparison
-    if (!row.previousQuantities) {
-      row.previousQuantities = {};
+    // Prevent negative values
+    if (newQuantity < 0) {
+        row.quantities[size] = 0;
     }
-    row.previousQuantities[size] = newQuantity;
 
-    // Call update method to recalculate totals and any other actions
-    this.updateTotals();
-  }
+    // Update `avilableSet` with modified quantity
+    const productIndex = this.avilableSet.findIndex(
+        (item) => item.designNumber === row.designNumber && item.size === size
+    );
+
+    if (productIndex !== -1) {
+        this.avilableSet[productIndex].quantity = newQuantity;
+    }
+
+    console.log("Updated avilableSet:", this.avilableSet);
+}
+
 
   
   updateTotals(): void {
@@ -561,6 +532,15 @@ getPendingQuantity(designNumber: string, size: string): number {
       this.updateTotals(); // Recalculate overall totals
     }
   }
+  getOrderedQuantity(designNumber: string, colourName: string, size: string): number | null {
+    const orderedItem = this.orderedSet.find(
+        (item) => item.designNumber === designNumber && 
+                  item.colourName === colourName && 
+                  item.size === size
+    );
+    return orderedItem ? orderedItem.quantity : null; // ✅ Return null if no matching size
+}
+
 
 
   }

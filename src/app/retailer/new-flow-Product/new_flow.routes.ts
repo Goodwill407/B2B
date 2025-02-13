@@ -12,6 +12,8 @@ import { ViewRetailerpoComponent } from "./Mng-Product/view-retailerpo/view-reta
 import { RetailerpoGenerateComponent } from "./Mng-Product/view-retailerpo/retailerpo-generate/retailerpo-generate.component";
 import { ProductViewOfMfgComponent } from "./Mng-Product/product-management/product-list-of-mfg/product-view-of-mfg/product-view-of-mfg.component";
 import { ViewProductDetailsComponent } from "./Mng-Product/product-management/product-list-of-mfg/view-product-details/view-product-details.component";
+import { CartProduct2RetailerManComponent } from "./Mng-Product/cart-product2-retailer-man/cart-product2-retailer-man.component";
+import { GenPoRetailerManComponent } from "./Mng-Product/cart-product2-retailer-man/gen-po-retailer-man/gen-po-retailer-man.component";
 
 
 export const NewFlow:Route[]=[
@@ -21,11 +23,14 @@ export const NewFlow:Route[]=[
     {path:'view-product2', component:ViewWholeselerProductComponent},
     {path:'cart-product2-retailer', component:CartProduct2RetailerComponent},
     {path:'poretailor/:id', component:GenraterpoComponent},
+    { path: 'genpoMan/:email/:productBy', component: GenPoRetailerManComponent },
+    
     {path:'wishlist-product2', component:WishlistProduct2Component},
     {path:'wishlistproducts', component:ViewDetailWishlistComponent},
     {path:'view-retailerpo',component:ViewRetailerpoComponent},
     {path:'retailerpo-generate',component:RetailerpoGenerateComponent},
     {path:'view-product-ofMfg' ,component:ProductViewOfMfgComponent},
-    {path:'view-product-details' ,component:ViewProductDetailsComponent}
+    {path:'view-product-details' ,component:ViewProductDetailsComponent},
+    {path:'cart-product2-MAn', component:CartProduct2RetailerManComponent},
     
 ]
