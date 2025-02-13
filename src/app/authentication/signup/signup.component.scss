@@ -123,3 +123,8 @@
     padding-right: 5px !important;
 }
 
+.disabled {
+    pointer-events: none; /* Disable interaction */
+    background-color: #f8f9fa; /* Light grey background */
+    opacity: 0.65; /* Slightly faded appearance */
+  }

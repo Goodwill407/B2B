@@ -62,8 +62,8 @@ export class RetailerWholAssociatedListComponent {
       this.getAllWholeseler();
     }
   
-    navigateToProfile(id: string,email:any,requestDetailsObject:any) {
+    navigateToProfile(id: string,email:any,requestDetailsObject:any,isForView:any) {
       // Navigate to the target route with email as query parameter
-      this.router.navigate(['/retailer/view-wholesaler-details'], { queryParams: { id: id ,email:email,RequestDetails: JSON.stringify(requestDetailsObject)} });
+      this.router.navigate(['/retailer/view-wholesaler-details'], { queryParams: { id: id ,email:email,RequestDetails: JSON.stringify(requestDetailsObject),isForView:isForView} });
     }
   }

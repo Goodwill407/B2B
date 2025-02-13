@@ -181,7 +181,7 @@
     
             <!-- Action Button -->
             <!-- Add Request Button -->
-          <div class="button-container">
+          <div class="button-container" *ngIf="!OnlyForView">
             <!-- Show Request to Add button if status is empty -->
             <button *ngIf="!requestDetails" class="btn btn-outline-primary request-btn" [disabled]="isRequestSent" (click)="sendRequestToWholesaler()">
               Request to Add

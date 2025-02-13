@@ -49,15 +49,17 @@ export class SignupComponent implements OnInit {
   isIndiaSelected: boolean = false; // Track whether India is selected
   countryCode: any[] = [];
   invitedBy: any[] = [];
+  isRoleDisabled = false;
   
   constructor(private fb: FormBuilder,private cdr: ChangeDetectorRef, private authService: AuthService, private communicationService: CommunicationService, private http: HttpClient, private router: Router, private spinner: NgxSpinnerService, private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.email = this.route.snapshot.paramMap.get('email') || '';
+    this.getAllCountry();
     this.initializeForm();
     this.initializePasswordForm();
-    this.getallIdentity()
-    this.getAllCountry()
+    this.getallIdentity();
+    this.email = this.route.snapshot.paramMap.get('email') || '';
+    
     if (this.email) {
       this.authService.get(`invitations/${this.email}`).subscribe(
         (res: any) => {
@@ -76,6 +78,13 @@ export class SignupComponent implements OnInit {
     
           console.log('Form Value After Patch:', this.mgfRegistrationForm.value); // Log form value
     
+          // Trigger the country change event programmatically
+          const countryCode = res.contryCode != null ? res.contryCode : '+91';
+          this.onCountryChange({ value: countryCode });
+
+           // Set the role field as readonly instead of disabling it
+           this.isRoleDisabled = true;
+
           // Save the inviter's email if available
           this.invitedBy = res.invitedBy || [];
           
@@ -464,6 +473,7 @@ export class SignupComponent implements OnInit {
     const selectedDialCode = event.value; // Get the selected country code
     this.isIndiaSelected = selectedDialCode === '91';
   
+    // console.log('event.value',event.value,this.isIndiaSelected)
     // Update form controls based on selection
     if (this.isIndiaSelected) {
       // Apply validators for India
@@ -474,7 +484,6 @@ export class SignupComponent implements OnInit {
       this.mgfRegistrationForm.controls['mobileOtp'].setValue(''); // Clear value if not needed
     }
     this.mgfRegistrationForm.controls['mobileOtp'].updateValueAndValidity();
-
   }
   
   isButtonDisabled(): boolean {

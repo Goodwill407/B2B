@@ -27,7 +27,8 @@ export class ViewWholesalerDetailsComponent {
     isRequestSend:boolean=false;
     requestDetails:any;
     isRequestSent = false;
-  
+    OnlyForView: any;
+
     constructor(private route: ActivatedRoute, private authService:AuthService,private location: Location,private communicationService:CommunicationService) {
       this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
     }
@@ -38,6 +39,7 @@ export class ViewWholesalerDetailsComponent {
        this.route.queryParams.subscribe(params => {
         this.id = params['id']; 
         this.email=params['email']    
+        this.OnlyForView = params['isForView'];  
         const wholesalerEmail = this.email; // wholsaler value
         const requestByEmail = this.userProfile.email; // Assume userProfile is already available
         this.checkRequestStatus(wholesalerEmail, requestByEmail);
