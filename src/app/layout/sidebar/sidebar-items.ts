@@ -495,6 +495,7 @@ export const ROUTES: RouteInfo[] = [
         role: [''],
         submenu: [],
       },
+      
       // {
       //   path: '/users/skill-trainer',
       //   title: 'View And Manage Product',
@@ -1644,6 +1645,18 @@ export const ROUTES2: RouteInfo[] = [
       {
         path: '/retailer/new/cart-product2-retailer',
         title: "Cart Products",
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+      {
+        path: '/retailer/new/cart-product2-MAn',
+        title: "Manufacture Cart Products",
         iconType: '',
         icon: '',
         class: 'ml-menu',

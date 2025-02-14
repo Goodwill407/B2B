@@ -81,59 +81,43 @@ export class ViewMdeliveryChallanComponent {
   getAllProducts() {
     const url = `mnf-delivery-challan/${this.distributorId}`;
     this.authService.get(url).subscribe(
-      (res: any) => {
-       
-        this.responseData = res; // Store the response in responseData
-        console.log(res)
-        // Update purchaseOrder from the response
-        this.purchaseOrder = {
-          supplierName: res.manufacturer.companyName,
-          supplierDetails: res.manufacturer.fullName,
-          supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.city}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
-          supplierContact: `${res.manufacturer.mobNumber}`,
-          supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
-          buyerName: res.wholesaler.companyName,
-          logoUrl:  res.wholesaler.profileImg,
-          buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
-          buyerPhone: res.wholesaler.mobNumber,
-          buyerEmail: res.wholesaler.email,
-          buyerDetails: res.wholesaler.fullName,
-          buyerDetails2: res.manufacturer.fullName,
-          buyerGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
-          poDate: new Date().toLocaleDateString(),
-          poNumber: res.poNumber,
-          products: res.products || [],
-        };
+        (res: any) => {
+            this.responseData = res;
+            console.log(res);
 
-        if (res.set && Array.isArray(res.set) && res.set.length > 0) {
-          this.extractSizesAndPrices(res.set); // <-- Ensure this is called
-  
-          // Process grouped products and update mergedProducts
-          this.mergedProducts = this.processGroupedProducts(res.set);
-          this.filteredData = res.set[0];
-        
-      
-          // Proceed if filteredData is not empty
-          if (this.filteredData) {
-              // Flatten the set into mergedProducts
-              this.mergedProducts = this.flattenProductData(res.set);  // Pass the entire set array
-              
-          }
+            this.purchaseOrder = {
+                supplierName: res.manufacturer.companyName,
+                supplierDetails: res.manufacturer.fullName,
+                supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.city}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
+                supplierContact: `${res.manufacturer.mobNumber}`,
+                supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
+                buyerName: res.wholesaler.companyName,
+                logoUrl: res.wholesaler.profileImg,
+                buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
+                buyerPhone: res.wholesaler.mobNumber,
+                buyerEmail: res.wholesaler.email,
+                buyerDetails: res.wholesaler.fullName,
+                buyerDetails2: res.manufacturer.fullName,
+                buyerGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
+                poDate: new Date().toLocaleDateString(),
+                poNumber: res.poNumber,
+                products: res.products || [],
+            };
+
+            // Ensure orderedSet and avilableSet are properly passed
+            if (res.orderedSet && res.avilableSet) {
+                this.extractSizesAndPrices(res.orderedSet);
+                this.mergedProducts = this.processGroupedProducts(res.orderedSet, res.avilableSet);
+            } else {
+                this.mergedProducts = [];
+            }
+        },
+        (error) => {
+            console.error("Error fetching products", error);
         }
-
-       else {
-          
-          this.filteredData = null;
-          this.mergedProducts = [];
-      }
-      
-      
-      },
-      (error) => {
-        
-      }
     );
-  }
+}
+
 
   extractSizesAndPrices(productSet: any[]): void {
     const uniqueSizes = new Set<string>();
@@ -149,59 +133,43 @@ export class ViewMdeliveryChallanComponent {
     this.sizeHeaders = Array.from(uniqueSizes); // Convert Set to Array for the table header
   }
 
-  processGroupedProducts(productSet: any[]): any[] {
+  processGroupedProducts(orderedSet: any[], availableSet: any[]): any[] {
     const groupedByDesignNumber: any = {};
-    let totalGrandTotal = 0;
-    let totalGST = 0;
-    let totalSub = 0;
 
-    productSet.forEach((product) => {
-      const designKey = product.designNumber;
+    orderedSet.forEach((product) => {
+        const designKey = product.designNumber;
 
-      if (!groupedByDesignNumber[designKey]) {
-        groupedByDesignNumber[designKey] = {
-          designNumber: product.designNumber,
-          rows: [],
-          subTotal: 0,
-          gst: 0,
-          grandTotal: 0,
-        };
-      }
+        if (!groupedByDesignNumber[designKey]) {
+            groupedByDesignNumber[designKey] = {
+                designNumber: product.designNumber,
+                colourName: product.colourName,
+                colourImage: product.colourImage,
+                quantities: {},  // Store ordered quantities
+                availableQuantities: {}, // Store available quantities
+            };
+        }
 
-      let existingRow = groupedByDesignNumber[designKey].rows.find(
-        (row: any) => row.colourName === product.colourName
-      );
+        // Assign ordered quantity
+        groupedByDesignNumber[designKey].quantities[product.size] = product.quantity;
 
-      if (!existingRow) {
-        existingRow = {
-          colourName: product.colourName,
-          colourImage: product.colourImage,
-          colour: product.colour,
-          quantities: {},
-          totalPrice: 0,
-        };
-        groupedByDesignNumber[designKey].rows.push(existingRow);
-      }
+        // Find matching available quantity
+        const matchingAvailable = availableSet.find(
+            (avail) =>
+                avail.designNumber === product.designNumber &&
+                avail.size === product.size &&
+                parseFloat(avail.price) === parseFloat(product.price)
+        );
 
-      existingRow.quantities[product.size] = (existingRow.quantities[product.size] || 0) + product.quantity;
-      existingRow.totalPrice += product.quantity * product.price;
+        groupedByDesignNumber[designKey].availableQuantities[product.size] =
+            matchingAvailable ? matchingAvailable.quantity : 0;
     });
 
-    Object.values(groupedByDesignNumber).forEach((group: any) => {
-      group.subTotal = group.rows.reduce((acc: number, row: any) => acc + this.calculateTotalPrice(row), 0);
-      group.gst = this.calculateGST(group.subTotal);
-      totalGST += group.gst;
-      totalSub += group.subTotal;
-      group.grandTotal = this.calculateGrandTotal(group.subTotal, group.gst);
-      totalGrandTotal += group.grandTotal;
-    });
-
-    this.Totalsub = totalSub;
-    this.gst = totalGST;
-    this.totalGrandTotal = totalGrandTotal;
-
+    console.log('Grouped Data:', Object.values(groupedByDesignNumber)); // ✅ Log final data before sending to UI
     return Object.values(groupedByDesignNumber);
-  }
+}
+
+
+
 
   calculateTotalPrice(row: any): number {
     let total = 0;
