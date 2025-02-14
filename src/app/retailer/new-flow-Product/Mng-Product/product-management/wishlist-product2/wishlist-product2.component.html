@@ -38,7 +38,11 @@
                           </div>
                           <small class="date">Item Added : {{product.createdAt | date:'dd MMM yyyy'}}</small>
                         </div>
-                      }
+                      }@if(!products){
+                        <p class="data-not-found mt-3 justify-content-center text-center">Wishliste Products Not Found [Server Error] .</p>
+                        }@else{
+                        <p class="data-not-found mt-3 justify-content-center text-center">No products in Your Wishlist.</p>   
+                        }
                 </div>
             </div>
           </div>

@@ -105,7 +105,9 @@
                 {{ brand.requestDetails.status === 'accepted' ? 'Accepted' : 'Requested' }}
               </button>
             </div>
-
+            <div *ngIf="(brandData.length == 0 && noDataFound) || (productTypeWise.length == 0 && noDataFound)" class="data-not-found text-center justify-content-center">
+              <p>No Brand or Product Found for Your Search. Try a Different Search.</p>
+            </div>
             <!-- Section for Product Data -->
             <div *ngFor="let product of productTypeWise" class="brand-box">
               <!-- Product Brand Logo -->

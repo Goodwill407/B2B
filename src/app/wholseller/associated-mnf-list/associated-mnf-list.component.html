@@ -36,6 +36,12 @@
                     </tr>
                   </ng-template>
                 </p-table>
+                <div *ngIf="!allMnf" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
+                  <p>Associated Manufacturer List Not Found [Server Error] </p>
+                </div>
+                <div *ngIf="allMnf.length == 0" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
+                  <p>No Manufacturer Connected to You</p>
+                </div>
                 <span *ngIf="!allMnf || allMnf.length == 0"
                   class="data-not-found d-flex justify-content-center align-items-center"> </span>
                 <p-paginator *ngIf="allMnf && allMnf.length > 0" (onPageChange)="onPageChange($event)"

@@ -40,6 +40,10 @@
                           </div>
                           <small class="date">Item Added : {{product.createdAt | date:'dd MMM yyyy'}}</small>
                         </div>
+                      }@if(products.length == 0){
+                        <p class="data-not-found text-center"> No Products in Your Wishlist.</p>
+                      }@if(!products){
+                        <p class="data-not-found text-center"> No Product in Your Wishlist Found [Server Error]</p>
                       }
                 </div>
             </div>

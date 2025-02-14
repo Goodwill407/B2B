@@ -89,7 +89,10 @@
     </p-accordion>
 
     <!-- Display 'No data found' message if products array is empty -->
-    <div *ngIf="!products || products.length === 0" class="no-data-found">
+    <div *ngIf="products.length === 0" class="no-data-found">
+      <p>Product List Not Found [Server Error]</p>
+    </div>
+    <div *ngIf="!products" class="no-data-found">
       <p>No Product Added in Cart</p>
     </div>
     <div class="mb-3">

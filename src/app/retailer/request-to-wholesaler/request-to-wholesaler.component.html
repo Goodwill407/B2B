@@ -98,13 +98,13 @@
             </div>
             <hr class="mb-0 mt-0">
           </div>
-
-
+ 
+          
 
           <!-- Display Brand and Product Data -->
           <div class="brand-list">
             <!-- Section for Brand Data -->
-            <div *ngFor="let wholesaler of wholesalerData" class="brand-box">
+            <div *ngFor="let wholesaler of wholesalerData" class="brand-box" >
               <!-- Brand Logo and Name -->
               <div class="brand-logo-container">
                 <img [src]="wholesaler.brandLogo" alt="{{ wholesaler.brandName }}" class="brand-logo"
@@ -128,7 +128,9 @@
                 </button> -->
               </div>
             </div>
-
+            <div *ngIf="(wholesalerData.length == 0 && noDataFound)" class="data-not-found text-center justify-content-center">
+              <p>No Brand Found for Your Search. Try a Different Search.</p>
+            </div>
             <!-- Section for Product Data -->
             <div *ngFor="let product of productTypeWise" class="brand-box">
               <!-- Product Brand Logo -->

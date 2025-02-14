@@ -41,7 +41,7 @@ export class RequestToManufacturerComponent {
   userProfile:any;
   WholsellerData:any
   filteredSuggestions: string[] = [];
-
+  noDataFound = false;
 
   brandData:any[]=[];
   SearchBrand:any;
@@ -84,6 +84,7 @@ export class RequestToManufacturerComponent {
 
   // clear data after change Tab
   onTabChange(tabName: string) {
+    this.noDataFound = false;
     if (tabName === 'brand') {
       this.productTypeWise = [];  // Clear product array when switching to brand tab
     } else if (tabName === 'product') {
@@ -94,7 +95,7 @@ export class RequestToManufacturerComponent {
 
   onBrandSearchChange(): void {
     if (this.SearchBrand) {
-
+      
       const object={
         brandName:this.SearchBrand,
         requestByEmail:this.userProfile.email        
@@ -110,7 +111,8 @@ export class RequestToManufacturerComponent {
           // Handle error accordingly
         }
       );
-    }   
+    } 
+    this.noDataFound = true;  
   }  
 
   // Filter Master
@@ -184,6 +186,7 @@ export class RequestToManufacturerComponent {
     if(this.userProfile.email){
       body.requestByEmail=this.userProfile.email;
     }
+    this.noDataFound = true;
     // if (this.filters.country) {
     //   body.country = this.filters.country;
     // }

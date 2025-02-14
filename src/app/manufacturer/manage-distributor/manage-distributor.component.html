@@ -138,13 +138,13 @@
                 </div>
             </div>
             <!-- No Data Message -->
-            <div *ngIf="retailers && retailers.length == 0 && !searchPerformed" class="text-center mt-4">
+            <div *ngIf="retailers && retailers.length == 0 && !searchPerformed" class="data-not-found text-center mt-4">
                 <p>No Retailers Connected Yet</p>
               </div>
-            <div *ngIf="searchPerformed && retailers.length == 0" class="text-center mt-4">
+            <div *ngIf="searchPerformed && retailers.length == 0" class="data-not-found text-center mt-4">
                 <p>No data found. Try a different search.</p>
               </div>
-              <div *ngIf="!retailers" class="text-center mt-4">
+              <div *ngIf="!retailers" class="data-not-found text-center mt-4">
                 <p>No Retailers data found. [Server Error]</p>
               </div>
               
