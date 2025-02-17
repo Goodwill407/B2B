@@ -165,49 +165,37 @@ getAllProducts() {
     }
 
     processGroupedProducts(productSet: any[]): any[] {
-      const groupedByDesignNumber: any = {};
+      const groupedByDesignColour: { [key: string]: any } = {};
       let totalGrandTotal = 0;
       let totalGST = 0;
       let totalSub = 0;
     
       productSet.forEach((product) => {
-        const designKey = product.designNumber;
+        const key = `${product.designNumber}-${product.colourName}`;
     
-        // Ensure that we are grouping by design number
-        if (!groupedByDesignNumber[designKey]) {
-          groupedByDesignNumber[designKey] = {
+        if (!groupedByDesignColour[key]) {
+          groupedByDesignColour[key] = {
             designNumber: product.designNumber,
-            rows: [],
-            subTotal: 0,
-            gst: 0,
-            grandTotal: 0,
-          };
-        }
-    
-        let existingRow = groupedByDesignNumber[designKey].rows.find(
-          (row: any) => row.colourName === product.colourName
-        );
-    
-        if (!existingRow) {
-          existingRow = {
             colourName: product.colourName,
             colourImage: product.colourImage,
             colour: product.colour,
-            quantities: {}, // This holds quantities mapped by size
+            quantities: {},
             totalPrice: 0,
           };
-          groupedByDesignNumber[designKey].rows.push(existingRow);
         }
     
-        // Update quantities by size for the respective color and design
-        if (product.size && product.quantity) {
-          existingRow.quantities[product.size] = (existingRow.quantities[product.size] || 0) + product.quantity;
-          existingRow.totalPrice += product.quantity * product.price;
+        // Aggregate quantity for the same size
+        if (product.size) {
+          groupedByDesignColour[key].quantities[product.size] =
+            (groupedByDesignColour[key].quantities[product.size] || 0) + product.quantity;
         }
+    
+        // Update the total price
+        groupedByDesignColour[key].totalPrice += product.quantity * parseFloat(product.price);
       });
     
-      Object.values(groupedByDesignNumber).forEach((group: any) => {
-        group.subTotal = group.rows.reduce((acc: number, row: any) => acc + this.calculateTotalPrice(row), 0);
+      Object.values(groupedByDesignColour).forEach((group: any) => {
+        group.subTotal = Object.values(group.quantities).reduce((sum: number, qty: any) => sum + qty, 0);
         group.gst = this.calculateGST(group.subTotal);
         totalGST += group.gst;
         totalSub += group.subTotal;
@@ -219,8 +207,9 @@ getAllProducts() {
       this.gst = totalGST;
       this.totalGrandTotal = totalGrandTotal;
     
-      return Object.values(groupedByDesignNumber);
+      return Object.values(groupedByDesignColour);
     }
+    
     
 
     calculateTotalPrice(row: any): number {

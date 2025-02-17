@@ -19,11 +19,11 @@
                 <a class="nav-link active" id="brand-tab" data-bs-toggle="tab" href="#brand" role="tab"
                   aria-controls="brand" aria-selected="true" (shown.bs.tab)="onTabChange('brand')">Search By Brand</a>
               </li>
-              <li class="nav-item" role="presentation">
+              <!-- <li class="nav-item" role="presentation">
                 <a class="nav-link" id="product-tab" data-bs-toggle="tab" href="#product" role="tab"
                   aria-controls="product" aria-selected="false" (shown.bs.tab)="onTabChange('product')">Search By
                   Product Type</a>
-              </li>
+              </li> -->
             </ul>
 
             <!-- Search Label -->
@@ -98,13 +98,13 @@
             </div>
             <hr class="mb-0 mt-0">
           </div>
-
-
+ 
+          
 
           <!-- Display Brand and Product Data -->
           <div class="brand-list">
             <!-- Section for Brand Data -->
-            <div *ngFor="let wholesaler of wholesalerData" class="brand-box">
+            <div *ngFor="let wholesaler of wholesalerData" class="brand-box" >
               <!-- Brand Logo and Name -->
               <div class="brand-logo-container">
                 <img [src]="wholesaler.brandLogo" alt="{{ wholesaler.brandName }}" class="brand-logo"
@@ -128,7 +128,9 @@
                 </button> -->
               </div>
             </div>
-
+            <div *ngIf="(wholesalerData.length == 0 && noDataFound)" class="data-not-found text-center justify-content-center">
+              <p>No Brand Found for Your Search. Try a Different Search.</p>
+            </div>
             <!-- Section for Product Data -->
             <div *ngFor="let product of productTypeWise" class="brand-box">
               <!-- Product Brand Logo -->

@@ -64,10 +64,16 @@
       </p-accordion>
   
       <!-- Display no data found -->
-      <div *ngIf="!processedProducts || processedProducts.length === 0" class="no-data-found">
+      <!-- <div *ngIf="!processedProducts || processedProducts.length === 0" class="no-data-found">
         <p>No data found</p>
+      </div> -->
+      <div *ngIf="!processedProducts" class="text-center data-not-found ">
+       <p>Cart Data Not Found [Server Error]</p>
       </div>
-  
+      <div *ngIf="processedProducts.length === 0" class=" text-center data-not-found mb-12">
+        <p>Your Cart is Empty</p>
+      </div>
+      
       <div class="mb-3">
         <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
       </div>

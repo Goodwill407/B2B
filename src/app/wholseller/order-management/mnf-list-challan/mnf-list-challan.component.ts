@@ -26,12 +26,19 @@ export class MnfListChallanComponent {
     'assets/images/adv/ads2.jpg',
   'assets/images/adv/ads.jpg'
   ];
+  errMessage:any="";
 
   constructor(private authService: AuthService, private route: Router, private communicationService: CommunicationService) {}
 
   ngOnInit() {
     this.authService.get(`dilevery-order/get/challan?customerEmail=${this.authService.currentUserValue.email}`)
       .subscribe((res: any) => {
+        console.log('Response received:', res);
+      if (!res || Object.keys(res).length === 0) {
+        this.challan = {};
+        this.errMessage = "No New Order Available";
+        console.log('No data available, setting errMessage:', this.errMessage);
+        }
         this.challan = res.reduce((acc: { [key: string]: any[] }, item: any) => {
           const key = item.companyDetails;
           if (!acc[key]) {
@@ -40,10 +47,10 @@ export class MnfListChallanComponent {
           acc[key].push(item);
           return acc;
         }, {} as { [key: string]: any[] });
-
-        console.log(this.challan);
+        console.log("challan",this.challan);
       }, (err: any) => {
         this.communicationService.customError(err.error.message);
+        this.errMessage = "Wholesaler Order List [Server Error]"
       });
   }
 

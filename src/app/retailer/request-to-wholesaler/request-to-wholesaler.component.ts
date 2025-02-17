@@ -43,7 +43,7 @@ export class RequestToWholesalerComponent {
   userProfile:any;
   WholsellerData:any
   filteredSuggestions: string[] = [];
-
+  noDataFound=false;
 
   brandData:any[]=[];
   SearchBrand:any;
@@ -116,6 +116,10 @@ export class RequestToWholesalerComponent {
 
   searchByWholselers(): void {
     if (this.SearchBrand) {
+      // Clear previous results before making a new search
+      this.wholesalerData = [];
+      this.noDataFound = false;
+
       const object = {
         brandName: this.SearchBrand,
         requestByEmail: this.userProfile.email
@@ -130,12 +134,18 @@ export class RequestToWholesalerComponent {
               ...wholesaler
             }))
           );
+           // If no data is found, set noDataFound flag
+        if (this.wholesalerData.length === 0) {
+          this.noDataFound = true;
+        }
         },
         (error) => {
           console.error('Error searching brand:', error);
+          this.noDataFound = true;
         }
       );
     }
+    
   }
   
 

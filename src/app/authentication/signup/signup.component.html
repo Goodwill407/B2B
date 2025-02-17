@@ -38,7 +38,7 @@
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12">
                                 <label class="lable-input" for="role">Organization Identity<span>*</span>:</label>
                                 <!-- <input type="text" id="role" formControlName="role" class="form-control" /> -->
-                                <select formControlName="role" class="form-select"
+                                <select formControlName="role" class="form-select" [ngClass]="{ 'disabled': isRoleDisabled }"
                                     placeholder="Select Organization Identity">
                                     <option value="" disabled>Select Identity</option>
                                     <option *ngFor="let item of allIdentity" [value]="item.name">{{item.name|titlecase}}

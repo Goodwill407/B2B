@@ -106,6 +106,8 @@ export class ViewProduct2Component {
         this.selectColourCollection(this.product.colours[0]);
         this.quantity = this.product.minimumOrderQty;
       }
+      this.checkWishlist();
+
     });
   }
 
@@ -210,9 +212,11 @@ export class ViewProduct2Component {
 
   WishlistAdd() {
     this.authService.post('type2-wishlist', { productId: this.ProductId, email: this.userProfile.email }).subscribe((res: any) => {
+      this.communicationService.customSuccess1('Product Added to Wishlist'); // Display the success message
       this.checkWishlist();
     }, (err: any) => {
       this.wishlist = false;
+      this.communicationService.customError1('Error Adding Product to Wishlist'); // Handle error case
     })
   }
 

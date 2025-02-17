@@ -27,3 +27,18 @@
 .btn:disabled{
     border: none !important;
 }
+
+.cancel-btn {
+    padding-right: 2.5rem !important;
+    padding-left: 2.5rem !important;
+    // margin: 2rem !important;
+    background-color: #fc7b4c;
+    color: #fff;
+}
+
+  /* Add !important to override Angular's dynamic styles */
+::ng-deep .mat-mdc-tab-body-content {
+    height: auto !important;
+    overflow: hidden !important;
+    // transform: none !important; /* Reset Angular animations if needed */
+  }

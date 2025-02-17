@@ -33,8 +33,14 @@
                     </tr>
                   </ng-template>
                 </p-table>
-                <span *ngIf="!allWholesaler || allWholesaler.length == 0"
-                  class="data-not-found d-flex justify-content-center align-items-center"> </span>
+                <!-- <span *ngIf="!allWholesaler || allWholesaler.length == 0"
+                  class="data-not-found d-flex justify-content-center align-items-center"> </span> -->
+                  <div *ngIf="!allWholesaler" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
+                    <p>No Wholesaler Request List Found [Server Error] </p>
+                  </div>
+                  <div *ngIf="allWholesaler.length == 0" class="data-not-found mt-3 d-flex justify-content-center align-items-center" >
+                    <p>No Wholesaler Requested Yet</p>
+                  </div>
                   <p-paginator *ngIf="allWholesaler && allWholesaler.length > 5" (onPageChange)="onPageChange($event)"
                   [first]="first" [rows]="rows" [totalRecords]="totalResults"
                   [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>

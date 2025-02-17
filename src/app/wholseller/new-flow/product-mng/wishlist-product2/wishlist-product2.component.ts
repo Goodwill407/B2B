@@ -75,7 +75,8 @@ export class WishlistProduct2Component {
           id: product.wishlistId,
           productId: product._id,
           productBy: product.productBy,
-          hoverIndex: 0
+          hoverIndex: 0,
+          wishlistId: product.WishListType2SchemaId
         }));
 
         this.products.forEach(product => {
@@ -146,7 +147,7 @@ export class WishlistProduct2Component {
   }
 
   deleteWishlistItem(item: any) {
-    this.authService.delete('wishlist', item).subscribe((res: any) => {
+    this.authService.delete('type2-wishlist', item).subscribe((res: any) => {
       this.getAllProducts(this.userProfile.email);
       this.communicationService.showNotification('snackbar-success','Product Removed From Wishlist','bottom','center');
     })

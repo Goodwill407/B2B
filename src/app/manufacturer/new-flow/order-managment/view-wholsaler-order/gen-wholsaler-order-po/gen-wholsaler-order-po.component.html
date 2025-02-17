@@ -5,45 +5,10 @@
     </h4>
 
     <div id="purchase-order" class="challan-container card my-2">
-      <div class="header">
-        <!-- Logo Section -->
-        <div class="logo">
-          <img [src]="purchaseOrder.logoUrl" alt="Company Logo"
-            onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';" />
-        </div>
-
-        <!-- Buyer Information Container -->
-        <div class="buyer-info">
-          <h5>From -</h5>
-          <p>{{ purchaseOrder.buyerName }}</p>
-          <p>{{ purchaseOrder.buyerDetails }}</p>
-          <p>{{ purchaseOrder.buyerAddress }}</p>
-          <p>{{ purchaseOrder.buyerPhone }}</p>
-          <p class="mb-2"><b>GSTIN : {{ purchaseOrder.buyerGSTIN }}</b></p>
-          <p class="mb-2"><b>Delivery Challan : {{ this.Deliverychllanid }}</b></p>
-        </div>
-
-        <!-- Seller Information Container -->
-        <div class="seller-info">
-          <h5>To -</h5>
-          <p>{{ purchaseOrder.supplierName }}</p>
-          <p>{{ purchaseOrder.buyerDetails2 }}</p>
-          <p>{{ purchaseOrder.supplierAddress }}</p>
-          <p>{{ purchaseOrder.supplierContact }}</p>
-          <p class="mb-2"><b>GSTIN : {{ purchaseOrder.supplierGSTIN }}</b></p>
-          <p><strong>PO Number :</strong> <span><b>{{ purchaseOrder.poNumber }}</b></span></p>
-          <p><strong>Date :</strong>{{ purchaseOrder.poDate }}</p>
-        </div>
-      </div>
-
-
-
       <section class="gstin my-0">
         <h2>DELIVERY CHALLAN</h2>
-
       </section>
-      <hr class="my-1">
-
+      <hr class="my-1" />
 
       <section class="order-details">
         <div *ngIf="mergedProducts && mergedProducts.length > 0">
@@ -67,78 +32,80 @@
 
                 <td *ngFor="let size of sizeHeaders">
                   <div>
-                    <th>Ordered</th>
-                <th>Available</th>
-                
-              <tr>
-                <td>
-                  <div *ngIf="getOrderedQuantity(row.designNumber, row.colourName, size) !== null; else showNA">
-                    <span style="color: gray;">
-                      {{ getOrderedQuantity(row.designNumber, row.colourName, size) }}
-                    </span>
+                    <table>
+                      <tr>
+                        <th>Ordered</th>
+                        <th>Available</th>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div *ngIf="getOrderedQuantity(row.designNumber, row.colourName, size) !== null; else showNA">
+                            <span style="color: gray;">
+                              {{ getOrderedQuantity(row.designNumber, row.colourName, size) }}
+                            </span>
+                          </div>
+                        </td>
+                        <td>
+                          <input 
+                            *ngIf="row.quantities[size] !== undefined"
+                            type="number" 
+                            [(ngModel)]="row.quantities[size]"
+                            (ngModelChange)="onQuantityChange(row, size)"
+                            [min]="0"
+                            style="width: 60px; text-align: center;"
+                            [disabled]="row.quantities[size] <= 0"
+                          />
+                        </td>
+                      </tr>
+                    </table>
                   </div>
                 </td>
-                <td> <input *ngIf="row.quantities[size] !== undefined" type="number" [(ngModel)]="row.quantities[size]"
-                    (ngModelChange)="onQuantityChange(row, size)" [min]="0" style="width: 60px; text-align: center;"
-                    [disabled]="row.quantities[size] <= 0" /></td>
+
+                <td>{{ calculateTotalPrice(row) | currency: 'INR' }}</td>
               </tr>
-            
+            </ng-template>
+
+            <!-- Footer Row for Subtotal, GST, and Grand Total -->
+            <ng-template pTemplate="footer">
+              <tr [ngStyle]="{'background-color': 'white'}">
+                <td [attr.colspan]="2 + sizeHeaders.length" style="border: none;"></td>
+                <td style="text-align: right; font-weight: bold;">Subtotal:</td>
+                <td>{{ Totalsub | currency: 'INR' }}</td>
+              </tr>
+              <tr [ngStyle]="{'background-color': 'white'}">
+                <td [attr.colspan]="2 + sizeHeaders.length" style="border: none;"></td>
+                <td style="text-align: right; font-weight: bold;">GST (18%):</td>
+                <td>{{ gst | currency: 'INR' }}</td>
+              </tr>
+              <tr [ngStyle]="{'background-color': 'white'}">
+                <td [attr.colspan]="2 + sizeHeaders.length" style="border: none;"></td>
+                <td style="text-align: right; font-weight: bold;">Grand Total:</td>
+                <td>{{ totalGrandTotal | currency: 'INR' }}</td>
+              </tr>
+            </ng-template>
+          </p-table>
         </div>
-        <ng-template #showNA>
-          <span>N/A</span>
-        </ng-template>
-        </td>
+      </section>
 
-        <td>{{ calculateTotalPrice(row) | currency: 'INR' }}</td>
-        </tr>
+      <div class="row">
+        <div class="col-12">
+          <div class="text-center my-3">
+            <!-- Button hidden when status is 'shipped' -->
+            <button 
+              class="btn btn-success ms-auto" 
+              (click)="addpo()" 
+              *ngIf="purchaseOrder?.status && purchaseOrder.status !== 'shipped'">
+              Generate Purchase Order
+            </button>
+          </div>
+        </div>
+      </div>
 
-        </ng-template>
-
-
-
-
-        <!-- Footer Row for Subtotal, GST, and Grand Total under Size 2 -->
-        <ng-template pTemplate="footer">
-          <tr [ngStyle]="{'background-color': 'white'}">
-            <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
-            <!-- Empty cells to align totals under Size 2 -->
-            <td style="text-align: right; font-weight: bold;">Subtotal:</td>
-            <td>{{ Totalsub | currency: 'INR' }}</td>
-          </tr>
-          <tr [ngStyle]="{'background-color': 'white'}">
-            <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
-            <!-- Empty cells to align totals under Size 2 -->
-            <td style="text-align: right; font-weight: bold;">GST (18%):</td>
-            <td>{{ gst | currency: 'INR' }}</td>
-          </tr>
-          <tr [ngStyle]="{'background-color': 'white'}">
-            <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
-            <!-- Empty cells to align totals under Size 2 -->
-            <td style="text-align: right; font-weight: bold;">Grand Total:</td>
-            <td>{{ totalGrandTotal | currency: 'INR' }}</td>
-          </tr>
-        </ng-template>
-
-
-        </p-table>
-    </div>
-</section>
-
-<div class="row">
-  <div class="col-12">
-    <div class="text-center my-3">
-      <!-- Button hidden when status is 'shipped' -->
-      <button class="btn btn-success ms-auto" (click)="addpo()"
-        *ngIf="purchaseOrder?.status && purchaseOrder.status !== 'shipped'">
-        Generate Purchase Order
-      </button>
     </div>
   </div>
-</div>
-
-</div>
-
-
-
-</div>
 </section>
+
+<!-- Template for "N/A" display -->
+<ng-template #showNA>
+  <span>N/A</span>
+</ng-template>

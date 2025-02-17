@@ -70,6 +70,14 @@
                   <div *ngIf="searchPerformed && distributors.length === 0" class="text-center mt-4">
                     <p>No data found. Try a different search.</p>
                   </div>
+
+                  <div *ngIf="distributors.length === 0" class="data-not-found text-center mt-4">
+                    <p>No Retailers Connected Yet.</p>
+                  </div>
+
+                  <div *ngIf="!distributors" class="text-center data-not-found mt-4">
+                    <p>No Retailers Data Found.[Server Error]</p>
+                  </div>
                   
                   <!-- Paginator -->
                   <p-paginator

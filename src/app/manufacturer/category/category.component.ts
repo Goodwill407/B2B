@@ -20,7 +20,8 @@ import { TooltipModule } from 'primeng/tooltip';
     MatTabsModule
   ],
   templateUrl: './category.component.html',
-  styleUrls: ['./category.component.scss']
+  styleUrls: ['./category.component.scss'],
+ 
 })
 export class CategoryComponent {
   categoryForm1!: FormGroup;
@@ -30,19 +31,20 @@ export class CategoryComponent {
   retailerCategory: any;
   totalResultsWholesaler: any;
   totalResultsRetailer: any;
-  limit = 10;
+  limit = 5;
   pageWholesaler: number = 1;
   pageRetailer: number = 1;
   firstWholesaler: number = 0;
   firstRetailer: number = 0;
-  rows: number = 10;
+  rows: number = 5;
   deleteBtnDisabled: boolean = false;
   activeTab: string = 'wholesaler'; // Track active tab
+  categoryType:any = 'Add';
 
   constructor(private fb: FormBuilder, private authService: AuthService, private communicationService: CommunicationService, private router: Router) { }
 
   ngOnInit() {
-    console.log(this.authService.currentUserValue.email);
+    // console.log(this.authService.currentUserValue.email);
     
     this.initializeForms();
     this.getAllWholesalerCategory();
@@ -156,6 +158,7 @@ export class CategoryComponent {
       this.deleteBtnDisabled = true;
     }
     this.formType = 'Update';
+    this.categoryType = 'Edit';
   }
 
   resetForm(form: FormGroup) {
@@ -168,12 +171,27 @@ export class CategoryComponent {
       id: ''
     });
     this.formType = 'Save';
+    this.categoryType = 'Add';
     this.deleteBtnDisabled = false; // Reset delete button state
   }
 
   // Handle tab changes
   onTabChange(event: any) {
-    this.activeTab = event.index === 0 ? 'wholesaler' : 'retailer';
-    this.resetForm(this.activeTab === 'wholesaler' ? this.categoryForm1 : this.categoryForm2);
-  }
+    this.activeTab = event === 0 ? 'wholesaler' : 'retailer'; 
+    if (this.activeTab == 'wholesaler') {
+        this.resetForm(this.categoryForm1);
+    } else if (this.activeTab == 'retailer') {
+        this.resetForm(this.categoryForm2);
+    }
+    this.categoryType = 'Add';
+}
+
+// resetForm1(formName: any) {
+//   if (formName == 'categoryForm1') {
+//     this.resetForm(this.categoryForm1);
+// } else if (formName == 'categoryForm2') {
+//     this.resetForm(this.categoryForm2);
+// }
+// }
+
 }

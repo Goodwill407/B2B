@@ -44,11 +44,18 @@
                             </tr>
                         </ng-template>
                     </p-table>
+                    <div *ngIf="!distributors" class="data-not-found d-flex mt-3 justify-content-center align-items-center">
+                        <p>Pending Invites Not Found [Server Error]</p>
+                    </div>
+                    <div *ngIf="distributors.length == 0" class="data-not-found mt-3 justify-content-center align-items-center">
+                        <p> No Pending Invites </p>
+                    </div>
                     <span *ngIf="!distributors || distributors.length == 0"
                           class="data-not-found d-flex justify-content-center align-items-center"> </span>
                     <p-paginator *ngIf="distributors && distributors.length > 0" (onPageChange)="onPageChange($event)"
                                  [first]="first" [rows]="rows" [totalRecords]="totalResults"
                                  [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
+                    
                 </div>
             </div>
         </div>

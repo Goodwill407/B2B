@@ -42,7 +42,10 @@ export class ViewProductDetailsComponent {
   designno:any;
   Prodnum:any;
   rowTotals:any;
-  
+  mfgEmail:any;
+  productUser:any =  'manufacturer';
+  wishlisted: boolean= false;
+
   ngOnInit(): void {
 
    
@@ -50,18 +53,20 @@ export class ViewProductDetailsComponent {
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
     this.route.params.subscribe(params => {
       const id = params['id'];
+      this.wishlisted = params['wishlisted'] || false;
       this.ProductId = id;
       if (id) {
         this.getProductDetails(id);
       }
     });
-    this.checkWishlist();
-  }
+    // this.checkWishlist();
+  } 
 
   getProductDetails(id: any) {
     this.authService.get('type2-products/' + id).subscribe((res: any) => {
       console.log(res);
       if (res) {
+        this.mfgEmail=res.productBy;
       this.product = {
   id: res.id,  // ✅ Ensure ID is included
   productBy: res.productBy,  // ✅ Ensure Manufacturer Email is included
@@ -114,6 +119,7 @@ export class ViewProductDetailsComponent {
         this.selectColourCollection(this.product.colours[0]);
         this.quantity = this.product.minimumOrderQty;
       }
+      this.checkWishlist();
     });
   }
 
@@ -279,7 +285,7 @@ async saveStepThree() {
   }
 
   WishlistAdd() {
-    this.authService.post('type2-wishlist', { productId: this.ProductId, email: this.userProfile.email }).subscribe(
+    this.authService.post('type2-wishlist', { productId: this.ProductId, email: this.userProfile.email, productOwnerEmail: this.mfgEmail, productUser:this.productUser }).subscribe(
       (res: any) => {
         this.checkWishlist();
         this.communicationService.customSuccess1('Product Added to Wishlist'); // Display the success message
@@ -292,7 +298,7 @@ async saveStepThree() {
   }
 
   checkWishlist() {
-    this.authService.get('type2-wishlist/checkout/wishlist?productId=' + this.ProductId + '&email=' + this.userProfile.email).subscribe((res: any) => {
+    this.authService.get('type2-wishlist/checkout/wishlist?productId=' + this.ProductId + '&email=' + this.userProfile.email + '&productOwnerEmail=' + this.mfgEmail).subscribe((res: any) => {
       if (res) {  
         this.wishlist = true;
       } else {

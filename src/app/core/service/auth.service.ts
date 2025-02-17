@@ -45,6 +45,7 @@ export class AuthService {
       return this.http.post<any>(this.apiURL + url, data, { headers: this.headerToken });
     }
   }
+  
 
   patch(url: string, data: any) {
     const type = Object.getPrototypeOf(data);

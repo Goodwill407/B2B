@@ -3,7 +3,7 @@
         <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Retailer's Discounts / Schemes</h4>
         <div class="card p-3">   
           
-                <h5 class="mt-4">Add Category</h5>
+                <h5 class="mt-4">{{actionName}} Category</h5>
                 <hr class="mt-0">
                 <form [formGroup]="categoryForm2" (ngSubmit)="onSubmit()">
                     <div class="row">
@@ -51,6 +51,7 @@
                             <button type="submit" class="btn submit-btn" [disabled]="categoryForm2.invalid">
                                 {{ formType }}
                             </button>
+                            <button type="button" class="btn cancel-btn ms-2" (click)="resetForm(categoryForm2)">Cancel</button>
                         </div>
                     </div>
                     
@@ -96,8 +97,10 @@
                             <p-paginator (onPageChange)="onPageChangeRetailer($event)" [first]="firstRetailer"
                                 [rows]="rows" [totalRecords]="totalResultsRetailer"
                                 [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
-                            }@else {
-                            <p>No Retailer's Scheme found.</p>
+                            }@else if(!retailerCategory){
+                            <p class="data-not-found mt-3 justify-content-center text-center">Retailer's Category Not Found [Server Error] .</p>
+                            }@else{
+                            <p class="data-not-found mt-3 justify-content-center text-center">Retailer's Category Not Added Yet.</p>   
                             }
                         </div>
                     </div>

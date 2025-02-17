@@ -1,7 +1,7 @@
-import { CommonModule, NgStyle } from '@angular/common';
+import { CommonModule, DatePipe, NgStyle } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 import { RightSideAdvertiseComponent } from '@core/models/advertisement/right-side-advertise/right-side-advertise.component';
@@ -12,6 +12,7 @@ import { PaginatorModule } from 'primeng/paginator';
   selector: 'app-wishlist-product2',
   standalone: true,
   imports: [ CommonModule,
+    DatePipe,
     FormsModule,
     NgStyle,
     RouterModule,
@@ -23,7 +24,7 @@ import { PaginatorModule } from 'primeng/paginator';
 })
 export class WishlistProduct2Component {
   products: any[] = [];
- 
+
   limit = 10;
   page: number = 1
   first: number = 0;
@@ -33,7 +34,12 @@ export class WishlistProduct2Component {
   hoverIntervals: any = {}; // Track hover intervals for each product
   totalResults: any;
 
-  constructor(public authService: AuthService, private route: ActivatedRoute,private communicationService:CommunicationService) { }
+  constructor(
+    public authService: AuthService,
+    private router: Router, 
+    private route: ActivatedRoute,
+    private communicationService:CommunicationService
+  ) { }
 
   // for ads
   rightAdImages: string[] = [
@@ -62,6 +68,8 @@ export class WishlistProduct2Component {
       if (res) {
         this.totalResults = res.totalResults;
         this.products = res.map((product: any) => ({
+          productUser:product.productUser,
+          productOwnerEmail:product.productOwnerEmail,
           designNo: product.designNumber,
           selectedImageUrl: product.colourCollections[0]?.productImages[0] || '',
           selectedImageUrls: product.colourCollections[0]?.productImages || [], // Initialize with all images for the first color
@@ -79,6 +87,7 @@ export class WishlistProduct2Component {
           wishlistId: product.WishListType2SchemaId, // id to delete product from wishlist
           productBy: product.productBy,
           hoverIndex: 0
+
         }));
 
         this.products.forEach(product => {
@@ -171,4 +180,18 @@ export class WishlistProduct2Component {
     }
   )
   }
+
+  navigateAddToCart(productUser: string, productOwnerEmail: string, _id: string) {
+    // Check if the productUser is 'manufacturer'
+    if (productUser === 'manufacturer') {
+      // Navigate with product id and query param wishlist=true
+      this.router.navigate(['/retailer/new/view-product-details', { id: _id, wishlisted: true }]);
+    }
+     // Check if the productUser is 'wholesaler'
+     else if (productUser === 'wholesaler') {
+      this.router.navigate(['/retailer/new/view-product2', { id: _id, WholeselerEmail:productOwnerEmail, wishlisted: true }]);
+     }
+  }
+ 
+ 
 }
