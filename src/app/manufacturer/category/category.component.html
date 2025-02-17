@@ -3,9 +3,9 @@
         <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Add Discounts/ Schemes</h4>
         <div class="card p-3">        
 
-            <mat-tab-group  (selectedIndexChange)="onTabChange($event)">
-                <mat-tab label="For Wholesaler">
-                    <h5 class="mt-4">Add Category</h5>
+             <mat-tab-group style="overflow: hidden;" (selectedIndexChange)="onTabChange($event)">
+                <mat-tab style="overflow: hidden;" label="For Wholesaler" >
+                    <h5 class="mt-4 " >{{categoryType}} Category</h5>
                     <hr class="mt-0">
                     <form [formGroup]="categoryForm1" (ngSubmit)="onSubmit('wholesaler')">
                         <div class="row">
@@ -50,6 +50,7 @@
                                 <button type="submit" class="btn submit-btn" [disabled]="categoryForm1.invalid">
                                     {{ formType }}
                                 </button>
+                                <button type="button" class="btn cancel-btn ms-2" (click)="resetForm(categoryForm1)">Cancel</button>
                             </div>
                         </div>
                     </form>
@@ -94,15 +95,18 @@
                                 <p-paginator (onPageChange)="onPageChangeWholesaler($event)" [first]="firstWholesaler"
                                     [rows]="rows" [totalRecords]="totalResultsWholesaler"
                                     [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
-                                }@else {
-                                <p class="text-center">No Wholesaler's Scheme found.</p>
+                                }@if(!wholesalerCategory){
+                                    <p class="mt-3 data-not-found text-center">Wholesaler's Category Not found.[Server Error]</p>
+                                }
+                                @else {
+                                <p class="mt-3 data-not-found text-center">Wholesaler's Category Not Added Yet</p>
                                 }
                             </div>
                         </div>
                     </div>
                 </mat-tab>
-                <mat-tab label="For Retailer">
-                    <h5 class="mt-4">Add Category</h5>
+                <mat-tab style="overflow: hidden;" label="For Retailer">
+                    <h5 class="mt-4">{{categoryType}} Category</h5>
                     <hr class="mt-0">
                     <form [formGroup]="categoryForm2" (ngSubmit)="onSubmit('retailer')">
                         <div class="row">
@@ -147,6 +151,7 @@
                                 <button type="submit" class="btn submit-btn" [disabled]="categoryForm2.invalid">
                                     {{ formType }}
                                 </button>
+                                <button type="button" class="btn cancel-btn ms-2" (click)="resetForm(categoryForm2)">Cancel</button>
                             </div>
                         </div>
                         
@@ -192,14 +197,18 @@
                                 <p-paginator (onPageChange)="onPageChangeRetailer($event)" [first]="firstRetailer"
                                     [rows]="rows" [totalRecords]="totalResultsRetailer"
                                     [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
-                                }@else {
-                                <p>No Retailer's Scheme found.</p>
+                                }
+                                @if(!retailerCategory){
+                                    <p class="mt-3 data-not-found">Retailer's Category Not found.[Server Error]</p>
+                                }
+                                @else {
+                                <p class="mt-3 data-not-found">Retailer's Category Not Added Yet</p>
                                 }
                             </div>
                         </div>
                     </div>
                 </mat-tab>
-            </mat-tab-group>           
+            </mat-tab-group>   
         </div>
 
     </div>

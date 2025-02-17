@@ -168,8 +168,9 @@
                     </div>
                     <div class="d-flex justify-content-center">
                       <button type="submit" class="btn submit-btn mt-3 me-2">Add to Cart</button>
-                      <button type="submit" class="btn submit-btn mt-3 me-2"[disabled]="wishlist"
-                      [ngClass]="wishlist?'btn-wishlist-true':'btn-wishlist'" (click)="WishlistAdd()"><i
+                      <button type="button" class="btn submit-btn mt-3 me-2"[disabled]="wishlist"
+                      [ngClass]="wishlist?'btn-wishlist-true':'btn-wishlist'" [hidden]="wishlisted" 
+                      (click)="WishlistAdd()"><i
                           class="bi bi-heart"></i>&nbsp; WISHLIST</button>
                     </div>
                   </form>                  

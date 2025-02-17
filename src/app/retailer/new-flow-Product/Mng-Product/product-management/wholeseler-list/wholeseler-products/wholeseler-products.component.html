@@ -1,6 +1,10 @@
 <section class="content">
     <div class="content-block">
-      <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"> </i> View Products of {{CompanyName}} </h4>
+      <h4 class="mt-4">
+        <!-- <i class="bi bi-person-vcard-fill h3"> </i> -->
+        <button class="btn navigate" (click)="navigateFun()">
+          <i class="bi bi-arrow-left-circle h4"></i>
+        </button> View Products of Wholesaler - {{CompanyName}} </h4>
       <div class="ads-flex">
         <div class="flex-grow-1">
       <div class="card p-4">
@@ -9,7 +13,7 @@
             <option value="">Select Brand</option>
             <option *ngFor="let brand of allBrand" [value]="brand.brandName">{{brand.brandName}}</option>
           </select>
-          <select class="form-select" [(ngModel)]="filters.productType" placeholder="Product Type">
+          <select class="form-select" [(ngModel)]="filters.productType" placeholder="Product Type" (change)="getCategoryByProductTypeAndGender()">
             <option value="">Select Product Type</option>
             <option *ngFor="let type of allProductType" [value]="type.name">{{ type.name }}</option>
           </select>
@@ -17,14 +21,18 @@
             <option value="">Select Gender</option>
             <option *ngFor="let gender of allGender" [value]="gender">{{gender}}</option>
           </select>
-          <select name="" class="form-select" [(ngModel)]="filters.category" (change)="getSubCategoryBYProductType_Gender_and_Category()">
-            <option value="">Select category</option>
-            <option *ngFor="let category of allcategory" [value]="category">{{category}}</option>
-          </select>
-          <select name="" class="form-select" [(ngModel)]="filters.subCategory">
-            <option value="">Select Sub-Category</option>
-            <option *ngFor="let subCategory of allSubCategory" [value]="subCategory">{{subCategory}}</option>
-          </select>
+           <!-- category -->
+        <select name="" class="form-select" [(ngModel)]="filters.category" (change)="getSubCategoryBYProductType_Gender_and_Category()">
+          <option value="">Select Category</option>
+          <option *ngFor="let category of allcategory" [value]="category">{{category}}</option>
+          <option *ngIf="allcategory.length === 0" disabled style="color: tomato;" >** Please Select Product Type and Gender first ** </option>
+        </select>
+        <!-- sub Category -->
+        <select name="" class="form-select" [(ngModel)]="filters.subCategory">
+          <option value="">Select Sub-Category</option>
+          <option *ngFor="let subCategory of allSubCategory" [value]="subCategory">{{subCategory}}</option>
+          <option *ngIf="allSubCategory.length === 0" disabled style="color: tomato;" >** Please Select Category first ** </option>
+        </select>
           <button class="btn btn-info" (click)="getAllProducts()">Display</button>
         </div>
         <hr>

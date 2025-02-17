@@ -2,7 +2,8 @@
     <div class="content-block">
       <div class="flex-grow-1">
         <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i>&nbsp; Wholesaler Order List</h4>
-  
+        
+      
         <!-- @if(challan && challan.length >0){ -->
             <p-accordion [activeIndex]="0" class="card">
                 <ng-container *ngFor="let distributor of challan | keyvalue; let distIndex = index">
@@ -38,6 +39,9 @@
                     </p-table>
                   </p-accordionTab>
                 </ng-container>
+                <div *ngIf="errMessage" class="data-not-found justify-content-center align-items-center" >
+                  <p>{{errMessage}}</p>
+                 </div>
               </p-accordion>
               
         <!-- }@else {

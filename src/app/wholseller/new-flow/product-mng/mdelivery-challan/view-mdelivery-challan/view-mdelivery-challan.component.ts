@@ -81,59 +81,43 @@ export class ViewMdeliveryChallanComponent {
   getAllProducts() {
     const url = `mnf-delivery-challan/${this.distributorId}`;
     this.authService.get(url).subscribe(
-      (res: any) => {
-       
-        this.responseData = res; // Store the response in responseData
-        console.log(res)
-        // Update purchaseOrder from the response
-        this.purchaseOrder = {
-          supplierName: res.manufacturer.companyName,
-          supplierDetails: res.manufacturer.fullName,
-          supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.city}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
-          supplierContact: `${res.manufacturer.mobNumber}`,
-          supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
-          buyerName: res.wholesaler.companyName,
-          logoUrl:  res.wholesaler.profileImg,
-          buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
-          buyerPhone: res.wholesaler.mobNumber,
-          buyerEmail: res.wholesaler.email,
-          buyerDetails: res.wholesaler.fullName,
-          buyerDetails2: res.manufacturer.fullName,
-          buyerGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
-          poDate: new Date().toLocaleDateString(),
-          poNumber: res.poNumber,
-          products: res.products || [],
-        };
+        (res: any) => {
+            this.responseData = res;
+            console.log(res);
 
-        if (res.set && Array.isArray(res.set) && res.set.length > 0) {
-          this.extractSizesAndPrices(res.set); // <-- Ensure this is called
-  
-          // Process grouped products and update mergedProducts
-          this.mergedProducts = this.processGroupedProducts(res.set);
-          this.filteredData = res.set[0];
-        
-      
-          // Proceed if filteredData is not empty
-          if (this.filteredData) {
-              // Flatten the set into mergedProducts
-              this.mergedProducts = this.flattenProductData(res.set);  // Pass the entire set array
-              
-          }
+            this.purchaseOrder = {
+                supplierName: res.manufacturer.companyName,
+                supplierDetails: res.manufacturer.fullName,
+                supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.city}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
+                supplierContact: `${res.manufacturer.mobNumber}`,
+                supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
+                buyerName: res.wholesaler.companyName,
+                logoUrl: res.wholesaler.profileImg,
+                buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
+                buyerPhone: res.wholesaler.mobNumber,
+                buyerEmail: res.wholesaler.email,
+                buyerDetails: res.wholesaler.fullName,
+                buyerDetails2: res.manufacturer.fullName,
+                buyerGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
+                poDate: new Date().toLocaleDateString(),
+                poNumber: res.poNumber,
+                products: res.products || [],
+            };
+
+            // Ensure orderedSet and avilableSet are properly passed
+            if (res.orderedSet && res.avilableSet) {
+                this.extractSizesAndPrices(res.orderedSet);
+                this.mergedProducts = this.processGroupedProducts(res.orderedSet, res.avilableSet);
+            } else {
+                this.mergedProducts = [];
+            }
+        },
+        (error) => {
+            console.error("Error fetching products", error);
         }
-
-       else {
-          
-          this.filteredData = null;
-          this.mergedProducts = [];
-      }
-      
-      
-      },
-      (error) => {
-        
-      }
     );
-  }
+}
+
 
   extractSizesAndPrices(productSet: any[]): void {
     const uniqueSizes = new Set<string>();
@@ -149,59 +133,43 @@ export class ViewMdeliveryChallanComponent {
     this.sizeHeaders = Array.from(uniqueSizes); // Convert Set to Array for the table header
   }
 
-  processGroupedProducts(productSet: any[]): any[] {
+  processGroupedProducts(orderedSet: any[], availableSet: any[]): any[] {
     const groupedByDesignNumber: any = {};
-    let totalGrandTotal = 0;
-    let totalGST = 0;
-    let totalSub = 0;
 
-    productSet.forEach((product) => {
-      const designKey = product.designNumber;
+    orderedSet.forEach((product) => {
+        const designKey = product.designNumber;
 
-      if (!groupedByDesignNumber[designKey]) {
-        groupedByDesignNumber[designKey] = {
-          designNumber: product.designNumber,
-          rows: [],
-          subTotal: 0,
-          gst: 0,
-          grandTotal: 0,
-        };
-      }
+        if (!groupedByDesignNumber[designKey]) {
+            groupedByDesignNumber[designKey] = {
+                designNumber: product.designNumber,
+                colourName: product.colourName,
+                colourImage: product.colourImage,
+                quantities: {},  // Store ordered quantities
+                availableQuantities: {}, // Store available quantities
+            };
+        }
 
-      let existingRow = groupedByDesignNumber[designKey].rows.find(
-        (row: any) => row.colourName === product.colourName
-      );
+        // Assign ordered quantity
+        groupedByDesignNumber[designKey].quantities[product.size] = product.quantity;
 
-      if (!existingRow) {
-        existingRow = {
-          colourName: product.colourName,
-          colourImage: product.colourImage,
-          colour: product.colour,
-          quantities: {},
-          totalPrice: 0,
-        };
-        groupedByDesignNumber[designKey].rows.push(existingRow);
-      }
+        // Find matching available quantity
+        const matchingAvailable = availableSet.find(
+            (avail) =>
+                avail.designNumber === product.designNumber &&
+                avail.size === product.size &&
+                parseFloat(avail.price) === parseFloat(product.price)
+        );
 
-      existingRow.quantities[product.size] = (existingRow.quantities[product.size] || 0) + product.quantity;
-      existingRow.totalPrice += product.quantity * product.price;
+        groupedByDesignNumber[designKey].availableQuantities[product.size] =
+            matchingAvailable ? matchingAvailable.quantity : 0;
     });
 
-    Object.values(groupedByDesignNumber).forEach((group: any) => {
-      group.subTotal = group.rows.reduce((acc: number, row: any) => acc + this.calculateTotalPrice(row), 0);
-      group.gst = this.calculateGST(group.subTotal);
-      totalGST += group.gst;
-      totalSub += group.subTotal;
-      group.grandTotal = this.calculateGrandTotal(group.subTotal, group.gst);
-      totalGrandTotal += group.grandTotal;
-    });
-
-    this.Totalsub = totalSub;
-    this.gst = totalGST;
-    this.totalGrandTotal = totalGrandTotal;
-
+    console.log('Grouped Data:', Object.values(groupedByDesignNumber)); // ✅ Log final data before sending to UI
     return Object.values(groupedByDesignNumber);
-  }
+}
+
+
+
 
   calculateTotalPrice(row: any): number {
     let total = 0;
@@ -228,87 +196,16 @@ export class ViewMdeliveryChallanComponent {
   }
 
   addpo() {
-    // Initialize separate payloads for defective and accepted items
-    const defectivePayload: any[] = [];
-    const acceptedPayload: any[] = [];
-  
-    // Iterate over `mergedProducts` to create transformed payloads
-    this.mergedProducts.forEach((row) => {
-      this.sizeHeaders.forEach((size) => {
-        const receivedQuantity = row.quantities[size] || 0; // Original received quantity
-        const defectiveQuantity = row.defective[size] || 0; // Defective quantity
-        const acceptedQuantity = Math.max(receivedQuantity - defectiveQuantity, 0); // Accepted quantity
-        const returnReason = row.feedback[size] || ''; // Fetch returnReason for the specific size
-  
-        // Base payload shared between accepted and defective
-        const basePayload = {
-          designNumber: row.designNumber,
-          colour: row.colour,
-          colourName: row.colourName,
-          colourImage: row.colourImage,
-          size: size,
-          price: this.priceHeaders[size] || 0,
-          productBy: this.responseData?.email || '',
-        };
-  
-        // Add to defective payload if there are defective items
-        if (defectiveQuantity > 0) {
-          defectivePayload.push({
-            ...basePayload,
-            quantity: defectiveQuantity,
-            returnReason: returnReason,
-          });
-        }
-  
-        // Add to accepted payload if there are accepted items
-        if (acceptedQuantity > 0) {
-          acceptedPayload.push({
-            ...basePayload,
-            quantity: acceptedQuantity,
-          });
-        }
-      });
-    });
-  
-    // Construct the full payload for defective and accepted
-    const defectiveFullPayload = {
-      ...this.responseData, // Keep all original fields
-      set: defectivePayload, // Update the set with defective items
-    };
-  
-    const acceptedFullPayload = {
-      ...this.responseData, // Keep all original fields
-      set: acceptedPayload, // Update the set with accepted items
-    };
-  
-    console.log('Defective Full Payload:', defectiveFullPayload);
-    console.log('Accepted Full Payload:', acceptedFullPayload);
-  
-    // Send the defective full payload to `/wholesaler-return`
-    if (defectivePayload.length > 0) {
-      this.authService.post('/wholesaler-return', defectiveFullPayload).subscribe(
-        (res: any) => {
-          this.communicationService.customSuccess('Defective items processed successfully.');
-          this.updateStatusToChecked(); // Call API to update status after successful processing
-        },
-        (error) => {
-          this.communicationService.customError1('Failed to process defective items.');
-        }
-      );
-    }
-  
-    // Send the accepted full payload to `/final-product`
-    if (acceptedPayload.length > 0) {
-      this.authService.post('/final-product', acceptedFullPayload).subscribe(
-        (res: any) => {
-          this.communicationService.customSuccess('Accepted items processed successfully.');
-          this.updateStatusToChecked(); // Call API to update status after successful processing
-        },
-        (error) => {
-          this.communicationService.customError1('Failed to process accepted items.');
-        }
-      );
-    }
+    const url = `/mnf-delivery-challan/purchase-orders/process-retailer-orders?deliveryChallanId=${this.distributorId}`;
+    this.authService.get(url).subscribe(
+      (res: any) => {
+        this.communicationService.customSuccess('Accepted items processed successfully.');
+        this.updateStatusToChecked(); // Call API to update status after successful processing
+      },
+      (error) => {
+        this.communicationService.customError1('Failed to process accepted items.');
+      }
+    );
   }
   
   // Method to update the status to "checked"

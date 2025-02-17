@@ -47,6 +47,8 @@ export class StepTwoComponent {
   productDescription: string = '';
   category: string = '';
   isActive: boolean = true;
+  productTitle:any;
+  designNumber:any;
 
   constructor(
     private httpClient: HttpClient,
@@ -83,6 +85,9 @@ export class StepTwoComponent {
     try {
       const res = await this.authService.getById('type2-products', this.productId).toPromise();
       this.productDetails = res;
+      console.log(this.productDetails);
+      this.productTitle = res.productTitle ;
+      this.designNumber = res.designNumber;
       if (this.productDetails) this.colourCollections = this.productDetails.colourCollections;
     } catch (error) {
       console.error('Error fetching product data:', error);

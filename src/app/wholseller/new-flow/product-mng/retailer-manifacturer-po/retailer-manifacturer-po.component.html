@@ -71,8 +71,11 @@
       </p-accordion>
   
       <!-- Display 'No data found' message if products array is empty -->
-      <div *ngIf="!products || products.length === 0" class="no-data-found">
-        <p>PO List is Empty</p>
+      <div *ngIf="products.length == 0" class="data-not-found justify-content-center p-5 align-items-center">
+        <p>No Wholesaler PO available at the moment</p>
+      </div>
+      <div  *ngIf="!products">
+
       </div>
       <div class="mb-3">
         <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>

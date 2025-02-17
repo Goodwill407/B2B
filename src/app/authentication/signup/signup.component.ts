@@ -49,15 +49,17 @@ export class SignupComponent implements OnInit {
   isIndiaSelected: boolean = false; // Track whether India is selected
   countryCode: any[] = [];
   invitedBy: any[] = [];
+  isRoleDisabled = false;
   
   constructor(private fb: FormBuilder,private cdr: ChangeDetectorRef, private authService: AuthService, private communicationService: CommunicationService, private http: HttpClient, private router: Router, private spinner: NgxSpinnerService, private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.email = this.route.snapshot.paramMap.get('email') || '';
+    this.getAllCountry();
     this.initializeForm();
     this.initializePasswordForm();
-    this.getallIdentity()
-    this.getAllCountry()
+    this.getallIdentity();
+    this.email = this.route.snapshot.paramMap.get('email') || '';
+    
     if (this.email) {
       this.authService.get(`invitations/${this.email}`).subscribe(
         (res: any) => {
@@ -68,13 +70,21 @@ export class SignupComponent implements OnInit {
             fullName: res.fullName || '',
             companyName: res.companyName || '',
             role: res.role || '',
-            contryCode: res.contryCode || '+91', // Use country code from API, default to +91 only if missing
+            contryCode: res.contryCode != null ? res.contryCode : '+91',  // Only fallback to +91 if null or undefined
+            //contryCode: res.contryCode || '+91',
             mobileNumber: res.mobileNumber || '',
             email: res.email || '',
           });
     
           console.log('Form Value After Patch:', this.mgfRegistrationForm.value); // Log form value
     
+          // Trigger the country change event programmatically
+          const countryCode = res.contryCode != null ? res.contryCode : '+91';
+          this.onCountryChange({ value: countryCode });
+
+           // Set the role field as readonly instead of disabling it
+           this.isRoleDisabled = true;
+
           // Save the inviter's email if available
           this.invitedBy = res.invitedBy || [];
           
@@ -103,7 +113,7 @@ export class SignupComponent implements OnInit {
       this.mgfRegistrationForm.patchValue({
         contryCode: '+91',
       });
-      console.log('Default Form Value for No Email:', this.mgfRegistrationForm.value); // Debug default behavior
+      // console.log('Default Form Value for No Email:', this.mgfRegistrationForm.value); // Debug default behavior
     }
     
     
@@ -463,6 +473,7 @@ export class SignupComponent implements OnInit {
     const selectedDialCode = event.value; // Get the selected country code
     this.isIndiaSelected = selectedDialCode === '91';
   
+    // console.log('event.value',event.value,this.isIndiaSelected)
     // Update form controls based on selection
     if (this.isIndiaSelected) {
       // Apply validators for India
@@ -473,7 +484,6 @@ export class SignupComponent implements OnInit {
       this.mgfRegistrationForm.controls['mobileOtp'].setValue(''); // Clear value if not needed
     }
     this.mgfRegistrationForm.controls['mobileOtp'].updateValueAndValidity();
-
   }
   
   isButtonDisabled(): boolean {

@@ -37,13 +37,19 @@
                                         </div>
                                     </td> -->
                                     <td class="text-center">
-                                      <button class="btn btn-icon p-2" pTooltip="View Profile" (click)="navigateToProfile(allWholeselers.id, allWholeselers.email, allWholeselers.requestDetails)"  tooltipPosition="top">
+                                      <button class="btn btn-icon p-2" pTooltip="View Profile" (click)="navigateToProfile(allWholeselers.id, allWholeselers.email, allWholeselers.requestDetails, true)"  tooltipPosition="top">
                                         <i class="fas fa-eye"></i>
                                       </button>
                                   </td>
                     </tr>
                   </ng-template>
                 </p-table>
+                <div  *ngIf="!allWholeselers" lass="data-not-found d-flex justify-content-center align-items-center">
+                  <p>Wholesaler List is Not Available [Server Error]</p>
+                </div>
+                <div *ngIf="allWholeselers.length == 0" lass="data-not-found d-flex justify-content-center align-items-center">
+                  <p>No Wholesaler Connected to You</p>
+                </div>
                 <span *ngIf="!allWholeselers || allWholeselers.length == 0"
                   class="data-not-found d-flex justify-content-center align-items-center"> </span>
                 <p-paginator *ngIf="allWholeselers && allWholeselers.length > 0" 

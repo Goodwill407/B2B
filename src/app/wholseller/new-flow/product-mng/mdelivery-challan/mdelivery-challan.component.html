@@ -33,6 +33,12 @@
                                             </tr>
                                         </ng-template>
                                     </p-table>
+                                    <div *ngIf="!tableData"  class="mt-3 d-flex justify-content-center align-items-center">
+                                        <p>All Delivery Challans Not Found [Server Error].</p>
+                                    </div>
+                                    <div *ngIf="tableData.length == 0"  class="mt-3 d-flex justify-content-center align-items-center">
+                                        <p>All Delivery Challans Have Been Processed.</p>
+                                    </div>
                                     <span *ngIf="!tableData || tableData.length == 0"
                                         class="data-not-found d-flex justify-content-center align-items-center"> </span>
                                     <p-paginator *ngIf="tableData && tableData.length > 0" (onPageChange)="onPageChange($event)"
@@ -73,6 +79,12 @@
                                             </tr>
                                         </ng-template>
                                     </p-table>
+                                    <div *ngIf="!tableData2"  class="mt-3 d-flex justify-content-center align-items-center">
+                                        <p>Delivery Challans Not Found [Server Error].</p>
+                                    </div>
+                                    <div *ngIf="tableData2.length == 0"  class="mt-3 d-flex justify-content-center align-items-center">
+                                        <p> No Pending Delivery Challans at the Moment.</p>
+                                    </div>
                                     <span *ngIf="!tableData || tableData.length == 0"
                                         class="data-not-found d-flex justify-content-center align-items-center"> </span>
                                     <p-paginator *ngIf="tableData && tableData.length > 0" (onPageChange)="onPageChange($event)"
@@ -113,6 +125,12 @@
                                             </tr>
                                         </ng-template>
                                     </p-table>
+                                    <div *ngIf="!tableData3"  class="mt-3 d-flex justify-content-center align-items-center">
+                                        <p>Delivery Challans Not Found [Server Error].</p>
+                                    </div>
+                                    <div *ngIf="tableData3.length == 0"  class="mt-3 d-flex justify-content-center align-items-center">
+                                        <p> No checked delivery challans available.</p>
+                                    </div>
                                     <span *ngIf="!tableData || tableData.length == 0"
                                         class="data-not-found d-flex justify-content-center align-items-center"> </span>
                                     <p-paginator *ngIf="tableData && tableData.length > 0" (onPageChange)="onPageChange($event)"

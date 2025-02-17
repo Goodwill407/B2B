@@ -224,10 +224,10 @@ export class EditReProductPriceComponent {
         const res = await this.authService.post('wholesaler-price-type2', payload).toPromise();
   
         if (res) {
-          this.communicationService.customSuccess1('Saved Successfully...!!!');
+          this.communicationService.customSuccess1('Price Added Successfully...!!!');
         }
       } catch (error) {
-        this.communicationService.customError1('Error occurred while saving...!!!');
+        this.communicationService.customError1('Error occurred while Adding Price...!!!');
       }
     }
   }

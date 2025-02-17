@@ -42,7 +42,10 @@ export class ViewProductDetailsComponent {
   designno:any;
   Prodnum:any;
   rowTotals:any;
-  
+  mfgEmail:any;
+  productUser:any =  'manufacturer';
+  wishlisted: boolean= false;
+
   ngOnInit(): void {
 
    
@@ -50,67 +53,73 @@ export class ViewProductDetailsComponent {
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
     this.route.params.subscribe(params => {
       const id = params['id'];
+      this.wishlisted = params['wishlisted'] || false;
       this.ProductId = id;
       if (id) {
         this.getProductDetails(id);
       }
     });
-  }
+    // this.checkWishlist();
+  } 
 
   getProductDetails(id: any) {
     this.authService.get('type2-products/' + id).subscribe((res: any) => {
       console.log(res);
       if (res) {
-        this.product = {
-          brand: res.brand,
-          designNumber: res.designNumber,
-          clothingType: res.clothing,
-          subCategory: res.subCategory,
-          gender: res.gender,
-          FSIN: res.FSIN,
-          title: res.productTitle,
-          description: res.productDescription,
-          material: res.material,
-          materialVariety: res.materialvariety,
-          pattern: res.fabricPattern,
-          fitType: res.fitStyle,
-          occasion: res.selectedOccasion.join(', '),
-          lifestyle: res.selectedlifeStyle.join(', '),
-          closureType: res.closureType,
-          pocketDescription: res.pocketDescription,
-          sleeveCuffStyle: res.sleeveCuffStyle,
-          neckCollarStyle: res.neckStyle,
-          specialFeatures: res.specialFeature.join(', '),
-          careInstructions: res.careInstructions,
-          sizes: res.sizes.map((size: any) => ({
-            standardSize: size.standardSize,
-            brandSize: size.brandSize,
-            chestSize: size.chestSize,
-            frontLength: size.frontLength,
-            neckSize: size.neckSize,
-            shoulderSize: size.shoulderSize,
-            RtlPrice: size.RtlPrice,
-            singleMRP: size.singleMRP,
-            manufacturerPrice: size.manufacturerPrice,
-          })),
-          
-          colours: res.colourCollections.map((colour: any) => ({
-            name: colour.colourName,
-            hex: colour.colour,
-            image: colour.colourImage,
-            images: colour.productImages,
-            video: colour.productVideo
-          })),
-          setOFnetWeight: res.setOFnetWeight,
-          dimensions: res.productDimension,
-          dateAvailable: res.dateOfListing ? new Date(res.dateOfListing).toLocaleDateString() : 'N/A',
-          availability: res.quantity > 0 ? `${res.quantity} (In Stock)` : 'Out of Stock'
-        };
+        this.mfgEmail=res.productBy;
+      this.product = {
+  id: res.id,  // ✅ Ensure ID is included
+  productBy: res.productBy,  // ✅ Ensure Manufacturer Email is included
+  brand: res.brand,
+  designNumber: res.designNumber,
+  clothingType: res.clothing,
+  subCategory: res.subCategory,
+  gender: res.gender,
+  FSIN: res.FSIN,
+  title: res.productTitle,
+  description: res.productDescription,
+  material: res.material,
+  materialVariety: res.materialvariety,
+  pattern: res.fabricPattern,
+  fitType: res.fitStyle,
+  occasion: res.selectedOccasion.join(', '),
+  lifestyle: res.selectedlifeStyle.join(', '),
+  closureType: res.closureType,
+  pocketDescription: res.pocketDescription,
+  sleeveCuffStyle: res.sleeveCuffStyle,
+  neckCollarStyle: res.neckStyle,
+  specialFeatures: res.specialFeature.join(', '),
+  careInstructions: res.careInstructions,
+  sizes: res.sizes.map((size: any) => ({
+    standardSize: size.standardSize,
+    brandSize: size.brandSize,
+    chestSize: size.chestSize,
+    frontLength: size.frontLength,
+    neckSize: size.neckSize,
+    shoulderSize: size.shoulderSize,
+    RtlPrice: size.RtlPrice,
+    singleMRP: size.singleMRP,
+    manufacturerPrice: size.manufacturerPrice,
+  })),
+  colours: res.colourCollections.map((colour: any) => ({
+    name: colour.colourName,
+    hex: colour.colour,
+    image: colour.colourImage,
+    images: colour.productImages,
+    video: colour.productVideo
+  })),
+  setOFnetWeight: res.setOFnetWeight,
+  dimensions: res.productDimension,
+  dateAvailable: res.dateOfListing ? new Date(res.dateOfListing).toLocaleDateString() : 'N/A',
+  availability: res.quantity > 0 ? `${res.quantity} (In Stock)` : 'Out of Stock'
+};
+
 
         this.createFormControls2();
         this.selectColourCollection(this.product.colours[0]);
         this.quantity = this.product.minimumOrderQty;
       }
+      this.checkWishlist();
     });
   }
 
@@ -177,65 +186,85 @@ getRowTotal(colorName: string): number {
   this.product?.sizes.forEach((size: any) => {
     const controlName = this.getControlName(colorName, size.standardSize);
     const quantity = this.stepThree.get(controlName)?.value || 0; // Default to 0 if value is not available
-    console.log(quantity, 'Quantity');
-    console.log(controlName, 'controlName');
 
     // Find the price for the given size
     const sizePrice = this.product?.sizes.find((s: any) => s.standardSize === size.standardSize)?.RtlPrice || 0;
-    console.log(sizePrice, 'sizeprice');
     // Ensure valid data (sizePrice and quantity are valid numbers)
     if (sizePrice && !isNaN(quantity)) {
       total += quantity * sizePrice; // Calculate total for this size
     }
   });
-  console.log(total, 'total');
   return total; // Return the total for this color
 }
 
 
   
+
 async saveStepThree() {
+  if (!this.product || !this.product.productBy || !this.product.id) {
+    this.communicationService.customError1("Product details are not yet loaded. Please try again.");
+    return;
+  }
+
   if (this.stepThree.valid) {
     const formData = this.stepThree.value;
     const result: any[] = [];
 
+    // Loop through each color and size combination
     this.product?.colours.forEach((color: any) => {
       const sanitizedColorName = this.sanitizeControlName(color.name);
+
       this.product?.sizes.forEach((size: any) => {
-        const quantity = formData[`${sanitizedColorName}_${size.size}`];
-        if (quantity) {
+        const quantity = formData[`${sanitizedColorName}_${size.standardSize}`];
+
+        // Only include sizes that have quantity selected
+        if (quantity && quantity > 0) {
+          // Safely convert price to string, using a fallback if RtlPrice is undefined or null
+          const price = size.RtlPrice !== undefined && size.RtlPrice !== null ? size.RtlPrice.toString() : "0";
+
           result.push({
-            productBy: this.product.productBy, 
-            colourName: color.name,
-            colourImage: color.image,
-            colour: color.hex,
-            quantity,
-            ...size,
-            designNumber: this.designno, // Use the class-level design number here
+            productBy: this.product.productBy,  // Ensure productBy (wholesaler's email) is included
+            colourName: color.name,  // Colour name
+            colourImage: color.image,  // Colour image
+            colour: color.colour,  // Colour hex code
+            quantity: quantity,  // The quantity selected by the user
+            size: size.standardSize,  // The selected size (e.g., '5XS')
+            price: price,  // Ensure price is a string (either from RtlPrice or fallback to "0")
+            designNumber: this.product.designNumber,  // The design number
           });
         }
       });
     });
 
+    // Check if no valid quantities were selected
+    if (result.length === 0) {
+      this.communicationService.customError1("Please select at least one quantity before saving.");
+      return;
+    }
+
+    // Prepare the payload
     const payload = {
-      set: result,
-      productId: this.product.id,
-      email: this.authService.currentUserValue.email,
-      wholesalerEmail: this.WholeselerEmail || "",
-      productBy: this.product.productBy
+      set: result,  // Array of size/color combinations
+      email: this.userProfile.email,  // Retailer's email
+      wholesalerEmail: this.WholeselerEmail,  // Wholesaler's email
+      productBy: this.product.productBy,  // Wholesaler's email (productBy)
+      cartAddedDate: new Date().toISOString(),  // Timestamp for when the cart item is added
+      id: this.product.id  // Product ID
     };
 
+    console.log("Final Payload before sending:", payload);  // Debugging log
+
     try {
-      const res = await this.authService.post('retailer-cart-type2', payload).toPromise();
+      const res = await this.authService.post('rtl-toMnf-cart', payload).toPromise();
       if (res) {
         this.communicationService.customSuccess1('Saved Successfully...!!!');
-        // Optionally reset the form or perform any additional cleanup
       }
     } catch (error) {
       this.communicationService.customError1('Error occurred while saving...!!!');
     }
   }
 }
+
 
 
   changeMainMedia(media: any) {
@@ -256,15 +285,20 @@ async saveStepThree() {
   }
 
   WishlistAdd() {
-    this.authService.post('type2-wishlist', { productId: this.ProductId, email: this.userProfile.email }).subscribe((res: any) => {
-      this.checkWishlist();
-    }, (err: any) => {
-      this.wishlist = false;
-    })
+    this.authService.post('type2-wishlist', { productId: this.ProductId, email: this.userProfile.email, productOwnerEmail: this.mfgEmail, productUser:this.productUser }).subscribe(
+      (res: any) => {
+        this.checkWishlist();
+        this.communicationService.customSuccess1('Product Added to Wishlist'); // Display the success message
+      },
+      (err: any) => {
+        this.wishlist = false;
+        this.communicationService.customError1('Error Adding Product to Wishlist'); // Handle error case
+      }
+    );
   }
 
   checkWishlist() {
-    this.authService.get('type2-wishlist/checkout/wishlist?productId=' + this.ProductId + '&email=' + this.userProfile.email).subscribe((res: any) => {
+    this.authService.get('type2-wishlist/checkout/wishlist?productId=' + this.ProductId + '&email=' + this.userProfile.email + '&productOwnerEmail=' + this.mfgEmail).subscribe((res: any) => {
       if (res) {  
         this.wishlist = true;
       } else {
@@ -293,7 +327,7 @@ async saveStepThree() {
       "quantity": this.quantity
     }
 
-    this.authService.post('cart', cartBody).subscribe((res: any) => {
+    this.authService.post('rtl-toMnf-cart', cartBody).subscribe((res: any) => {
       this.communicationService.customSuccess('Product Successfully Added in Cart');
     },
       (error) => {

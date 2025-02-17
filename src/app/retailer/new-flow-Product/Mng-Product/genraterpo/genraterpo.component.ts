@@ -1,4 +1,4 @@
-  import { CommonModule } from '@angular/common';
+  import { CommonModule, Location } from '@angular/common';
   import { Component, OnInit } from '@angular/core';
   import { FormsModule } from '@angular/forms';
   import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -58,7 +58,8 @@
       public authService: AuthService,
       private router: Router,
       private communicationService: CommunicationService,
-      private route: ActivatedRoute
+      private route: ActivatedRoute,
+      private location: Location
     ) {
       this.distributorId = this.route.snapshot.paramMap.get('id') ?? '';
   
@@ -390,6 +391,9 @@
     }
   }
   
+  navigateFun() {
+    this.location.back();
+  }
   
     
   }

@@ -33,7 +33,7 @@ export class ManageDistributorComponent {
   page: number = 1
   first: number = 0;
   rows: number = 10;
-  retailers:any
+  retailers:any = [];
   searchPerformed:boolean = false;;
 
   constructor(private authService: AuthService, private communicationService:CommunicationService,private router: Router) { }
@@ -54,7 +54,7 @@ getPendingInvitesWholseler(searchKey: string = '') {
     )
     .subscribe((res: any) => {
       this.distributors = res.results;
-      this.totalResults = res.totalResults;
+      this.totalResults = res.totalPages;
       // console.log(res,"wholsalers");
 
       // Process discounts for each distributor
@@ -83,8 +83,8 @@ getPendingInvitesRetailers(searchKey: string = '') {
     )
     .subscribe((res: any) => {
       this.retailers = res.results;
-      // console.log(res,"retailers");
-      this.totalResults = res.totalResults;
+      console.log(this.retailers,"retailers");
+      this.totalResults = res.totalPages;
 
       // Process discounts for each retailer
       this.retailers.forEach((retailer: any) => {

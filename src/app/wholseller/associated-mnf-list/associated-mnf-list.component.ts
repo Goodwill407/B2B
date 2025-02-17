@@ -53,7 +53,7 @@ export class AssociatedMnfListComponent {
   getAllMnf(): void {
     // Construct the API endpoint URL dynamically
     this.spinner.show()    
-    const endpoint = `wholesaler/manufactureList/${this.user.email}?userCategory=${this.user.userCategory}`;
+    const endpoint = `wholesaler/manufactureList/${this.user.email}?page=${this.page}&limit=${this.limit}?userCategory=${this.user.userCategory}`;
     
     // Call the API using the authService
     this.authService.get(endpoint).subscribe({
@@ -61,7 +61,7 @@ export class AssociatedMnfListComponent {
         // Handle the successful response
         this.allMnf = res.docs
         // Assign the data to the local variable
-        this.totalResults = res.totalResults; // Store the total count of documents
+        this.totalResults = res.totalDocs; // Store the total count of documents
         this.spinner.hide()
       },
       error: (err: any) => {

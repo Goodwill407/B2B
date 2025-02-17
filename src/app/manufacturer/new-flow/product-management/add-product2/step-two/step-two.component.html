@@ -4,7 +4,9 @@
 
 <div class="card p-4">
 <form [formGroup]="stepTwo" class="border p-4 rounded" style="background-color: aliceblue;" (ngSubmit)="saveStepTwoData()">                       
-    <h5>Add Color Collection:</h5>
+    <h5>
+        Add Color Collection For: {{ productTitle && designNumber ? productTitle + ' (' + designNumber + ')' : 'Your Product' }}
+      </h5>      
     <div class="row">
         <!-- Color Code -->
         <div class="col-2">

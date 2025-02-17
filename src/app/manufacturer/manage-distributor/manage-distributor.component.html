@@ -65,6 +65,15 @@
                   <div *ngIf="searchPerformed && distributors.length === 0" class="text-center mt-4">
                     <p>No data found. Try a different search.</p>
                   </div>
+                  <div *ngIf="!distributors" class="data-not-found text-center mt-4">
+                    <p>No Wholesalers data found. [Server Error]</p>
+                  </div>
+                  <div *ngIf="distributors && distributors.length == 0 && !searchPerformed" class="text-center data-not-found mt-4">
+                    <p>No Wholesalers Connected Yet.</p>
+                  </div>
+                  <!-- <div *ngIf="message" class="text-center mt-4">
+                    <p>{{ message }}</p>
+                  </div> -->
                     <!-- Pagination moved to the bottom of the card -->
                     <div class="text-center mt-3">
                         <p-paginator *ngIf="distributors && distributors.length > 0" 
@@ -103,19 +112,19 @@
                                 <th>Action</th>
                             </tr>
                         </ng-template>
-                        <ng-template pTemplate="body" let-retailers>
+                        <ng-template pTemplate="body" let-retailer>
                             <tr>
-                                <td class="text-center">{{retailers.fullName}}</td>
-                                <td class="text-center">{{retailers.companyName}}</td>
-                                <td class="text-center">{{retailers.mobNumber}}</td>
-                                <td class="text-center">{{retailers.email}}</td>
-                                <td class="text-center">{{retailers.country}}</td>
-                                <td class="text-center">{{retailers.city}}</td>
-                                <td class="text-center">{{retailers.discountCategories}}</td>
-                                <td class="text-center fw-bold" [ngClass]="retailers.isActive?'text-success':'text-danger'">{{retailers.isActive?'Active':'Inactive'}}</td>
+                                <td class="text-center">{{retailer.fullName}}</td>
+                                <td class="text-center">{{retailer.companyName}}</td>
+                                <td class="text-center">{{retailer.mobNumber}}</td>
+                                <td class="text-center">{{retailer.email}}</td>
+                                <td class="text-center">{{retailer.country}}</td>
+                                <td class="text-center">{{retailer.city}}</td>
+                                <td class="text-center">{{retailer.discountCategories}}</td>
+                                <td class="text-center fw-bold" [ngClass]="retailer.isActive?'text-success':'text-danger'">{{retailer.isActive?'Active':'Inactive'}}</td>
                                 <td>
                                     <div class="button-container text-center">
-                                        <button class="btn btn-icon p-2" pTooltip="View Profile" (click)="viewProfile(retailers,'retailer')" tooltipPosition="top">
+                                        <button class="btn btn-icon p-2" pTooltip="View Profile" (click)="viewProfile(retailer,'retailer')" tooltipPosition="top">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                         <!-- <button class="btn btn-icon p-2" pTooltip="Delete" tooltipPosition="top">
@@ -129,9 +138,16 @@
                 </div>
             </div>
             <!-- No Data Message -->
-            <div *ngIf="searchPerformed && retailers.length === 0" class="text-center mt-4">
+            <div *ngIf="retailers && retailers.length == 0 && !searchPerformed" class="data-not-found text-center mt-4">
+                <p>No Retailers Connected Yet</p>
+              </div>
+            <div *ngIf="searchPerformed && retailers.length == 0" class="data-not-found text-center mt-4">
                 <p>No data found. Try a different search.</p>
               </div>
+              <div *ngIf="!retailers" class="data-not-found text-center mt-4">
+                <p>No Retailers data found. [Server Error]</p>
+              </div>
+              
             <!-- Pagination moved to the bottom of the card -->
             <div class="text-center mt-3">
                 <p-paginator *ngIf="retailers && retailers.length > 0" 
