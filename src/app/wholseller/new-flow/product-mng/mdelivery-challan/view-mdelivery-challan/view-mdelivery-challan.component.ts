@@ -196,87 +196,16 @@ export class ViewMdeliveryChallanComponent {
   }
 
   addpo() {
-    // Initialize separate payloads for defective and accepted items
-    const defectivePayload: any[] = [];
-    const acceptedPayload: any[] = [];
-  
-    // Iterate over `mergedProducts` to create transformed payloads
-    this.mergedProducts.forEach((row) => {
-      this.sizeHeaders.forEach((size) => {
-        const receivedQuantity = row.quantities[size] || 0; // Original received quantity
-        const defectiveQuantity = row.defective[size] || 0; // Defective quantity
-        const acceptedQuantity = Math.max(receivedQuantity - defectiveQuantity, 0); // Accepted quantity
-        const returnReason = row.feedback[size] || ''; // Fetch returnReason for the specific size
-  
-        // Base payload shared between accepted and defective
-        const basePayload = {
-          designNumber: row.designNumber,
-          colour: row.colour,
-          colourName: row.colourName,
-          colourImage: row.colourImage,
-          size: size,
-          price: this.priceHeaders[size] || 0,
-          productBy: this.responseData?.email || '',
-        };
-  
-        // Add to defective payload if there are defective items
-        if (defectiveQuantity > 0) {
-          defectivePayload.push({
-            ...basePayload,
-            quantity: defectiveQuantity,
-            returnReason: returnReason,
-          });
-        }
-  
-        // Add to accepted payload if there are accepted items
-        if (acceptedQuantity > 0) {
-          acceptedPayload.push({
-            ...basePayload,
-            quantity: acceptedQuantity,
-          });
-        }
-      });
-    });
-  
-    // Construct the full payload for defective and accepted
-    const defectiveFullPayload = {
-      ...this.responseData, // Keep all original fields
-      set: defectivePayload, // Update the set with defective items
-    };
-  
-    const acceptedFullPayload = {
-      ...this.responseData, // Keep all original fields
-      set: acceptedPayload, // Update the set with accepted items
-    };
-  
-    console.log('Defective Full Payload:', defectiveFullPayload);
-    console.log('Accepted Full Payload:', acceptedFullPayload);
-  
-    // Send the defective full payload to `/wholesaler-return`
-    if (defectivePayload.length > 0) {
-      this.authService.post('/wholesaler-return', defectiveFullPayload).subscribe(
-        (res: any) => {
-          this.communicationService.customSuccess('Defective items processed successfully.');
-          this.updateStatusToChecked(); // Call API to update status after successful processing
-        },
-        (error) => {
-          this.communicationService.customError1('Failed to process defective items.');
-        }
-      );
-    }
-  
-    // Send the accepted full payload to `/final-product`
-    if (acceptedPayload.length > 0) {
-      this.authService.post('/final-product', acceptedFullPayload).subscribe(
-        (res: any) => {
-          this.communicationService.customSuccess('Accepted items processed successfully.');
-          this.updateStatusToChecked(); // Call API to update status after successful processing
-        },
-        (error) => {
-          this.communicationService.customError1('Failed to process accepted items.');
-        }
-      );
-    }
+    const url = `/mnf-delivery-challan/purchase-orders/process-retailer-orders?deliveryChallanId=${this.distributorId}`;
+    this.authService.get(url).subscribe(
+      (res: any) => {
+        this.communicationService.customSuccess('Accepted items processed successfully.');
+        this.updateStatusToChecked(); // Call API to update status after successful processing
+      },
+      (error) => {
+        this.communicationService.customError1('Failed to process accepted items.');
+      }
+    );
   }
   
   // Method to update the status to "checked"
