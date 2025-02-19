@@ -14,6 +14,7 @@ import { ProductViewOfMfgComponent } from "./Mng-Product/product-management/prod
 import { ViewProductDetailsComponent } from "./Mng-Product/product-management/product-list-of-mfg/view-product-details/view-product-details.component";
 import { CartProduct2RetailerManComponent } from "./Mng-Product/cart-product2-retailer-man/cart-product2-retailer-man.component";
 import { GenPoRetailerManComponent } from "./Mng-Product/cart-product2-retailer-man/gen-po-retailer-man/gen-po-retailer-man.component";
+import { RetailorManOrderReqComponent } from "./Mng-Product/retailor-man-order-req/retailor-man-order-req.component";
 
 
 export const NewFlow:Route[]=[
@@ -28,6 +29,7 @@ export const NewFlow:Route[]=[
     {path:'wishlist-product2', component:WishlistProduct2Component},
     {path:'wishlistproducts', component:ViewDetailWishlistComponent},
     {path:'view-retailerpo',component:ViewRetailerpoComponent},
+    {path:'view-ManReq',component:RetailorManOrderReqComponent},
     {path:'retailerpo-generate',component:RetailerpoGenerateComponent},
     {path:'view-product-ofMfg' ,component:ProductViewOfMfgComponent},
     {path:'view-product-details' ,component:ViewProductDetailsComponent},

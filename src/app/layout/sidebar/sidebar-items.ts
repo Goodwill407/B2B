@@ -607,6 +607,7 @@ export const ROUTES: RouteInfo[] = [
         role: [''],
         submenu: [],
       },
+     
     ],
   },
   // {
@@ -1780,6 +1781,18 @@ export const ROUTES2: RouteInfo[] = [
       {
         path: '/retailer/new/view-retailerpo',
         title: 'Retailer PO',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+      {
+        path: '/retailer/new/view-ManReq',
+        title: 'Retailer Order Request',
         iconType: '',
         icon: '',
         class: 'ml-menu',
