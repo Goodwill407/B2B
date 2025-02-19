@@ -31,7 +31,7 @@
           <option *ngFor="let subCategory of allSubCategory" [value]="subCategory">{{subCategory}}</option>
           <option *ngIf="allSubCategory.length === 0" disabled style="color: tomato;" >** Please Select Category first ** </option>
         </select>
-        <button class="btn btn-info" (click)="getAllProducts()">Display</button>
+        <button class="btn btn-info" (click)="displayBtn()">Display</button>
       </div>
       <hr>
       <div class="cards-container">

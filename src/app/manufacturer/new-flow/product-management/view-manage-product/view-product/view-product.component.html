@@ -137,13 +137,21 @@
             <tr>
               <th>Standard Size</th>
               <th>Brand Size</th>
-              <th>Chest Size</th>
-              <th>Front Length</th>
-              <th>Neck Size</th>
-              <th>Shoulder Size</th>
-              <th>Rtl Price</th>
-              <th>Single MRP</th>
+      
+              <!-- Conditionally show columns based on available size attributes -->
+              <th *ngIf="product?.sizes[0]?.waist">Waist Size</th>
+              <th *ngIf="product?.sizes[0]?.inseam">Inseam</th>
+              <th *ngIf="product?.sizes[0]?.lengthIn">Length (in)</th>
+              <th *ngIf="product?.sizes[0]?.rise">Rise</th>
+
+              <th *ngIf="product?.sizes[0]?.chestSize">Chest Size</th>
+              <th *ngIf="product?.sizes[0]?.shoulderSize">Shoulder Size</th>
+              <th *ngIf="product?.sizes[0]?.frontLength">Front Length</th>
+              <th *ngIf="product?.sizes[0]?.neckSize">Neck Size</th>
+      
               <th>Manufacturer Price</th>
+              <th>Retail Price</th>
+              <th>Single MRP</th>
             </tr>
           </thead>
           <tbody>
@@ -151,18 +159,28 @@
               <tr>
                 <td>{{ size.standardSize }}</td>
                 <td>{{ size.brandSize }}</td>
-                <td>{{ size.chestSize }}</td>
-                <td>{{ size.frontLength }}</td>
-                <td>{{ size.neckSize }}</td>
-                <td>{{ size.shoulderSize }}</td>
+      
+                <!-- Conditionally show data based on available size attributes -->
+                <td *ngIf="size.waist">{{ size.waist }}</td>
+                <td *ngIf="size.inseam">{{ size.inseam }}</td>
+                <td *ngIf="size.lengthIn">{{ size.lengthIn }}</td>
+                <td *ngIf="size.rise">{{ size.rise }}</td>
+
+                <td *ngIf="size.chestSize">{{ size.chestSize }}</td>
+                <td *ngIf="size.shoulderSize">{{ size.shoulderSize }}</td>
+                <td *ngIf="size.frontLength">{{ size.frontLength }}</td>
+                <td *ngIf="size.neckSize">{{ size.neckSize }}</td>
+      
+                <!-- Price fields -->
+                <td>{{ size.manufacturerPrice }}</td>
                 <td>{{ size.RtlPrice }}</td>
                 <td>{{ size.singleMRP }}</td>
-                <td>{{ size.manufacturerPrice }}</td>
               </tr>
             </ng-container>
           </tbody>
         </table>
       </div>
+      
     </div>
   </div>
 </section>

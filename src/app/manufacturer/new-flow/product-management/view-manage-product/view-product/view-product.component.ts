@@ -71,6 +71,12 @@ export class ViewProductComponent {
             frontLength: size.frontLength,
             neckSize: size.neckSize,
             shoulderSize: size.shoulderSize,
+
+            waist: size.waist ? size.waist : undefined,
+            inseam: size.inseam ? size.inseam : undefined,
+            lengthIn: size.lengthIn ? size.lengthIn : undefined,
+            rise: size.rise ? size.rise : undefined,
+
             RtlPrice: size.RtlPrice,
             singleMRP: size.singleMRP,
             manufacturerPrice: size.manufacturerPrice,

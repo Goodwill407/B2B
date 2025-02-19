@@ -112,6 +112,11 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
     });   
   }
   
+  displayBtn(){
+    this.page = 1;
+    this.getAllProducts()
+  }
+
   getAllProducts() {
     let url = `type2-products/filter-products`;
    
