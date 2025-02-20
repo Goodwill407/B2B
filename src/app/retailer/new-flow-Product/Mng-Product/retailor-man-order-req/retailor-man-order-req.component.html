@@ -1,36 +1,39 @@
 <section class="content">
     <div class="content-block">
-        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> {{isNewPO?'Generate PO':'PO List'}}</h4>
+        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Retailer Order Request</h4>
         <div class="card mt-3 p-4">
             <div class="p-grid p-fluid">
                 <div class="p-col-12 text-center">
                     <p-table [value]="tableData">
                         <ng-template pTemplate="header">
                             <tr>
-                                <th>Wholesaler's Name</th>
-                                <th>Company Name</th>
-                                <th>Email</th>
                                 <th>PO Number</th>
-                                <th>Status</th>
-                                <!-- <th>PO Date</th> -->
+                                <th>Company Name</th>
+                                <th>Wholesaler Email</th>
+                                <th>Request Type</th>
+                                <!-- <th>Status</th> -->
+                                <th>Consolidate Date</th>
                                 <th>View</th>
-
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-data>
                             <tr>
-                                <td class="text-center">{{data.wholesaler.fullName}}</td>
-                                <td class="text-center">{{data.wholesaler.companyName}}</td>
-                                <td class="text-center">{{data.wholesaler.email}}</td>
                                 <td class="text-center">{{data.poNumber}}</td>
-                                <td class="text-center">{{data.status}}</td>
-                                <!-- <td class="text-center">{{data.poDate}}</td> -->
+                                <td class="text-center">{{data.companyName}}</td>
+                                <td class="text-center">{{data.wholesalerEmail}}</td>
+                                <td class="text-center">
+                                    {{ data.requestType === 'partial_delivery' ? 'Partial Delivery' : data.requestType }}
+                                </td>
+                                <!-- <td class="text-center">{{data.status}}</td> -->
+                                <td class="text-center">{{data.contativeDate | date:'short'}}</td> <!-- You can format the date here -->
                                 <td class="text-center"
-                                    [routerLink]="['/retailer/new/retailerpo-generate',{id: data.id}]"><button
-                                        class="btn"><i class="bi bi-eye h5"></i></button></td>
+                                    [routerLink]="['/retailer/new/retailerpo-generate',{id: data.id}]">
+                                    <button class="btn"><i class="bi bi-eye h5"></i></button>
+                                </td>
                             </tr>
                         </ng-template>
                     </p-table>
+                    
                     <!-- <span *ngIf="!tableData || tableData.length == 0"
                         class="data-not-found d-flex justify-content-center align-items-center"> </span> -->
                         <div *ngIf="!tableData" class="data-not-found mt-3 d-flex justify-content-center align-items-center">

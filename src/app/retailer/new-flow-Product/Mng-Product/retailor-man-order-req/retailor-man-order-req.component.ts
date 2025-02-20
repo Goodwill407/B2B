@@ -20,24 +20,24 @@ import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-
   styleUrl: './retailor-man-order-req.component.scss'
 })
 export class RetailorManOrderReqComponent {
-  purchaseOrder: any = {
-    supplierName: '',
-    supplierDetails: '',
-    supplierAddress: '',
-    supplierContact: '',
-    supplierGSTIN: '',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/38/MONOGRAM_LOGO_Color_200x200_v.png',
-    orderNo: 'PO123',
-    orderDate: new Date().toLocaleDateString(),
-    deliveryDate: '',
-    buyerName: '',
-    buyerAddress: '',
-    buyerPhone: '',
-    buyerGSTIN: '',
-    products: [],
-    totalAmount: 0,
-    totalInWords: ''
-  };
+  // purchaseOrder: any = {
+  //   supplierName: '',
+  //   supplierDetails: '',
+  //   supplierAddress: '',
+  //   supplierContact: '',
+  //   supplierGSTIN: '',
+  //   logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/38/MONOGRAM_LOGO_Color_200x200_v.png',
+  //   orderNo: 'PO123',
+  //   orderDate: new Date().toLocaleDateString(),
+  //   deliveryDate: '',
+  //   buyerName: '',
+  //   buyerAddress: '',
+  //   buyerPhone: '',
+  //   buyerGSTIN: '',
+  //   products: [],
+  //   totalAmount: 0,
+  //   totalInWords: ''
+  // };
   email: string | null = null;
   productBy: string | null = null;
   userProfile: any;
@@ -79,7 +79,7 @@ export class RetailorManOrderReqComponent {
   }
 
   patchData(data: any) {
-    this.purchaseOrder = data;
+    // this.purchaseOrder = data;
     this.isNewPO = false;  // Set to false to hide the "Generate PO" button
     this.showFlag = true;  // Show the purchase order details
   }

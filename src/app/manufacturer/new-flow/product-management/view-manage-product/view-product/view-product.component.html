@@ -131,7 +131,7 @@
         <button type="button" class="btn btn-wishlist">ADD TO CART</button>
       </div> -->
       <hr>
-      <div class="table-responsive">
+      <div class="table-responsive" *ngIf="product?.sizes.length !== 0">
         <table class="table table-bordered">
           <thead>
             <tr>
