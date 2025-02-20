@@ -70,7 +70,7 @@ export class RetailorManOrderReqComponent {
 
   getAllData() {
     this.showFlag = false;
-    this.authService.get(`rtl-orderP-request?retailerEmail=${this.authService.currentUserValue.email}&status='Pending'`).subscribe((res: any) => {
+    this.authService.get(`rtl-orderP-request?retailerEmail=${this.authService.currentUserValue.email}&status=pending`).subscribe((res: any) => {
      console.log(res)
       this.tableData = res.results;
       console.log(res)
