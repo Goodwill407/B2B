@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -57,6 +57,7 @@ export class ViewWholesalerPoComponent {
     private router: Router,
     private communicationService: CommunicationService,
     private route: ActivatedRoute,
+    private location: Location
   ) 
   {
   }
@@ -418,6 +419,10 @@ printPurchaseOrder(): void {
   } else {
     console.error("Element with id 'purchase-order' not found.");
   }
+}
+
+navigateFun() {
+  this.location.back();
 }
 
   

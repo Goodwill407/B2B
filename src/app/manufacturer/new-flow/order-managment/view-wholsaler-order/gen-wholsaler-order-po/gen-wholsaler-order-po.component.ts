@@ -1,4 +1,4 @@
-  import { CommonModule } from '@angular/common';
+  import { CommonModule, Location } from '@angular/common';
   import { Component, OnInit } from '@angular/core';
   import { FormsModule } from '@angular/forms';
   import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -57,7 +57,7 @@
 
     constructor(
       public authService: AuthService,
-      
+      private location: Location,
       private communicationService: CommunicationService,
       private route: ActivatedRoute
     ) 
@@ -530,6 +530,8 @@ getPendingQuantity(designNumber: string, size: string): number {
     return orderedItem ? orderedItem.quantity : null; // ✅ Return null if no matching size
 }
 
-
+navigateFun() {
+  this.location.back();
+}
 
   }
