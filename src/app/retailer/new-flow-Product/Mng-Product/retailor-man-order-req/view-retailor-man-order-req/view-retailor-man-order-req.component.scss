@@ -1,0 +1,90 @@
+/* Color Box for Product Color Display */
+.color-box {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+  }
+  
+  /* Button Group for Accept/Reject */
+  .btn-group {
+    display: flex;
+    gap: 10px;
+  }
+  
+  /* Outline Buttons for Clean Look */
+  .btn-outline-success,
+  .btn-outline-danger {
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .btn-outline-success.active {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .btn-outline-danger.active {
+    background-color: #dc3545;
+    color: white;
+  }
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: center;
+}
+
+.styled-table th, .styled-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+
+.styled-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.styled-table td {
+    background-color: #fff;
+}
+
+.color-box {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: lightgray;
+}
+
+.color-circle {
+    width: 50px;
+    height: 50px;
+    display: inline-block;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+}
+
+.btn-group {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-outline-success {
+    color: green;
+    border: 1px solid green;
+    padding: 5px 10px;
+}
+
+.btn-outline-danger {
+    color: red;
+    border: 1px solid red;
+    padding: 5px 10px;
+}

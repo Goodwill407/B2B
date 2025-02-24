@@ -15,6 +15,7 @@ import { ViewProductDetailsComponent } from "./Mng-Product/product-management/pr
 import { CartProduct2RetailerManComponent } from "./Mng-Product/cart-product2-retailer-man/cart-product2-retailer-man.component";
 import { GenPoRetailerManComponent } from "./Mng-Product/cart-product2-retailer-man/gen-po-retailer-man/gen-po-retailer-man.component";
 import { RetailorManOrderReqComponent } from "./Mng-Product/retailor-man-order-req/retailor-man-order-req.component";
+import { ViewRetailorManOrderReqComponent } from "./Mng-Product/retailor-man-order-req/view-retailor-man-order-req/view-retailor-man-order-req.component";
 
 
 export const NewFlow:Route[]=[
@@ -31,6 +32,7 @@ export const NewFlow:Route[]=[
     {path:'view-retailerpo',component:ViewRetailerpoComponent},
     {path:'view-ManReq',component:RetailorManOrderReqComponent},
     {path:'retailerpo-generate',component:RetailerpoGenerateComponent},
+    {path:'retailer-view-order',component:ViewRetailorManOrderReqComponent},
     {path:'view-product-ofMfg' ,component:ProductViewOfMfgComponent},
     {path:'view-product-details' ,component:ViewProductDetailsComponent},
     {path:'cart-product2-MAn', component:CartProduct2RetailerManComponent},
