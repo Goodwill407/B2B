@@ -134,38 +134,38 @@ export class ViewMdeliveryChallanComponent {
   }
 
   processGroupedProducts(orderedSet: any[], availableSet: any[]): any[] {
-    const groupedByDesignNumber: any = {};
+    const groupedByDesignNumberAndColor: any = {};
 
     orderedSet.forEach((product) => {
-        const designKey = product.designNumber;
+        const designKey = `${product.designNumber}-${product.colourName}`; // Include color in the key
 
-        if (!groupedByDesignNumber[designKey]) {
-            groupedByDesignNumber[designKey] = {
+        if (!groupedByDesignNumberAndColor[designKey]) {
+            groupedByDesignNumberAndColor[designKey] = {
                 designNumber: product.designNumber,
                 colourName: product.colourName,
                 colourImage: product.colourImage,
-                quantities: {},  // Store ordered quantities
-                availableQuantities: {}, // Store available quantities
+                quantities: {},  
+                availableQuantities: {}, 
             };
         }
 
-        // Assign ordered quantity
-        groupedByDesignNumber[designKey].quantities[product.size] = product.quantity;
+        groupedByDesignNumberAndColor[designKey].quantities[product.size] = product.quantity;
 
         // Find matching available quantity
         const matchingAvailable = availableSet.find(
             (avail) =>
                 avail.designNumber === product.designNumber &&
+                avail.colourName === product.colourName && // Match color too!
                 avail.size === product.size &&
                 parseFloat(avail.price) === parseFloat(product.price)
         );
 
-        groupedByDesignNumber[designKey].availableQuantities[product.size] =
+        groupedByDesignNumberAndColor[designKey].availableQuantities[product.size] =
             matchingAvailable ? matchingAvailable.quantity : 0;
     });
 
-    console.log('Grouped Data:', Object.values(groupedByDesignNumber)); // ✅ Log final data before sending to UI
-    return Object.values(groupedByDesignNumber);
+    console.log('Grouped Data:', Object.values(groupedByDesignNumberAndColor)); 
+    return Object.values(groupedByDesignNumberAndColor);
 }
 
 

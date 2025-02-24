@@ -27,7 +27,7 @@
                                 <!-- <td class="text-center">{{data.status}}</td> -->
                                 <td class="text-center">{{data.contativeDate | date:'short'}}</td> <!-- You can format the date here -->
                                 <td class="text-center"
-                                    [routerLink]="['/retailer/new/retailerpo-generate',{id: data.id}]">
+                                    [routerLink]="['/retailer/new/retailer-view-order',{id: data._id}]">
                                     <button class="btn"><i class="bi bi-eye h5"></i></button>
                                 </td>
                             </tr>

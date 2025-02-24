@@ -166,9 +166,6 @@ getAllProducts() {
 
     processGroupedProducts(productSet: any[]): any[] {
       const groupedByDesignColour: { [key: string]: any } = {};
-      let totalGrandTotal = 0;
-      let totalGST = 0;
-      let totalSub = 0;
     
       productSet.forEach((product) => {
         const key = `${product.designNumber}-${product.colourName}`;
@@ -184,28 +181,20 @@ getAllProducts() {
           };
         }
     
-        // Aggregate quantity for the same size
+        // Only update quantities if the size isn't already accounted for
         if (product.size) {
-          groupedByDesignColour[key].quantities[product.size] =
-            (groupedByDesignColour[key].quantities[product.size] || 0) + product.quantity;
+          if (!groupedByDesignColour[key].quantities[product.size]) {
+            groupedByDesignColour[key].quantities[product.size] = 0;
+          }
+          groupedByDesignColour[key].quantities[product.size] += product.quantity;
         }
     
-        // Update the total price
-        groupedByDesignColour[key].totalPrice += product.quantity * parseFloat(product.price);
+        // Prevent duplicate total price calculations
+        if (!groupedByDesignColour[key].totalPriceAdded) {
+          groupedByDesignColour[key].totalPrice = product.quantity * parseFloat(product.price);
+          groupedByDesignColour[key].totalPriceAdded = true; // Mark as added to avoid duplication
+        }
       });
-    
-      Object.values(groupedByDesignColour).forEach((group: any) => {
-        group.subTotal = Object.values(group.quantities).reduce((sum: number, qty: any) => sum + qty, 0);
-        group.gst = this.calculateGST(group.subTotal);
-        totalGST += group.gst;
-        totalSub += group.subTotal;
-        group.grandTotal = this.calculateGrandTotal(group.subTotal, group.gst);
-        totalGrandTotal += group.grandTotal;
-      });
-    
-      this.Totalsub = totalSub;
-      this.gst = totalGST;
-      this.totalGrandTotal = totalGrandTotal;
     
       return Object.values(groupedByDesignColour);
     }
@@ -406,36 +395,30 @@ getPendingQuantity(designNumber: string, size: string): number {
 
     flattenProductData(productSet: any[]): any[] {
       const flatList: any[] = [];
-
-      // Iterate through each product in the set
+    
       productSet.forEach((product) => {
-          const designKey = product.designNumber; // Assuming each product has a designNumber
-
-          // Check if we already have a row for this designNumber + colourName
-          let existingRow = flatList.find(row => row.designNumber === designKey && row.colourName === product.colourName);
-
-          // If no existing row, create a new one
-          if (!existingRow) {
-              existingRow = {
-                  designNumber: product.designNumber,
-                  colourName: product.colourName,
-                  colourImage: product.colourImage,
-                  colour: product.colour,
-                  quantities: {},
-                  totalPrice: 0
-              };
-              flatList.push(existingRow);
-          }
-
-          // Update quantities for this specific size
-          if (product.size && product.quantity) {
-              existingRow.quantities[product.size] = (existingRow.quantities[product.size] || 0) + product.quantity;
-              existingRow.totalPrice += product.quantity * parseFloat(product.price); // Assuming price is a string
-          }
+        const existingRow = flatList.find(
+          row => row.designNumber === product.designNumber && row.colourName === product.colourName
+        );
+    
+        if (!existingRow) {
+          flatList.push({
+            designNumber: product.designNumber,
+            colourName: product.colourName,
+            colourImage: product.colourImage,
+            colour: product.colour,
+            quantities: { [product.size]: product.quantity },
+            totalPrice: parseFloat(product.price) * product.quantity
+          });
+        } else {
+          existingRow.quantities[product.size] = (existingRow.quantities[product.size] || 0) + product.quantity;
+          existingRow.totalPrice += parseFloat(product.price) * product.quantity;
+        }
       });
-
+    
       return flatList;
-  }
+    }
+    
 
   printPurchaseOrder(): void {
     const data = document.getElementById('purchase-order');
