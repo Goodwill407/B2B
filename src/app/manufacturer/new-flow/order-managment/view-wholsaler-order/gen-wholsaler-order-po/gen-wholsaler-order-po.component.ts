@@ -395,30 +395,36 @@ getPendingQuantity(designNumber: string, size: string): number {
 
     flattenProductData(productSet: any[]): any[] {
       const flatList: any[] = [];
-    
+
+      // Iterate through each product in the set
       productSet.forEach((product) => {
-        const existingRow = flatList.find(
-          row => row.designNumber === product.designNumber && row.colourName === product.colourName
-        );
-    
-        if (!existingRow) {
-          flatList.push({
-            designNumber: product.designNumber,
-            colourName: product.colourName,
-            colourImage: product.colourImage,
-            colour: product.colour,
-            quantities: { [product.size]: product.quantity },
-            totalPrice: parseFloat(product.price) * product.quantity
-          });
-        } else {
-          existingRow.quantities[product.size] = (existingRow.quantities[product.size] || 0) + product.quantity;
-          existingRow.totalPrice += parseFloat(product.price) * product.quantity;
-        }
+          const designKey = product.designNumber; // Assuming each product has a designNumber
+
+          // Check if we already have a row for this designNumber + colourName
+          let existingRow = flatList.find(row => row.designNumber === designKey && row.colourName === product.colourName);
+
+          // If no existing row, create a new one
+          if (!existingRow) {
+              existingRow = {
+                  designNumber: product.designNumber,
+                  colourName: product.colourName,
+                  colourImage: product.colourImage,
+                  colour: product.colour,
+                  quantities: {},
+                  totalPrice: 0
+              };
+              flatList.push(existingRow);
+          }
+
+          // Update quantities for this specific size
+          if (product.size && product.quantity) {
+              existingRow.quantities[product.size] = (existingRow.quantities[product.size] || 0) + product.quantity;
+              existingRow.totalPrice += product.quantity * parseFloat(product.price); // Assuming price is a string
+          }
       });
-    
+
       return flatList;
-    }
-    
+  }
 
   printPurchaseOrder(): void {
     const data = document.getElementById('purchase-order');
@@ -459,27 +465,26 @@ getPendingQuantity(designNumber: string, size: string): number {
     }
   }
 
-  onQuantityChange(row: any, size: string): void {
-    if (!row || !size) return; // Ensure valid input
-
-    const newQuantity = row.quantities[size];
-
-    // Prevent negative values
-    if (newQuantity < 0) {
-        row.quantities[size] = 0;
-    }
-
-    // Update `avilableSet` with modified quantity
-    const productIndex = this.avilableSet.findIndex(
-        (item) => item.designNumber === row.designNumber && item.size === size
+  onQuantityChange(row: any, size: string) {
+    console.log("Before Update:", JSON.stringify(this.avilableSet, null, 2));
+  
+    // Find the correct product in avilableSet that matches designNumber, colour, and size
+    const productToUpdate = this.avilableSet.find(
+      (p) => 
+        p.designNumber === row.designNumber && 
+        p.colourName === row.colourName && 
+        p.size === size
     );
-
-    if (productIndex !== -1) {
-        this.avilableSet[productIndex].quantity = newQuantity;
+  
+    if (productToUpdate) {
+      productToUpdate.quantity = row.quantities[size]; // Update the correct size
+    } else {
+      console.warn("Matching product not found for", row.designNumber, row.colourName, size);
     }
-
-    console.log("Updated avilableSet:", this.avilableSet);
-}
+  
+    console.log("After Update:", JSON.stringify(this.avilableSet, null, 2));
+  }
+  
 
 
   
