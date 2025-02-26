@@ -29,6 +29,7 @@ import { WolesellerPendingOrdersComponent } from "./new-flow/order-managment/wol
 import { WholsellerPoComponent } from "./new-flow/order-managment/wholseller-po/wholseller-po.component";
 import { ViewWholesalerPoComponent } from "./new-flow/order-managment/wholseller-po/view-wholesaler-po/view-wholesaler-po.component";
 import { ViewWholesellerPendingOrderComponent } from "./new-flow/order-managment/woleseller-pending-orders/view-wholeseller-pending-order/view-wholeseller-pending-order.component";
+import { GenPerformaInvoiceComponent } from "./new-flow/order-managment/view-wholsaler-order/gen-performa-invoice/gen-performa-invoice.component";
 
 
 export const M_Auth: Route[] = [
@@ -54,6 +55,7 @@ export const M_Auth: Route[] = [
     { path: 'wls-list', component: ViewWholsalerOrderComponent },
     { path: 'wls-pen-list', component: WolesellerPendingOrdersComponent },
     { path: 'wls-list-po', component: GenWholsalerOrderPoComponent },
+    { path: 'wls-list-perf', component: GenPerformaInvoiceComponent },
     { path: 'wls-po-listview', component: ViewWholesalerPoComponent },
     { path: 'wls-po-pen-listview', component: ViewWholesellerPendingOrderComponent },
     { path: 'wls-po-list', component: WholsellerPoComponent },   
