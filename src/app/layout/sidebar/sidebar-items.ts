@@ -2232,6 +2232,18 @@ export const ROUTES2: RouteInfo[] = [
         role: [''],
         submenu: [],
       },  
+      {
+        path: '/wholesaler/order-mng/Performainvoiceshow',
+        title: 'Proforma Invoice',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },  
          
     ],
   },

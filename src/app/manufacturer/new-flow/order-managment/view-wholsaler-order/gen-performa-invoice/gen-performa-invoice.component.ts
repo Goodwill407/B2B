@@ -266,34 +266,75 @@ return original.map((origItem: any) => {
 //   this.sendToBackend("mnf-delivery-challan", pendingCartBody, "Pending Quantities Updated Successfully");
 // }
 addpo() {
-console.log("Ordered Set (Fixed Data):", this.orderedSet);
-console.log("Available Set (Editable Data):", this.avilableSet);
-console.log("Retailer POs:", this.responseData.retailerPOs);
+  console.log("Ordered Set:", this.orderedSet);
+  console.log("Available Set:", this.avilableSet);
 
-const payload = {
-  email: this.responseData.wholesaler.email,
-  productBy: this.responseData.manufacturer.email,
-  poNumber: this.responseData.poNumber,
-  deliveryChallanNumber: this.Deliverychllanid,
-  orderedSet: this.orderedSet,  // Fixed (original) data
-  avilableSet: this.avilableSet, // Modified (user-edited) data
-  retailerPOs: this.responseData.retailerPOs, // ✅ Now sending retailer POs
-  manufacturer: this.responseData.manufacturer,
-  wholesaler: this.responseData.wholesaler,
-};
+  const payloads: any[] = []; // To store all API calls before sending
+  const dispatchedItems: any[] = [];
+  const pendingItems: any[] = [];
 
-console.log("Final Payload:", payload);
+  this.orderedSet.forEach((orderItem) => {
+    const availableItem = this.avilableSet.find(
+      (avlItem) =>
+        avlItem.designNumber === orderItem.designNumber &&
+        avlItem.size === orderItem.size &&
+        avlItem.colour === orderItem.colour
+    );
 
-this.authService.post("mnf-delivery-challan", payload).subscribe(
-  () => {
-    this.communicationService.customSuccess("Product Successfully Added in Cart");
-  },
-  (error) => {
-    this.communicationService.customError1(error.error.message);
+    if (availableItem) {
+      const orderedQty = orderItem.quantity;
+      const availableQty = availableItem.quantity;
+
+      if (orderedQty > 0) {  // We only process items with a quantity greater than 0
+        if (orderedQty === availableQty) {
+          // ✅ If order and available qty are same → Add to Dispatched list
+          dispatchedItems.push({ ...orderItem, quantity: availableQty });
+        } else if (orderedQty > availableQty) {
+          // ✅ If ordered qty is greater than available qty → Add both to Dispatched and Pending lists
+          dispatchedItems.push({ ...orderItem, quantity: availableQty }); // Dispatch the available quantity
+          pendingItems.push({ ...orderItem, quantity: orderedQty - availableQty }); // Remaining quantity as Pending
+        }
+      }
+    }
+  });
+
+  // Remove items with 0 quantity from dispatched and pending lists before adding them to the payload
+  const finalDispatchedItems = dispatchedItems.filter(item => item.quantity > 0);
+  const finalPendingItems = pendingItems.filter(item => item.quantity > 0);
+
+  // Add the dispatched and pending items to their respective payloads
+  if (finalDispatchedItems.length > 0) {
+    payloads.push({
+      ...this.createPayload("Dispatched", finalDispatchedItems),
+    });
   }
-);
-}
 
+  if (finalPendingItems.length > 0) {
+    payloads.push({
+      ...this.createPayload("Pending", finalPendingItems),
+    });
+  }
+
+  // If no items to dispatch or mark as pending, we exit early
+  if (payloads.length === 0) {
+    console.log("No items to update, skipping API calls.");
+    return;
+  }
+
+  console.log("Final Payloads:", payloads);
+
+  // 🔥 Send all API requests one by one
+  payloads.forEach((payload) => {
+    this.authService.post("perform-invoice", payload).subscribe(
+      () => {
+        this.communicationService.customSuccess("Product Successfully Updated");
+      },
+      (error) => {
+        this.communicationService.customError1(error.error.message);
+      }
+    );
+  });
+}
 
 
 
@@ -305,14 +346,14 @@ return product.totalPrice
 }
 
 // Function to create payload with status
-createPayload(status: string, setData: any, deliveryChallanNumber: any) {
-return {
-  ...this.responseData,
-  status,
-  deliveryChallanNumber,
-  set: setData,
-};
-}
+// createPayload(status: string, setData: any, deliveryChallanNumber: any) {
+// return {
+//   ...this.responseData,
+//   status,
+//   deliveryChallanNumber,
+//   set: setData,
+// };
+// }
 
 // Function to send data to the backend
 sendToBackend(endpoint: string, payload: any, successMessage: string) {
@@ -340,6 +381,19 @@ updatePendingQuantities(designNumber: string, size: string, quantity: number) {
 }
 
   
+createPayload(status: string, setData: any) {
+  return {
+    email: this.responseData.wholesaler.email,
+    productBy: this.responseData.manufacturer.email,
+    poNumber: this.responseData.poNumber,
+    deliveryChallanNumber: this.Deliverychllanid,
+    orderedSet: setData, // Pass only required items
+    retailerPOs: this.responseData.retailerPOs, 
+    manufacturer: this.responseData.manufacturer,
+    wholesaler: this.responseData.wholesaler,
+    status: status,
+  };
+}
 
   
   // Helper function to generate a unique ID (you can modify this if your backend uses a different ID generation strategy)
@@ -433,7 +487,12 @@ onQuantityChange(row: any, size: string): void {
   );
 
   if (productToUpdate) {
-    productToUpdate.quantity = row.quantities[size]; // Update quantity
+    // Update quantity in available set
+    productToUpdate.quantity = row.quantities[size]; 
+
+    // Optionally, you can add other logic here (e.g., update pending quantities, etc.)
+    this.updatePendingQuantities(row.designNumber, size, row.quantities[size]);
+
   } else {
     console.warn("Matching product not found for", row.designNumber, row.colourName, size);
   }

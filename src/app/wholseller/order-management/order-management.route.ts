@@ -15,6 +15,7 @@ import { FinalProductWhComponent } from "../new-flow/product-mng/final-product-w
 import { ViwFinalProductPoWhComponent } from "../new-flow/product-mng/final-product-wh/viw-final-product-po-wh/viw-final-product-po-wh.component";
 import { DistributeMProductComponent } from "../new-flow/product-mng/final-product-wh/distribute-m-product/distribute-m-product.component";
 import { ViewPlaceOrderPoComponent } from "./place-order/view-place-order-po/view-place-order-po.component";
+import { PerformaInvoiceComponent } from "../new-flow/product-mng/performa-invoice/performa-invoice.component";
 
 export const Order_Management_Route:Route[]= [
     {path: 'place-order', component: PlaceOrderComponent},
@@ -33,4 +34,5 @@ export const Order_Management_Route:Route[]= [
     {path: 'okproductlist', component: FinalProductWhComponent },
     {path: 'View-MNFDChalan', component: ViewMdeliveryChallanComponent },
     {path: 'View-MNFDChalan-sfinal', component: ViewDeliveryFinalComponent },
+    {path: 'Performainvoiceshow', component: PerformaInvoiceComponent},
 ]

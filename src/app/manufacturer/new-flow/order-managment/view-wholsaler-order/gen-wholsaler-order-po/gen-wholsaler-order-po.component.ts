@@ -150,56 +150,53 @@ getAllProducts() {
 
     
 
-    extractSizesAndPrices(productSet: any[]): void {
-      const uniqueSizes = new Set<string>();
-      this.priceHeaders = {}; // Reset size-price mapping
+extractSizesAndPrices(productSet: any[]): void {
+  const uniqueSizes = new Set<string>();
 
-      productSet.forEach((product) => {
-        if (product.size && product.price > 0) {
-          uniqueSizes.add(product.size);
-          this.priceHeaders[product.size] = product.price;
-        }
-      });
-
-      this.sizeHeaders = Array.from(uniqueSizes); // Convert Set to Array for the table header
+  productSet.forEach((product) => {
+    if (product.size) {
+      uniqueSizes.add(product.size);
     }
+  });
 
-    processGroupedProducts(productSet: any[]): any[] {
-      const groupedByDesignColour: { [key: string]: any } = {};
-    
-      productSet.forEach((product) => {
-        const key = `${product.designNumber}-${product.colourName}`;
-    
-        if (!groupedByDesignColour[key]) {
-          groupedByDesignColour[key] = {
-            designNumber: product.designNumber,
-            colourName: product.colourName,
-            colourImage: product.colourImage,
-            colour: product.colour,
-            quantities: {},
-            totalPrice: 0,
+  this.sizeHeaders = Array.from(uniqueSizes); // Convert Set to Array
+}
+
+
+processGroupedProducts(productSet: any[]): any[] {
+  const groupedProducts: { [key: string]: any } = {};
+
+  productSet.forEach((product) => {
+      const key = `${product.designNumber}-${product.colourName}`;
+
+      if (!groupedProducts[key]) {
+          groupedProducts[key] = {
+              designNumber: product.designNumber,
+              colourName: product.colourName,
+              colourImage: product.colourImage,
+              colour: product.colour,
+              quantities: {} // Grouped by size
           };
-        }
-    
-        // Only update quantities if the size isn't already accounted for
-        if (product.size) {
-          if (!groupedByDesignColour[key].quantities[product.size]) {
-            groupedByDesignColour[key].quantities[product.size] = 0;
+      }
+
+      // Ensure size exists before assigning
+      if (product.size) {
+          if (!groupedProducts[key].quantities[product.size]) {
+              groupedProducts[key].quantities[product.size] = {
+                  ordered: 0,
+                  available: 0,
+              };
           }
-          groupedByDesignColour[key].quantities[product.size] += product.quantity;
-        }
-    
-        // Prevent duplicate total price calculations
-        if (!groupedByDesignColour[key].totalPriceAdded) {
-          groupedByDesignColour[key].totalPrice = product.quantity * parseFloat(product.price);
-          groupedByDesignColour[key].totalPriceAdded = true; // Mark as added to avoid duplication
-        }
-      });
-    
-      return Object.values(groupedByDesignColour);
-    }
-    
-    
+
+          // ✅ Sum ordered quantity instead of overwriting
+          groupedProducts[key].quantities[product.size].ordered += product.quantity;
+          groupedProducts[key].quantities[product.size].available = product.quantity; // Keep last value for available
+      }
+  });
+
+  return Object.values(groupedProducts);
+}
+
 
     calculateTotalPrice(row: any): number {
       let total = 0;
@@ -308,36 +305,178 @@ calculateQuantities(original: any, updated: any) {
 //   this.sendToBackend("mnf-delivery-challan", updatedCartBody, "Product Successfully Added in Cart");
 //   this.sendToBackend("mnf-delivery-challan", pendingCartBody, "Pending Quantities Updated Successfully");
 // }
-addpo() {
-  console.log("Ordered Set (Fixed Data):", this.orderedSet);
-  console.log("Available Set (Editable Data):", this.avilableSet);
-  console.log("Retailer POs:", this.responseData.retailerPOs);
+// addpo() {
+//   console.log("Ordered Set Before Merge:", this.orderedSet);
+//   console.log("Available Set Before Merge:", this.avilableSet);
 
+//   // ✅ **Merge Ordered Set Before Sending API (Summing Ordered Quantities)**
+//   const mergedOrderedSet: { [key: string]: any } = {};
+//   this.orderedSet.forEach(item => {
+//     const key = `${item.designNumber}-${item.colourName}-${item.size}`;
+
+//     if (!mergedOrderedSet[key]) {
+//       mergedOrderedSet[key] = { ...item };
+//     } else {
+//       mergedOrderedSet[key].ordered += item.ordered; // ✅ Sum ordered quantities
+//     }
+//   });
+
+//   const finalOrderedSet = Object.values(mergedOrderedSet); // Convert back to array
+
+//   // ✅ **Merge Available Set Before Sending API (Summing Available Quantities)**
+//   const mergedAvailableSet: { [key: string]: any } = {};
+//   this.avilableSet.forEach(item => {
+//     const key = `${item.designNumber}-${item.colourName}-${item.size}`;
+
+//     if (!mergedAvailableSet[key]) {
+//       mergedAvailableSet[key] = { ...item };
+//     } else {
+//       mergedAvailableSet[key].available += item.available; // ✅ Sum available quantities
+//     }
+//   });
+
+//   const finalAvailableSet = Object.values(mergedAvailableSet); // Convert back to array
+
+//   // ✅ **Prepare Final Payload**
+//   const payload = {
+//       email: this.responseData.wholesaler.email,
+//       productBy: this.responseData.manufacturer.email,
+//       poNumber: this.responseData.poNumber,
+//       deliveryChallanNumber: this.Deliverychllanid,
+//       orderedSet: finalOrderedSet, // ✅ Now merged correctly
+//       avilableSet: finalAvailableSet, // ✅ Now merged correctly
+//       retailerPOs: this.responseData.retailerPOs,
+//       manufacturer: this.responseData.manufacturer,
+//       wholesaler: this.responseData.wholesaler,
+//   };
+
+//   console.log("Final Payload (After Merging):", JSON.stringify(payload, null, 2));
+
+//   // ✅ **Send API Request**
+//   this.authService.post("mnf-delivery-challan", payload).subscribe(
+//       () => {
+//           this.communicationService.customSuccess("Product Successfully Added in Cart");
+//       },
+//       (error) => {
+//           this.communicationService.customError1(error.error.message);
+//       }
+//   );
+// }
+addpo() {
+  console.log("Ordered Set Before Merge:", this.orderedSet);
+  console.log("Available Set (Unchanged):", this.avilableSet);
+
+  // ✅ **1️⃣ Merge Ordered Set (Summing Ordered Quantities)**
+  const mergedOrderedSet: { [key: string]: any } = {};
+  this.orderedSet.forEach(item => {
+    const key = `${item.designNumber}-${item.colourName}-${item.size}`;
+
+    if (!mergedOrderedSet[key]) {
+      mergedOrderedSet[key] = { ...item, quantity: item.quantity }; // ✅ Copy and store quantity
+    } else {
+      mergedOrderedSet[key].quantity += item.quantity; // ✅ Sum ordered quantities
+    }
+  });
+
+  const finalOrderedSet = Object.values(mergedOrderedSet); // Convert back to array
+
+  // ✅ **2️⃣ Use Available Set as it is (No Merging or Modification)**
+
+  //   const finalMergedSet = mergedAvailableSet.map((item) => {
+//       const matchingOrderedItem = mergedOrderedSet.find(
+//           (ord) =>
+//               ord.designNumber === item.designNumber &&
+//               ord.colourName === item.colourName &&
+//               ord.size === item.size
+//       );
+
+//       if (matchingOrderedItem) {
+//           item.ordered = matchingOrderedItem.ordered; // ✅ Ensure ordered quantity is taken from orderedSet
+//           item.available = item.available - matchingOrderedItem.ordered;
+//           item.available = item.available >= 0 ? item.available : 0; // ✅ Prevent negative values
+//       }
+
+//       return item;
+//   });
+  const finalAvailableSet = [...this.avilableSet]; // ✅ Keep availableSet unchanged
+
+  // ✅ **3️⃣ Prepare Final Payload**
   const payload = {
-    email: this.responseData.wholesaler.email,
-    productBy: this.responseData.manufacturer.email,
-    poNumber: this.responseData.poNumber,
-    deliveryChallanNumber: this.Deliverychllanid,
-    orderedSet: this.orderedSet,  // Fixed (original) data
-    avilableSet: this.avilableSet, // Modified (user-edited) data
-    retailerPOs: this.responseData.retailerPOs, // ✅ Now sending retailer POs
-    manufacturer: this.responseData.manufacturer,
-    wholesaler: this.responseData.wholesaler,
+      email: this.responseData.wholesaler.email,
+      productBy: this.responseData.manufacturer.email,
+      poNumber: this.responseData.poNumber,
+      deliveryChallanNumber: this.Deliverychllanid,
+      orderedSet: finalOrderedSet, // ✅ Now merged correctly
+      avilableSet: finalAvailableSet, // ✅ Unchanged
+      retailerPOs: this.responseData.retailerPOs,
+      manufacturer: this.responseData.manufacturer,
+      wholesaler: this.responseData.wholesaler,
   };
 
-  console.log("Final Payload:", payload);
+  console.log("Final Payload (After Fix):", JSON.stringify(payload, null, 2));
 
+  // ✅ **4️⃣ Send API Request**
   this.authService.post("mnf-delivery-challan", payload).subscribe(
-    () => {
-      this.communicationService.customSuccess("Product Successfully Added in Cart");
-    },
-    (error) => {
-      this.communicationService.customError1(error.error.message);
-    }
+      () => {
+          this.communicationService.customSuccess("Product Successfully Added in Cart");
+      },
+      (error) => {
+          this.communicationService.customError1(error.error.message);
+      }
   );
 }
 
 
+// addpo() {
+//   console.log("Ordered Set (Before Merge):", this.orderedSet);
+//   console.log("Available Set (Before Merge):", this.avilableSet);
+//   console.log("Retailer POs:", this.responseData.retailerPOs);
+
+//   // ✅ Merge Ordered and Available Sets Properly
+//   const mergedOrderedSet = this.mergeEntries(this.orderedSet, "ordered");  // ✅ Ensure ordered quantities are correct
+//   const mergedAvailableSet = this.mergeEntries(this.avilableSet, "available"); // ✅ Ensure available quantities are correct
+
+//   // ✅ Correctly merge same `designNumber`, `colourName`, and `size`
+//   const finalMergedSet = mergedAvailableSet.map((item) => {
+//       const matchingOrderedItem = mergedOrderedSet.find(
+//           (ord) =>
+//               ord.designNumber === item.designNumber &&
+//               ord.colourName === item.colourName &&
+//               ord.size === item.size
+//       );
+
+//       if (matchingOrderedItem) {
+//           item.ordered = matchingOrderedItem.ordered; // ✅ Ensure ordered quantity is taken from orderedSet
+//           item.available = item.available - matchingOrderedItem.ordered;
+//           item.available = item.available >= 0 ? item.available : 0; // ✅ Prevent negative values
+//       }
+
+//       return item;
+//   });
+
+//   const payload = {
+//       email: this.responseData.wholesaler.email,
+//       productBy: this.responseData.manufacturer.email,
+//       poNumber: this.responseData.poNumber,
+//       deliveryChallanNumber: this.Deliverychllanid,
+//       orderedSet: mergedOrderedSet,  // ✅ FIXED: Orders now correctly reflect quantity as ordered
+//       avilableSet: finalMergedSet, // ✅ FIXED: Available quantities are correct
+//       retailerPOs: this.responseData.retailerPOs,
+//       manufacturer: this.responseData.manufacturer,
+//       wholesaler: this.responseData.wholesaler,
+//   };
+
+//   console.log("Final Payload (After Correct Merge):", JSON.stringify(payload, null, 2));
+
+//   this.authService.post("mnf-delivery-challan", payload).subscribe(
+//       () => {
+//           this.communicationService.customSuccess("Product Successfully Added in Cart");
+//       },
+//       (error) => {
+//           this.communicationService.customError1(error.error.message);
+//       }
+//   );
+// }
 
 
 // Function to calculate price per product
@@ -464,27 +603,27 @@ getPendingQuantity(designNumber: string, size: string): number {
       console.error("Element with id 'purchase-order' not found.");
     }
   }
-
   onQuantityChange(row: any, size: string) {
-    console.log("Before Update:", JSON.stringify(this.avilableSet, null, 2));
-  
-    // Find the correct product in avilableSet that matches designNumber, colour, and size
     const productToUpdate = this.avilableSet.find(
-      (p) => 
-        p.designNumber === row.designNumber && 
-        p.colourName === row.colourName && 
-        p.size === size
+        (p) =>
+            p.designNumber === row.designNumber &&
+            p.colourName === row.colourName &&
+            p.size === size
     );
-  
+
     if (productToUpdate) {
-      productToUpdate.quantity = row.quantities[size]; // Update the correct size
+        productToUpdate.quantity = row.quantities[size]; // ✅ Correct field to update
     } else {
-      console.warn("Matching product not found for", row.designNumber, row.colourName, size);
+        console.warn("Matching product not found for", row.designNumber, row.colourName, size);
     }
-  
-    console.log("After Update:", JSON.stringify(this.avilableSet, null, 2));
-  }
-  
+
+    // ✅ **Remove Duplicates from `avilableSet`**
+    const mergedAvailableSet = this.mergeEntries(this.avilableSet, "available");
+    this.avilableSet = mergedAvailableSet; // ✅ Update `avilableSet` with de-duplicated data
+
+    console.log("Updated Available Quantities:", JSON.stringify(this.avilableSet, null, 2));
+}
+
 
 
   
@@ -509,15 +648,76 @@ getPendingQuantity(designNumber: string, size: string): number {
       this.updateTotals(); // Recalculate overall totals
     }
   }
-  getOrderedQuantity(designNumber: string, colourName: string, size: string): number | null {
-    const orderedItem = this.orderedSet.find(
-        (item) => item.designNumber === designNumber && 
-                  item.colourName === colourName && 
-                  item.size === size
-    );
-    return orderedItem ? orderedItem.quantity : null; // ✅ Return null if no matching size
+  getOrderedQuantity(designNumber: string, colourName: string, size: string): number {
+    return this.orderedSet
+        .filter(item => item.designNumber === designNumber && item.colourName === colourName && item.size === size)
+        .reduce((total, item) => total + item.quantity, 0); // ✅ Sum up all matching entries
 }
+// mergeEntries(productSet: any[], type: "ordered" | "available"): any[] {
+//   const mergedMap: { [key: string]: any } = {};
 
+//   productSet.forEach((product) => {
+//     const key = `${product.designNumber}-${product.colourName}-${product.size}`;
+
+//     if (!mergedMap[key]) {
+//       mergedMap[key] = {
+//         ...product,
+//         ordered: type === "ordered" ? product.quantity : 0,  // ✅ Store ordered quantity
+//         available: type === "available" ? product.quantity : 0  // ✅ Store available quantity
+//       };
+//     } else {
+//       if (type === "ordered") {
+//         mergedMap[key].ordered += product.quantity ?? 0; // ✅ Accumulate ordered quantity
+//       } else {
+//         mergedMap[key].available += product.quantity ?? 0; // ✅ Accumulate available quantity
+//       }
+//     }
+//   });
+
+//   return Object.values(mergedMap);
+// }
+// mergeEntries(productSet: any[], type: "ordered" | "available"): any[] {
+//   const mergedMap: { [key: string]: any } = {};
+
+//   productSet.forEach((product) => {
+//     const key = `${product.designNumber}-${product.colourName}-${product.size}`;
+
+//     if (!mergedMap[key]) {
+//       mergedMap[key] = {
+//         ...product,
+//         ordered: type === "ordered" ? product.quantity : 0,  // ✅ Store ordered quantity correctly
+//         available: type === "available" ? product.quantity : 0  // ✅ Store available quantity correctly
+//       };
+//     } else {
+//       if (type === "ordered") {
+//         mergedMap[key].ordered += product.quantity ?? 0; // ✅ Accumulate ordered quantity correctly
+//       } else {
+//         mergedMap[key].available += product.quantity ?? 0; // ✅ Accumulate available quantity correctly
+//       }
+//     }
+//   });
+
+//   return Object.values(mergedMap);
+// }
+
+mergeEntries(productSet: any[], type: "ordered" | "available"): any[] {
+  const mergedMap: { [key: string]: any } = {};
+
+  productSet.forEach((product) => {
+    const key = `${product.designNumber}-${product.colourName}-${product.size}`;
+
+    if (!mergedMap[key]) {
+      mergedMap[key] = {
+        ...product,
+        quantity: product.quantity ?? 0,  // ✅ Store initial quantity
+      };
+    } else {
+      mergedMap[key].quantity += product.quantity ?? 0; // ✅ Sum ordered or available quantity correctly
+    }
+  });
+
+  return Object.values(mergedMap);
+}
 
 
   }
