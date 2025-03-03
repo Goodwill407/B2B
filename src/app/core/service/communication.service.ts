@@ -188,7 +188,7 @@ export class CommunicationService {
     success() {
       Swal.fire({
         html:
-          '<span style="float: left; padding-top: 8px; font-weight: 500">Added Succesfully</span> <img style="float: right;padding-top: 10px" src="../assets/icons/cross.png">', position: 'bottom', timer: 4000, showCancelButton: false, width: 400, showConfirmButton: false, background: "#E8FFF3", color: "#47BE7D", backdrop: false
+          '<span style="float: left; padding-top: 8px; font-weight: 500">Added Succesfully</span> <img style="float: right;padding-top: 10px" src="../assets/icons/cross.png">', position: 'bottom', timer: 4000, showCancelButton: false, width: 400, showConfirmButton: false, background: "#88c4fb", color: "#ffffff", backdrop: false
       })
     }
   
@@ -258,7 +258,8 @@ export class CommunicationService {
         width: '300px',
         showConfirmButton: false,
         // background: '#DFF2E2', // Softer green
-        background: '#7ed5fe',
+        // background: '#7ed5fe',
+        background: '#88c4fb',
         color: 'white',
         backdrop: false,
         customClass: {
@@ -277,7 +278,7 @@ export class CommunicationService {
     customSuccess1(message: any) {
       Swal.fire({
         html:
-          '<span style="float: left; padding-top: 8px; font-weight: 500">' + message + '</span> <img style="float: right;padding-top: 10px" src="../assets/icons/cross.png">', position: 'bottom', timer: 3100, showCancelButton: false, width: 450, showConfirmButton: false, background: "#E8FFF3", color: "#47BE7D", backdrop: false
+          '<span style="float: left; padding-top: 8px; font-weight: 500">' + message + '</span> <img style="float: right;padding-top: 10px" src="../assets/icons/cross.png">', position: 'bottom', timer: 3100, showCancelButton: false, width: 450, showConfirmButton: false, background: "#88c4fb", color: "#fff", backdrop: false
       })
     }
 }

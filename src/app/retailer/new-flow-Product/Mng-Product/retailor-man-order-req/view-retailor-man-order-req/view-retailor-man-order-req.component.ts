@@ -169,9 +169,11 @@ export class ViewRetailorManOrderReqComponent implements OnInit {
     this.authService.patch(apiUrl, requestPayload).subscribe(
       (response) => {
         console.log('Data successfully submitted:', response);
+        this.communicationService.customSuccess1( 'Submitted Successfully');
       },
       (error) => {
         console.error('Error during submission:', error);
+        this.communicationService.customError1( 'Something Went Wrong');
       }
     );
   }

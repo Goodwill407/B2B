@@ -182,13 +182,29 @@ export class StepTwoComponent {
     }
   }
 
-  goToNextStep() {
-    if (this.colourCollections.length > 0) this.next.emit(this.productId);
+  // goToNextStep() {
+  //   if (this.colourCollections.length > 0) this.next.emit(this.productId);
+  //   else this.communicationService.showNotification('snackbar-error', 'First add any collection then go to the next page', 'bottom', 'center');
+  // }
+
+  // This method skips the step 3 & 4 and directly create product as we dont have to take min and max Quantity
+  goToNextStep() {  
+    if (this.colourCollections.length > 0){
+      this.navigateOnProduct();
+    } 
     else this.communicationService.showNotification('snackbar-error', 'First add any collection then go to the next page', 'bottom', 'center');
   }
 
   navigateOnProduct() {
-    this.router.navigateByUrl('mnf/manage-product');
+      this.communicationService.showNotification(
+        'snackbar-success',
+        'Saved Successfully...!!!',
+        'bottom',
+        'center'
+      );
+      setTimeout(() => {
+        this.router.navigate(['mnf/new/manage-product2']);
+      }, 1500);   
   }
 
   createFormData(): Promise<FormData> {

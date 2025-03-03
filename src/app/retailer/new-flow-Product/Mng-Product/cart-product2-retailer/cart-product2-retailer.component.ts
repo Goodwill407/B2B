@@ -67,6 +67,7 @@ interface Product {
 })
 export class CartProduct2RetailerComponent implements OnInit {
   products: Product[] = [];
+  serverError: boolean = false;
   userProfile: any;
   sizeHeaders: string[] = [];
   priceHeaders: PriceHeaders = {};
@@ -102,7 +103,9 @@ export class CartProduct2RetailerComponent implements OnInit {
           this.extractSizesAndPrices(this.products); // Extract sizes and prices
         }
       },
-      (error) => console.error(error)
+      (error) => {
+        this.serverError = true;
+        console.error(error)}
     );
   }
 

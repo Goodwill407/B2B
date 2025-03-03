@@ -7,6 +7,8 @@ import { AccordionModule } from 'primeng/accordion';
 import { TableModule } from 'primeng/table';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { Location } from '@angular/common';
+
 @Component({
   selector: 'app-gen-po-retailer-man',
   standalone: true,
@@ -59,7 +61,8 @@ export class GenPoRetailerManComponent {
     public authService: AuthService,
     private router: Router,
     private communicationService: CommunicationService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private location: Location
   ) {
     this.email1 = this.route.snapshot.paramMap.get('email') ?? '';
     this.productby1 = this.route.snapshot.paramMap.get('productBy') ?? '';
@@ -83,20 +86,25 @@ export class GenPoRetailerManComponent {
         
         // Update purchaseOrder from the response
         this.purchaseOrder = {
-          supplierName: res.manufacturer.companyName,
-          supplierDetails: res.manufacturer.fullName,
-          supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.city}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
-          supplierContact: res.manufacturer.mobNumber,
-          supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
-          buyerName: res.retailer.companyName,
+          supplierName: res.manufacturer.companyName|| 'Company Name Not Provided',
+          supplierDetails: res.manufacturer.fullName || 'Full Name Not Provided',
+          supplierAddress: `${res.manufacturer.address || '' } ${res.manufacturer.city || ''} ${res.manufacturer.state || ''} ${res.manufacturer.pinCode || ''}`,
+          supplierContact: res.manufacturer.mobNumber || 'Mobile Number Not Provided',
+          supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN Not Provided',
+          supplierEmail: res.manufacturer.email || 'Email Not Provided',
+          supplierPAN: res.manufacturer.pan || 'PAN Not Provided',
+          buyerName: res.retailer.companyName || 'Company Name Not Provided',
           logoUrl: res.retailer.profileImg || '', // Handle missing logo
-          buyerAddress: `${res.retailer.address || ''}, ${res.retailer.city || ''}, ${res.retailer.state || ''} - ${res.retailer.pinCode || ''}`,
-          buyerPhone: res.retailer.mobNumber || '',
-          buyerEmail: res.retailer.email || '',
-          email: res.retailer.email || '',  // Here, we are setting the retailer's email
-          productBy: res.manufacturer.email || '',  // Ensure manufacturer email is correctly assigned
-          buyerDetails: res.retailer.fullName || '',
-          buyerGSTIN: res.retailer.GSTIN || 'GSTIN_NOT_PROVIDED',
+          buyerPAN: res.retailer.pan || 'PAN Not Provided',
+          buyerAddress: `${res.retailer.address || ''} ${res.retailer.city || ''} ${res.retailer.state || ''} ${res.retailer.pinCode || ''}`,
+          buyerPhone: res.retailer.mobNumber ||  'Mobile Number Not Provided',
+          buyerEmail: res.retailer.email || 'Email Not Provided',
+          email: res.retailer.email || 'Email Not Provided',  // Here, we are setting the retailer's email
+          productBy: res.manufacturer.email || 'Email Not Provided',  // Ensure manufacturer email is correctly assigned
+          buyerDetails: res.retailer.fullName || 'Full Name Not Provided',
+          
+          buyerGSTIN: res.retailer.GSTIN || 'GSTIN Not Provided',
+          poDate: new Date().toLocaleDateString(),
           orderDate: new Date().toLocaleDateString(),
           orderNumber: res.orderNumber,
           products: res.products?.[0]?.set || [], // Updated to match new response structure
@@ -123,6 +131,9 @@ export class GenPoRetailerManComponent {
     );
   }
     
+  navigateFun() {
+    this.location.back();
+  }
 
   extractSizesAndPrices(productSet: any[]): void {
     const uniqueSizes = new Set<string>();

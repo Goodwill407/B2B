@@ -1,0 +1,47 @@
+button {
+    background-color: #87CEEB; /* Sky Blue */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+button:hover {
+    background-color: #00BFFF; /* Deep Sky Blue */
+    transform: scale(1.05);
+}
+
+button:focus {
+    outline: none;
+}
+
+button:active {
+    background-color: #4682B4; /* Steel Blue */
+}
+
+/* Table header style */
+.table-header th {
+  text-align: center;
+  padding: 10px;
+  background-color: #f4f4f4;
+  border: 1px solid #ddd; /* Add border to the header */
+}
+
+.even-row {
+  background-color: #f9f9f9;
+}
+
+.odd-row {
+  background-color: #fff;
+}
+
+.bordered-table th, .bordered-table td {  /* Apply border to both header and body cells */
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ddd;  /* Add border to all cells */
+}
+
+  

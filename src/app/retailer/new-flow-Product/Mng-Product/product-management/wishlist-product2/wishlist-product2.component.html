@@ -1,61 +1,56 @@
 <section class="content">
-    <div class="content-block">
-        <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i>  Products in Your Wishlist </h4>
-        <div class="ads-flex">
-         <div class="flex-grow-1">
-            <div class="card p-4">
+  <div class="content-block">
+    <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Products in Your Wishlist </h4>
+    <div class="ads-flex">
+      <div class="flex-grow-1">
+        <div class="card p-4">
 
-                <div class="cards-container">
-                    @for(product of products; track product){
-                        <div class="product-card" (mouseenter)="onMouseEnter(product)" (mouseleave)="onMouseLeave(product)">
-                          <div class="design-no">
-                            <p class="mb-0 d-flex justify-content-between">
-                              <span>{{product.productUser | titlecase }}</span>
-                              <span>{{product.brand}}</span>
-                            </p>
-                            Design No : {{product.designNo}}
-                          </div>
-                          <div class="image-carousel">
-                            <img class="main-img" [src]="product.selectedImageUrl" alt="{{product.title}}"   (click)="navigateAddToCart(product.productUser,product.productOwnerEmail,product.productId )">
-                            <div class="carousel-dots">
-                              <span *ngFor="let img of product.selectedImageUrls; let i = index" [class.active]="i === product.hoverIndex" (click)="navigateToImage(product, i)"></span>
-                            </div>
-                          </div>
-                          <div class="product-details">
-                            <div class="color-options mt-0">
-                              <button *ngFor="let color of product.colors" [ngStyle]="{'background-color': color, 'border': color === '#FFFFFF' ? '1px solid #000' : 'none'}" [class.active]="product.selectedColor === color" (click)="changeProductImage(product, color)"></button>
-                            </div>
-                            <h6 class="title" (click)="navigateAddToCart(product.productUser,product.productOwnerEmail,product.productId )">{{product.title}}</h6>
-                            <p class="mb-0 truncate-text">{{ product.description }}</p>
-                            <div class="availability">
-                              <span *ngIf="product.stock > 0" class="in-stock">In stock - Qty {{product.stock}}</span>
-                              <span *ngIf="product.stock === 0" class="out-of-stock">Out of stock</span>
-                            </div>
-                            <div class="wish-button d-flex justify-content-between">
-                              <button class="btn add-to-cart" (click)="navigateAddToCart(product.productUser,product.productOwnerEmail,product.productId )">Add To Cart</button>
-                              <button class="btn delete" (click)="deleteWishlistItem(product.wishlistId)"><i class="bi bi-trash-fill"></i></button>
-                            </div>
-                          </div>
-                          <small class="date">Item Added : {{product.createdAt | date:'dd MMM yyyy'}}</small>
-                        </div>
-                      }@if(!products){
-                        <p class="data-not-found mt-3 justify-content-center text-center">Wishliste Products Not Found [Server Error] .</p>
-                        }@else{
-                        <p class="data-not-found mt-3 justify-content-center text-center">No products in Your Wishlist.</p>   
-                        }
+          <div class="cards-container">
+            <div class="product-card" *ngFor="let product of products;" (mouseenter)="onMouseEnter(product)" (mouseleave)="onMouseLeave(product)">
+              <div class="design-no">
+                <p class="mb-0 d-flex justify-content-between">
+                  <span>{{product.productUser | titlecase }}</span>
+                  <span>{{product.brand}}</span>
+                </p>
+                Design No : {{product.designNo}}
+              </div>
+              <div class="image-carousel">
+                <img class="main-img" [src]="product.selectedImageUrl" alt="{{product.title}}" (click)="navigateAddToCart(product.productUser,product.productOwnerEmail,product.productId )">
+                <div class="carousel-dots">
+                  <span *ngFor="let img of product.selectedImageUrls; let i = index" [class.active]="i === product.hoverIndex" (click)="navigateToImage(product, i)"></span>
                 </div>
+              </div>
+              <div class="product-details">
+                <div class="color-options mt-0">
+                  <button *ngFor="let color of product.colors" [ngStyle]="{'background-color': color, 'border': color === '#FFFFFF' ? '1px solid #000' : 'none'}" [class.active]="product.selectedColor === color" (click)="changeProductImage(product, color)"></button>
+                </div>
+                <h6 class="title" (click)="navigateAddToCart(product.productUser,product.productOwnerEmail,product.productId )">{{product.title}}</h6>
+                <p class="mb-0 truncate-text">{{ product.description }}</p>
+                <div class="availability">
+                  <span *ngIf="product.stock > 0" class="in-stock">In stock - Qty {{product.stock}}</span>
+                  <span *ngIf="product.stock === 0" class="out-of-stock">Out of stock</span>
+                </div>
+                <div class="wish-button d-flex justify-content-between">
+                  <button class="btn add-to-cart" (click)="navigateAddToCart(product.productUser,product.productOwnerEmail,product.productId )">Add To Cart</button>
+                  <button class="btn delete" (click)="deleteWishlistItem(product.wishlistId)"><i class="bi bi-trash-fill"></i></button>
+                </div>
+              </div>
+              <small class="date">Item Added : {{product.createdAt | date:'dd MMM yyyy'}}</small>
             </div>
+            <p class="data-not-found mt-3 justify-content-center text-center" *ngIf="!products || products.length === 0">No products in Your Wishlist.</p>
           </div>
-
-            <!-- Right-Side Ads Container -->
-            <!-- <div class="ads-right mt-0">
-                <app-right-side-advertise [imageUrls]="rightAdImages"></app-right-side-advertise>
-            </div> -->
         </div>
+      </div>
 
-        <!-- Bottom-Side Ad Container -->
-        <div class=" mb-3">
-            <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
-        </div>
+      <!-- Right-Side Ads Container -->
+      <!-- <div class="ads-right mt-0">
+          <app-right-side-advertise [imageUrls]="rightAdImages"></app-right-side-advertise>
+      </div> -->
     </div>
+
+    <!-- Bottom-Side Ad Container -->
+    <div class="mb-3">
+      <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
+    </div>
+  </div>
 </section>
