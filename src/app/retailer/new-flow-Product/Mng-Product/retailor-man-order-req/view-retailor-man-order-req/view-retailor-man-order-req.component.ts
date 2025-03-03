@@ -127,44 +127,45 @@ export class ViewRetailorManOrderReqComponent implements OnInit {
   }
 
   submitConfirmation(): void {
-    // Ensure distributorId is available
     if (!this.distributorId) {
       console.error('Distributor ID is missing!');
-      return;  // Prevent submitting without the distributor ID
+      return;
     }
   
-    // Prepare the updatedItems for the request
     const updatedItems = this.groupedProducts.flatMap(group =>
-      group.rows.flatMap((row: Row) => {
-        return this.sizeHeaders.map((size) => ({
-          statusSingle: row.statusSingle,
-          _id: row._id,
-          colourName: row.colourName,
-          colour: row.colour,
-          size: size,
-          designNumber: row.designNumber,
-          orderedQuantity: row.quantities[size] || 'N/A',
-          availableQuantity: row.availableQuantities[size] || 0,
-        }));
-      })
+      group.rows.flatMap((row: Row) =>
+        this.sizeHeaders
+          .filter(size => row.quantities[size] > 0 || row.availableQuantities[size] > 0) // ✅ Only include valid sizes
+          .map(size => ({
+            statusSingle: row.statusSingle,
+            colourName: row.colourName,
+            colour: row.colour,
+            size: size,
+            designNumber: row.designNumber,
+            orderedQuantity: row.quantities[size],
+            availableQuantity: row.availableQuantities[size]
+          }))
+      )
     );
   
-    // Construct the request payload
     const requestPayload = {
-      id: this.distributorId,
-      status: 'checked',
+      id: this.distributorId,  // Assuming this represents the ObjectId
+      status: 'pending',
       contativeDate: new Date().toISOString(),
+      deliveryChallanId: '67c54aed668e20ee777303c3', // If available, else remove
       poNumber: this.poNumber,
       retailerEmail: this.retailerEmail,
       wholesalerEmail: this.wholesalerEmail,
       requestType: 'partial_delivery',
       requestedItems: updatedItems,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      
     };
   
-    // Log the URL for debugging purposes
+    console.log('Final Payload:', requestPayload);
+  
     const apiUrl = `rtl-orderP-request`;
-    console.log('API URL:', apiUrl);  // This will help you see if the URL is correctly formed
-    // Make the API call
     this.authService.patch(apiUrl, requestPayload).subscribe(
       (response) => {
         console.log('Data successfully submitted:', response);
