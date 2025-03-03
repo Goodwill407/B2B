@@ -1,0 +1,62 @@
+<section class="content">
+<div class="content-block">
+  <h4 class="mt-4">
+    <i class="bi bi-person-vcard-fill h3"></i> Check Received Product
+  </h4>
+
+  <div id="purchase-order" class="challan-container card my-2 p-2">
+    <section>
+      <div *ngIf="mergedProducts.length > 0; else noData">
+        <p-table [value]="mergedProducts" class="bordered-table">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>PO Number</th>
+              <th>Retailer Name</th>
+              <th>Design No</th>
+              <th>Colour</th>
+              <th *ngFor="let size of sizeHeaders">
+                {{ size }} <br />
+                <span *ngIf="!isSizeAvailable(mergedProducts, size)">N/A</span>
+              </th>
+              <th>Status</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-row>
+            <tr>
+              <td>{{ row.poNumber  }}</td>
+              <td>{{ row.companyName}}</td>
+              <td>{{ row.designNumber }}</td>
+              <td>{{ row.colourName }}</td>
+              
+              <!-- Loop through size headers and show ordered/available quantities -->
+              <td *ngFor="let size of sizeHeaders">
+                <div>
+                  <strong>Ordered:</strong> {{ row.quantities[size] ?? 'N/A' }} <br>
+                  <strong>Available:</strong> {{ row.availableQuantities[size] ?? 'N/A' }}
+                </div>
+              </td>
+              
+              <!-- Show status for each size -->
+              <td>{{ row.statusOfOrder  }}</td>
+              <!-- <td>
+                <div *ngFor="let status of row.status">
+                {{ status.status || 'N/A' }}
+                </div>
+              </td> -->
+            </tr>
+          </ng-template>
+        </p-table>
+      </div> 
+      
+      <ng-template #noData>
+        <p>No data available</p>
+      </ng-template>
+      
+      <div class="d-flex justify-content-center p-2">
+        <button class="btn btn-success" (click)="forwardBtn()">Forward All</button>
+      </div>
+    </section>
+  </div>
+</div>
+</section>

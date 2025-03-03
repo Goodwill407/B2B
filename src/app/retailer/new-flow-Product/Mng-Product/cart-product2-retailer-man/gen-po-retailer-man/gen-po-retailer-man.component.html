@@ -2,7 +2,10 @@
     <div class="content-block">
       <!-- Page Header -->
       <h4 class="mt-4">
-        <i class="bi bi-person-vcard-fill h3"></i> Generate Purchase Order
+        <button class="btn text-start" (click)="navigateFun()">
+          <i class="bi bi-arrow-left-circle h4"></i>
+        </button>
+         Generate Purchase Order
       </h4>
   
       <!-- Button to Download PDF -->
@@ -19,7 +22,7 @@
           </div>
           <div class="order-info text-right">
             <p><strong>Order Date:</strong> {{ purchaseOrder.poDate }}</p>
-            <p><strong>Order No:</strong> {{ purchaseOrder.poNumber }}</p>
+            <p><strong>Order No:</strong> {{ purchaseOrder.orderNumber }}</p>
           </div>
         </div>
   

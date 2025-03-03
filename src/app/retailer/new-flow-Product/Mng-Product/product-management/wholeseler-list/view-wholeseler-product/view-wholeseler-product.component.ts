@@ -233,7 +233,8 @@ export class ViewWholeselerProductComponent {
       try {
         const res = await this.authService.post('retailer-cart-type2', payload).toPromise();
         if (res) {
-          this.communicationService.customSuccess1('Saved Successfully...!!!');
+          this.communicationService.customSuccess1('Product Added to Cart');
+          this.resetQuantities(); // Reset quantity controls to zero after successful save
         }
       } catch (error) {
         this.communicationService.customError1('Error occurred while saving...!!!');
@@ -242,7 +243,19 @@ export class ViewWholeselerProductComponent {
       }
     }
   }
-
+  resetQuantities() {
+    Object.keys(this.stepThree.controls).forEach((controlName) => {
+      // Only reset fields that correspond to quantity controls (assuming quantity control names follow this pattern)
+      if (controlName.includes('_')) { // Assuming all quantity control names have '_' (for size and color combinations)
+        const control = this.stepThree.get(controlName);
+        if (control instanceof FormControl) {
+          control.reset();
+        }
+      }
+    });
+  }
+  
+  
   changeMainMedia(media: any) {
     this.selectedMedia = media.src;
     this.selectedMediaType = media.type;

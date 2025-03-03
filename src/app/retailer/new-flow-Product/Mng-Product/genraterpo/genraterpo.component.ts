@@ -82,22 +82,25 @@
           console.log(this.responseData)
           // Update purchaseOrder from the response
           this.purchaseOrder = {
-            supplierName: res.wholesaler.companyName,
-            supplierDetails: res.wholesaler.fullName,
-            supplierAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
-            supplierContact: `${res.wholesaler.mobNumber}`,
-            supplierGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
-            buyerName: res.retailer.companyName,
-            logoUrl: res.retailer.profileImg,
-            buyerAddress: `${res.retailer.address}, ${res.retailer.city}, ${res.retailer.state} - ${res.retailer.pinCode}`,
-            buyerPhone: res.retailer.mobNumber,
-            buyerEmail: res.retailer.email,
-            buyerDetails: res.retailer.fullName,
-            buyerGSTIN: res.retailer.GSTIN || 'GSTIN_NOT_PROVIDED',
+            supplierName: res.wholesaler.companyName || 'Company Name Not Provided',
+            supplierDetails: res.wholesaler.fullName || 'Full Name Not Provided',
+            supplierEmail: res.wholesaler.email || 'Email Not Provided',
+            supplierAddress: `${res.wholesaler.address || ''} ${res.wholesaler.city || ''} ${res.wholesaler.state || ''}  ${res.wholesaler.pinCode || ''}`,
+            supplierContact: `${res.wholesaler.mobNumber || 'Mobile Number Not Provided'}`,
+            supplierGSTIN: res.wholesaler.GSTIN || 'GSTIN Not Provided',
+            supplierPAN: res.wholesaler.pan || 'PAN Not Provided',
+            buyerName: res.retailer.companyName || 'Company Name Not Provided',
+            logoUrl: res.retailer.profileImg || 'assets/images/company_logo.jpg',
+            buyerAddress: `${res.retailer.address || ''} ${res.retailer.city || ''} ${res.retailer.state || ''}  ${res.retailer.pinCode || ''}`,
+            buyerPhone: res.retailer.mobNumber || 'Mobile Number Not Provided',
+            buyerEmail: res.retailer.email || 'Email Not Provided',
+            buyerDetails: res.retailer.fullName || 'Full Name Not Provided',
+            buyerGSTIN: res.retailer.GSTIN || 'GSTIN Not Provided',
+            buyerPAN: res.retailer.pan || 'PAN Not Provided',
             poDate: new Date().toLocaleDateString(),
             poNumber: res.poNumber,
             products: res.set || [],
-            ProductDiscount: res.retailer.productDiscount,
+            ProductDiscount: res.retailer.productDiscount || 0,
           };
   
           if (res.set && Array.isArray(res.set) && res.set.length > 0) {

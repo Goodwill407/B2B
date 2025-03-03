@@ -100,7 +100,7 @@ export class MdeliveryChallanComponent {
   }
   getAllData3() {
     this.showFlag = false;
-    this.authService.get(`/mnf-delivery-challan?email=${this.authService.currentUserValue.email}&status=checked&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
+    this.authService.get(`/mnf-delivery-challan?email=${this.authService.currentUserValue.email}&status=Forwarded&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
       this.tableData3 = res.results;
       console.log(res)
       this.totalResults3 = res.totalResults;

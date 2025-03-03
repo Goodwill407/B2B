@@ -50,7 +50,7 @@
                 </div>
                 <!-- <span *ngIf="!allWholeselers || allWholeselers.length == 0"
                   class="data-not-found d-flex justify-content-center align-items-center"> </span> -->
-                <p-paginator *ngIf="allWholeselers && allWholeselers.length > 5" (onPageChange)="onPageChange($event)"
+                <p-paginator *ngIf="allWholeselers && allWholeselers.length > 0" (onPageChange)="onPageChange($event)"
                   [first]="first" [rows]="rows" [totalRecords]="totalResults"
                   [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
               </div>

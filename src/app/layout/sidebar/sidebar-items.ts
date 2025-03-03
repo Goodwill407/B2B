@@ -2196,6 +2196,18 @@ export const ROUTES2: RouteInfo[] = [
         role: [''],
         submenu: [],
       },  
+      // {
+      //   path: '/wholesaler/order-mng/RequestProcess',
+      //   title: 'Request Process',
+      //   iconType: '',
+      //   icon: '',
+      //   class: 'ml-menu',
+      //   groupTitle: false,
+      //   badge: '',
+      //   badgeClass: '',
+      //   role: [''],
+      //   submenu: [],
+      // },  
       {
         path: '/wholesaler/order-mng/retailormanpo',
         title: 'Retailer-Manufacturer-Po',
