@@ -57,11 +57,11 @@
             </div>
             <hr />
             <div class="d-flex align-items-center">
-              <div class="totals">
+              <!-- <div class="totals">
                 <p>Total Sub Total: {{ manufacturerTotals[prod.manufacturer.companyName]?.subtotal | currency: 'INR' }}</p>
                 <p>Total GST: {{ manufacturerTotals[prod.manufacturer.companyName]?.gst | currency: 'INR' }}</p>
                 <p>Total Grand Total: {{ manufacturerTotals[prod.manufacturer.companyName]?.grandTotal | currency: 'INR' }}</p>
-              </div>
+              </div> -->
               <button class="btn btn-success mx-auto" (click)="placeOrder(prod)">
                 <i class="bi bi-cart-check"></i> View PO
               </button>

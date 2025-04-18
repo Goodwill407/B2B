@@ -37,6 +37,7 @@ export class ViewRetailorManOrderReqComponent implements OnInit {
   poNumber: number = 0;
   retailerEmail: string = '';
   wholesalerEmail: string = '';
+  deliveryChallanId: string | null = null;  // Add this line
 
   constructor(
     private authService: AuthService,
@@ -68,6 +69,7 @@ export class ViewRetailorManOrderReqComponent implements OnInit {
           this.poNumber = res.poNumber;
           this.retailerEmail = res.retailerEmail;
           this.wholesalerEmail = res.wholesalerEmail;
+          this.deliveryChallanId = res.deliveryChallanId;
           this.processGroupedProducts(res.requestedItems);
         }
       },
@@ -125,54 +127,53 @@ export class ViewRetailorManOrderReqComponent implements OnInit {
     row.confirmation = status;
     row.statusSingle = status === 'accept' ? 'approved' : 'rejected';  // Update statusSingle based on action
   }
-
   submitConfirmation(): void {
-    // Ensure distributorId is available
     if (!this.distributorId) {
       console.error('Distributor ID is missing!');
-      return;  // Prevent submitting without the distributor ID
+      return;
     }
   
-    // Prepare the updatedItems for the request
     const updatedItems = this.groupedProducts.flatMap(group =>
-      group.rows.flatMap((row: Row) => {
-        return this.sizeHeaders.map((size) => ({
-          statusSingle: row.statusSingle,
-          _id: row._id,
-          colourName: row.colourName,
-          colour: row.colour,
-          size: size,
-          designNumber: row.designNumber,
-          orderedQuantity: row.quantities[size] || 'N/A',
-          availableQuantity: row.availableQuantities[size] || 0,
-        }));
-      })
+      group.rows.flatMap((row: Row) =>
+        this.sizeHeaders
+          .filter(size => row.quantities[size] > 0 || row.availableQuantities[size] > 0) // ✅ Only include valid sizes
+          .map(size => ({
+            statusSingle: row.statusSingle,
+            colourName: row.colourName,
+            colour: row.colour,
+            size: size,
+            designNumber: row.designNumber,
+            orderedQuantity: row.quantities[size],
+            availableQuantity: row.availableQuantities[size]
+          }))
+      )
     );
   
-    // Construct the request payload
     const requestPayload = {
-      id: this.distributorId,
+      id: this.distributorId,  // ✅ Distributor ID dynamically assigned
       status: 'checked',
       contativeDate: new Date().toISOString(),
+      deliveryChallanId: this.deliveryChallanId || null, // ✅ Dynamic handling of deliveryChallanId
       poNumber: this.poNumber,
       retailerEmail: this.retailerEmail,
       wholesalerEmail: this.wholesalerEmail,
       requestType: 'partial_delivery',
       requestedItems: updatedItems,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
   
-    // Log the URL for debugging purposes
+    console.log('Final Payload:', requestPayload);
+  
     const apiUrl = `rtl-orderP-request`;
-    console.log('API URL:', apiUrl);  // This will help you see if the URL is correctly formed
-    // Make the API call
     this.authService.patch(apiUrl, requestPayload).subscribe(
       (response) => {
         console.log('Data successfully submitted:', response);
-        this.communicationService.customSuccess1( 'Submitted Successfully');
+        this.communicationService.customSuccess1('Submitted Successfully');
       },
       (error) => {
         console.error('Error during submission:', error);
-        this.communicationService.customError1( 'Something Went Wrong');
+        this.communicationService.customError1('Something Went Wrong');
       }
     );
   }

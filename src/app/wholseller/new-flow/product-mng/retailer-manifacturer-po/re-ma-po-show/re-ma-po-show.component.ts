@@ -81,12 +81,12 @@
           this.purchaseOrder = {
             supplierName: res.manufacturer.companyName,
             supplierDetails: res.manufacturer.fullName,
-            supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
+            supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.pinCode} - ${res.manufacturer.state}`,
             supplierContact: `${res.manufacturer.mobNumber}`,
             supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
             buyerName: res.wholesaler.companyName,
             logoUrl: res.wholesaler.profileImg,
-            buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
+            buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.pinCode} - ${res.wholesaler.state} `,
             buyerPhone: res.wholesaler.mobNumber,
             buyerEmail: res.wholesaler.email,
             buyerDetails: res.wholesaler.fullName,
@@ -241,6 +241,7 @@
       console.log('Wholesaler State:', wholesalerState);
     
       // Check if the states are different
+
       if (retailerState !== wholesalerState) {
         // States don't match, apply IGST
         const gstRate = 18; // IGST

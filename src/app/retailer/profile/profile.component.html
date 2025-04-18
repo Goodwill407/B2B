@@ -51,7 +51,7 @@
                                 <label class="label-input" for="introduction">Company/Firm Introduction<span
                                         class="required">*</span></label>
                                 <textarea type="text" id="introduction" formControlName="introduction"
-                                    class="form-control" maxlength="4000"
+                                    class="form-control" maxlength="10"
                                     [ngClass]="{ 'is-invalid': submitted && f.introduction.errors }"></textarea>
 
                                 <!-- Validation Messages -->
@@ -403,8 +403,8 @@
                             <div class="col-12 d-flex justify-content-center mt-3">
                                 <button *ngIf="!isDataSaved" type="submit" class="btn submit-btn me-3"
                                     (click)="onSubmit('Save')">Save & Next >></button>
-                                <button *ngIf="isUpdateBtn" type="button" class="btn submit-btn"
-                                    (click)="onSubmit('Update')">Update & Next >></button>
+                                    <button *ngIf="isUpdateBtn" type="button" class="btn submit-btn" (click)="onSubmit('Update')">Update & Next >></button>
+
                             </div>
                         </div>
                     </div>

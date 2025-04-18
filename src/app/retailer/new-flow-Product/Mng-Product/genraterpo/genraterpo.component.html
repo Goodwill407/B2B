@@ -82,9 +82,10 @@
                 <td *ngFor="let size of sizeHeaders">
                   {{ row.quantities[size] > 0 ? row.quantities[size] : 'N/A' }}
                 </td>
-                <td>{{ calculateTotalPrice(row) | currency: 'INR' }}</td>
+                <td>{{ getOriginalPrice(row) | currency: 'INR' }}</td> <!-- ✅ Now shows correct price -->
               </tr>
             </ng-template>
+            
 
             <!-- Table Footer -->
             <ng-template pTemplate="footer">
@@ -94,33 +95,35 @@
                 <td>{{ Totalsub | currency: 'INR' }}</td>
              </tr>
              
-              <tr>
-                <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
-                <td style="text-align: right; font-weight: bold;">
-                  Discount ({{ purchaseOrder.ProductDiscount }}%):
-                </td>
-                <td>{{ discountedTotal | currency: 'INR' }}</td>
-              </tr>
+             <tr>
+              <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
+              <td style="text-align: right; font-weight: bold;">
+                Discount ({{ purchaseOrder.ProductDiscount }}%):
+              </td>
+              <td>{{ (Totalsub - discountedTotal) | currency: 'INR' }}</td> <!-- ✅ Correct -->
+            </tr>
+            
 
-              <!-- Show SGST and CGST if states are the same -->
-              <tr *ngIf="sgst && cgst">
-                <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
-                <td style="text-align: right; font-weight: bold;">SGST (9%):</td>
-                <td>{{ sgst | currency: 'INR' }}</td>
-              </tr>
+           <!-- Show SGST & CGST only if IGST is 0 -->
+<tr *ngIf="igst === 0 && sgst > 0 && cgst > 0">
+  <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
+  <td style="text-align: right; font-weight: bold;">SGST (9%):</td>
+  <td>{{ sgst | currency: 'INR' }}</td>
+</tr>
 
-              <tr *ngIf="sgst && cgst">
-                <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
-                <td style="text-align: right; font-weight: bold;">CGST (9%):</td>
-                <td>{{ cgst | currency: 'INR' }}</td>
-              </tr>
+<tr *ngIf="igst === 0 && sgst > 0 && cgst > 0">
+  <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
+  <td style="text-align: right; font-weight: bold;">CGST (9%):</td>
+  <td>{{ cgst | currency: 'INR' }}</td>
+</tr>
 
-              <!-- Show IGST if states are different -->
-              <tr *ngIf="igst">
-                <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
-                <td style="text-align: right; font-weight: bold;">IGST (18%):</td>
-                <td>{{ igst | currency: 'INR' }}</td>
-              </tr>
+<!-- Show IGST only if SGST & CGST are 0 -->
+<tr *ngIf="sgst === 0 && cgst === 0 && igst > 0">
+  <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
+  <td style="text-align: right; font-weight: bold;">IGST (18%):</td>
+  <td>{{ igst | currency: 'INR' }}</td>
+</tr>
+
 
               <!-- Show the Grand Total -->
               <tr>
