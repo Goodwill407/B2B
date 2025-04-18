@@ -7,6 +7,8 @@ import { StepThreeComponent } from "./product-management/add-product2/step-three
 import { AddProduct2Component } from "./product-management/add-product2/add-product2.component";
 import { RetrunProductsComponent } from "./return-managment/retrun-products/retrun-products.component";
 import { ViewReturnProductPoComponent } from "./return-managment/retrun-products/view-return-product-po/view-return-product-po.component";
+import { MfgProformaInvoiceListComponent } from "./order-managment/mfg-proforma-invoice-list/mfg-proforma-invoice-list.component";
+import { MfgProformaInvoiceViewComponent } from "./order-managment/mfg-proforma-invoice-view/mfg-proforma-invoice-view.component";
 
 export const NewFlow:Route[]=[
     {path:'add-product2',component:AddProduct2Component},
@@ -17,4 +19,6 @@ export const NewFlow:Route[]=[
     {path:'view-product',component:ViewProductComponent},
     {path:'Return-products',component:RetrunProductsComponent},
     {path:'Return-products-po',component:ViewReturnProductPoComponent},
+    {path:'mfg-proforma-invoice-list', component:MfgProformaInvoiceListComponent},
+    {path:'mfg-proforma-invoice-view', component:MfgProformaInvoiceViewComponent},
 ]

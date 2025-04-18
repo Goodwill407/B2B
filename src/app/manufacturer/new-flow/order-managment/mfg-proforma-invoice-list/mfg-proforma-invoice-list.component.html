@@ -1,0 +1,52 @@
+<section class="content">
+    <div class="content-block">
+      <h4 class="mt-4">
+        <i class="bi bi-person-vcard-fill h3"></i> Proforma Invoice List
+      </h4>
+      <div class="card mt-3 p-4">
+        <div class="p-grid p-fluid">
+          <div class="p-col-12 text-center">
+            <p-table [value]="proformaList">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Wholesaler's Name</th>
+                  <th>Company Name</th>
+                  <th>Email</th>
+                  <th>PO Number</th>
+                  <th>View</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-data>
+                <tr>
+                  <td class="text-center">{{data.wholesaler.fullName}}</td>
+                  <td class="text-center">{{data.wholesaler.companyName}}</td>
+                  <td class="text-center">{{data.wholesaler.email}}</td>
+                  <td class="text-center">{{data.poNumber}}</td>
+                  <td class="text-center">
+                    <button class="btn">
+                      <i class="bi bi-eye h5" [routerLink]="['/mnf/new/mfg-proforma-invoice-list', {id: data.id}]"></i>
+                    </button>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+  
+            <!-- <div *ngIf="!proformaList" class="mt-3 d-flex justify-content-center align-items-center">
+              <p>Proforma Invoice List Not Found [Server Error].</p>
+            </div> -->
+  
+            <div *ngIf="!proformaList || proformaList.length === 0" class="mt-3 d-flex justify-content-center align-items-center">
+                <p>No Proforma Invoice List at the Moment.</p>
+            </div>
+  
+            <span *ngIf="!proformaList || proformaList.length == 0" class="data-not-found d-flex justify-content-center align-items-center"></span>
+  
+            <p-paginator *ngIf="proformaList && proformaList.length > 0" (onPageChange)="onPageChange($event)"
+              [first]="first" [rows]="rows" [totalRecords]="totalResults" [rowsPerPageOptions]="[10, 20, 30]"></p-paginator>
+          </div>
+        </div>
+      </div>
+  
+    </div>
+  </section>
+  

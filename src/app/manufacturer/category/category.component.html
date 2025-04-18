@@ -98,7 +98,7 @@
                                 }@if(!wholesalerCategory){
                                     <p class="mt-3 data-not-found text-center">Wholesaler's Category Not found.[Server Error]</p>
                                 }
-                                @else {
+                                @if(wholesalerCategory.length == 0) {
                                 <p class="mt-3 data-not-found text-center">Wholesaler's Category Not Added Yet</p>
                                 }
                             </div>
@@ -201,7 +201,7 @@
                                 @if(!retailerCategory){
                                     <p class="mt-3 data-not-found">Retailer's Category Not found.[Server Error]</p>
                                 }
-                                @else {
+                                @if(retailerCategory.length == 0) {
                                 <p class="mt-3 data-not-found">Retailer's Category Not Added Yet</p>
                                 }
                             </div>

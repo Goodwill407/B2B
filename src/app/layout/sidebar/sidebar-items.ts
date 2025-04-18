@@ -1385,6 +1385,18 @@ export const ROUTES2: RouteInfo[] = [
         role: [''],
         submenu: [],
       },
+      {
+        path: '/mnf/new/mfg-proforma-invoice-list',
+        title: 'Proforma Invoice',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
       // {
       //   path: '/users/skill-trainer',
       //   title: 'View Order Status',
