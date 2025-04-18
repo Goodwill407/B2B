@@ -18,6 +18,7 @@ import { ViewPlaceOrderPoComponent } from "./place-order/view-place-order-po/vie
 import { RequestProcessComponent } from "../new-flow/product-mng/request-process/request-process.component";
 import { ViewForwardedComponent } from "../new-flow/product-mng/mdelivery-challan/view-forwarded/view-forwarded.component";
 import { PerformaInvoiceComponent } from "../new-flow/product-mng/performa-invoice/performa-invoice.component";
+import { ReturnProductCheckComponent } from "../new-flow/product-mng/performa-invoice/return-product-check/return-product-check.component";
 
 export const Order_Management_Route:Route[]= [
     {path: 'place-order', component: PlaceOrderComponent},
@@ -32,6 +33,7 @@ export const Order_Management_Route:Route[]= [
     {path: 'getmanpo', component: ReMaPoShowComponent },
     {path: 'MNFDChalan', component: MdeliveryChallanComponent },
     {path: 'viiw-Accept-product-po', component: ViwFinalProductPoWhComponent },
+    {path: 'viiw-return-product', component: ReturnProductCheckComponent },
     {path: 'Distribute-Accept-product-po', component: DistributeMProductComponent },
     {path: 'okproductlist', component: FinalProductWhComponent },
     {path: 'View-MNFDChalan', component: ViewMdeliveryChallanComponent },

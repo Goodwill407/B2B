@@ -37,6 +37,7 @@ export class ViewRetailorManOrderReqComponent implements OnInit {
   poNumber: number = 0;
   retailerEmail: string = '';
   wholesalerEmail: string = '';
+  deliveryChallanId: string | null = null;  // Add this line
 
   constructor(
     private authService: AuthService,
@@ -68,6 +69,7 @@ export class ViewRetailorManOrderReqComponent implements OnInit {
           this.poNumber = res.poNumber;
           this.retailerEmail = res.retailerEmail;
           this.wholesalerEmail = res.wholesalerEmail;
+          this.deliveryChallanId = res.deliveryChallanId;
           this.processGroupedProducts(res.requestedItems);
         }
       },
@@ -125,7 +127,6 @@ export class ViewRetailorManOrderReqComponent implements OnInit {
     row.confirmation = status;
     row.statusSingle = status === 'accept' ? 'approved' : 'rejected';  // Update statusSingle based on action
   }
-
   submitConfirmation(): void {
     if (!this.distributorId) {
       console.error('Distributor ID is missing!');
@@ -149,10 +150,10 @@ export class ViewRetailorManOrderReqComponent implements OnInit {
     );
   
     const requestPayload = {
-      id: this.distributorId,  // Assuming this represents the ObjectId
-      status: 'pending',
+      id: this.distributorId,  // ✅ Distributor ID dynamically assigned
+      status: 'checked',
       contativeDate: new Date().toISOString(),
-      deliveryChallanId: '67c54aed668e20ee777303c3', // If available, else remove
+      deliveryChallanId: this.deliveryChallanId || null, // ✅ Dynamic handling of deliveryChallanId
       poNumber: this.poNumber,
       retailerEmail: this.retailerEmail,
       wholesalerEmail: this.wholesalerEmail,
@@ -160,7 +161,6 @@ export class ViewRetailorManOrderReqComponent implements OnInit {
       requestedItems: updatedItems,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      
     };
   
     console.log('Final Payload:', requestPayload);
@@ -169,11 +169,11 @@ export class ViewRetailorManOrderReqComponent implements OnInit {
     this.authService.patch(apiUrl, requestPayload).subscribe(
       (response) => {
         console.log('Data successfully submitted:', response);
-        this.communicationService.customSuccess1( 'Submitted Successfully');
+        this.communicationService.customSuccess1('Submitted Successfully');
       },
       (error) => {
         console.error('Error during submission:', error);
-        this.communicationService.customError1( 'Something Went Wrong');
+        this.communicationService.customError1('Something Went Wrong');
       }
     );
   }

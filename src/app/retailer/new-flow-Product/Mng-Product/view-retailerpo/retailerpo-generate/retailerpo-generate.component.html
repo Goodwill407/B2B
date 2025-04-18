@@ -88,11 +88,12 @@
              </tr>
              
               <tr>
-                <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
+                <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>   
                 <td style="text-align: right; font-weight: bold;">
                   Discount ({{ purchaseOrder.ProductDiscount }}%):
                 </td>
-                <td>{{ discountedTotal | currency: 'INR' }}</td>
+                <td>{{ dicountprice | currency: 'INR' }}</td> <!-- ✅ Ensure Discount is Subtracted -->
+                
               </tr>
 
               <!-- Show SGST and CGST if states are the same -->
