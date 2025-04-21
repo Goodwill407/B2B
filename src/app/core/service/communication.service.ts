@@ -37,7 +37,7 @@ export class CommunicationService {
     }
 
     showNotification(
-        colorName: string,
+        colorName: string = '#88c4fb',
         text: string,
         placementFrom: MatSnackBarVerticalPosition,
         placementAlign: MatSnackBarHorizontalPosition
@@ -188,14 +188,14 @@ export class CommunicationService {
     success() {
       Swal.fire({
         html:
-          '<span style="float: left; padding-top: 8px; font-weight: 500">Added Succesfully</span> <img style="float: right;padding-top: 10px" src="../assets/icons/cross.png">', position: 'bottom', timer: 4000, showCancelButton: false, width: 400, showConfirmButton: false, background: "#88c4fb", color: "#ffffff", backdrop: false
+          '<span style="float: left; padding-top: 8px; font-weight: 500">Added Succesfully</span> <img style="float: right;padding-top: 10px" src="../assets/icons/cross1.png">', position: 'bottom', timer: 4000, showCancelButton: false, width: 400, showConfirmButton: false, background: "#88c4fb", color: "#ffffff", backdrop: false
       })
     }
   
     delete() {
       Swal.fire({
         html:
-          '<span style="float: left; padding-top: 8px; font-weight: 500">Delete Succesfully</span> <img style="float: right;padding-top: 10px" src="../assets/icons/cross.png">', position: 'bottom', timer: 4000, showCancelButton: false, width: 400, showConfirmButton: false, background: "#E8FFF3", color: "#47BE7D", backdrop: false
+          '<span style="float: left; padding-top: 8px; font-weight: 500">Delete Succesfully</span> <img style="float: right;padding-top: 10px" src="../assets/icons/cross1.png">', position: 'bottom', timer: 4000, showCancelButton: false, width: 400, showConfirmButton: false, background: "#E8FFF3", color: "#47BE7D", backdrop: false
       })
     }
   
@@ -209,7 +209,7 @@ export class CommunicationService {
     login() {
       Swal.fire({
         html:
-          '<span style="float: left; padding-top: 8px; font-weight: 500">Login Succesfully</span> <img style="float: right;padding-top: 10px" src="../assets/icons/cross.png">', position: 'bottom', timer: 4000, showCancelButton: false, width: 400, showConfirmButton: false, background: "#E8FFF3", color: "#47BE7D", backdrop: false
+          '<span style="float: left; padding-top: 8px; font-weight: 500">Login Succesfully</span> <img style="float: right;padding-top: 10px" src="../assets/icons/cross1.png">', position: 'bottom', timer: 4000, showCancelButton: false, width: 400, showConfirmButton: false, background: "#E8FFF3", color: "#47BE7D", backdrop: false
       })
     }
   
@@ -223,7 +223,7 @@ export class CommunicationService {
     setPassword() {
       Swal.fire({
         html:
-          '<span style="float: left; padding-top: 8px; font-weight: 500">Password has been set Succesfully</span> <img style="float: right;padding-top: 10px" src="../assets/icons/cross.png">', position: 'bottom', timer: 4000, showCancelButton: false, width: 400, showConfirmButton: false, background: "#E8FFF3", color: "#47BE7D", backdrop: false
+          '<span style="float: left; padding-top: 8px; font-weight: 500">Password has been set Succesfully</span> <img style="float: right;padding-top: 10px" src="../assets/icons/cross1.png">', position: 'bottom', timer: 4000, showCancelButton: false, width: 400, showConfirmButton: false, background: "#E8FFF3", color: "#47BE7D", backdrop: false
       })
     }
     customError(message: any) {
@@ -278,7 +278,7 @@ export class CommunicationService {
     customSuccess1(message: any) {
       Swal.fire({
         html:
-          '<span style="float: left; padding-top: 8px; font-weight: 500">' + message + '</span> <img style="float: right;padding-top: 10px" src="../assets/icons/cross.png">', position: 'bottom', timer: 3100, showCancelButton: false, width: 450, showConfirmButton: false, background: "#88c4fb", color: "#fff", backdrop: false
+          '<span style="float: left; padding-top: 8px; font-weight: 500">' + message + '</span> <img style="float: right;padding-top: 10px" src="../assets/icons/cross1.png">', position: 'bottom', timer: 3100, showCancelButton: false, width: 450, showConfirmButton: false, background: "#88c4fb", color: "#fff", backdrop: false
       })
     }
 }
