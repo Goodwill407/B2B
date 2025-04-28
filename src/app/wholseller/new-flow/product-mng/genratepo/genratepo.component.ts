@@ -47,6 +47,9 @@ import jsPDF from 'jspdf';
     sizeHeaders: string[] = [];
     priceHeaders: { [size: string]: number } = {};
 
+    discountAmount: number = 0;     // ₹ value of the discount
+    discountedTotal: number = 0;    // net total after discount
+
     totalGrandTotal: number = 0;
     gst: number = 0;
     Totalsub: number = 0;
@@ -92,7 +95,7 @@ import jsPDF from 'jspdf';
             poDate: new Date().toLocaleDateString(),
             poNumber: res.poNumber,
             products: res.products || [],
-            ProductDiscount: res.wholesaler.ProductDiscount !== undefined && res.wholesaler.ProductDiscount !== '' ? parseFloat(res.wholesaler.ProductDiscount) : 0,  // Ensure we handle undefined and empty values properly
+            ProductDiscount: res.wholesaler.productDiscount !== undefined && res.wholesaler.productDiscount !== '' ? parseFloat(res.wholesaler.productDiscount) : 0,  // Ensure we handle undefined and empty values properly
           };
           
           
@@ -142,75 +145,63 @@ import jsPDF from 'jspdf';
     }
 
     processGroupedProducts(productSet: any[]): any[] {
-      const groupedByDesignNumber: any = {};
-      let totalGrandTotal = 0;
+      const grouped: Record<string, {
+        designNumber: string;
+        rows: { colourName: string; quantities: Record<string, number> }[];
+        subTotal: number;
+        discountedTotal: number;
+        grandTotal: number;
+      }> = {};
+    
       let totalSub = 0;
       let totalDiscounted = 0;
-      let totalDiscounted2= 0;
+      let totalGrandTotal = 0;
     
-      // Step 1: Group products by design number
-      productSet.forEach((product) => {
-        const designKey = product.designNumber;
-    
-        if (!groupedByDesignNumber[designKey]) {
-          groupedByDesignNumber[designKey] = {
-            designNumber: product.designNumber,
-            rows: [],
-            subTotal: 0,
-            discountedTotal: 0,
-            grandTotal: 0,
-          };
+      // Build groups by designNumber + colourName
+      productSet.forEach(product => {
+        const key = product.designNumber;
+        if (!grouped[key]) {
+          grouped[key] = { designNumber: key, rows: [], subTotal: 0, discountedTotal: 0, grandTotal: 0 };
         }
+        let row = grouped[key].rows.find(r => r.colourName === product.colourName);
+        if (!row) {
+          row = { colourName: product.colourName, quantities: {} };
+          grouped[key].rows.push(row);
+        }
+        row.quantities[product.size] = (row.quantities[product.size] || 0) + product.quantity;
+      });
     
-        let existingRow = groupedByDesignNumber[designKey].rows.find(
-          (row: any) => row.colourName === product.colourName
+      // Compute subtotals and discounted totals
+      Object.values(grouped).forEach(group => {
+        group.subTotal = group.rows.reduce(
+          (sum, row) => sum + this.calculateTotalPrice(row, false),
+          0
         );
-    
-        if (!existingRow) {
-          existingRow = {
-            colourName: product.colourName,
-            quantities: {},
-            totalPrice: 0,
-          };
-          groupedByDesignNumber[designKey].rows.push(existingRow);
-        }
-    
-        existingRow.quantities[product.size] = (existingRow.quantities[product.size] || 0) + product.quantity;
-        existingRow.totalPrice += product.quantity * product.price;
+        group.discountedTotal = group.rows.reduce(
+          (sum, row) => sum + this.calculateTotalPrice(row, true),
+          0
+        );
+        totalSub        += group.subTotal;
+        totalDiscounted += group.discountedTotal;
       });
     
-      // Step 2: Calculate totals for all products
-      Object.values(groupedByDesignNumber).forEach((group: any) => {
-        group.subTotal = group.rows.reduce((acc: number, row: any) => acc + this.calculateTotalPrice(row, false), 0);
-        group.discountedTotal = group.rows.reduce((acc: number, row: any) => acc + this.calculateTotalPrice(row, true), 0);
+      // Store overall discount & post-discount subtotal
+      this.discountAmount  = totalSub - totalDiscounted;
+      this.Totalsub        = totalSub;
+      this.discountedTotal = totalDiscounted;
     
-        totalSub += group.subTotal;
-        totalDiscounted +=group.discountedTotal;
-        group.discountedTotal;
-        totalDiscounted2 += group.discountedTotal;
-      });
+      // Recompute GST on the post-discount total
+      this.calculateGST();
     
-      // Step 3: Calculate GST based on the total discounted value (not per product)
-      this.discountedTotal = totalDiscounted;  // Use final discounted total for all products
-      this.calculateGST();  // Calculate GST based on the final discounted total
+      // Compute grand totals
+      // Object.values(grouped).forEach(group => {
+      //   group.grandTotal = group.discountedTotal + this.sgst + this.cgst + this.igst;
+      //   totalGrandTotal += group.grandTotal;
+      // });
+      // this.totalGrandTotal = totalGrandTotal;
     
-      // Step 4: Calculate the Grand Total for each group
-      Object.values(groupedByDesignNumber).forEach((group: any) => {
-        group.grandTotal = group.discountedTotal + this.sgst + this.cgst + this.igst;
-        totalGrandTotal += group.grandTotal;
-      });
-    
-      // Store the final totals
-      this.Totalsub = totalSub;
-      this.totalGrandTotal = totalGrandTotal;
-      console.log('Subtotal:', totalSub);
-      console.log('Total Discounted:', totalDiscounted);  // This should be the final discounted total
-      console.log('GST (SGST, CGST, IGST):', this.sgst, this.cgst, this.igst);
-      console.log('Grand Total:', this.totalGrandTotal);
-      
-      return Object.values(groupedByDesignNumber);
+      return Object.values(grouped);
     }
-    
     
     
     calculateTotalPrice(row: any, applyDiscount: boolean = true): number {
@@ -236,49 +227,28 @@ import jsPDF from 'jspdf';
     
     
     
-    discountedTotal: number = 0;
 
-    calculateGST() {
-      const discountedTotal = this.discountedTotal; // Already discounted total
+    calculateGST(): void {
+      const dt = this.discountedTotal;
     
-      // Now apply GST calculation logic as before
-      const retailerState = this.getStateFromAddress(this.purchaseOrder.buyerAddress);
-      const wholesalerState = this.getStateFromAddress(this.purchaseOrder.supplierAddress);
+      const manuState = this.responseData.manufacturer.state?.trim().toLowerCase();
+      const whoState  = this.responseData.wholesaler.state?.trim().toLowerCase();
     
-      console.log('Retailer State:', retailerState);
-      console.log('Wholesaler State:', wholesalerState);
-    
-      if (retailerState && wholesalerState) {
-        if (retailerState !== wholesalerState) {
-          // States don't match, apply IGST
-          const gstRate = 18; // IGST
-          this.sgst = 0;
-          this.cgst = 0;
-          this.igst = (discountedTotal * gstRate) / 100;
-          console.log('Applying IGST:', this.igst);
-        } else {
-          // States match, apply SGST and CGST
-          const gstRate = 9; // SGST and CGST
-          this.sgst = (discountedTotal * gstRate) / 100;
-          this.cgst = (discountedTotal * gstRate) / 100;
-          this.igst = 0;
-          console.log('Applying SGST and CGST:', this.sgst, this.cgst);
-        }
+      if (manuState && whoState && manuState === whoState) {
+        // intra-state
+        this.sgst = (dt * 9) / 100;
+        this.cgst = (dt * 9) / 100;
+        this.igst = 0;
       } else {
-        console.error('Invalid state information. Cannot calculate GST.');
+        // inter-state
         this.sgst = 0;
         this.cgst = 0;
-        this.igst = 0;
+        this.igst = (dt * 18) / 100;
       }
     
-      console.log('SGST:', this.sgst);
-      console.log('CGST:', this.cgst);
-      console.log('IGST:', this.igst);
-    
-      // Calculate Grand Total
-      this.totalGrandTotal = discountedTotal + this.sgst + this.cgst + this.igst;
-      console.log('Grand Total:', this.totalGrandTotal);
+      this.totalGrandTotal = +(dt + this.sgst + this.cgst + this.igst).toFixed(2);
     }
+    
     
     
     getStateFromAddress(address: string): string | null {

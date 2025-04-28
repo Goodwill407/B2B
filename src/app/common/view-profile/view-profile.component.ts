@@ -151,6 +151,7 @@ export class ViewProfileComponent {
     category: this.SelectedCategory.category, // Assuming this.SelectedCategory has category
     productDiscount: this.SelectedCategory.productDiscount, // Replace with actual property names
     shippingDiscount: this.SelectedCategory.shippingDiscount, // Replace with actual property names
+    id: this.SelectedCategory.id // Sending Discounts ID 
   };
 
   // Initialize URL variable

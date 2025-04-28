@@ -77,7 +77,7 @@
                   <td *ngFor="let size of sizeHeaders">
                     {{ row.quantities[size] > 0 ? row.quantities[size] : 'N/A' }}
                   </td>
-                  <td>{{ calculateTotalPrice(row) | currency: 'INR' }}</td>
+                  <td>{{ calculateTotalPrice(row, false) | currency: 'INR' }}</td>
                 </tr>
               </ng-template>
   
@@ -90,13 +90,23 @@
                   <td>{{ Totalsub | currency: 'INR' }}</td>
                 </tr>
                  
-                <tr>
-                  <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
-                  <td style="text-align: right; font-weight: bold;">
-                    Discount ({{ purchaseOrder.ProductDiscount }}%):
-                  </td>
-                  <td>{{ discountedTotal | currency: 'INR' }}</td>
-                </tr>
+                <!-- ₹ discount amount -->
+                 <tr>
+                   <td [attr.colspan]="1 + sizeHeaders.length" style="border:none;"></td>
+                   <td style="text-align:right;font-weight:bold;">
+                     Discount ({{ purchaseOrder.ProductDiscount }}%):
+                   </td>
+                   <td>{{ discountAmount | currency:'INR' }}</td>
+                 </tr>
+                
+                 <!-- Net after % discount -->
+                <!-- <tr>
+                  <td [attr.colspan]="1 + sizeHeaders.length" style="border:none;"></td>
+                   <td style="text-align:right;font-weight:bold;">
+                     Total after Discount:
+                   </td>
+                  <td>{{ discountedTotal | currency:'INR' }}</td>
+                </tr> -->
               
                 <!-- Show SGST and CGST only if states match -->
                 <tr *ngIf="sgst > 0 && cgst > 0">
