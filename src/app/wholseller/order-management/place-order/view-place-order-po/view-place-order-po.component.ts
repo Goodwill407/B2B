@@ -53,6 +53,8 @@ export class ViewPlaceOrderPoComponent {
   gst: number = 0;
   Totalsub: number = 0;
 
+  discountAmount: number = 0;
+
   constructor(
     public authService: AuthService,
     private router: Router,
@@ -71,8 +73,14 @@ export class ViewPlaceOrderPoComponent {
   }
 
   getAllProducts() {
-    const url = `retailer-purchase-order-type2/purchase-orders/wholesaler-email/combined-order/single?wholesaleremail=${this.distributorId2}&productBy=${this.distributorId}`;
-    this.authService.get(url).subscribe(
+    // const url = `retailer-purchase-order-type2/purchase-orders/wholesaler-email/combined-order/single?wholesaleremail=${this.distributorId2}&productBy=${this.distributorId}`;
+    const url = 'type2-purchaseorder/getsinglepurchaseorderdata/bywholesaleremail';
+    const body = {
+      email: this.distributorId2,           // “wholesaleremail” → req.body.email
+      productBy: this.distributorId,        // same as before
+      poNumber: parseInt(this.pono, 10)     // from queryParamMap('poNumber')
+    };  
+    this.authService.post(url, body).subscribe(
       (res: any) => {
         this.responseData = res; // Store the response in responseData
   
@@ -81,12 +89,12 @@ export class ViewPlaceOrderPoComponent {
         this.purchaseOrder = {
           supplierName: res.manufacturer.companyName,
           supplierDetails: res.manufacturer.fullName,
-          supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
+          supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.pinCode} - ${res.manufacturer.state} `,
           supplierContact: `${res.manufacturer.mobNumber}`,
           supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
           buyerName: res.wholesaler.companyName,
           logoUrl: res.wholesaler.profileImg,
-          buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
+          buyerAddress: `${res.wholesaler.address},  ${res.wholesaler.pinCode} - ${res.wholesaler.state} `,
           buyerPhone: res.wholesaler.mobNumber,
           buyerEmail: res.wholesaler.email,
           buyerDetails: res.wholesaler.fullName,
@@ -94,7 +102,7 @@ export class ViewPlaceOrderPoComponent {
           poDate: new Date().toLocaleDateString(),
           poNumber: res.poNumber,
           products: res.products || [],
-          ProductDiscount: res.discounts?.[0]?.productDiscount || 0,  // Set product discount
+          ProductDiscount: parseFloat(res.wholesaler.productDiscount || '0'),  // Set product discount
         };
   
         if (res.set && Array.isArray(res.set) && res.set.length > 0) {
@@ -135,18 +143,23 @@ export class ViewPlaceOrderPoComponent {
   }
 
   processGroupedProducts(productSet: any[]): any[] {
-    const groupedByDesignNumber: any = {};
-    let totalGrandTotal = 0;
-    let totalSub = 0;
-    let totalDiscounted = 0;
-    let totalDiscounted2= 0;
+    const groupedByDesignNumber: Record<string, {
+      designNumber: string;
+      rows: { colourName: string; quantities: Record<string, number>; totalPrice: number }[];
+      subTotal: number;
+      discountedTotal: number;
+      grandTotal: number;
+    }> = {};
+    
+    let totalSub: number = 0;
+    let totalDiscounted: number = 0;
+    let totalGrandTotal: number = 0;
   
     // Step 1: Group products by design number
-    productSet.forEach((product) => {
-      const designKey = product.designNumber;
-  
-      if (!groupedByDesignNumber[designKey]) {
-        groupedByDesignNumber[designKey] = {
+    productSet.forEach((product: any) => {
+      const key = product.designNumber;
+      if (!groupedByDesignNumber[key]) {
+        groupedByDesignNumber[key] = {
           designNumber: product.designNumber,
           rows: [],
           subTotal: 0,
@@ -155,52 +168,53 @@ export class ViewPlaceOrderPoComponent {
         };
       }
   
-      let existingRow = groupedByDesignNumber[designKey].rows.find(
-        (row: any) => row.colourName === product.colourName
+      // Now the `r` below is explicitly typed
+      let row = groupedByDesignNumber[key].rows.find((r: any) => 
+        r.colourName === product.colourName
       );
   
-      if (!existingRow) {
-        existingRow = {
+      if (!row) {
+        row = {
           colourName: product.colourName,
-          quantities: {},
-          totalPrice: 0,
+          quantities: {} as Record<string, number>,
+          totalPrice: 0
         };
-        groupedByDesignNumber[designKey].rows.push(existingRow);
+        groupedByDesignNumber[key].rows.push(row);
       }
   
-      existingRow.quantities[product.size] = (existingRow.quantities[product.size] || 0) + product.quantity;
-      existingRow.totalPrice += product.quantity * product.price;
+      row.quantities[product.size] = (row.quantities[product.size] || 0) + product.quantity;
+      row.totalPrice += product.quantity * parseFloat(product.price);
     });
   
-    // Step 2: Calculate totals for all products
+    // Step 2: Compute subtotals & discounted totals
     Object.values(groupedByDesignNumber).forEach((group: any) => {
-      group.subTotal = group.rows.reduce((acc: number, row: any) => acc + this.calculateTotalPrice(row, false), 0);
-      group.discountedTotal = group.rows.reduce((acc: number, row: any) => acc + this.calculateTotalPrice(row, true), 0);
+      group.subTotal = group.rows.reduce(
+        (sum: number, row: any) => sum + this.calculateTotalPrice(row, false),
+        0
+      );
+  
+      const discountAmt: number = (group.subTotal * this.purchaseOrder.ProductDiscount) / 100;
+      group.discountedTotal = group.subTotal - discountAmt;
   
       totalSub += group.subTotal;
-      totalDiscounted +=group.discountedTotal;
-      group.discountedTotal;
-      totalDiscounted2 += group.discountedTotal;
+      totalDiscounted += group.discountedTotal;
     });
   
-    // Step 3: Calculate GST based on the total discounted value (not per product)
-    this.discountedTotal = totalDiscounted;  // Use final discounted total for all products
-    this.calculateGST();  // Calculate GST based on the final discounted total
+    // Store per-run totals
+    this.discountAmount   = totalSub - totalDiscounted;
+    this.Totalsub         = totalSub;
+    this.discountedTotal  = totalDiscounted;
   
-    // Step 4: Calculate the Grand Total for each group
-    Object.values(groupedByDesignNumber).forEach((group: any) => {
-      group.grandTotal = group.discountedTotal + this.sgst + this.cgst + this.igst;
-      totalGrandTotal += group.grandTotal;
-    });
+    // Step 3: GST on post-discount total
+    this.calculateGST();  // sets this.sgst, this.cgst, this.igst
   
-    // Store the final totals
-    this.Totalsub = totalSub;
-    this.totalGrandTotal = totalGrandTotal;
-    console.log('Subtotal:', totalSub);
-    console.log('Total Discounted:', totalDiscounted);  // This should be the final discounted total
-    console.log('GST (SGST, CGST, IGST):', this.sgst, this.cgst, this.igst);
-    console.log('Grand Total:', this.totalGrandTotal);
-    
+    // Step 4: Grand totals
+    // Object.values(groupedByDesignNumber).forEach((group: any) => {
+    //   group.grandTotal = group.discountedTotal + this.sgst + this.cgst + this.igst;
+    //   totalGrandTotal += group.grandTotal;
+    // });
+    // this.totalGrandTotal = totalGrandTotal;
+  
     return Object.values(groupedByDesignNumber);
   }
   
@@ -230,45 +244,32 @@ export class ViewPlaceOrderPoComponent {
   
   discountedTotal: number = 0;
 
-  calculateGST() {
+  calculateGST(): void {
     const discountedTotal = this.discountedTotal;
   
-    // Extract the state of wholesaler and manufacturer
-    const retailerState = this.purchaseOrder.buyerAddress.split(',')[1]?.trim();  // Check if it's the second part
-    const wholesalerState = this.purchaseOrder.supplierAddress.split(',')[1]?.trim();  // Same here for wholesaler
+    // Pull states directly from your response data
+    const wholesalerState = this.responseData.manufacturer.state
+      ?.trim()
+      .toLowerCase();
+    const retailerState = this.responseData.wholesaler.state
+      ?.trim()
+      .toLowerCase();
   
-    console.log('Retailer State:', retailerState);
-    console.log('Wholesaler State:', wholesalerState);
-  
-    // Check if the states are different
-    if (retailerState !== wholesalerState) {
-      // States don't match, apply IGST
-      const gstRate = 18; // IGST
+    if (wholesalerState && retailerState && wholesalerState === retailerState) {
+      // Same state → SGST + CGST @ 9% each
+      this.sgst = (discountedTotal * 9) / 100;
+      this.cgst = (discountedTotal * 9) / 100;
+      this.igst = 0;
+    } else {
+      // Different state (or missing data) → IGST @ 18%
       this.sgst = 0;
       this.cgst = 0;
-      this.igst = (discountedTotal * gstRate) / 100;
-      console.log('Applying IGST:', this.igst);
-    } else {
-      // States match, apply SGST and CGST
-      const gstRate = 9; // SGST and CGST
-      this.sgst = (discountedTotal * gstRate) / 100;
-      this.cgst = (discountedTotal * gstRate) / 100;
-      this.igst = 0;
-      console.log('Applying SGST and CGST:', this.sgst, this.cgst);
+      this.igst = (discountedTotal * 18) / 100;
     }
-
-    console.log('Retailer State:', retailerState);
-console.log('Wholesaler State:', wholesalerState);
-console.log('SGST:', this.sgst);
-console.log('CGST:', this.cgst);
-console.log('IGST:', this.igst);
-
   
-    // Calculate Grand Total
-    this.totalGrandTotal = discountedTotal + this.sgst + this.cgst + this.igst;
-    console.log('Grand Total:', this.totalGrandTotal);
+    // Finally, update the grand total
+    this.totalGrandTotal = (discountedTotal + this.sgst + this.cgst + this.igst).toFixed(2);
   }
-  
   
   
   dicountprice: number = 0;

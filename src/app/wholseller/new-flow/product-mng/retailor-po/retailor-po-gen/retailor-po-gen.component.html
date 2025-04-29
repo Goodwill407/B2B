@@ -79,25 +79,36 @@
                 <td *ngFor="let size of sizeHeaders">
                   {{ row.quantities[size] > 0 ? row.quantities[size] : 'N/A' }}
                 </td>
-                <td>{{ calculateTotalPrice(row) | currency: 'INR' }}</td>
+                <td>{{ calculateTotalPrice(row, false) | currency:'INR' }}</td>
               </tr>
             </ng-template>
 
             <!-- Table Footer -->
             <ng-template pTemplate="footer">
+              <!-- Subtotal -->
               <tr>
-                <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
-                <td style="text-align: right; font-weight: bold;">Subtotal:</td>
-                <td>{{ Totalsub | currency: 'INR' }}</td>
-             </tr>
-             
+                <td [attr.colspan]="1 + sizeHeaders.length" style="border:none;"></td>
+                <td style="text-align:right; font-weight:bold;">Subtotal:</td>
+                <td>{{ Totalsub | currency:'INR' }}</td>
+              </tr>
+
+              <!-- Discount ₹ -->
               <tr>
-                <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
-                <td style="text-align: right; font-weight: bold;">
+                <td [attr.colspan]="1 + sizeHeaders.length" style="border:none;"></td>
+                <td style="text-align:right; font-weight:bold;">
                   Discount ({{ purchaseOrder.ProductDiscount }}%):
                 </td>
-                <td>{{ discountedTotal | currency: 'INR' }}</td>
+                <td>{{ discountAmount | currency:'INR' }}</td>
               </tr>
+
+              <!-- Net after discount -->
+              <!-- <tr>
+                <td [attr.colspan]="1 + sizeHeaders.length" style="border:none;"></td>
+                <td style="text-align:right; font-weight:bold;">
+                  Total after Discount:
+                </td>
+                <td>{{ discountedTotal | currency:'INR' }}</td>
+              </tr> -->
 
               <!-- Show SGST and CGST if states are the same -->
               <tr *ngIf="sgst && cgst">
