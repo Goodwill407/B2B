@@ -23,6 +23,8 @@ export class ViewWholeselerProductComponent {
   wishlist: boolean = false;
   quantity: any;
   hoveredColourName: string = '';
+  retailerPrice: any;
+  colours: any;
   constructor(private location: Location,private renderer: Renderer2, private route: ActivatedRoute, public authService: AuthService, private fb: FormBuilder, private communicationService: CommunicationService,private dialog: MatDialog) { }
  @ViewChild('mainImage') mainImage!: ElementRef; // Reference to the main image element
    zoomed: boolean = false;
@@ -40,6 +42,22 @@ export class ViewWholeselerProductComponent {
   Prodnum:any;
   productUser:any='wholesaler';
   wishlisted: boolean = false;
+
+  selectedColor: any = null;
+selectedSize: string = '';
+selectedQuantity: number = 1;
+calculatedPrice: number = 0;
+
+tempCart: Array<{
+  colourName: string;
+  size: string;
+  quantity: number;
+  price: any;
+  designNumber:any;
+  colour:any,
+  colourImage:any
+}> = [];
+
   ngOnInit(): void {
 
     this.stepThree = this.fb.group({});
@@ -55,9 +73,11 @@ export class ViewWholeselerProductComponent {
         // this.checkWishlist()
       }
     });
+    
     this.checkWishlist();
   }
 
+  
   getProductDetails(id: any) {
     this.authService.get(`wholesaler-price-type2/retailer-product/wholesaler-wise?productId=${id}&wholesalerEmail=${this.WholeselerEmail}`).subscribe((res: any) => {
       this.designno = res.product.designNumber;
@@ -65,6 +85,7 @@ export class ViewWholeselerProductComponent {
       if (res) {
         const productData = res.product;
         const retailerPriceData = res.retailerPrice;
+        this.retailerPrice = retailerPriceData
   
         // Start building the product object
         this.product = {
@@ -116,7 +137,9 @@ export class ViewWholeselerProductComponent {
           productBy: productData.productBy,
           inventory: productData.inventory,
         };
-  
+        
+        this.colours = this.product.colours;
+        
         // Replace manufacturerPrice with wholesalerPrice by matching sizes
         productData.sizes.forEach((size: any) => {
            retailerPriceData.set.find((setItem: any) => { 
@@ -156,8 +179,6 @@ export class ViewWholeselerProductComponent {
   disableScroll(event: WheelEvent) {
     event.preventDefault();
   }
-  
-  
   
 
   navigateFun() {
@@ -372,4 +393,106 @@ export class ViewWholeselerProductComponent {
      onLeaveColour() {
        this.selectedColourName = this.hoveredColourName; // Revert to the original selected name when hover is removed
      }
+
+    // colours = this.product?.colourCollections || [];
+    availableSizes: string[] = [];
+
+    onColorChange() {
+      // Example: you might filter sizes by color if needed
+      
+      this.availableSizes = this.product?.sizes.map((size: { size: any; }) => size.size);
+      // console.log(this.availableSizes)
+      this.selectedSize = '';
+      this.calculatedPrice = 0;
+    }
+
+    getPriceBySize(size: string): number {
+      const pricing = this.retailerPrice.set.find((s: { size: string; }) => s.size === size);
+      if (pricing) {
+        return +pricing.wholesalerPrice;  // Always return wholesaler price
+      }
+      return 0;
+    }
+
+  onSizeChange() {
+    if (this.selectedSize) {
+      this.calculatedPrice = this.getPriceBySize(this.selectedSize);
+    }
+  }
+
+  addItem() {
+    if (!this.selectedColor || !this.selectedSize || !this.selectedQuantity) {
+      alert('Please select color, size and quantity.');
+      return;
+    }
+  
+    const price = this.getPriceBySize(this.selectedSize);
+  
+    // Find the matching color object from this.colours
+    const matchedColor = this.colours.find((c: { name: string; }) => c.name.toLowerCase() === this.selectedColor.toLowerCase());
+  
+    const colourHex = matchedColor?.hex || '';
+    const colourImage = matchedColor?.image || '';
+  
+    // Check if this combination already exists
+    const existingItem = this.tempCart.find(item =>
+      item.colourName === this.selectedColor && item.size === this.selectedSize
+    );
+  
+    if (existingItem) {
+      // Update quantity and price
+      existingItem.quantity += this.selectedQuantity;
+      existingItem.price = price.toString(); // Optional: If price might change
+    } else {
+      // Add as new item
+      this.tempCart.push({
+        colourName: this.selectedColor,
+        size: this.selectedSize,
+        quantity: this.selectedQuantity,
+        price: this.calculatedPrice.toString(),
+        designNumber: this.designno,
+        colour: colourHex,
+        colourImage: colourImage
+      });
+    }
+  
+    // Reset after adding
+    this.selectedSize = '';
+    this.selectedQuantity = 1;
+    this.calculatedPrice = 0;
+  }
+  
+
+    removeItem(index: number) {
+      this.tempCart.splice(index, 1);
+    }
+
+    finalizeCart() {
+      console.log('Final cart:', this.tempCart);
+      // Emit or submit this.tempCart
+    }
+
+    async addToCartArray(){
+      const payload = {
+        set: this.tempCart,
+        productId: this.product.id,
+        email: this.authService.currentUserValue.email,
+        wholesalerEmail: this.WholeselerEmail || "",
+        productBy: this.product.productBy
+       
+      };
+  
+      try {
+        const res = await this.authService.post('retailer-cart-type2', payload).toPromise();
+        if (res) {
+          this.communicationService.customSuccess1('Product Added to Cart');
+          this.resetQuantities(); // Reset quantity controls to zero after successful save
+        }
+      } catch (error) {
+        this.communicationService.customError1('Error occurred while saving...!!!');
+      } finally {
+        // Cleanup if needed
+      }
+    }
+    
 }
