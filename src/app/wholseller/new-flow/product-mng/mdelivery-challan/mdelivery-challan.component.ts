@@ -52,7 +52,7 @@ export class MdeliveryChallanComponent {
   showFlag: boolean = false;
   tableData: any;
   tableData2: any;
-  
+  tableData4: any;
   tableData3: any;
   totalResults: any;
   totalResults2: any;
@@ -62,6 +62,7 @@ export class MdeliveryChallanComponent {
   rows: number = 10;
   isNewPO: boolean = false;
   totalResults3: any;
+  totalResults4: any;
   bottomAdImage: string[] = [
     'assets/images/adv/ads2.jpg',
   'assets/images/adv/ads.jpg'
@@ -79,6 +80,7 @@ export class MdeliveryChallanComponent {
         this.getAllData();
         this.getAllData2();
         this.getAllData3();
+        this.getAllData4();
     });
   }
 
@@ -106,7 +108,14 @@ export class MdeliveryChallanComponent {
       this.totalResults3 = res.totalResults;
     })
   }
-
+  getAllData4() {
+    this.showFlag = false;
+    this.authService.get(`/mnf-delivery-challan?email=${this.authService.currentUserValue.email}&status=Rejected&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
+      this.tableData4 = res.results;
+      console.log(res)
+      this.totalResults4 = res.totalResults;
+    })
+  }
   patchData(data: any) {
     this.purchaseOrder = data;
     this.isNewPO = false;  // Set to false to hide the "Generate PO" button
