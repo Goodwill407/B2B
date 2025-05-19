@@ -1,0 +1,39 @@
+.table-wrapper {
+    overflow-x: auto;           /* allow horizontal scroll on middle columns */
+    position: relative;
+  }
+  
+  .sizes-scroll-cell {
+    white-space: nowrap;        /* keep size header & qty on one line */
+  }
+  
+  /* generic sticky styling */
+  .sticky-col {
+    position: sticky;
+    background: #fff;
+    z-index: 2;
+  }
+  
+  /* left-frozen columns */
+  .sticky-left {
+    left: 0;
+  }
+  
+  /* if you have two left columns, bump the second over by its width: */
+  .sticky-left + .sticky-left {
+    left: 120px;  /* adjust to match your first column width */
+  }
+  
+  /* right-frozen Price column */
+  .sticky-right {
+    right: 0;
+  }
+  
+  /* tighten up the inline editor */
+.quantity-input {
+    width: 60px;
+    padding: .25rem .5rem;
+    font-size: .875rem;
+  }
+  
+ 

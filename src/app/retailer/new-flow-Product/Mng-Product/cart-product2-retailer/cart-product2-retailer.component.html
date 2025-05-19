@@ -7,86 +7,78 @@
     <!-- If products are available, display the accordion -->
     <p-accordion [activeIndex]="0" class="card" *ngIf="products && products.length > 0">
       <ng-container *ngFor="let prod of products">
-        <p-accordionTab class="px-0" [header]="prod.wholesaler.fullName">
-          <div *ngFor="let group of prod.groupedProducts" class="mb-4">
-            <p-table [value]="group.rows">
-              <ng-template pTemplate="header">
-                <tr>
-                  <th>Design No</th>
-                  <th>Colour</th>
-                  <th *ngFor="let size of sizeHeaders">
-                  {{ size }} <br />
-                  <span *ngIf="priceHeaders[prod.wholesaler.fullName] && priceHeaders[prod.wholesaler.fullName][group.designNumber] && priceHeaders[prod.wholesaler.fullName][group.designNumber][size]">
-                    ₹{{ priceHeaders[prod.wholesaler.fullName][group.designNumber][size] | number:'1.2-2' }}
-                  </span>
-                  <span *ngIf="!priceHeaders[prod.wholesaler.fullName] || !priceHeaders[prod.wholesaler.fullName][group.designNumber][size]">
-                    N/A
-                  </span>
-                </th>
-                  <th>Price</th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-row>
-                <tr>
-                  <td>{{ group.designNumber }}</td>
-                  <td>
-                    
-                    <span
-  *ngIf="row.colourName"
-  style="display: inline-block; width: 50px; height: 50px; line-height: 50px; text-align: center;"
->
-  {{ row.colourName }}
-</span>
+        <p-accordionTab class="px-0">
+          <ng-template pTemplate="header">
+            <div class="d-flex justify-content-between align-items-center w-100">
+              <div class="text-primary fw-bold">
+                {{ prod.wholesaler.fullName }} —
+                Total Items: {{ getTotalQuantity(prod) | number:'1.0-0' }} |
+                Total Amount: ₹{{ getTotalAmount(prod) | number:'1.2-2' }}
 
-                    <span
-                      *ngIf="!row.colourName"
-                      [ngStyle]="{ 'background-color': row.colour || '#ffffff' }"
-                      style="width: 50px; height: 50px; display: inline-block; border-radius: 4px;"
-                    ></span>
-                  </td>
-                  
-                  <td *ngFor="let size of sizeHeaders">
-                    {{ row.quantities[size] > 0 ? row.quantities[size] : 'N/A' }}
-                  </td>
-                  <td>{{ row.totalPrice | currency: 'INR' }}</td>
-                </tr>
-              </ng-template>
-            </p-table>
+              </div>
+              <button class="btn btn-sm btn-danger" (click)="confirmDeleteCart(prod)">
+                <i class="bi bi-trash-fill"></i> Delete All
+              </button>
+            </div>
+          </ng-template>        
+          
+          <div  class="mb-4">
+    
+            <!-- wrapper that lets only sizes scroll -->
+            <div class="table-wrapper">
+              <p-table [value]="prod.set" [responsive]="true" [paginator]="false" [style]="{ 'table-layout': 'auto' }">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th>Sr. No.</th>
+                    <th>Design No.</th>
+                    <th>Colour Name</th>
+                    <th>Image</th>
+                    <th>Size</th>
+                    <th>Rate</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                    <th>Action</th>
+                  </tr>
+                </ng-template>
+            
+                <ng-template pTemplate="body" let-item let-i="rowIndex">
+                  <tr>
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ item.designNumber }}</td>
+                    <td>{{ item.colourName }}</td>
+                    <td>
+                      <img [src]="item.colourImage" alt="Colour Image" style="width: 50px; height: 50px; object-fit: cover;" />
+                    </td>
+                    <td>{{ item.size }}</td>
+                    <td>₹{{ item.price }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹{{ item.price * item.quantity }}</td>
+                    <td>
+                      <button class="btn btn-sm btn-primary me-2"  (click)="onEdit(item, prod._id)">
+                        <i class="bi bi-pencil-fill"></i>
+                      </button>
+                      <button class="btn btn-sm btn-danger" (click)="onDelete(item, prod._id)" >
+                        <i class="bi bi-trash-fill"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+    
           </div>
+    
           <hr />
           <div class="d-flex align-items-center">
-            <!-- <div class="totals" *ngIf="wholesalerTotals[prod.wholesaler.fullName]">
-                <p class="mb-1 fw-bold">
-                    Total Sub Total: {{ wholesalerTotals[prod.wholesaler.fullName].subtotal | currency: 'INR' }}
-                </p>
-                <ng-container *ngIf="wholesalerTotals[prod.wholesaler.fullName].sgst !== undefined">
-                    <p class="mb-1 fw-bold">
-                        SGST (9%): {{ wholesalerTotals[prod.wholesaler.fullName].sgst | currency: 'INR' }}
-                    </p>
-                    <p class="mb-1 fw-bold">
-                        CGST (9%): {{ wholesalerTotals[prod.wholesaler.fullName].cgst | currency: 'INR' }}
-                    </p>
-                </ng-container>
-                <ng-container *ngIf="wholesalerTotals[prod.wholesaler.fullName].igst !== undefined">
-                    <p class="mb-1 fw-bold">
-                        IGST (18%): {{ wholesalerTotals[prod.wholesaler.fullName].igst | currency: 'INR' }}
-                    </p>
-                </ng-container>
-                <p class="mb-1 fw-bold">
-                    Total GST: {{ wholesalerTotals[prod.wholesaler.fullName].gst | currency: 'INR' }}
-                </p>
-                <p class="mb-1 fw-bold">
-                    Total Grand Total: {{ wholesalerTotals[prod.wholesaler.fullName].grandTotal | currency: 'INR' }}
-                </p>
-            </div> -->
-            
             <button class="btn btn-success mx-auto" (click)="placeOrder(prod)">
               <i class="bi bi-cart-check"></i> Purchase Order
             </button>
           </div>
+    
         </p-accordionTab>
       </ng-container>
     </p-accordion>
+    
 
     <!-- Display 'No data found' message if products array is empty -->
     <div *ngIf="serverError" class="no-data-found">

@@ -113,7 +113,64 @@
                 </div>
             </div>
             <hr>
-            <div class="">
+            <div class="price-section" >
+              <div class="row flex">
+                <div class="col-md-3">
+                  <label>Color:</label>
+                  <select [(ngModel)]="selectedColor" (change)="onColorChange()" class="form-control select">
+                    <option value="null" disabled> Select Color</option>
+                    <option *ngFor="let color of colours" [value]="color.name">{{ color.name }}</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label>Size:</label>
+                  <select [(ngModel)]="selectedSize" class="form-control select" (change)="onSizeChange()">
+                    <option value="" disabled> Select Size</option>
+                    <option *ngFor="let size of availableSizes" [value]="size">{{ size }}</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label>Price:</label>
+                  <input class="form-control" type="text" [value]="calculatedPrice" disabled readonly>
+                </div>
+                <div class="col-md-2">
+                  <label>Quantity:</label>
+                <input class="form-control" type="number" [(ngModel)]="selectedQuantity" min="1">
+                </div>
+                <div class="col-md-1 flex pt-3">
+                  <button  (click)="addItem()" class="btn btn-primary ">Add</button>
+                </div>
+              </div>
+            
+              <!-- Temporary cart table -->
+              <div class="temp-cart" *ngIf="tempCart.length > 0" style="flex: 2; margin-left: 10px;">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Color</th>
+                      <th>Size</th>
+                      <th>Price</th>
+                      <th>Qty</th>
+                      <th>Total</th>
+                      <th>Remove</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of tempCart; let i = index">
+                      <td>{{ item.colourName }}</td>
+                      <td>{{ item.size }}</td>
+                      <td>{{ item.price }}</td>
+                      <td>{{ item.quantity }}</td>
+                      <td>{{ item.price * item.quantity }}</td>
+                      <td><button class="btn btn-sm btn-danger" (click)="removeItem(i)">X</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <button class="btn btn-success" (click)="addToCartArray()">Add to Cart</button>
+              </div>
+            </div>           
+            
+            <!-- <div class="">
                 <form [formGroup]="stepThree" (ngSubmit)="saveStepThree()">
                     <div class="inventory-container3">
                       <div class="header3">
@@ -126,7 +183,7 @@
                             {{ size.size }} <br />
                             <small>{{ size.price | currency: 'INR' }}</small>
                           </div>
-                          <div class="size-header3">Total</div> <!-- New Total Column -->
+                          <div class="size-header3">Total</div>
                         </div>
                       </div>
                       <hr class="mt-0 mb-1" />
@@ -161,11 +218,11 @@
                             />
                           </div>
                           <div class="size-input3">
-                            <span>{{ getRowTotal(color.name) | currency: 'INR' }}</span> <!-- Display total for each color -->
+                            <span>{{ getRowTotal(color.name) | currency: 'INR' }}</span> 
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </div> -->
                     <div class="d-flex justify-content-center">
                       <button type="submit" class="btn submit-btn mt-3 me-2">Add to Cart</button>
                       <button type="button" class="btn submit-btn mt-3 me-2"[disabled]="wishlist"
@@ -173,8 +230,8 @@
                       [hidden]="wishlisted" (click)="WishlistAdd()"><i
                           class="bi bi-heart"></i>&nbsp; WISHLIST</button>
                     </div>
-                  </form>                  
-            </div>
+                  <!-- </form>                  
+            </div> -->
         </div>
     </div>
   </section>

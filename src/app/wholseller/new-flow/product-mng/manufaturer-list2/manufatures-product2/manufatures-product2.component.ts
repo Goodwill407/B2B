@@ -81,9 +81,11 @@ export class ManufaturesProduct2Component {
   }
 
   getAllProducts(email: any) {
-    let url = `type2-products/filter-products?limit=${this.limit}&page=${this.page}`;
+    let url = `type2-products/filter-products`;
 
     const Object = {
+      limit: this.limit,
+      page: this.page,
       productBy: email,
       brand: this.filters.brand,
       productType: this.filters.productType,
