@@ -77,59 +77,80 @@ export class GenPoRetailerManComponent {
 
   }
 
-  getAllProducts(email1: string, productby1: string) {
-    const url = `rtl-toMnf-cart/cart-products/po?email=${email1}&productBy=${productby1}`;
-    this.authService.get(url).subscribe(
-      (res: any) => {
-        this.responseData = res; // Store the response
-        console.log(res);
-        
-        // Update purchaseOrder from the response
-        this.purchaseOrder = {
-          supplierName: res.manufacturer.companyName|| 'Company Name Not Provided',
-          supplierDetails: res.manufacturer.fullName || 'Full Name Not Provided',
-          supplierAddress: `${res.manufacturer.address || '' } ${res.manufacturer.city || ''} ${res.manufacturer.state || ''} ${res.manufacturer.pinCode || ''}`,
-          supplierContact: res.manufacturer.mobNumber || 'Mobile Number Not Provided',
-          supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN Not Provided',
-          supplierEmail: res.manufacturer.email || 'Email Not Provided',
-          supplierPAN: res.manufacturer.pan || 'PAN Not Provided',
-          buyerName: res.retailer.companyName || 'Company Name Not Provided',
-          logoUrl: res.retailer.profileImg || '', // Handle missing logo
-          buyerPAN: res.retailer.pan || 'PAN Not Provided',
-          buyerAddress: `${res.retailer.address || ''} ${res.retailer.city || ''} ${res.retailer.state || ''} ${res.retailer.pinCode || ''}`,
-          buyerPhone: res.retailer.mobNumber ||  'Mobile Number Not Provided',
-          buyerEmail: res.retailer.email || 'Email Not Provided',
-          email: res.retailer.email || 'Email Not Provided',  // Here, we are setting the retailer's email
-          productBy: res.manufacturer.email || 'Email Not Provided',  // Ensure manufacturer email is correctly assigned
-          buyerDetails: res.retailer.fullName || 'Full Name Not Provided',
-          
-          buyerGSTIN: res.retailer.GSTIN || 'GSTIN Not Provided',
-          poDate: new Date().toLocaleDateString(),
-          orderDate: new Date().toLocaleDateString(),
-          orderNumber: res.orderNumber,
-          products: res.products?.[0]?.set || [], // Updated to match new response structure
-          ProductDiscount: res.retailer.productDiscount || 0,
-        };
-  
-        // You can process products if necessary
-        if (res.products?.[0]?.set && Array.isArray(res.products[0].set) && res.products[0].set.length > 0) {
-          this.extractSizesAndPrices(res.products[0].set);
-          this.mergedProducts = this.processGroupedProducts(res.products[0].set);
-          this.filteredData = res.products[0].set[0];
-  
-          if (this.filteredData) {
-            this.mergedProducts = this.flattenProductData(res.products[0].set);
-          }
-        } else {
-          this.filteredData = null;
-          this.mergedProducts = [];
-        }
-      },
-      (error) => {
-        console.error("Error fetching products:", error);
-      }
-    );
-  }
+getAllProducts(email1: string, productby1: string) {
+  const url = `rtl-toMnf-cart/cart-products/po?email=${email1}&productBy=${productby1}`;
+  this.authService.get(url).subscribe(
+    (res: any) => {
+      this.responseData = res;
+      console.log('📦 Raw Response:', res);
+
+
+      const productSet = res.products?.[0]?.set || [];
+this.chunkArray(productSet);
+
+      // ✅ Populate purchaseOrder without processing/merging data
+      this.purchaseOrder = {
+        supplierName: res.manufacturer.companyName || '',
+        supplierDetails: res.manufacturer.fullName || '',
+        supplierAddress: `${res.manufacturer.address || ''} ${res.manufacturer.city || ''}  ${res.manufacturer.pinCode || ''} ${res.manufacturer.state || ''}`,
+        supplierContact: res.manufacturer.mobNumber || '',
+        supplierGSTIN: res.manufacturer.GSTIN || '',
+        supplierEmail: res.manufacturer.email || '',
+        supplierPAN: res.manufacturer.pan || '',
+        buyerName: res.retailer.companyName || '',
+        buyerDetails: res.retailer.fullName || '',
+        buyerEmail: res.retailer.email || '',
+        buyerAddress: `${res.retailer.address || ''} ${res.retailer.city || ''}  ${res.retailer.pinCode || ''} ${res.retailer.state || ''}`,
+        buyerPhone: res.retailer.mobNumber || '',
+        buyerGSTIN: res.retailer.GSTIN || '',
+        buyerPAN: res.retailer.pan || '',
+        logoUrl: res.retailer.profileImg || 'assets/images/company_logo.jpg',
+        orderDate: new Date().toLocaleDateString(),
+        poDate: new Date().toLocaleDateString(),
+        orderNumber: res.orderNumber || '',
+        products: productSet,
+        ProductDiscount: res.retailer.productDiscount || 0
+      };
+
+      // ✅ Store unprocessed product data
+      this.products = productSet;
+
+      // ✅ Extract size/price for footer summary calculations
+      this.extractSizesAndPrices(productSet);
+
+      // ✅ Chunk the original data (used only for PDF)
+    this.chunkArray(productSet);
+ // or whatever your full data list is
+
+      // ✅ Calculate totals directly
+      this.calculateTotalsFromRawData(productSet);
+    },
+    (error) => {
+      console.error("Error fetching products:", error);
+    }
+  );
+}
+calculateTotalsFromRawData(productSet: any[]) {
+  let subtotal = 0;
+
+  productSet.forEach((item) => {
+    const quantity = item.quantity || 0;
+    const rate = parseFloat(item.price) || 0;
+    subtotal += quantity * rate;
+  });
+
+  this.Totalsub = subtotal;
+
+  const discount = this.purchaseOrder.ProductDiscount || 0;
+  const discountAmount = (subtotal * discount) / 100;
+  this.discountedTotal = subtotal - discountAmount;
+  this.dicountprice = discountAmount;
+
+  this.calculateGST(); // already uses discountedTotal
+
+  this.totalGrandTotal = this.discountedTotal + this.sgst + this.cgst + this.igst;
+}
+
     
   navigateFun() {
     this.location.back();
@@ -236,31 +257,33 @@ export class GenPoRetailerManComponent {
   
     
 
-  calculateGST() {
-    const discountedTotal = this.discountedTotal;
-  
-    // Assume that the buyer and supplier states are in the addresses
-    const retailerState = this.purchaseOrder.buyerAddress.split(',')[2]?.trim().split(' ')[0];
-    const wholesalerState = this.purchaseOrder.supplierAddress.split(',')[2]?.trim().split(' ')[0];
-  
-    // Determine whether to apply SGST/CGST or IGST based on states
-    if (retailerState === wholesalerState) {
-      // Apply SGST and CGST if both states are the same
-      const gstRate = 9; // SGST and CGST are 9% each
-      this.sgst = (discountedTotal * gstRate) / 100;
-      this.cgst = (discountedTotal * gstRate) / 100;
-      this.igst = 0; // No IGST when states are the same
+calculateGST() {
+  const discountedTotal = this.discountedTotal;
+
+  // ✅ Use clean state values from response instead of parsing addresses
+  const retailerState = this.responseData?.retailer?.state?.trim().toLowerCase();
+  const supplierState = this.responseData?.manufacturer?.state?.trim().toLowerCase();
+
+  if (retailerState && supplierState) {
+    if (retailerState === supplierState) {
+      this.sgst = (discountedTotal * 9) / 100;
+      this.cgst = (discountedTotal * 9) / 100;
+      this.igst = 0;
     } else {
-      // Apply IGST if states are different
-      const gstRate = 18; // IGST is 18%
       this.sgst = 0;
       this.cgst = 0;
-      this.igst = (discountedTotal * gstRate) / 100;
+      this.igst = (discountedTotal * 18) / 100;
     }
-  
-    // Round the grand total to 2 decimal places
-    this.totalGrandTotal = parseFloat((discountedTotal + this.sgst + this.cgst + this.igst).toFixed(2));
+  } else {
+    // Fallback: treat as IGST if we can't compare properly
+    this.sgst = 0;
+    this.cgst = 0;
+    this.igst = (discountedTotal * 18) / 100;
   }
+
+  this.totalGrandTotal = parseFloat((discountedTotal + this.sgst + this.cgst + this.igst).toFixed(2));
+}
+
   
   
   
@@ -345,45 +368,102 @@ export class GenPoRetailerManComponent {
     return flatList;
 }
 
+tableChunks: any[][] = [];
+serialOffset: number[] = [];
 
-printPO(): void {
-  const data = document.getElementById('purchase-order');
-  if (data) {
-    html2canvas(data, {
-      scale: 3,  // Adjust scale for better quality
-      useCORS: true,
-    }).then((canvas) => {
-      const imgWidth = 208;  // A4 page width in mm
-      const pageHeight = 295;  // A4 page height in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
+chunkArray(array: any[]): void {
+  this.tableChunks = [];
+  this.serialOffset = [];
 
-      const contentDataURL = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');  // Create new PDF
-      const margin = 10;  // Margin for PDF
-      let position = margin;
+  const firstChunkSize = 20;
+  const nextChunkSize = 30;
 
-      // Add first page
-      pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
-      heightLeft -= pageHeight;
+  if (array.length > 0) {
+    // Push first 20
+    this.tableChunks.push(array.slice(0, firstChunkSize));
+    this.serialOffset.push(0);
 
-      // Loop over content to add remaining pages if content exceeds one page
-      while (heightLeft > 0) {
-        pdf.addPage();  // Add new page
-        position = margin - heightLeft;  // Position for the next page
-        pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
-      // Save PDF file
-      pdf.save('purchase-order.pdf');
-    }).catch((error) => {
-      console.error("Error generating PDF:", error);
-    });
-  } else {
-    console.error("Element with id 'purchase-order' not found.");
+    let start = firstChunkSize;
+    while (start < array.length) {
+      this.tableChunks.push(array.slice(start, start + nextChunkSize));
+      this.serialOffset.push(start); // Serial starts from this index
+      start += nextChunkSize;
+    }
   }
 }
+
+
+printPO(): void {
+  const fullId = 'purchase-order';
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const margin = 10;
+  const chunkCount = this.tableChunks.length;
+  let currentChunk = 0;
+
+  const renderChunk = () => {
+    const fullContent = document.getElementById(fullId);
+    if (!fullContent) return;
+
+    const fullClone = fullContent.cloneNode(true) as HTMLElement;
+
+    // Hide all chunks except current one
+    const chunks = fullClone.querySelectorAll('.table-chunk');
+    chunks.forEach((div, i) => {
+      (div as HTMLElement).style.display = i === currentChunk ? 'block' : 'none';
+    });
+
+    // ✅ REMOVE the full header content after first page
+    if (currentChunk > 0) {
+      const headerContent = fullClone.querySelector('.page-header-content');
+      if (headerContent) headerContent.remove();
+    }
+
+    // ✅ Include styles to maintain design
+    const styles = document.querySelectorAll('style, link[rel="stylesheet"]');
+    styles.forEach((tag) => {
+      fullClone.appendChild(tag.cloneNode(true));
+    });
+
+    // ✅ Insert into off-screen DOM for rendering
+    const tempWrapper = document.createElement('div');
+    tempWrapper.style.position = 'fixed';
+    tempWrapper.style.top = '-10000px';
+    tempWrapper.style.left = '-10000px';
+    tempWrapper.style.width = '1000px';
+    tempWrapper.style.zIndex = '-9999';
+    tempWrapper.style.opacity = '0';
+    tempWrapper.appendChild(fullClone);
+    document.body.appendChild(tempWrapper);
+
+    html2canvas(fullClone, {
+      scale: 2,
+      useCORS: true,
+      scrollY: -window.scrollY
+    }).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const imgProps = pdf.getImageProperties(imgData);
+      const imgWidth = pageWidth - margin * 2;
+      const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+
+      if (currentChunk > 0) pdf.addPage();
+      pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
+
+      document.body.removeChild(tempWrapper);
+
+      currentChunk++;
+      if (currentChunk < chunkCount) {
+        renderChunk(); // Go to next table chunk
+      } else {
+        pdf.save('purchase-order.pdf');
+      }
+    });
+  };
+
+  renderChunk();
+}
+
+
 
 
   
