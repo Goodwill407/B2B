@@ -1,4 +1,4 @@
-import { CommonModule,Location } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -22,8 +22,10 @@ export class ViewProduct2Component {
   wishlist: boolean = false;
   quantity: any;
   hoveredColourName: string = '';
-  constructor(private location: Location,private renderer: Renderer2, private route: ActivatedRoute, public authService: AuthService, private fb: FormBuilder, private communicationService: CommunicationService,private dialog: MatDialog) { }
- @ViewChild('mainImage') mainImage!: ElementRef; // Reference to the main image element
+  selectedColor: any = null;
+
+  constructor(private location: Location, private renderer: Renderer2, private route: ActivatedRoute, public authService: AuthService, private fb: FormBuilder, private communicationService: CommunicationService, private dialog: MatDialog) { }
+  @ViewChild('mainImage') mainImage!: ElementRef; // Reference to the main image element
   zoomed: boolean = false;
 
   product: any;
@@ -35,9 +37,27 @@ export class ViewProduct2Component {
   stepThree!: FormGroup;
   selectedSizes: any[] = [];
   colourCollections: any[] = [];
-  designno:any;
-  Prodnum:any;
-  
+  designno: any;
+  Prodnum: any;
+
+
+  electedColor: any = null;
+  selectedSize: string = '';
+  selectedQuantity: number = 1;
+  calculatedPrice: number = 0;
+  colours: any;
+  mnfPrice: any;
+
+  tempCart: Array<{
+    colourName: string;
+    size: string;
+    quantity: number;
+    price: any;
+    designNumber: any;
+    colour: any,
+    colourImage: any
+  }> = [];
+
   ngOnInit(): void {
     this.stepThree = this.fb.group({});
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
@@ -58,7 +78,7 @@ export class ViewProduct2Component {
         this.product = {
           brand: res.brand,
           designNumber: this.designno,
-        
+
           clothingType: res.clothing,
           subCategory: res.subCategory,
           gender: res.gender,
@@ -98,10 +118,14 @@ export class ViewProduct2Component {
         };
         this.colourCollections = this.product.colours;
         this.selectedSizes = this.product.sizes.map((item: any) => {
-         return {
-          size:item.standardSize,
-          price:item.manufacturerPrice}
+          return {
+            size: item.standardSize,
+            price: item.manufacturerPrice
+          }
         });
+
+        this.colours = this.colourCollections;
+
         this.createFormControls2();
         this.selectColourCollection(this.product.colours[0]);
         this.quantity = this.product.minimumOrderQty;
@@ -136,31 +160,31 @@ export class ViewProduct2Component {
   updateRowTotal(colorName: string, sizeName: string) {
     // Optional: You can add logic here to do something when the input changes
   }
-  
+
   getRowTotal(colorName: string): number {
     let total = 0;
-  
+
     this.selectedSizes.forEach(size => {
       const controlName = this.getControlName(colorName, size.size);
       const quantity = this.stepThree.get(controlName)?.value || 0; // Get the quantity for the control
       total += quantity * size.price; // Calculate total for this size
     });
-  
+
     return total; // Return the total for this color
   }
-  
-  async saveStepThree() {    
+
+  async saveStepThree() {
     if (this.stepThree.valid) {
       const formData = this.stepThree.value;
       const result: any[] = [];
-  
+
       this.colourCollections.forEach((color: any) => {
         const sanitizedColorName = this.sanitizeControlName(color.name);
         this.selectedSizes.forEach((size: any) => {
           const quantity = formData[`${sanitizedColorName}_${size.size}`];
           if (quantity) {
             result.push({
-              
+
               colourName: color.name,
               colourImage: color.image,
               colour: color.hex,
@@ -171,15 +195,15 @@ export class ViewProduct2Component {
           }
         });
       });
-  
+
       const payload = {
         set: result,
         productId: this.product.id,
         email: this.authService.currentUserValue.email,
         productBy: this.product.productBy
-       
+
       };
-  
+
       try {
         const res = await this.authService.post('type2-cart', payload).toPromise();
         if (res) {
@@ -257,7 +281,7 @@ export class ViewProduct2Component {
       }
     )
   }
- zoomImage(event: MouseEvent) {
+  zoomImage(event: MouseEvent) {
     const imageElement = this.mainImage?.nativeElement; // Get the native image element
 
     if (!imageElement) {
@@ -299,5 +323,111 @@ export class ViewProduct2Component {
   onLeaveColour() {
     this.selectedColourName = this.hoveredColourName; // Revert to the original selected name when hover is removed
   }
-}
 
+
+  // colours = this.product?.colourCollections || [];
+  availableSizes: string[] = [];
+
+  // 1) Rebuild sizes whenever you pick a color
+  onColorChange() {
+    if (!this.selectedColor) {
+      this.availableSizes = [];
+      this.selectedSize = '';
+      this.calculatedPrice = 0;
+      return;
+    }
+
+    // Grab every standardSize string
+    this.availableSizes = this.product.sizes.map((s: any) => s.standardSize);
+    this.selectedSize = '';
+    this.calculatedPrice = 0;
+  }
+
+  getPriceBySize(size: string): number {
+    // Find the size record
+    const sizeObj = (this.product.sizes || [])
+      .find((s: any) => s.standardSize === size);
+
+    // Parse the manufacturerPrice (string) into a number
+    return sizeObj
+      ? Number(sizeObj.manufacturerPrice)
+      : 0;
+  }
+
+  onSizeChange() {
+    if (this.selectedSize) {
+      this.calculatedPrice = this.getPriceBySize(this.selectedSize);
+    }
+  }
+
+  addItem() {
+    if (!this.selectedColor || !this.selectedSize || !this.selectedQuantity) {
+      alert('Please select color, size and quantity.');
+      return;
+    }
+
+    const price = this.getPriceBySize(this.selectedSize);
+
+    // Find the matching color object from this.colours
+    const matchedColor = this.colours.find((c: { name: string; }) => c.name.toLowerCase() === this.selectedColor.toLowerCase());
+
+    const colourHex = matchedColor?.hex || '';
+    const colourImage = matchedColor?.image || '';
+
+    // Check if this combination already exists
+    const existingItem = this.tempCart.find(item =>
+      item.colourName === this.selectedColor && item.size === this.selectedSize
+    );
+
+    if (existingItem) {
+      // Update quantity and price
+      existingItem.quantity += this.selectedQuantity;
+      existingItem.price = price.toString(); // Optional: If price might change
+    } else {
+      // Add as new item
+      this.tempCart.push({
+        colourName: this.selectedColor,
+        size: this.selectedSize,
+        quantity: this.selectedQuantity,
+        price: this.calculatedPrice.toString(),
+        designNumber: this.designno,
+        colour: colourHex,
+        colourImage: colourImage
+      });
+    }
+
+    // Reset after adding
+    this.selectedSize = '';
+    this.selectedQuantity = 1;
+    this.calculatedPrice = 0;
+  }
+
+
+  removeItem(index: number) {
+    this.tempCart.splice(index, 1);
+  }
+
+
+  async addToCartArray() {
+    const payload = {
+      set: this.tempCart,
+      productId: this.product.id,
+      email: this.authService.currentUserValue.email,
+      productBy: this.product.productBy
+
+    };
+
+    try {
+      const res = await this.authService.post('type2-cart', payload).toPromise();
+      if (res) {
+        this.communicationService.customSuccess1('Product Added to Cart');
+        this.tempCart = [];
+      }
+    } catch (error) {
+      this.communicationService.customError1('Error occurred while saving...!!!');
+    } finally {
+      // Cleanup if needed
+    }
+  }
+
+}

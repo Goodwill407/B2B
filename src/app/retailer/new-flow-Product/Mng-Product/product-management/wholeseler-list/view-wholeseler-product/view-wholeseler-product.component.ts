@@ -467,10 +467,6 @@ tempCart: Array<{
       this.tempCart.splice(index, 1);
     }
 
-    finalizeCart() {
-      console.log('Final cart:', this.tempCart);
-      // Emit or submit this.tempCart
-    }
 
     async addToCartArray(){
       const payload = {
@@ -487,6 +483,7 @@ tempCart: Array<{
         if (res) {
           this.communicationService.customSuccess1('Product Added to Cart');
           this.resetQuantities(); // Reset quantity controls to zero after successful save
+          this.tempCart = [];
         }
       } catch (error) {
         this.communicationService.customError1('Error occurred while saving...!!!');
