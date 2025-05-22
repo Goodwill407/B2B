@@ -136,3 +136,40 @@
     width: 100%;
   }
 }
+#purchase-order {
+  background: white;
+  color: black;
+  width: 800px; /* or your actual layout width */
+  padding: 20px;
+  margin: auto;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #purchase-order, #purchase-order * {
+    visibility: visible;
+  }
+}
+
+.table-chunk .p-datatable {
+  border: 1px solid #dee2e6;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.table-chunk .p-datatable th,
+.table-chunk .p-datatable td {
+  border: 1px solid #dee2e6;
+  padding: 8px;
+  font-size: 12px;
+}
+.d-none {
+  display: none !important;
+}
+
+
+.table-chunk {
+  page-break-inside: avoid;
+}
