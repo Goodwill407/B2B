@@ -483,7 +483,9 @@ chunkArray(array: any[]): void {
       if (currentChunk < chunkCount) {
         renderChunk();
       } else {
-        pdf.save('purchase-order.pdf');
+   const poDate = this.purchaseOrder.poDate?.replace(/\//g, '-') || 'no-date';
+const poNumber = this.purchaseOrder.poNumber || 'no-number';
+pdf.save(`PO_${poDate}_${poNumber}.pdf`);
       }
     });
   };
