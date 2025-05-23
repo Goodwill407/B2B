@@ -2,153 +2,145 @@
   <div class="content-block">
     <!-- Page Header -->
     <h4 class="mt-4">
-      <!-- <i class="bi bi-person-vcard-fill h3"></i> -->
       <button class="btn navigate" (click)="navigateFun()">
         <i class="bi bi-arrow-left-circle h4"></i>
       </button>
       View Purchase Order
     </h4>
 
-    <!-- Button to Download PDF -->
-    <!-- <div class="d-flex justify-content-end">
-        <button class="btn btn-success" (click)="printPO()">Download PDF</button>
-      </div> -->
-
     <!-- Purchase Order Container -->
     <div id="purchase-order" class="challan-container card my-2">
-      <!-- Header Section -->
-      <div class="header d-flex justify-content-between align-items-center">
-        <div class="company-info text-center">
-          <h1>PURCHASE ORDER</h1>
-        </div>
-        <div class="order-info text-right">
-          <p><strong>Order Date:</strong> {{ purchaseOrder.poDate }}</p>
-          <p><strong>Order No:</strong> {{ purchaseOrder.poNumber }}</p>
-        </div>
-      </div>
-
-      <!-- Buyer and Seller Information -->
-      <div class="buyer-seller-info d-flex justify-content-between">
-        <div class="logo">
-          <img [src]="purchaseOrder.logoUrl" alt="Company Logo"
-            onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';" />
-        </div>
-        <!-- Buyer Information -->
-        <div class="buyer-info">
-          <h5>Order By:</h5>
-          <p><strong>{{ purchaseOrder.buyerName }}</strong></p>
-          <p>{{ purchaseOrder.buyerAddress}}</p>
-          <p>Phone No.: {{ purchaseOrder.buyerPhone }}</p>
-          <p>Email: {{ purchaseOrder.buyerEmail }}</p>
-          <p>GSTN: {{ purchaseOrder.buyerGSTIN }}</p>
-          <p>PAN: {{ purchaseOrder.buyerPAN }}</p>
+      <!-- ✅ Header Section: only included on first page in PDF -->
+      <div class="page-header-content" id="purchase-header">
+        <!-- Title & Order Info -->
+        <div class="header d-flex justify-content-between align-items-center">
+          <div class="company-info text-center">
+            <h1>PURCHASE ORDER</h1>
+          </div>
+          <div class="order-info text-right">
+            <p><strong>Order Date:</strong> {{ purchaseOrder.poDate }}</p>
+            <p><strong>Order No:</strong> {{ purchaseOrder.poNumber }}</p>
+          </div>
         </div>
 
-        <!-- Seller Information -->
-        <div class="seller-info">
+        <!-- Buyer & Seller Details -->
+        <div class="buyer-seller-info d-flex justify-content-between">
+          <div class="logo">
+            <img
+              [src]="purchaseOrder.logoUrl"
+              alt="Company Logo"
+              onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';"
+            />
+          </div>
 
-          <h5>Order To:</h5>
-          <p><strong>{{ purchaseOrder.supplierName }}</strong></p>
-          <p>{{ purchaseOrder.supplierAddress }}</p>
-          <p>Phone No.: {{ purchaseOrder.supplierContact }}</p>
-          <p>Email: {{ purchaseOrder.supplierEmail }}</p>
-          <p>GSTN: {{ purchaseOrder.supplierGSTIN }}</p>
-          <p>PAN: {{ purchaseOrder.supplierPAN }}</p>
+          <div class="buyer-info">
+            <h5><u>Order By:</u></h5>
+            <p><strong>{{ purchaseOrder.buyerName }}</strong></p>
+            <p>{{ purchaseOrder.buyerAddress }}</p>
+            <p>Phone No.: {{ purchaseOrder.buyerPhone }}</p>
+            <p>Email: {{ purchaseOrder.buyerEmail }}</p>
+            <p>GSTN: {{ purchaseOrder.buyerGSTIN }}</p>
+            <p>PAN: {{ purchaseOrder.buyerPAN }}</p>
+          </div>
+
+          <div class="seller-info">
+            <h5><u>Order To:</u></h5>
+            <p><strong>{{ purchaseOrder.supplierName }}</strong></p>
+            <p>{{ purchaseOrder.supplierAddress }}</p>
+            <p>Phone No.: {{ purchaseOrder.supplierContact }}</p>
+            <p>Email: {{ purchaseOrder.supplierEmail }}</p>
+            <p>GSTN: {{ purchaseOrder.supplierGSTIN }}</p>
+            <p>PAN: {{ purchaseOrder.supplierPAN }}</p>
+          </div>
         </div>
-      </div>
 
-      <section class="order-details">
+        <!-- ✅ Order Details Title only on first page -->
         <h4 class="text-center mb-3">Order Details</h4>
-        <div *ngIf="mergedProducts && mergedProducts.length > 0">
-          <p-table [value]="mergedProducts" class="bordered-table">
-            <!-- Table Header -->
-            <ng-template pTemplate="header">
-              <tr>
-                <th>Design No</th>
-                <th>Colour</th>
-                <th *ngFor="let size of sizeHeaders">{{ size }}</th>
-                <th>Price</th>
-              </tr>
-            </ng-template>
+      </div>
 
-            <!-- Table Body -->
-            <ng-template pTemplate="body" let-row>
-              <tr>
-                <td>{{ row.designNumber }}</td>
-                <td>{{ row.colourName }}</td>
-                <td *ngFor="let size of sizeHeaders">
-                  {{ row.quantities[size] > 0 ? row.quantities[size] : 'N/A' }}
-                </td>
-                <td>{{ calculateTotalPrice(row, false) | currency: 'INR' }}</td>
-              </tr>
-            </ng-template>
+      <!-- Order Details Table (Chunked) -->
+      <section class="order-details">
+        <ng-container *ngFor="let chunk of tableChunks; let i = index">
+          <div [id]="'table-part-' + i" class="table-chunk mb-4">
+            <p-table [value]="chunk" [responsive]="true" class="bordered-table">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Sr. No.</th>
+                  <th>Design No.</th>
+                  <th>Colour Name</th>
+                  <th>Size</th>
+                  <th>Rate</th>
+                  <th>Quantity</th>
+                  <th>Total Price</th>
+                </tr>
+              </ng-template>
 
-            <!-- Table Footer -->
-            <!-- Table Footer -->
-            <ng-template pTemplate="footer">
-              <!-- Subtotal -->
-              <tr>
-                <td [attr.colspan]="1 + sizeHeaders.length"></td>
-                <td style="text-align:right;font-weight:bold;">Subtotal:</td>
-                <td>{{ Totalsub | currency:'INR' }}</td>
-              </tr>
+              <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+                <tr>
+                  <td>{{ serialOffset[i] + rowIndex + 1 }}</td>
+                  <td>{{ item.designNumber }}</td>
+                  <td>{{ item.colourName }}</td>
+                  <td>{{ item.size }}</td>
+                  <td>₹{{ item.price }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>₹{{ item.quantity * item.price }}</td>
+                </tr>
+              </ng-template>
 
-              <!-- Discount amount -->
-              <tr>
-                <td [attr.colspan]="1 + sizeHeaders.length"></td>
-                <td style="text-align:right;font-weight:bold;">
-                  Discount ({{ purchaseOrder.ProductDiscount }}%):
-                </td>
-                <td>{{ discountAmount | currency:'INR' }}</td>
-              </tr>
-              
-              <!-- Net after discount -->
-              <!-- <tr>
-                <td [attr.colspan]="1 + sizeHeaders.length"></td>
-                <td style="text-align:right;font-weight:bold;">
-                  Total after Discount:
-                </td>
-                <td>{{ discountedTotal | currency:'INR' }}</td>
-              </tr> -->
+              <!-- ✅ Show footer only on last chunk -->
+              <ng-template pTemplate="footer" *ngIf="i === tableChunks.length - 1">
+                <!-- Subtotal -->
+                <tr>
+                  <td colspan="5" style="background-color: #f9f9f9; border: none;"></td>
+                  <td style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">Subtotal:</td>
+                  <td style="border: 1px solid #dee2e6;">{{ Totalsub | currency: 'INR' }}</td>
+                </tr>
 
-              <!-- Show SGST and CGST only if states match -->
-              <tr *ngIf="sgst > 0 && cgst > 0">
-                <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
-                <td style="text-align: right; font-weight: bold;">SGST (9%):</td>
-                <td>{{ sgst | currency: 'INR' }}</td>
-              </tr>
-            
-              <tr *ngIf="sgst > 0 && cgst > 0">
-                <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
-                <td style="text-align: right; font-weight: bold;">CGST (9%):</td>
-                <td>{{ cgst | currency: 'INR' }}</td>
-              </tr>
-            
-              <!-- Show IGST only if states are different -->
-              <tr *ngIf="igst > 0">
-                <td [attr.colspan]="1 + sizeHeaders.length" style="border: none;"></td>
-                <td style="text-align: right; font-weight: bold;">IGST (18%):</td>
-                <td>{{ igst | currency: 'INR' }}</td>
-              </tr>
-            
-              <!-- Grand Total -->
-              <tr>
-                <td [attr.colspan]="1 + sizeHeaders.length"></td>
-                <td style="text-align:right;font-weight:bold;">Grand Total:</td>
-                <td>{{ totalGrandTotal | currency:'INR' }}</td>
-              </tr>
-            </ng-template>
-            
+                <!-- Discount -->
+                <tr>
+                  <td colspan="5" style="background-color: #f9f9f9; border: none;"></td>
+                  <td style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">
+                    Discount ({{ purchaseOrder.ProductDiscount }}%):
+                  </td>
+                  <td style="border: 1px solid #dee2e6;">{{ discountAmount | currency: 'INR' }}</td>
+                </tr>
 
-          </p-table>
-        </div>
+                <!-- SGST/CGST -->
+                <tr *ngIf="sgst > 0 && cgst > 0">
+                  <td colspan="5" style="background-color: #f9f9f9; border: none;"></td>
+                  <td style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">SGST (9%):</td>
+                  <td style="border: 1px solid #dee2e6;">{{ sgst | currency: 'INR' }}</td>
+                </tr>
+                <tr *ngIf="sgst > 0 && cgst > 0">
+                  <td colspan="5" style="background-color: #f9f9f9; border: none;"></td>
+                  <td style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">CGST (9%):</td>
+                  <td style="border: 1px solid #dee2e6;">{{ cgst | currency: 'INR' }}</td>
+                </tr>
+
+                <!-- IGST -->
+                <tr *ngIf="igst > 0">
+                  <td colspan="5" style="background-color: #f9f9f9; border: none;"></td>
+                  <td style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">IGST (18%):</td>
+                  <td style="border: 1px solid #dee2e6;">{{ igst | currency: 'INR' }}</td>
+                </tr>
+
+                <!-- Grand Total -->
+                <tr>
+                  <td colspan="5" style="background-color: #f9f9f9; border: none;"></td>
+                  <td style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">Grand Total:</td>
+                  <td style="border: 1px solid #dee2e6;">{{ totalGrandTotal | currency: 'INR' }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </ng-container>
       </section>
     </div>
 
-    <!-- Footer Button -->
+    <!-- Footer Buttons -->
     <div class="row">
       <div class="col-12">
-        <div class="text-center my-3">  
+        <div class="text-center my-3">
           <button class="btn btn-success" (click)="addpo()">Generate Purchase Order</button> &nbsp;
           <button class="btn btn-success ms-auto" (click)="printPO()">Download Purchase Order</button>
         </div>

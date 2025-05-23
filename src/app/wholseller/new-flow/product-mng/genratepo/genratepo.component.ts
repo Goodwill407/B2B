@@ -70,65 +70,74 @@ import jsPDF from 'jspdf';
       this.getAllProducts(this.distributorId);
     
     }
+getAllProducts(distributorId: string) {
+  const url = `type2-cart/place-order/products/${distributorId}`;
+  this.authService.get(url).subscribe(
+    (res: any) => {
+      console.log('✅ Full API response:', res);
 
-    getAllProducts(distributorId: string) {
-      const url = `type2-cart/place-order/products/${distributorId}`;
-      this.authService.get(url).subscribe(
-        (res: any) => {
-          console.log('ProductDiscount:', res.wholesaler.ProductDiscount),
-          this.responseData = res; // Store the response in responseData
-          console.log(res)
-          // Update purchaseOrder from the response
-          this.purchaseOrder = {
-            supplierName: res.manufacturer.companyName,
-            supplierDetails: res.manufacturer.fullName,
-            supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.city}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
-            supplierContact: `${res.manufacturer.mobNumber}`,
-            supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
-            buyerName: res.wholesaler.companyName,
-            logoUrl: res.wholesaler.profileImg,
-            buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
-            buyerPhone: res.wholesaler.mobNumber,
-            buyerEmail: res.wholesaler.email,
-            buyerDetails: res.wholesaler.fullName,
-            buyerGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
-            poDate: new Date().toLocaleDateString(),
-            poNumber: res.poNumber,
-            products: res.products || [],
-            ProductDiscount: res.wholesaler.productDiscount !== undefined && res.wholesaler.productDiscount !== '' ? parseFloat(res.wholesaler.productDiscount) : 0,  // Ensure we handle undefined and empty values properly
-          };
-          
-          
+      // Extract product set (actual cart items)
+      const productSet = res.set || [];
 
-          if (res.set && Array.isArray(res.set) && res.set.length > 0) {
-            this.extractSizesAndPrices(res.set); // <-- Ensure this is called
-    
-            // Process grouped products and update mergedProducts
-            this.mergedProducts = this.processGroupedProducts(res.set);
-            this.filteredData = res.set[0];
-          
-        
-            // Proceed if filteredData is not empty
-            if (this.filteredData) {
-                // Flatten the set into mergedProducts
-                this.mergedProducts = this.flattenProductData(res.set);  // Pass the entire set array
-                
-            }
-          }
- 
-         else {
-            
-            this.filteredData = null;
-            this.mergedProducts = [];
-        }
-        
-        
-        },
-        (error) => {
-          
-        }
-      );
+      // Store full response in a local variable
+      this.responseData = res;
+
+      // Assign PO details and product list properly
+      this.purchaseOrder = {
+        supplierName: res.manufacturer.companyName,
+        supplierDetails: res.manufacturer.fullName,
+        supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.city}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
+        supplierContact: res.manufacturer.mobNumber,
+        supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
+
+        buyerName: res.wholesaler.companyName,
+        buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
+        buyerPhone: res.wholesaler.mobNumber,
+        buyerEmail: res.wholesaler.email,
+        buyerDetails: res.wholesaler.fullName,
+        buyerGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
+        logoUrl: res.wholesaler.profileImg || '',
+
+        poDate: new Date().toLocaleDateString(),
+        poNumber: res.poNumber,
+
+        products: productSet,  // ✅ Assign actual product data here
+        ProductDiscount: res.wholesaler.productDiscount !== undefined && res.wholesaler.productDiscount !== ''
+          ? parseFloat(res.wholesaler.productDiscount)
+          : 0,
+      };
+
+      // ✅ Proceed with calculations and table rendering
+      this.calculateTotalsFromRawData(productSet);         // flat table version
+      this.extractSizesAndPrices(productSet);              // if needed
+      this.chunkArray(productSet);                         // if using chunked PDF export
+    },
+    (error) => {
+      console.error('❌ Error fetching products:', error);
+      this.communicationService.customError1('Failed to load purchase order data.');
     }
+  );
+}
+
+calculateTotalsFromRawData(productSet: any[]): void {
+  let subtotal = 0;
+
+  productSet.forEach((item) => {
+    const quantity = item.quantity || 0;
+    const rate = parseFloat(item.price) || 0;
+    subtotal += quantity * rate;
+  });
+
+  this.Totalsub = subtotal;
+
+  const discount = this.purchaseOrder.ProductDiscount || 0;
+  const discountAmount = (subtotal * discount) / 100;
+  this.discountAmount = discountAmount;
+  this.discountedTotal = subtotal - discountAmount;
+
+  this.calculateGST();
+  this.totalGrandTotal = this.discountedTotal + this.sgst + this.cgst + this.igst;
+}
 
     extractSizesAndPrices(productSet: any[]): void {
       const uniqueSizes = new Set<string>();
@@ -391,45 +400,98 @@ import jsPDF from 'jspdf';
       console.error("Element with id 'purchase-order' not found.");
     }
   }
-  
-  printPO(): void {
-    const data = document.getElementById('purchase-order');
-    if (data) {
-      html2canvas(data, {
-        scale: 3,  // Adjust scale for better quality
-        useCORS: true,
-      }).then((canvas) => {
-        const imgWidth = 208;  // A4 page width in mm
-        const pageHeight = 295;  // A4 page height in mm
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        let heightLeft = imgHeight;
 
-        const contentDataURL = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');  // Create new PDF
-        const margin = 10;  // Margin for PDF
-        let position = margin;
+  tableChunks: any[][] = [];
+serialOffset: number[] = [];
 
-        // Add first page
-        pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
-        heightLeft -= pageHeight;
+chunkArray(array: any[]): void {
+  this.tableChunks = [];
+  this.serialOffset = [];
 
-        // Loop over content to add remaining pages if content exceeds one page
-        while (heightLeft > 0) {
-          pdf.addPage();  // Add new page
-          position = margin - heightLeft;  // Position for the next page
-          pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
-          heightLeft -= pageHeight;
-        }
+  const firstPage = 20; // first page item limit
+  const restPages = 30; // subsequent page item limit
 
-        // Save PDF file
-        pdf.save('purchase-order.pdf');
-      }).catch((error) => {
-        console.error("Error generating PDF:", error);
-      });
-    } else {
-      console.error("Element with id 'purchase-order' not found.");
+  if (array.length <= firstPage) {
+    this.tableChunks.push(array);
+    this.serialOffset.push(0);
+  } else {
+    this.tableChunks.push(array.slice(0, firstPage));
+    this.serialOffset.push(0);
+
+    let start = firstPage;
+    while (start < array.length) {
+      this.tableChunks.push(array.slice(start, start + restPages));
+      this.serialOffset.push(start);
+      start += restPages;
     }
   }
+}
+
+  
+ printPO(): void {
+  const fullId = 'purchase-order';
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const margin = 10;
+  const chunkCount = this.tableChunks.length;
+  let currentChunk = 0;
+
+  const renderChunk = () => {
+    const fullContent = document.getElementById(fullId);
+    if (!fullContent) return;
+
+    const fullClone = fullContent.cloneNode(true) as HTMLElement;
+
+    // ✅ Hide all table chunks except current one
+    const chunks = fullClone.querySelectorAll('.table-chunk');
+    chunks.forEach((div, i) => {
+      (div as HTMLElement).style.display = i === currentChunk ? 'block' : 'none';
+    });
+
+    // ✅ Remove the header on all pages after the first
+    if (currentChunk > 0) {
+      const header = fullClone.querySelector('#purchase-header');
+      if (header) header.remove();
+    }
+
+    const tempWrapper = document.createElement('div');
+    tempWrapper.style.position = 'fixed';
+    tempWrapper.style.top = '-10000px';
+    tempWrapper.style.left = '-10000px';
+    tempWrapper.style.width = '1000px';
+    tempWrapper.style.zIndex = '-9999';
+    tempWrapper.style.opacity = '0';
+    tempWrapper.appendChild(fullClone);
+    document.body.appendChild(tempWrapper);
+
+    html2canvas(fullClone, {
+      scale: 2,
+      useCORS: true,
+      scrollY: -window.scrollY,
+    }).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const imgProps = pdf.getImageProperties(imgData);
+      const imgWidth = pageWidth - margin * 2;
+      const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+
+      if (currentChunk > 0) pdf.addPage();
+      pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
+
+      document.body.removeChild(tempWrapper);
+
+      currentChunk++;
+      if (currentChunk < chunkCount) {
+        renderChunk();
+      } else {
+        pdf.save('purchase-order.pdf');
+      }
+    });
+  };
+
+  renderChunk();
+}
+
+
 
   navigateFun() {
     this.location.back();
