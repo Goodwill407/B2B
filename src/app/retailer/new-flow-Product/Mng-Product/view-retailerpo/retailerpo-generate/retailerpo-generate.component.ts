@@ -7,6 +7,7 @@
     import { TableModule } from 'primeng/table';
     import html2canvas from 'html2canvas';
     import jsPDF from 'jspdf';
+    import { Location } from '@angular/common';
   @Component({
     selector: 'app-retailerpo-generate',
     standalone: true,
@@ -57,7 +58,8 @@
       public authService: AuthService,
       private router: Router,
       private communicationService: CommunicationService,
-      private route: ActivatedRoute
+      private route: ActivatedRoute,
+      private location: Location
     ) {
       this.distributorId = this.route.snapshot.paramMap.get('id') ?? '';
 
@@ -426,7 +428,9 @@ chunkArray(array: any[]): void {
   renderChunk();
 }
 
-
+navigateFun() {
+    this.location.back();
+  }
     
   }
 

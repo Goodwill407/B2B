@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { AccordionModule } from 'primeng/accordion';
-
+import { Location } from '@angular/common'
 interface Row {
   colourName: string;
   colour: string;
@@ -43,7 +43,8 @@ export class ViewRetailorManOrderReqComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
-    private communicationService: CommunicationService
+    private communicationService: CommunicationService,
+    private location: Location
   ) {}
   ngOnInit(): void {
     // Fetch distributorId from route params
@@ -178,5 +179,8 @@ export class ViewRetailorManOrderReqComponent implements OnInit {
     );
   }
   
+  navigateFun() {
+    this.location.back();
+  }
 
 }
