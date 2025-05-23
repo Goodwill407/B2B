@@ -366,9 +366,9 @@
           pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
           heightLeft -= pageHeight;
         }
-
-        // Save PDF file
-        pdf.save('purchase-order.pdf');
+const poDate = this.purchaseOrder.poDate?.replace(/\//g, '-') || 'no-date';
+const poNumber = this.purchaseOrder.poNumber || 'no-number';
+pdf.save(`PO_${poDate}_${poNumber}.pdf`);
       }).catch((error) => {
         console.error("Error generating PDF:", error);
       });
