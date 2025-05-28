@@ -126,8 +126,11 @@ getAllProducts() {
           productBy: res.manufacturer.email,
         }));
 
-        // **2️⃣ Create Available Set (Editable Copy)**
-        this.avilableSet = res.set.map((product: any) => ({ ...product })); 
+      this.avilableSet.forEach(item => {
+  const key = `${item.designNumber}_${item.colourName}_${item.size}`;
+  this.sizeLevelQtyMap[key] = item.quantity;
+});
+
 
         // Process grouped products and update mergedProducts
         this.mergedProducts = this.processGroupedProducts(res.set);
@@ -532,38 +535,32 @@ getPendingQuantity(designNumber: string, size: string): number {
     
     
 
-    flattenProductData(productSet: any[]): any[] {
-      const flatList: any[] = [];
+flattenProductData(set: any[]): any[] {
+  const flatList: any[] = [];
 
-      // Iterate through each product in the set
-      productSet.forEach((product) => {
-          const designKey = product.designNumber; // Assuming each product has a designNumber
+  set.forEach((item) => {
+    const key = `${item.designNumber}-${item.colourName}`;
+    let existing = flatList.find(p =>
+      p.designNumber === item.designNumber && p.colourName === item.colourName
+    );
 
-          // Check if we already have a row for this designNumber + colourName
-          let existingRow = flatList.find(row => row.designNumber === designKey && row.colourName === product.colourName);
+    if (!existing) {
+      existing = {
+        designNumber: item.designNumber,
+        colourName: item.colourName,
+        originalQty: 0,
+        editQty: 0
+      };
+      flatList.push(existing);
+    }
 
-          // If no existing row, create a new one
-          if (!existingRow) {
-              existingRow = {
-                  designNumber: product.designNumber,
-                  colourName: product.colourName,
-                  colourImage: product.colourImage,
-                  colour: product.colour,
-                  quantities: {},
-                  totalPrice: 0
-              };
-              flatList.push(existingRow);
-          }
+    existing.originalQty += item.quantity;
+    existing.editQty += item.quantity; // Start with same value
+  });
 
-          // Update quantities for this specific size
-          if (product.size && product.quantity) {
-              existingRow.quantities[product.size] = (existingRow.quantities[product.size] || 0) + product.quantity;
-              existingRow.totalPrice += product.quantity * parseFloat(product.price); // Assuming price is a string
-          }
-      });
+  return flatList;
+}
 
-      return flatList;
-  }
 
   printPurchaseOrder(): void {
     const data = document.getElementById('purchase-order');
@@ -648,11 +645,16 @@ getPendingQuantity(designNumber: string, size: string): number {
       this.updateTotals(); // Recalculate overall totals
     }
   }
-  getOrderedQuantity(designNumber: string, colourName: string, size: string): number {
-    return this.orderedSet
-        .filter(item => item.designNumber === designNumber && item.colourName === colourName && item.size === size)
-        .reduce((total, item) => total + item.quantity, 0); // ✅ Sum up all matching entries
+ getOrderedQty(designNumber: string, colourName: string, size: string): number {
+  return this.orderedSet
+    .filter(item =>
+      item.designNumber === designNumber &&
+      item.colourName === colourName &&
+      item.size === size
+    )
+    .reduce((sum, item) => sum + item.quantity, 0);
 }
+
 // mergeEntries(productSet: any[], type: "ordered" | "available"): any[] {
 //   const mergedMap: { [key: string]: any } = {};
 
@@ -721,5 +723,78 @@ mergeEntries(productSet: any[], type: "ordered" | "available"): any[] {
 navigateFun() {
   this.location.back();
 }
+
+getTotalOriginalQty(designNumber: string, colourName: string): number {
+  return this.orderedSet
+    .filter(p => p.designNumber === designNumber && p.colourName === colourName)
+    .reduce((sum, item) => sum + item.quantity, 0);
+}
+
+preventInvalidInput(event: KeyboardEvent): void {
+  if (['e', 'E', '+', '-'].includes(event.key)) {
+    event.preventDefault();
+  }
+}
+
+onQtyUpdate(row: any): void {
+  // Find all matching entries in avilableSet and update their quantity
+  const matches = this.avilableSet.filter(p =>
+    p.designNumber === row.designNumber && p.colourName === row.colourName
+  );
+
+  const eachQty = Math.floor(row.editQty / matches.length);
+
+  matches.forEach((item, index) => {
+    item.quantity = eachQty;
+  });
+
+  console.log("Updated avilableSet:", this.avilableSet);
+}
+
+getOriginalQtyBySize(designNumber: string, colourName: string, size: string): number {
+  return this.orderedSet
+    .filter(p => p.designNumber === designNumber && p.colourName === colourName && p.size === size)
+    .reduce((sum, item) => sum + item.quantity, 0);
+}
+
+getEditableQtyBinding(designNumber: string, colourName: string, size: string): number {
+  const item = this.avilableSet.find(p =>
+    p.designNumber === designNumber &&
+    p.colourName === colourName &&
+    p.size === size
+  );
+  return item?.quantity || 0;
+}
+sizeLevelQtyMap: { [key: string]: number } = {};
+
+
+onSizeQtyChange(designNumber: string, colourName: string, size: string): void {
+  const key = `${designNumber}_${colourName}_${size}`;
+  const updatedValue = this.sizeLevelQtyMap[key] || 0;
+
+  const item = this.avilableSet.find(p =>
+    p.designNumber === designNumber &&
+    p.colourName === colourName &&
+    p.size === size
+  );
+
+  if (item) {
+    item.quantity = updatedValue;
+  }
+
+  // Update main row total
+  const totalQty = this.avilableSet
+    .filter(p => p.designNumber === designNumber && p.colourName === colourName)
+    .reduce((sum, p) => sum + p.quantity, 0);
+
+  const mainRow = this.mergedProducts.find(r =>
+    r.designNumber === designNumber && r.colourName === colourName
+  );
+  if (mainRow) {
+    mainRow.editQty = totalQty;
+  }
+}
+
+
 
   }

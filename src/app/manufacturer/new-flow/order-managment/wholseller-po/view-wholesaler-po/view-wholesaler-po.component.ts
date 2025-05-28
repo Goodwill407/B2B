@@ -71,66 +71,61 @@ export class ViewWholesalerPoComponent {
   ngOnInit(): void {
     this.distributorId = this.route.snapshot.paramMap.get('id') ?? '';
     this.userProfile = JSON.parse(localStorage.getItem('currentUser')!);
+
     this.getAllProducts();
   }
+getAllProducts() {
+  const url = `type2-purchaseorder/${this.distributorId}`;
+  this.authService.get(url).subscribe((res: any) => {
+    this.responseData = res;
 
-  getAllProducts() {
-    const url = `type2-purchaseorder/${this.distributorId}`;
-    this.authService.get(url).subscribe(
-      (res: any) => {
-       
-        this.responseData = res; // Store the response in responseData
-        console.log(res)
-        // Update purchaseOrder from the response
-        this.purchaseOrder = {
-          supplierName: res.manufacturer.companyName,
-          supplierDetails: res.manufacturer.fullName,
-          supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.city}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
-          supplierContact: `${res.manufacturer.mobNumber}`,
-          supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
-          buyerName: res.wholesaler.companyName,
-          logoUrl:res.wholesaler.profileImg,
-          buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
-          buyerPhone: res.wholesaler.mobNumber,
-          buyerEmail: res.wholesaler.email,
-          buyerDetails: res.wholesaler.fullName,
-          buyerDetails2: res.manufacturer.fullName,
-          buyerGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
-          poDate: new Date().toLocaleDateString(),
-          poNumber: res.poNumber,
-          products: res.products || [],
-          ProductDiscount: res.wholesaler.productDiscount !== undefined && res.wholesaler.productDiscount !== '' ? parseFloat(res.wholesaler.productDiscount) : 0,  // Ensure we handle undefined and empty values properly
-        };
+    this.purchaseOrder = {
+      poNumber: res.poNumber,
+      poDate: new Date(res.wholesalerPoDate).toLocaleDateString(),
 
-        if (res.set && Array.isArray(res.set) && res.set.length > 0) {
-          this.extractSizesAndPrices(res.set); // <-- Ensure this is called
-  
-          // Process grouped products and update mergedProducts
-          this.mergedProducts = this.processGroupedProducts(res.set);
-          this.filteredData = res.set[0];
-        
-      
-          // Proceed if filteredData is not empty
-          if (this.filteredData) {
-              // Flatten the set into mergedProducts
-              this.mergedProducts = this.flattenProductData(res.set);  // Pass the entire set array
-              
-          }
-        }
+      supplierName: res.manufacturer?.companyName || '',
+      supplierDetails: res.manufacturer?.fullName || '',
+      supplierAddress: `${res.manufacturer?.address || ''}, ${res.manufacturer?.state || ''}`,
+      supplierContact: res.manufacturer?.mobNumber || '',
+      supplierGSTIN: res.manufacturer?.GSTIN || '',
+      supplierPAN: res.manufacturer?.pan || '',
 
-       else {
-          
-          this.filteredData = null;
-          this.mergedProducts = [];
-      }
-      
-      
-      },
-      (error) => {
-        
-      }
-    );
-  }
+      buyerName: res.wholesaler?.companyName || '',
+      buyerDetails: res.wholesaler?.fullName || '',
+      buyerEmail: res.wholesaler?.email || '',
+      buyerAddress: `${res.wholesaler?.address || ''}, ${res.wholesaler?.state || ''}`,
+      buyerPhone: res.wholesaler?.mobNumber || '',
+      buyerGSTIN: res.wholesaler?.GSTIN || '',
+      buyerPAN: res.wholesaler?.pan || '',
+      logoUrl: res.wholesaler?.profileImg || 'assets/images/company_logo.jpg',
+
+      ProductDiscount: res.wholesaler?.productDiscount
+        ? parseFloat(res.wholesaler.productDiscount)
+        : 0,
+
+      products: res.set || [],
+    };
+
+    // ✅ Setup headers and pricing
+    this.extractSizesAndPrices(res.set);
+
+    // ✅ Get flat row structure
+    this.mergedProducts = this.flattenProductData(res.set);
+this.chunkArray(this.mergedProducts);
+
+    // ✅ Recalculate totals
+    this.Totalsub = this.mergedProducts.reduce((acc, item) => {
+      const qty = this.getFirstQty(item.quantities);
+      const price = this.getFirstPrice(item.quantities, item.designNumber);
+      return acc + qty * price;
+    }, 0);
+
+    this.discountAmount = (this.Totalsub * this.purchaseOrder.ProductDiscount) / 100;
+    this.discountedTotal = this.Totalsub - this.discountAmount;
+    this.calculateGST();
+  });
+}
+
 
   extractSizesAndPrices(productSet: any[]): void {
     const uniqueSizes = new Set<string>();
@@ -145,6 +140,30 @@ export class ViewWholesalerPoComponent {
 
     this.sizeHeaders = Array.from(uniqueSizes); // Convert Set to Array for the table header
   }
+
+  tableChunks: any[][] = [];
+serialOffset: number[] = [];
+
+chunkArray(array: any[]): void {
+  this.tableChunks = [];
+  this.serialOffset = [];
+
+  const firstChunkSize = 20;
+  const nextChunkSize = 30;
+
+  if (array.length > 0) {
+    this.tableChunks.push(array.slice(0, firstChunkSize));
+    this.serialOffset.push(0);
+
+    let start = firstChunkSize;
+    while (start < array.length) {
+      this.tableChunks.push(array.slice(start, start + nextChunkSize));
+      this.serialOffset.push(start);
+      start += nextChunkSize;
+    }
+  }
+}
+
 
   processGroupedProducts(productSet: any[]): any[] {
     interface Group { 
@@ -373,47 +392,105 @@ export class ViewWholesalerPoComponent {
 }
 
 printPurchaseOrder(): void {
-  const data = document.getElementById('purchase-order');
-  if (data) {
-    html2canvas(data, {
-      scale: 3,  // Adjust scale for better quality
-      useCORS: true,
-    }).then((canvas) => {
-      const imgWidth = 208;  // A4 page width in mm
-      const pageHeight = 295;  // A4 page height in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
+  const fullId = 'purchase-order';
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const margin = 10;
+  const chunkCount = this.tableChunks.length || 1;  // fallback to 1 chunk
+  let currentChunk = 0;
 
-      const contentDataURL = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');  // Create new PDF
-      const margin = 10;  // Margin for PDF
-      let position = margin;
+  const renderChunk = () => {
+    const fullContent = document.getElementById(fullId);
+    if (!fullContent) return;
 
-      // Add first page
-      pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
-      heightLeft -= pageHeight;
+    const fullClone = fullContent.cloneNode(true) as HTMLElement;
 
-      // Loop over content to add remaining pages if content exceeds one page
-      while (heightLeft > 0) {
-        pdf.addPage();  // Add new page
-        position = margin - heightLeft;  // Position for the next page
-        pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
-        heightLeft -= pageHeight;
-      }
+    // Hide all rows except for the current chunk
+    const tableBody = fullClone.querySelector('p-table');
+    const rows = fullClone.querySelectorAll('tbody tr');
 
-      // Save PDF file
-      pdf.save('purchase-order.pdf');
-    }).catch((error) => {
-      console.error("Error generating PDF:", error);
+    // Show all rows if chunking not enabled
+    if (this.tableChunks.length > 0) {
+      rows.forEach((row, i) => {
+        const start = this.serialOffset[currentChunk];
+        const end = start + this.tableChunks[currentChunk].length;
+        if (i < start || i >= end) {
+          (row as HTMLElement).style.display = 'none';
+        }
+      });
+    }
+
+    // Remove the page-header-content on next pages
+    if (currentChunk > 0) {
+      const headerContent = fullClone.querySelector('.page-header-content');
+      if (headerContent) headerContent.remove();
+    }
+
+    // Copy styles
+    const styles = document.querySelectorAll('style, link[rel="stylesheet"]');
+    styles.forEach((tag) => {
+      fullClone.appendChild(tag.cloneNode(true));
     });
-  } else {
-    console.error("Element with id 'purchase-order' not found.");
-  }
+
+    // Temp container to render DOM off-screen
+    const tempWrapper = document.createElement('div');
+    tempWrapper.style.position = 'fixed';
+    tempWrapper.style.top = '-10000px';
+    tempWrapper.style.left = '-10000px';
+    tempWrapper.style.width = '1000px';
+    tempWrapper.style.zIndex = '-9999';
+    tempWrapper.style.opacity = '0';
+    tempWrapper.appendChild(fullClone);
+    document.body.appendChild(tempWrapper);
+
+    html2canvas(fullClone, {
+      scale: 2,
+      useCORS: true,
+      scrollY: -window.scrollY,
+    }).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const imgProps = pdf.getImageProperties(imgData);
+      const imgWidth = pageWidth - margin * 2;
+      const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+
+      if (currentChunk > 0) pdf.addPage();
+      pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
+
+      document.body.removeChild(tempWrapper);
+      currentChunk++;
+
+      if (currentChunk < chunkCount) {
+        renderChunk(); // Process next chunk
+      } else {
+        const poDate = this.purchaseOrder.poDate?.replace(/\//g, '-') || 'no-date';
+        const poNumber = this.purchaseOrder.poNumber || 'no-number';
+        pdf.save(`PO_${poDate}_${poNumber}.pdf`);
+      }
+    });
+  };
+
+  renderChunk();
 }
+
 
 navigateFun() {
   this.location.back();
 }
+
+getFirstSize(quantities: any): string {
+  return Object.keys(quantities)[0] || 'N/A';
+}
+
+getFirstQty(quantities: any): number {
+  const size = this.getFirstSize(quantities);
+  return quantities[size] || 0;
+}
+
+getFirstPrice(quantities: any, designNumber: string): number {
+  const size = this.getFirstSize(quantities);
+  return this.priceHeaders[size] || 0;
+}
+
 
   
 }

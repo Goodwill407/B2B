@@ -14,56 +14,40 @@
       </section>
       <hr class="my-1" />
 
-      <section class="order-details">
-        <div *ngIf="mergedProducts && mergedProducts.length > 0">
-          <p-table [value]="mergedProducts" class="bordered-table">
-            <ng-template pTemplate="header">
-              <tr>
-                <th>Design No</th>
-                <th>Colour</th>
-                <th *ngFor="let size of sizeHeaders">{{ size }}</th>
-              </tr>
-            </ng-template>
+<section class="order-details">
+  <div *ngIf="orderedSet && orderedSet.length > 0">
+    <table class="table table-bordered text-center">
+      <thead>
+        <tr>
+          <th>Sr. No.</th>
+          <th>Design No</th>
+          <th>Colour</th>
+          <th>Size</th>
+          <th>Original Qty</th>
+          <th>Edit Qty</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of orderedSet; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ item.designNumber }}</td>
+          <td>{{ item.colourName }}</td>
+          <td>{{ item.size }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>
+            <input type="number"
+                   [(ngModel)]="item.quantity"
+                   (keydown)="preventInvalidInput($event)"
+                   class="form-control form-control-sm"
+                   min="0"
+                   style="width: 80px;" />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
 
-            <ng-template pTemplate="body" let-row>
-              <tr>
-                <td>{{ row.designNumber }}</td>
-                <td>{{ row.colourName }}</td>
-
-                <td *ngFor="let size of sizeHeaders">
-                  <div>
-                    <table>
-                      <tr>
-                        <th>Ordered</th>
-                        <th>Available</th>
-                      </tr>
-                      <tr>
-                        <td>
-                          <span *ngIf="row.quantities[size] !== undefined">
-                            {{ getOrderedQuantity(row.designNumber, row.colourName, size) || 'N/A' }}
-                          </span>
-                        </td>
-                        <td>
-                          <input
-                            *ngIf="row.quantities[size] !== undefined"
-                            type="number"
-                            [(ngModel)]="row.quantities[size]"
-                            (ngModelChange)="onQuantityChange(row, size)"
-                            [min]="0"
-                            style="width: 60px; text-align: center;"
-                          />
-                        </td>
-                        
-                      </tr>
-                    </table>
-                  </div>
-                </td>
-                
-              </tr>
-            </ng-template>
-          </p-table>
-        </div>
-      </section>
 
       <div class="row">
         <div class="col-12 text-center my-3">
