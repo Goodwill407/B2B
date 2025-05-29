@@ -281,31 +281,38 @@ this.chunkArray(this.responseData.set); // or whatever your full data list is
   }
 
   addpo() {
-    const cartBody = { ...this.responseData };
-    console.log(cartBody);
-  
-    // Ensure required fields are included
-    cartBody.email = this.userProfile?.email || ''; // Ensure email is added
-    cartBody.productBy = this.responseData?.productBy || ''; // Ensure productBy is added
-  
-    // Remove unwanted fields
-    delete cartBody.__v;
-    delete cartBody._id;
-    delete cartBody.productId;
-  
-    // Debugging: Log the final payload
-    console.log('📤 Sending Purchase Order:', cartBody);
-  
-    // Post the cleaned data to the backend
-    this.authService.post('retailer-purchase-order-type2', cartBody).subscribe(
-      (res: any) => {
-        this.communicationService.customSuccess('Purchase Order Generated Successfully');
-      },
-      (error) => {
-        this.communicationService.customError1(error.error.message);
-      }
-    );
+  const cartBody = { ...this.responseData };
+
+  // Inject productBy into every item in set
+  if (Array.isArray(cartBody.set)) {
+    const productByValue = this.responseData?.productBy || this.userProfile?.email || '';
+    cartBody.set = cartBody.set.map((item: any) => ({
+      ...item,
+      productBy: productByValue
+    }));
   }
+
+  // Add top-level info if missing
+  cartBody.email = this.userProfile?.email || '';
+  cartBody.productBy = this.responseData?.productBy || this.userProfile?.email || '';
+
+  // Remove unnecessary fields
+  delete cartBody._id;
+  delete cartBody.__v;
+  delete cartBody.productId;
+
+  console.log('📤 Sending Purchase Order:', cartBody);
+
+  this.authService.post('retailer-purchase-order-type2', cartBody).subscribe(
+    (res: any) => {
+      this.communicationService.customSuccess('Purchase Order Generated Successfully');
+    },
+    (error) => {
+      this.communicationService.customError1(error.error.message);
+    }
+  );
+}
+
   
   flattenProductData(productSet: any[]): any[] {
     const flatList: any[] = [];

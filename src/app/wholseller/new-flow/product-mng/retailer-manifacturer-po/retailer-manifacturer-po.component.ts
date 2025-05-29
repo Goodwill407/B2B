@@ -40,10 +40,12 @@ export class RetailerManifacturerPoComponent {
 
   getAllProducts(email: string): void {
     const url = `retailer-purchase-order-type2/purchase-orders/wholesaler-email/combined-order?wholesaleremail=${email}`;
+
     this.authService.get(url).subscribe(
       (res: any[]) => {
         if (res) {
           this.products = res.map((product: any) => {
+            console.log(res)
             product.groupedProducts = this.processGroupedProducts(product.set, product.manufacturer.companyName);
             return product;
           });

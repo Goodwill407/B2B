@@ -1,121 +1,86 @@
 <section class="content">
-    <div class="content-block">
-      <h4 class="mt-4">
+  <div class="content-block">
+    <h4 class="mt-4">
         <button class="btn navigate" (click)="navigateFun()">
           <i class="bi bi-arrow-left-circle h4"></i>
         </button> Generate DELIVERY CHALLAN
       </h4>
-  
-      <div id="purchase-order" class="challan-container card my-2">
-        <div class="header">
-          <!-- Logo Section -->
-          <div class="logo">
-            <img [src]="purchaseOrder.logoUrl" alt="Company Logo"
-              onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';" />
-          </div>
-  
-          <!-- Buyer Information Container -->
-          <div class="buyer-info">
-            <h5>From -</h5>
-            <p>{{ purchaseOrder.buyerName }}</p>
-            <p>{{ purchaseOrder.buyerDetails }}</p>
-            <p>{{ purchaseOrder.buyerAddress }}</p>
-            <p>{{ purchaseOrder.buyerPhone }}</p>
-            <p class="mb-2"><b>GSTIN : {{ purchaseOrder.buyerGSTIN }}</b></p>
-            <p class="mb-2"><b>Delivery Challan : {{ this.Deliverychllanid }}</b></p>
-          </div>
-  
-          <!-- Seller Information Container -->
-          <div class="seller-info">
-            <h5>To -</h5>
-            <p>{{ purchaseOrder.supplierName }}</p>
-            <p>{{ purchaseOrder.buyerDetails2 }}</p>
-            <p>{{ purchaseOrder.supplierAddress }}</p>
-            <p>{{ purchaseOrder.supplierContact }}</p>
-            <p class="mb-2"><b>GSTIN : {{ purchaseOrder.supplierGSTIN }}</b></p>
-            <p><strong>PO Number :</strong> <span><b>{{ purchaseOrder.poNumber }}</b></span></p>
-            <p><strong>Date :</strong>{{ purchaseOrder.poDate }}</p>
-          </div>
+
+    <div id="purchase-order" class="challan-container card my-2">
+      <div class="header d-flex justify-content-between align-items-start mb-3">
+        <div class="logo">
+          <img [src]="purchaseOrder.logoUrl" alt="Company Logo"
+            onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';" />
         </div>
-  
-  
-  
-        <section class="gstin my-0">
-          <h2>DELIVERY CHALLAN</h2>
-  
-        </section>
-        <hr class="my-1">
-  
-  
-        <section class="order-details">
-          <div *ngIf="mergedProducts && mergedProducts.length > 0">
-            <p-table [value]="mergedProducts" class="bordered-table">
-                <ng-template pTemplate="header">
-                  <tr>
-                    <th>Design No</th>
-                    <th>Colour</th>
-                    <th *ngFor="let size of sizeHeaders">{{ size }}</th>
-                    <th>Price</th>
-                  </tr>
-                </ng-template>
-              
-                <ng-template pTemplate="body" let-row>
-                  <tr>
-                    <td>{{ row.designNumber }}</td>
-                    <td>{{ row.colourName }}</td>
-              
-                    <td *ngFor="let size of sizeHeaders">
-                        <div>
-                          <table>
-                            <tr>
-                              <th>Ordered</th>
-                              <th>Available</th>
-                            </tr>
-                            <tr>
-                              <td>
-                                <span *ngIf="row.quantities[size] !== undefined">
-                                  {{ getOrderedQuantity(row.designNumber, row.colourName, size) || 'N/A' }}
-                                </span>
-                              </td>
-                              <td>
-                                <input
-                                  *ngIf="row.quantities[size] !== undefined"
-                                  type="number"
-                                  [(ngModel)]="row.quantities[size]"
-                                  (ngModelChange)="onQuantityChange(row, size)"
-                                  [min]="0"
-                                  style="width: 60px; text-align: center;"
-                                />
-                              </td>
-                            </tr>
-                          </table>
-                        </div>
-                      </td>
-                      
-                    
-                    <td>{{ calculateTotalPrice(row) | currency: 'INR' }}</td>
-                  </tr>
-                </ng-template>
-              </p-table>
-              
+
+        <div class="buyer-info">
+          <h5>From -</h5>
+          <p>{{ purchaseOrder.buyerName }}</p>
+          <p>{{ purchaseOrder.buyerDetails }}</p>
+          <p>{{ purchaseOrder.buyerAddress }}</p>
+          <p>{{ purchaseOrder.buyerPhone }}</p>
+          <p><strong>GSTIN:</strong> {{ purchaseOrder.buyerGSTIN }}</p>
+          <p><strong>Delivery Challan:</strong> {{ Deliverychllanid }}</p>
+        </div>
+
+        <div class="seller-info">
+          <h5>To -</h5>
+          <p>{{ purchaseOrder.supplierName }}</p>
+          <p>{{ purchaseOrder.buyerDetails2 }}</p>
+          <p>{{ purchaseOrder.supplierAddress }}</p>
+          <p>{{ purchaseOrder.supplierContact }}</p>
+          <p><strong>GSTIN:</strong> {{ purchaseOrder.supplierGSTIN }}</p>
+          <p><strong>PO Number:</strong> {{ purchaseOrder.poNumber }}</p>
+          <p><strong>Date:</strong> {{ purchaseOrder.poDate }}</p>
+        </div>
       </div>
-  </section>
-  
-  <div class="row">
-    <div class="col-12">
-      <div class="text-center my-3">
-        <!-- Button hidden when status is 'shipped' -->
-        <button class="btn btn-success ms-auto" (click)="addpo()"
-          >
-          Generate Purchase Order
-        </button>
+
+      <section class="gstin my-0 text-center">
+        <h2>DELIVERY CHALLAN</h2>
+      </section>
+      <hr class="my-1" />
+
+      <section class="order-details">
+        <div *ngIf="orderedSet && orderedSet.length > 0">
+          <table class="table table-bordered text-center">
+            <thead>
+              <tr>
+                <th>Sr. No.</th>
+                <th>Design No</th>
+                <th>Colour</th>
+                <th>Size</th>
+                <th>Original Qty</th>
+                <th>Edit Qty</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of orderedSet; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ item.designNumber }}</td>
+                <td>{{ item.colourName }}</td>
+                <td>{{ item.size }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>
+                  <input type="number"
+                         [(ngModel)]="item.quantity"
+                         class="form-control form-control-sm"
+                         [min]="0"
+                         (keydown)="preventInvalidInput($event)"
+                         style="width: 80px;" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="row">
+        <div class="col-12 text-center my-3">
+          <button class="btn btn-success ms-auto" (click)="addpo()">
+            Generate Purchase Order
+          </button>
+        </div>
       </div>
     </div>
   </div>
-  
-  </div>
-  
-  
-  
-  </div>
-  </section>
+</section>
