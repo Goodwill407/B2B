@@ -13,7 +13,7 @@
               <div class="text-primary fw-bold">
                 {{ prod.wholesaler.fullName }} —
                 Total Items: {{ getTotalQuantity(prod) | number:'1.0-0' }} |
-                Total Amount: ₹{{ getTotalAmount(prod) | number:'1.2-2' }}
+                Total Amount: ₹ {{ getTotalAmount(prod) | indianCurrency }}
 
               </div>
               <button class="btn btn-sm btn-danger" (click)="confirmDeleteCart(prod)">
@@ -34,9 +34,9 @@
                     <th>Colour Name</th>
                     <th>Image</th>
                     <th>Size</th>
-                    <th>Rate</th>
+                    <th>Rate (₹)</th>
                     <th>Quantity</th>
-                    <th>Total Price</th>
+                    <th>Total Price (₹)</th>
                     <th>Action</th>
                   </tr>
                 </ng-template>
@@ -50,9 +50,9 @@
                       <img [src]="item.colourImage" alt="Colour Image" style="width: 50px; height: 50px; object-fit: cover;" />
                     </td>
                     <td>{{ item.size }}</td>
-                    <td>₹{{ item.price }}</td>
+                    <td>{{ item.price | indianCurrency}}</td>
                     <td>{{ item.quantity }}</td>
-                    <td>₹{{ item.price * item.quantity }}</td>
+                    <td>{{ item.price * item.quantity | indianCurrency}}</td>
                     <td>
                       <button class="btn btn-sm btn-primary me-2"  (click)="onEdit(item, prod._id)">
                         <i class="bi bi-pencil-fill"></i>

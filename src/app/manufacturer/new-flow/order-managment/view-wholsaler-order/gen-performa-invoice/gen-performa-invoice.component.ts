@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -56,7 +56,7 @@ data: any;
 
   constructor(
     public authService: AuthService,
-    
+    private location: Location,
     private communicationService: CommunicationService,
     private route: ActivatedRoute
   ) 
@@ -549,6 +549,8 @@ patchAvailableQuantities(): void {
   });
 }
 
-
+navigateFun(){
+  this.location.back();
+}
 }
 

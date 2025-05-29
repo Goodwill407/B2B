@@ -7,10 +7,11 @@ import { AccordionModule } from 'primeng/accordion';
 import { TableModule } from 'primeng/table';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { IndianCurrencyPipe } from 'app/custom.pipe';
 @Component({
   selector: 'app-retailor-po-gen',
   standalone: true,
-  imports: [CommonModule, FormsModule, AccordionModule, TableModule],
+  imports: [CommonModule, FormsModule, AccordionModule, TableModule, IndianCurrencyPipe],
   templateUrl: './retailor-po-gen.component.html',
   styleUrl: './retailor-po-gen.component.scss'
 })

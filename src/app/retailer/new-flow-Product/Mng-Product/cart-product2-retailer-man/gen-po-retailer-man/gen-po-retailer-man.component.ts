@@ -8,11 +8,12 @@ import { TableModule } from 'primeng/table';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { Location } from '@angular/common';
+import { IndianCurrencyPipe } from 'app/custom.pipe';
 
 @Component({
   selector: 'app-gen-po-retailer-man',
   standalone: true,
-  imports: [CommonModule, FormsModule, AccordionModule, TableModule],
+  imports: [CommonModule, FormsModule, AccordionModule, TableModule, IndianCurrencyPipe],
   templateUrl: './gen-po-retailer-man.component.html',
   styleUrl: './gen-po-retailer-man.component.scss'
 })

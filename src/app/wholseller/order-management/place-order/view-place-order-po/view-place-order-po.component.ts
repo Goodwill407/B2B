@@ -7,10 +7,11 @@ import { AccordionModule } from 'primeng/accordion';
 import { TableModule } from 'primeng/table';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { IndianCurrencyPipe } from 'app/custom.pipe';
 @Component({
   selector: 'app-view-place-order-po',
   standalone: true,
-  imports: [CommonModule, FormsModule, AccordionModule, TableModule],
+  imports: [CommonModule, FormsModule, AccordionModule, TableModule, IndianCurrencyPipe],
   templateUrl: './view-place-order-po.component.html',
   styleUrl: './view-place-order-po.component.scss'
 })

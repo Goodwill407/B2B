@@ -8,10 +8,11 @@ import { TableModule } from 'primeng/table';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { IndianCurrencyPipe } from 'app/custom.pipe';
 @Component({
   selector: 'app-genraterpo',
   standalone: true,
-  imports: [CommonModule, FormsModule, AccordionModule, TableModule],
+  imports: [CommonModule, FormsModule, AccordionModule, TableModule, IndianCurrencyPipe],
   templateUrl: './genraterpo.component.html',
   styleUrl: './genraterpo.component.scss',
 })
@@ -77,9 +78,6 @@ export class GenraterpoComponent {
       (res: any) => {
         this.responseData = res;
 this.chunkArray(this.responseData.set); // or whatever your full data list is
-
-
-
         const discountValue = res.retailer?.discountDetails?.productDiscount
           ? parseFloat(res.retailer.discountDetails.productDiscount)
           : 0;

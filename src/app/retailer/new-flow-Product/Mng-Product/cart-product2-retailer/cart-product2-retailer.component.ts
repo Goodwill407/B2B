@@ -7,6 +7,7 @@ import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-
 import { AccordionModule } from 'primeng/accordion';
 import { TableModule } from 'primeng/table';
 import Swal from 'sweetalert2';
+import { IndianCurrencyPipe } from 'app/custom.pipe';
 interface PriceHeaders {
   [wholesaler: string]: {
       [designNumber: string]: {
@@ -62,7 +63,8 @@ interface Product {
     RouterModule,
     TableModule,
     AccordionModule,
-    BottomSideAdvertiseComponent
+    BottomSideAdvertiseComponent,
+    IndianCurrencyPipe
   ],
   templateUrl: './cart-product2-retailer.component.html',
   styleUrls: ['./cart-product2-retailer.component.scss']

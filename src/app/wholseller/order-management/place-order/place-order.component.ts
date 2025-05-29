@@ -66,6 +66,8 @@ export class PlaceOrderComponent {
         this.authService.get(`cart/place-order/products?email=${this.email}&productBy=${this.productBy}`)
           .subscribe((res: any) => {
             const response = res[0];
+            const setData = response.set;
+
             this.purchaseOrder = {
               ...this.purchaseOrder,
               supplierName: response.manufacturer.companyName,
@@ -116,13 +118,17 @@ export class PlaceOrderComponent {
   }
 
   getAllData() {
-    this.showFlag = false;
-    this.authService.get(`type2-purchaseorder/get-po/by-wholesaler-email?wholesalerEmail=${this.authService.currentUserValue.email}&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
-     console.log(res);
-      this.tableData = res;
-      this.totalResults = res;
-    })
-  }
+  this.showFlag = false;
+  this.authService.get(`type2-purchaseorder/get-po/by-wholesaler-email?wholesalerEmail=${this.authService.currentUserValue.email}&page=${this.page}&limit=${this.limit}`)
+    .subscribe((res: any) => {
+      this.tableData = res.results || []; // updated
+      this.totalResults = res.totalResults || 0;
+    }, (error) => {
+      this.tableData = null; // mark it for error fallback
+      this.totalResults = 0;
+    });
+}
+
 
   patchData(data: any) {
     this.purchaseOrder = data;

@@ -5,12 +5,13 @@
   import { AuthService, CommunicationService } from '@core';
   import { AccordionModule } from 'primeng/accordion';
   import { TableModule } from 'primeng/table';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+  import html2canvas from 'html2canvas';
+  import jsPDF from 'jspdf';
+  import { IndianCurrencyPipe } from 'app/custom.pipe';
   @Component({
     selector: 'app-genratepo',
     standalone: true,
-    imports: [CommonModule, FormsModule, AccordionModule, TableModule],
+    imports: [CommonModule, FormsModule, AccordionModule, TableModule, IndianCurrencyPipe],
     templateUrl: './genratepo.component.html',
     styleUrls: ['./genratepo.component.scss'],
   })

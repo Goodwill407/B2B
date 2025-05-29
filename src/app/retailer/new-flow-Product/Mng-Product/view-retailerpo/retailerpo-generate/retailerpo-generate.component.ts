@@ -8,10 +8,11 @@
     import html2canvas from 'html2canvas';
     import jsPDF from 'jspdf';
     import { Location } from '@angular/common';
+    import { IndianCurrencyPipe } from 'app/custom.pipe';
   @Component({
     selector: 'app-retailerpo-generate',
     standalone: true,
-    imports: [CommonModule, FormsModule, AccordionModule, TableModule],
+    imports: [CommonModule, FormsModule, AccordionModule, TableModule, IndianCurrencyPipe],
     templateUrl: './retailerpo-generate.component.html',
     styleUrl: './retailerpo-generate.component.scss'
   })

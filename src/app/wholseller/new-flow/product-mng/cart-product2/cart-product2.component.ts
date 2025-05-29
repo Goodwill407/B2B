@@ -4,9 +4,11 @@
   import { Router, RouterModule } from '@angular/router';
   import { AuthService, CommunicationService } from '@core';
   import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
+  import { IndianCurrencyPipe } from 'app/custom.pipe';
   import { AccordionModule } from 'primeng/accordion';
   import { TableModule } from 'primeng/table';
   import Swal from 'sweetalert2';
+ 
   @Component({
     selector: 'app-cart-product2',
     standalone: true,
@@ -18,7 +20,8 @@
       RouterModule,
       TableModule,
       AccordionModule,
-      BottomSideAdvertiseComponent
+      BottomSideAdvertiseComponent,
+      IndianCurrencyPipe
     ],
   })
   export class CartProduct2Component {
