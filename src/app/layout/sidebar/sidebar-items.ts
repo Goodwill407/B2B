@@ -1657,7 +1657,7 @@ export const ROUTES2: RouteInfo[] = [
       },
       {
         path: '/retailer/new/cart-product2-retailer',
-        title: "Cart Products",
+        title: "Wholseller Cart Products",
         iconType: '',
         icon: '',
         class: 'ml-menu',

@@ -89,9 +89,10 @@ tempCart: Array<{
   
         // Start building the product object
         this.product = {
-          brand: productData.brand,
+          brand: productData.brand, 
           designNumber: this.designno,
           clothingType: productData.clothing,
+          productType: productData.productType,
           subCategory: productData.subCategory,
           gender: productData.gender,
           title: productData.productTitle,
@@ -143,10 +144,7 @@ tempCart: Array<{
         // Replace manufacturerPrice with wholesalerPrice by matching sizes
         productData.sizes.forEach((size: any) => {
            retailerPriceData.set.find((setItem: any) => { 
-            
             if(setItem.size === size.standardSize)size.manufacturerPrice = setItem.wholesalerPrice;
-
-
           });
         });
   
@@ -400,7 +398,8 @@ tempCart: Array<{
     onColorChange() {
       // Example: you might filter sizes by color if needed
       
-      this.availableSizes = this.product?.sizes.map((size: { size: any; }) => size.size);
+      this.availableSizes = this.retailerPrice.set.map((item: any) => item.size);
+
       // console.log(this.availableSizes)
       this.selectedSize = '';
       this.calculatedPrice = 0;
@@ -469,8 +468,18 @@ tempCart: Array<{
 
 
     async addToCartArray(){
+
+      // decorate each tempCart entry with the four extra props
+      const setPayload = this.tempCart.map(item => ({
+        ...item,
+        productType:   this.product.productType,
+        gender:        this.product.gender,
+        clothing:      this.product.clothingType,     // or clothingType if you named it so
+        subCategory:   this.product.subCategory,
+      }));
+
       const payload = {
-        set: this.tempCart,
+        set: setPayload,
         productId: this.product.id,
         email: this.authService.currentUserValue.email,
         wholesalerEmail: this.WholeselerEmail || "",
@@ -478,6 +487,8 @@ tempCart: Array<{
        
       };
   
+      console.log('Cart payload:', setPayload);
+
       try {
         const res = await this.authService.post('retailer-cart-type2', payload).toPromise();
         if (res) {

@@ -135,6 +135,7 @@ export class ViewProductDetailsComponent {
         this.createFormControls2();
         this.selectColourCollection(this.product.colours[0]);
         this.quantity = this.product.minimumOrderQty;
+        this.designno = res.designNumber;
       }
       this.checkWishlist();
     });

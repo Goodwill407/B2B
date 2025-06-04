@@ -72,7 +72,8 @@ export class ViewRetailerpoComponent {
 
   getAllData() {
     this.showFlag = false;
-    this.authService.get(`retailer-purchase-order-type2?email=${this.authService.currentUserValue.email}&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
+    // this.authService.get(`retailer-purchase-order-type2?email=${this.authService.currentUserValue.email}&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
+    this.authService.get(`po-retailer-to-wholesaler?email=${this.authService.currentUserValue.email}&sortBy=createdAt:desc&limit=${this.limit}&page=${this.page}`).subscribe((res: any) => {
       this.tableData = res.results;
       console.log(res)
       this.totalResults = res.totalResults;

@@ -74,45 +74,89 @@
 
     }
 
+// getAllProducts(distributorId: string) {
+//   const url = `retailer-purchase-order-type2/${distributorId}`;
+//   this.authService.get(url).subscribe(
+//     (res: any) => {
+//       this.responseData = res;
+
+//       const productSet = res.set || [];
+
+//       // Basic PO info
+//       this.purchaseOrder = {
+//         supplierName: res.wholesaler.companyName,
+//         supplierDetails: res.wholesaler.fullName,
+//         supplierAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.pinCode} - ${res.wholesaler.state}`,
+//         supplierContact: res.wholesaler.mobNumber,
+//         supplierGSTIN: res.wholesaler.GSTIN || '',
+//         buyerName: res.retailer.companyName,
+//         buyerAddress: `${res.retailer.address}, ${res.retailer.city}, ${res.retailer.pinCode} - ${res.retailer.state}`,
+//         buyerPhone: res.retailer.mobNumber,
+//         buyerEmail: res.retailer.email,
+//         buyerPAN: res.retailer.pan || '',
+//         logoUrl: res.retailer.profileImg || '',
+//         poDate: new Date().toLocaleDateString(),
+//         poNumber: res.poNumber,
+//         products: productSet,
+//         ProductDiscount: res.retailer.discountDetails.productDiscount || 0
+//       };
+
+//       // Chunk for printing
+//       this.chunkArray(productSet);
+
+//       // Totals
+//       this.calculateTotalsFromRawData(productSet);
+//     },
+//     (err) => {
+//       console.error('Error:', err);
+//     }
+//   );
+// }
+
 getAllProducts(distributorId: string) {
-  const url = `retailer-purchase-order-type2/${distributorId}`;
+  const url = `po-retailer-to-wholesaler/${distributorId}`;
+
   this.authService.get(url).subscribe(
     (res: any) => {
       this.responseData = res;
 
       const productSet = res.set || [];
 
-      // Basic PO info
+      // Updated Purchase Order Mapping
       this.purchaseOrder = {
-        supplierName: res.wholesaler.companyName,
-        supplierDetails: res.wholesaler.fullName,
-        supplierAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.pinCode} - ${res.wholesaler.state}`,
-        supplierContact: res.wholesaler.mobNumber,
-        supplierGSTIN: res.wholesaler.GSTIN || '',
-        buyerName: res.retailer.companyName,
-        buyerAddress: `${res.retailer.address}, ${res.retailer.city}, ${res.retailer.pinCode} - ${res.retailer.state}`,
-        buyerPhone: res.retailer.mobNumber,
-        buyerEmail: res.retailer.email,
-        buyerPAN: res.retailer.pan || '',
-        logoUrl: res.retailer.profileImg || '',
-        poDate: new Date().toLocaleDateString(),
-        poNumber: res.poNumber,
+        supplierName: res.wholesaler?.companyName || 'N/A',
+        supplierDetails: res.wholesaler?.fullName || '',
+        supplierAddress: res.wholesaler?.address || 'N/A', // Not present in response
+        supplierContact: res.wholesaler?.mobNumber || '',
+        supplierGSTIN: res.wholesaler?.GSTIN || '', // Optional
+        supplierPAN: '', // Not provided
+        supplierEmail: res.wholesaler?.email || '',
+
+        buyerName: res.retailer?.companyName || '',
+        buyerAddress: `${res.retailer?.address || ''}, ${res.retailer?.pinCode || ''} - ${res.retailer?.state || ''}`,
+        buyerPhone: res.retailer?.mobNumber || '',
+        buyerEmail: res.retailer?.email || '',
+        buyerGSTIN: res.retailer?.GSTIN || '',
+        buyerPAN: '', // Not provided
+
+        logoUrl: '', // No profileImg in response, fallback to default in template
+        poDate: res.retailerPoDate ? new Date(res.retailerPoDate).toLocaleDateString() : new Date().toLocaleDateString(),
+        poNumber: res.poNumber || 'N/A',
         products: productSet,
-        ProductDiscount: res.retailer.discountDetails.productDiscount || 0
+        ProductDiscount: parseFloat(res.retailer?.discountDetails?.productDiscount || '0')
       };
 
-      // Chunk for printing
+      // Chunk data for table rendering
       this.chunkArray(productSet);
 
-      // Totals
+      // Totals and GST
       this.calculateTotalsFromRawData(productSet);
     },
     (err) => {
-      console.error('Error:', err);
+      console.error('Error fetching PO data:', err);
     }
   );
 }
-
 
 calculateTotalsFromRawData(productSet: any[]): void {
   let subtotal = 0;
@@ -194,11 +238,11 @@ calculateTotalsFromRawData(productSet: any[]): void {
           group.subTotal = group.rows.reduce((acc: number, row: any) => acc + this.calculateTotalPrice(row, false), 0);
   
         // ✅ Correct Discount Calculation
-const discountAmount = (group.subTotal * this.purchaseOrder.ProductDiscount) / 100; 
-group.discountedTotal = group.subTotal - discountAmount;
+        const discountAmount = (group.subTotal * this.purchaseOrder.ProductDiscount) / 100; 
+        group.discountedTotal = group.subTotal - discountAmount;
 
-          totalSub += group.subTotal;
-          totalDiscountAmount += discountAmount;
+        totalSub += group.subTotal;
+        totalDiscountAmount += discountAmount;
       });
   
       // ✅ Assign to Class Properties
@@ -421,9 +465,9 @@ chunkArray(array: any[]): void {
       if (currentChunk < chunkCount) {
         renderChunk();
       } else {
-       const poDate = this.purchaseOrder.poDate?.replace(/\//g, '-') || 'no-date';
-const poNumber = this.purchaseOrder.poNumber || 'no-number';
-pdf.save(`PO_${poDate}_${poNumber}.pdf`);
+        const poDate = this.purchaseOrder.poDate?.replace(/\//g, '-') || 'no-date';
+        const poNumber = this.purchaseOrder.poNumber || 'no-number';
+        pdf.save(`PO_${poDate}_${poNumber}.pdf`);
 
       }
     });

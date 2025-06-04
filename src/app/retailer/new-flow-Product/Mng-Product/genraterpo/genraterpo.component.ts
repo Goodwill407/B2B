@@ -1,4 +1,4 @@
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';   
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -53,9 +53,9 @@ export class GenraterpoComponent {
   gst: number = 0;
   Totalsub: number = 0;
   dicountprice: number = 0;
-  sgst: any;
-  igst: any;
-  cgst: any;
+  sgst: number = 0;
+  igst: number = 0;
+  cgst: number = 0;
 
   constructor(
     public authService: AuthService,
@@ -301,9 +301,13 @@ this.chunkArray(this.responseData.set); // or whatever your full data list is
   delete cartBody.__v;
   delete cartBody.productId;
 
+  cartBody.cartId = this.responseData?._id || '';
+
   console.log('📤 Sending Purchase Order:', cartBody);
 
-  this.authService.post('retailer-purchase-order-type2', cartBody).subscribe(
+  // this.authService.post('retailer-purchase-order-type2', cartBody).subscribe(
+  this.authService.post('/po-retailer-to-wholesaler', cartBody).subscribe(
+
     (res: any) => {
       this.communicationService.customSuccess('Purchase Order Generated Successfully');
     },
