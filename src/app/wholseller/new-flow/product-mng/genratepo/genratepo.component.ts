@@ -37,9 +37,9 @@
     };
 
     mergedProducts: any[] = [];
-    sgst: any
-    igst: any
-    cgst: any
+    sgst: number = 0;
+    igst: number = 0;
+    cgst: number = 0;
     responseData: any; // New variable to store response data
     distributorId: string;
     products: any[] = [];

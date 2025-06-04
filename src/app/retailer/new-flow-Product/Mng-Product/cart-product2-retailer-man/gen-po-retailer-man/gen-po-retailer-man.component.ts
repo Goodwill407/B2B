@@ -314,26 +314,61 @@ calculateGST() {
     return rows.some((row) => row.quantities[size] > 0);
   }
 
-  addpo() {
-    const cartBody = { ...this.responseData };
-    // Create a copy of the response data
-  
-    // Remove unwanted fields to clean up the data
-    delete cartBody.__v;
-    delete cartBody._id;
-    delete cartBody.productId;
-  
-    // Post the cleaned data to the backend
-    this.authService.post('rtl-toMnf-po', cartBody).subscribe(
-      (res: any) => {
-        console.log(res);
-        this.communicationService.customSuccess('Purchase Order Generated Successfully');
-      },
-      (error) => {
-        this.communicationService.customError1(error.error.message);
-      }
-    );
-  }
+addpo() {
+  const cartData = this.responseData;
+
+  const poBody = {
+    statusAll: 'pending',
+    email: cartData.retailer.email, // Retailer email
+    manufacturerEmail: cartData.manufacturer.email,
+    discount: cartData.retailer.productDiscount || 0,
+    retailerPoDate: new Date(), // Current timestamp
+    poNumber: cartData.orderNumber || '', // Assuming orderNumber is generated already
+   cartId: cartData.products?.[0]?._id || '', // ✅ correct
+
+
+    set: cartData.products?.[0]?.set || [],
+
+    manufacturer: {
+      email: cartData.manufacturer.email,
+      fullName: cartData.manufacturer.fullName,
+      companyName: cartData.manufacturer.companyName,
+      address: cartData.manufacturer.address,
+      state: cartData.manufacturer.state,
+      country: cartData.manufacturer.country || 'India',
+      pinCode: cartData.manufacturer.pinCode,
+      mobNumber: cartData.manufacturer.mobNumber,
+      GSTIN: cartData.manufacturer.GSTIN,
+    },
+
+    retailer: {
+      email: cartData.retailer.email,
+      fullName: cartData.retailer.fullName,
+      companyName: cartData.retailer.companyName,
+      address: cartData.retailer.address,
+      state: cartData.retailer.state,
+      country: cartData.retailer.country || 'India',
+      pinCode: cartData.retailer.pinCode,
+      mobNumber: cartData.retailer.mobNumber,
+      GSTIN: cartData.retailer.GSTIN,
+      logo: cartData.retailer.profileImg || '',
+      productDiscount: cartData.retailer.productDiscount || '',
+      category: cartData.retailer.category || '',
+    }
+  };
+
+  this.authService.post('po-retailer-to-manufacture', poBody).subscribe(
+    (res: any) => {
+      console.log('PO Response:', res);
+      this.communicationService.customSuccess('Purchase Order Generated Successfully');
+    },
+    (error) => {
+      console.error('PO Creation Error:', error);
+      this.communicationService.customError1(error.error.message);
+    }
+  );
+}
+
   
 
   flattenProductData(productSet: any[]): any[] {
