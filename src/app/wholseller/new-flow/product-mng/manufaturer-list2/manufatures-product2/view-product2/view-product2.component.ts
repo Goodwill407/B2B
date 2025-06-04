@@ -23,6 +23,8 @@ export class ViewProduct2Component {
   quantity: any;
   hoveredColourName: string = '';
   selectedColor: any = null;
+  gender: any;
+  clothingType: any;
 
   constructor(private location: Location, private renderer: Renderer2, private route: ActivatedRoute, public authService: AuthService, private fb: FormBuilder, private communicationService: CommunicationService, private dialog: MatDialog) { }
   @ViewChild('mainImage') mainImage!: ElementRef; // Reference to the main image element
@@ -39,7 +41,7 @@ export class ViewProduct2Component {
   colourCollections: any[] = [];
   designno: any;
   Prodnum: any;
-
+productType:any;
 
   electedColor: any = null;
   selectedSize: string = '';
@@ -74,6 +76,9 @@ export class ViewProduct2Component {
   getProductDetails(id: any) {
     this.authService.get('type2-products/' + id).subscribe((res: any) => {
       this.designno = res.designNumber;
+      this.productType = res.productType;
+      this.gender=res.gender;
+      this.clothingType=res.clothing;
       if (res) {
         this.product = {
           brand: res.brand,
@@ -183,15 +188,18 @@ export class ViewProduct2Component {
         this.selectedSizes.forEach((size: any) => {
           const quantity = formData[`${sanitizedColorName}_${size.size}`];
           if (quantity) {
-            result.push({
+        result.push({
+  colourName: color.name,
+  colourImage: color.image,
+  colour: color.hex,
+  quantity,
+  ...size,
+  designNumber: this.designno,
+  productType: this.productType , // ✅ here
+  gender: this.gender,            // ✅ Added
+  clothing: this.clothingType 
+});
 
-              colourName: color.name,
-              colourImage: color.image,
-              colour: color.hex,
-              quantity,
-              ...size,
-              designNumber: this.designno, // Use the class-level design number here
-            });
           }
         });
       });
@@ -271,6 +279,7 @@ export class ViewProduct2Component {
       "productBy": data.productBy,
       "productId": data.id,
       "quantity": this.quantity
+      
     }
 
     this.authService.post('cart', cartBody).subscribe((res: any) => {
@@ -410,12 +419,17 @@ export class ViewProduct2Component {
 
   async addToCartArray() {
     const payload = {
-      set: this.tempCart,
-      productId: this.product.id,
-      email: this.authService.currentUserValue.email,
-      productBy: this.product.productBy
+  set: this.tempCart.map(item => ({
+    ...item,
+    productType: this.productType ,// ✅ added dynamically
+    gender: this.product.gender,            // ✅ Added
+    clothing: this.product.clothingType 
+  })),
+  productId: this.product.id,
+  email: this.authService.currentUserValue.email,
+  productBy: this.product.productBy
+};
 
-    };
 
     try {
       const res = await this.authService.post('type2-cart', payload).toPromise();

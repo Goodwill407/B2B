@@ -16,6 +16,8 @@ import { CartProduct2RetailerManComponent } from "./Mng-Product/cart-product2-re
 import { GenPoRetailerManComponent } from "./Mng-Product/cart-product2-retailer-man/gen-po-retailer-man/gen-po-retailer-man.component";
 import { RetailorManOrderReqComponent } from "./Mng-Product/retailor-man-order-req/retailor-man-order-req.component";
 import { ViewRetailorManOrderReqComponent } from "./Mng-Product/retailor-man-order-req/view-retailor-man-order-req/view-retailor-man-order-req.component";
+import { ViewRetailorpoManComponent } from "./Mng-Product/view-retailorpo-man/view-retailorpo-man.component";
+import { RetailormanpoGenComponent } from "./Mng-Product/view-retailorpo-man/retailormanpo-gen/retailormanpo-gen.component";
 
 
 export const NewFlow:Route[]=[
@@ -36,5 +38,7 @@ export const NewFlow:Route[]=[
     {path:'view-product-ofMfg' ,component:ProductViewOfMfgComponent},
     {path:'view-product-details' ,component:ViewProductDetailsComponent},
     {path:'cart-product2-MAn', component:CartProduct2RetailerManComponent},
+    {path:'view-retailerpotoman-list',component:ViewRetailorpoManComponent},
+     {path:'view-retailerpotoman',component:RetailormanpoGenComponent},
     
 ]

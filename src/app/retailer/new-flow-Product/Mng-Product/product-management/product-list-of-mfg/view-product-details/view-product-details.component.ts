@@ -27,6 +27,7 @@ export class ViewProductDetailsComponent {
   quantity: any;
   hoveredColourName: string = '';
   colours: any;
+  productType: any;
   constructor(private location: Location, private renderer: Renderer2, private route: ActivatedRoute, public authService: AuthService, private fb: FormBuilder, private communicationService: CommunicationService, private dialog: MatDialog) { }
   @ViewChild('mainImage') mainImage!: ElementRef; // Reference to the main image element
   zoomed: boolean = false;
@@ -82,6 +83,7 @@ export class ViewProductDetailsComponent {
   getProductDetails(id: any) {
     this.authService.get('type2-products/' + id).subscribe((res: any) => {
       console.log(res);
+      this.productType = res.productType;
       if (res) {
         this.mfgEmail = res.productBy;
         this.product = {
@@ -483,14 +485,17 @@ export class ViewProductDetailsComponent {
   }
 
   async addToCartArray() {
-    const payload = {
-      set: this.tempCart,
-      productId: this.product.id,
-      email: this.authService.currentUserValue.email,
-      // wholesalerEmail: this.WholeselerEmail || "",
-      productBy: this.product.productBy
-
-    };
+        const payload = {
+  set: this.tempCart.map(item => ({
+    ...item,
+    productType: this.productType ,// ✅ added dynamically
+    gender: this.product.gender,            // ✅ Added
+    clothing: this.product.clothingType 
+  })),
+  productId: this.product.id,
+  email: this.authService.currentUserValue.email,
+  productBy: this.product.productBy
+};
 
     try {
       const res = await this.authService.post('rtl-toMnf-cart', payload).toPromise();

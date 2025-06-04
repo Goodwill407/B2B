@@ -1803,6 +1803,18 @@ export const ROUTES2: RouteInfo[] = [
         submenu: [],
       },
       {
+        path: '/retailer/new/view-retailerpotoman-list',
+        title: 'Retailer To Man PO',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+      {
         path: '/retailer/new/view-ManReq',
         title: 'Retailer Order Request',
         iconType: '',
