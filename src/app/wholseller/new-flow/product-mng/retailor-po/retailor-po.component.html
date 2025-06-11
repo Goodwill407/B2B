@@ -11,7 +11,7 @@
                                 <th>Company Name</th>
                                 <th>Email</th>
                                 <th>PO Number</th>
-                                <!-- <th>PO Date</th> -->
+                                <th>PO Date</th>
                                 <th>View</th>
 
                             </tr>
@@ -22,7 +22,7 @@
                                 <td class="text-center">{{data.retailer.companyName}}</td>
                                 <td class="text-center">{{data.retailer.email}}</td>
                                 <td class="text-center">{{data.poNumber}}</td>
-                                <!-- <td class="text-center">{{data.poDate}}</td> -->
+                                <td class="text-center">{{data.retailerPoDate | date:'dd/MM/yyyy HH:mm'}}</td>
                                 <td class="text-center" [routerLink]="['/wholesaler/order-mng/viewporetailor',{id: data.id}]" ><button  class="btn"><i
                                             class="bi bi-eye h5"></i></button></td>
                             </tr>

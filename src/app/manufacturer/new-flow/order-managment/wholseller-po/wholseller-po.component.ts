@@ -62,7 +62,7 @@ export class WholsellerPoComponent {
 
   getAllData() {
     this.showFlag = false;
-    this.authService.get(`/type2-purchaseorder?productBy=${this.authService.currentUserValue.email}&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
+    this.authService.get(`/po-wholesaler-to-manufacture?manufacturerEmail=${this.authService.currentUserValue.email}&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
       this.tableData = res.results;
       console.log(res)
       this.totalResults = res.totalResults;

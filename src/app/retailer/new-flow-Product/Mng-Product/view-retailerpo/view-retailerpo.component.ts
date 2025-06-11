@@ -178,4 +178,11 @@ export class ViewRetailerpoComponent {
     }
   }
   
+  deleteSinglePo(id:any){
+    this.authService.delete('po-retailer-to-wholesaler',id).subscribe((res:any)=>{
+      this.communicationService.delete();
+      this.getAllData();
+    })
+  }
+
 }

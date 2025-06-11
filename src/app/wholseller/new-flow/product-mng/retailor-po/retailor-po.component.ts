@@ -100,7 +100,7 @@ export class RetailorPoComponent {
 
   getAllData() {
     this.showFlag = false;
-    this.authService.get(`retailer-purchase-order-type2?wholesalerEmail=${this.authService.currentUserValue.email}&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
+    this.authService.get(`po-retailer-to-wholesaler?wholesalerEmail=${this.authService.currentUserValue.email}&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
       this.tableData = res.results;
       console.log(res)
       this.totalResults = res.totalResults;

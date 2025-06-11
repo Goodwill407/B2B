@@ -9,6 +9,8 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { IndianCurrencyPipe } from 'app/custom.pipe';
+import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-genraterpo',
   standalone: true,
@@ -77,10 +79,10 @@ export class GenraterpoComponent {
     this.authService.get(url).subscribe(
       (res: any) => {
         this.responseData = res;
-this.chunkArray(this.responseData.set); // or whatever your full data list is
-        const discountValue = res.retailer?.discountDetails?.productDiscount
-          ? parseFloat(res.retailer.discountDetails.productDiscount)
-          : 0;
+        this.chunkArray(this.responseData.set); // or whatever your full data list is
+        const discountValue = res.retailer?.productDiscount
+        ? parseFloat(res.retailer.productDiscount)
+        : 0;
   
         this.purchaseOrder = {
           supplierName: res.wholesaler?.companyName || '',
@@ -117,6 +119,50 @@ this.chunkArray(this.responseData.set); // or whatever your full data list is
     );
   }
   
+//   validateBeforePO(): void {
+//   const missingRetailer: string[] = [];
+//   const missingWholesaler: string[] = [];
+
+//   const buyer = this.purchaseOrder;
+//   const seller = this.purchaseOrder;
+
+//   // Retailer (Buyer) validation
+//   if (!buyer.buyerAddress) missingRetailer.push('State/Address');
+//   if (!buyer.buyerPhone) missingRetailer.push('Phone No.');
+//   if (!buyer.buyerEmail) missingRetailer.push('Email');
+//   if (!buyer.buyerGSTIN) missingRetailer.push('GSTIN');
+//   if (!buyer.buyerPAN) missingRetailer.push('PAN');
+
+//   // Wholesaler (Supplier) validation
+//   if (!seller.supplierAddress) missingWholesaler.push('State/Address');
+//   if (!seller.supplierContact) missingWholesaler.push('Phone No.');
+//   if (!seller.supplierEmail) missingWholesaler.push('Email');
+//   if (!seller.supplierGSTIN) missingWholesaler.push('GSTIN');
+//   if (!seller.supplierPAN) missingWholesaler.push('PAN');
+
+//   if (missingRetailer.length || missingWholesaler.length) {
+//     let html = '<strong>Please Complete the below Details </strong><br><br>';
+
+//     if (missingRetailer.length) {
+//       html += `<strong>Retailer:</strong><ul style="text-align:left;">${missingRetailer.map(item => `<li>${item}</li>`).join('')}</ul>`;
+//     }
+
+//     if (missingWholesaler.length) {
+//       html += `<strong>Wholesaler:</strong><ul style="text-align:left;">${missingWholesaler.map(item => `<li>${item}</li>`).join('')}</ul>`;
+//     }
+
+//     Swal.fire({
+//       icon: 'warning',
+//       title: 'Incomplete Details Detected',
+//       html: html,
+//       confirmButtonText: 'OK'
+//     });
+//   } else {
+//     // ✅ All fields okay, proceed to generate PO
+//     this.addpo();
+//   }
+// }
+
   extractSizesAndPrices(productSet: any[]): void {
     const uniqueSizes = new Set<string>();
     this.priceHeaders = {}; // Reset size-price mapping

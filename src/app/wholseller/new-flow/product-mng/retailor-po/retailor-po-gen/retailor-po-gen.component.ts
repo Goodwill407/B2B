@@ -77,7 +77,7 @@ export class RetailorPoGenComponent {
   }
 
   getAllProducts(distributorId: string) {
-    const url = `retailer-purchase-order-type2/${distributorId}`
+    const url = `po-retailer-to-wholesaler/${distributorId}`
     this.authService.get(url).subscribe(
       (res: any) => {
       
@@ -86,25 +86,27 @@ export class RetailorPoGenComponent {
         console.log(this.responseData)
         // Update purchaseOrder from the response
         this.purchaseOrder = {
-          supplierName: res.wholesaler.companyName,
-          supplierDetails: res.wholesaler.fullName,
-          supplierAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
-          supplierContact: `${res.wholesaler.mobNumber}`,
-          supplierGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
-          buyerName: res.retailer.companyName,
-          logoUrl: res.retailer.profileImg,
-          buyerAddress: `${res.retailer.address}, ${res.retailer.city}, ${res.retailer.state} - ${res.retailer.pinCode}`,
-          buyerPhone: res.retailer.mobNumber,
-          buyerEmail: res.retailer.email,
-          buyerDetails: res.retailer.fullName,
-          buyerGSTIN: res.retailer.GSTIN || 'GSTIN_NOT_PROVIDED',
-          poDate: new Date().toLocaleDateString(),
-          poNumber: res.poNumber,
-          products: res.set || [],
-          // new — parse it to a Number
-          ProductDiscount: parseFloat(res.retailer.discountDetails?.productDiscount ?? '0'),
+        supplierName: res.wholesaler.companyName,
+        supplierAddress: `${res.wholesaler.address}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
+        supplierContact: res.wholesaler.mobNumber,
+        supplierEmail: res.wholesaler.email,
+        supplierGSTIN: res.wholesaler.GSTIN || 'N/A',
+        supplierPAN: res.wholesaler.PAN ?? res.wholesaler.GSTIN?.substring(2, 12) ?? 'N/A',
 
-        };
+        buyerName: res.retailer.companyName,
+        buyerAddress: `${res.retailer.address}, ${res.retailer.state} - ${res.retailer.pinCode}`,
+        buyerPhone: res.retailer.mobNumber,
+        buyerEmail: res.retailer.email,
+        buyerGSTIN: res.retailer.GSTIN || 'N/A',
+        buyerPAN: res.retailer.PAN ?? res.retailer.GSTIN?.substring(2, 12) ?? 'N/A',
+        
+        logoUrl: res.retailer.logo ?? 'assets/images/company_logo.jpg',
+        poDate: new Date(res.retailerPoDate).toLocaleDateString(),
+        poNumber: res.poNumber,
+        products: res.set || [],
+        ProductDiscount: parseFloat(res.retailer.productDiscount ?? '0'),
+      };
+
 
       // Use direct flat table
       this.chunkArray(productSet);

@@ -7,56 +7,27 @@ import { AccordionModule } from 'primeng/accordion';
 import { TableModule } from 'primeng/table';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { IndianCurrencyPipe } from 'app/custom.pipe';
+
 @Component({
   selector: 'app-view-wholesaler-po',
   standalone: true,
-  imports: [CommonModule, FormsModule, AccordionModule, TableModule],
+  imports: [CommonModule, FormsModule, AccordionModule, TableModule, IndianCurrencyPipe],
   templateUrl: './view-wholesaler-po.component.html',
   styleUrl: './view-wholesaler-po.component.scss'
 })
 export class ViewWholesalerPoComponent {
-  purchaseOrder: any = {
-    supplierName: '',
-    supplierDetails: '',
-    supplierAddress: '',
-    supplierContact: '',
-    supplierGSTIN: '',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/38/MONOGRAM_LOGO_Color_200x200_v.png',
-    orderNo: 'PO123',
-    orderDate: new Date().toLocaleDateString(),
-    deliveryDate: '',
-    buyerName: '',
-    buyerAddress: '',
-    buyerPhone: '',
-    buyerGSTIN: '',
-    products: [],
-    totalAmount: 0,
-    totalInWords: '',
-  };
-
-  mergedProducts: any[] = [];
-
-  responseData: any; // New variable to store response data
-  distributorId: string = '';
-  distributorId2: string = '';
-  pono: string = '';
-  products: any[] = [];
-  userProfile: any;
-  filteredData: any;
-  sizeHeaders: string[] = [];
-  priceHeaders: { [size: string]: number } = {};
-  sgst: any
-  igst: any
-  cgst: any
-  totalGrandTotal: number = 0;
-  gst: number = 0;
-  Totalsub: number = 0;
-
-    /** ₹ amount saved by the % discount */
-    discountAmount: number = 0;
-
-    /** Subtotal after percentage discount */
-    discountedTotal: number = 0;
+   purchaseOrder: any = {};
+  tableChunks: any[][] = [];
+  serialOffset: number[] = [];
+  Totalsub = 0;
+  discountAmount = 0;
+  discountedTotal = 0;
+  sgst = 0;
+  cgst = 0;
+  igst = 0;
+  totalGrandTotal = 0;
+  private distributorId = ''; 
 
   constructor(
     public authService: AuthService,
@@ -68,82 +39,71 @@ export class ViewWholesalerPoComponent {
   {
   }
 
-  ngOnInit(): void {
-    this.distributorId = this.route.snapshot.paramMap.get('id') ?? '';
-    this.userProfile = JSON.parse(localStorage.getItem('currentUser')!);
-
-    this.getAllProducts();
+  ngOnInit() {
+    this.distributorId = this.route.snapshot.paramMap.get('id') || '';
+    this.loadPurchaseOrder();
   }
-getAllProducts() {
-  const url = `type2-purchaseorder/${this.distributorId}`;
-  this.authService.get(url).subscribe((res: any) => {
-    this.responseData = res;
 
-    this.purchaseOrder = {
-      poNumber: res.poNumber,
-      poDate: new Date(res.wholesalerPoDate).toLocaleDateString(),
+   private loadPurchaseOrder() {
+    this.authService.get(`po-wholesaler-to-manufacture/${this.distributorId}`)
+      .subscribe((res: any) => {
+        // ─── Map PO metadata ────────────────────────────
+        this.purchaseOrder = {
+          poNumber:        res.poNumber,
+          poDate:          res.wholesalerPODateCreated,
+          supplierName:    res.manufacturer.companyName,
+          supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.pinCode} - ${res.manufacturer.state}`,
+          supplierContact: res.manufacturer.mobNumber,
+          supplierEmail:   res.manufacturer.email,
+          supplierGSTIN:   res.manufacturer.GSTIN,
+          supplierPAN:     res.manufacturer.GSTIN?.substring(2,12) || '',
+          buyerName:       res.wholesaler.companyName,
+          buyerAddress:    `${res.wholesaler.address}, ${res.wholesaler.pinCode} - ${res.wholesaler.state}`,
+          buyerPhone:      res.wholesaler.mobNumber,
+          buyerEmail:      res.wholesaler.email,
+          buyerGSTIN:      res.wholesaler.GSTIN,
+          buyerPAN:        res.wholesaler.GSTIN?.substring(2,12) || '',
+          logoUrl:         res.wholesaler.profileImg,
+          ProductDiscount: parseFloat(res.wholesaler.productDiscount || '0'),
+        };
 
-      supplierName: res.manufacturer?.companyName || '',
-      supplierDetails: res.manufacturer?.fullName || '',
-      supplierAddress: `${res.manufacturer?.address || ''}, ${res.manufacturer?.state || ''}`,
-      supplierContact: res.manufacturer?.mobNumber || '',
-      supplierGSTIN: res.manufacturer?.GSTIN || '',
-      supplierPAN: res.manufacturer?.pan || '',
+        // ─── Build rows & recalc totals ─────────────────
+        this.buildTable(res.set, res.manufacturer.state, res.wholesaler.state);
+      });
+  }
 
-      buyerName: res.wholesaler?.companyName || '',
-      buyerDetails: res.wholesaler?.fullName || '',
-      buyerEmail: res.wholesaler?.email || '',
-      buyerAddress: `${res.wholesaler?.address || ''}, ${res.wholesaler?.state || ''}`,
-      buyerPhone: res.wholesaler?.mobNumber || '',
-      buyerGSTIN: res.wholesaler?.GSTIN || '',
-      buyerPAN: res.wholesaler?.pan || '',
-      logoUrl: res.wholesaler?.profileImg || 'assets/images/company_logo.jpg',
+  private buildTable(items: any[], mState: string, wState: string) {
+    const rows = items.map(i => ({
+      designNumber: i.designNumber,
+      colourName:   i.colourName,
+      size:         i.size,
+      price:        parseFloat(i.price) || 0,
+      quantity:     i.totalQuantity,
+      gender:       i.gender,
+      clothing:     i.clothing
+    }));
 
-      ProductDiscount: res.wholesaler?.productDiscount
-        ? parseFloat(res.wholesaler.productDiscount)
-        : 0,
+    this.chunkArray(rows);
 
-      products: res.set || [],
-    };
-
-    // ✅ Setup headers and pricing
-    this.extractSizesAndPrices(res.set);
-
-    // ✅ Get flat row structure
-    this.mergedProducts = this.flattenProductData(res.set);
-this.chunkArray(this.mergedProducts);
-
-    // ✅ Recalculate totals
-    this.Totalsub = this.mergedProducts.reduce((acc, item) => {
-      const qty = this.getFirstQty(item.quantities);
-      const price = this.getFirstPrice(item.quantities, item.designNumber);
-      return acc + qty * price;
-    }, 0);
-
-    this.discountAmount = (this.Totalsub * this.purchaseOrder.ProductDiscount) / 100;
+    this.Totalsub = rows.reduce((s,r) => s + r.price * r.quantity, 0);
+    this.discountAmount  = (this.Totalsub * this.purchaseOrder.ProductDiscount)/100;
     this.discountedTotal = this.Totalsub - this.discountAmount;
-    this.calculateGST();
-  });
-}
 
-
-  extractSizesAndPrices(productSet: any[]): void {
-    const uniqueSizes = new Set<string>();
-    this.priceHeaders = {}; // Reset size-price mapping
-
-    productSet.forEach((product) => {
-      if (product.size && product.price > 0) {
-        uniqueSizes.add(product.size);
-        this.priceHeaders[product.size] = product.price;
-      }
-    });
-
-    this.sizeHeaders = Array.from(uniqueSizes); // Convert Set to Array for the table header
+    const ms = mState.trim().toLowerCase();
+    const ws = wState.trim().toLowerCase();
+    if (ms === ws || ms.includes(ws) || ws.includes(ms)) {
+      this.sgst = this.discountedTotal * 0.09;
+      this.cgst = this.discountedTotal * 0.09;
+      this.igst = 0;
+    } else {
+      this.sgst = 0;
+      this.cgst = 0;
+      this.igst = this.discountedTotal * 0.18;
+    }
+    this.totalGrandTotal = this.discountedTotal + this.sgst + this.cgst + this.igst;
   }
 
-  tableChunks: any[][] = [];
-serialOffset: number[] = [];
-
+  /** Unchanged: paginate rows into chunks */
 chunkArray(array: any[]): void {
   this.tableChunks = [];
   this.serialOffset = [];
@@ -164,234 +124,8 @@ chunkArray(array: any[]): void {
   }
 }
 
-
-  processGroupedProducts(productSet: any[]): any[] {
-    interface Group { 
-      designNumber: string;
-      rows: { colourName: string; quantities: Record<string, number> }[];
-      subTotal: number;
-      discountedTotal: number;
-      grandTotal: number;
-    }
-    const grouped: Record<string, Group> = {};
-    let totalSub = 0, totalDiscounted = 0, grandSum = 0;
-  
-    //–– ① Group into per-design/colour buckets
-    for (const p of productSet) {
-      const key = p.designNumber;
-      if (!grouped[key]) {
-        grouped[key] = {
-          designNumber: key,
-          rows: [],
-          subTotal: 0,
-          discountedTotal: 0,
-          grandTotal: 0
-        };
-      }
-      let r = grouped[key].rows.find(r => r.colourName === p.colourName);
-      if (!r) {
-        r = { colourName: p.colourName, quantities: {} };
-        grouped[key].rows.push(r);
-      }
-      r.quantities[p.size] = (r.quantities[p.size] || 0) + p.quantity;
-    }
-  
-    //–– ② Compute subtotals & discounted totals
-    for (const g of Object.values(grouped)) {
-      // raw subTotal
-      g.subTotal = g.rows.reduce((sum, r) => {
-        return sum + this.sizeHeaders.reduce((s, sz) => {
-          const qty = r.quantities[sz] || 0;
-          return s + qty * (this.priceHeaders[sz] || 0);
-        }, 0);
-      }, 0);
-  
-      // discountedTotal = line-by-line with % discount
-      g.discountedTotal = g.rows.reduce((sum, r) => {
-        return sum + this.sizeHeaders.reduce((s, sz) => {
-          const qty = r.quantities[sz] || 0;
-          let line = qty * (this.priceHeaders[sz] || 0);
-          const d = (line * this.purchaseOrder.ProductDiscount) / 100;
-          return s + (line - d);
-        }, 0);
-      }, 0);
-  
-      totalSub += g.subTotal;
-      totalDiscounted += g.discountedTotal;
-    }
-  
-    //–– ③ overall discount & net
-    this.Totalsub        = totalSub;
-    this.discountAmount  = totalSub - totalDiscounted;
-    this.discountedTotal = totalDiscounted;
-  
-    //–– ④ GST on the net total (normalize “MH” vs “Maharashtra”)
-    this.calculateGST();
-  
-    //–– ⑤ per-group grandTotals & overall
-    // for (const g of Object.values(grouped)) {
-    //   g.grandTotal = g.discountedTotal + this.sgst + this.cgst + this.igst;
-    //   grandSum += g.grandTotal;
-    // }
-    // this.totalGrandTotal = grandSum;
-  
-    return Object.values(grouped);
-  }
-  
-  
-  
-  
-  calculateTotalPrice(row: any, applyDiscount: boolean = true): number {
-    let total = 0;
-  
-    // Loop through each size header and calculate the total price
-    this.sizeHeaders.forEach((size) => {
-      // If there is a quantity for the current size, add to the total
-      if (row.quantities[size] > 0) {
-        total += row.quantities[size] * (this.priceHeaders[size] || 0);
-      }
-    });
-  
-    // Apply the discount if flag is true and discount is greater than 0
-    if (applyDiscount && this.purchaseOrder.ProductDiscount > 0) {
-      const discount = (total * this.purchaseOrder.ProductDiscount) / 100;
-      total -= discount;
-    }
-  
-    // Return the final calculated total price (round to 2 decimal places for consistency)
-    return parseFloat(total.toFixed(2));  // Optional: rounds off the value to 2 decimal points
-  }
-  
-  
- 
-
-  calculateGST(): void {
-    const dt = this.discountedTotal;
-    let m = this.responseData.manufacturer.state?.trim().toLowerCase()  || '';
-    let w = this.responseData.wholesaler.state?.trim().toLowerCase()    || '';
-    // treat “mh” vs “maharashtra” as same:
-    const same = m === w || m.includes(w) || w.includes(m);
-  
-    if (same) {
-      // intra-state
-      this.sgst = (dt * 9) / 100;
-      this.cgst = (dt * 9) / 100;
-      this.igst = 0;
-    } else {
-      // inter-state
-      this.sgst = 0;
-      this.cgst = 0;
-      this.igst = (dt * 18) / 100;
-    }
-  
-    this.totalGrandTotal = dt + this.sgst + this.cgst + this.igst;
-  }
-  
-  
-  
-  getStateFromAddress(address: string): string | null {
-    if (!address) {
-      console.error('Address is empty or invalid:', address);
-      return null;  // Address is missing or invalid
-    }
-  
-    console.log('Address:', address);  // Debug the address string
-  
-    // Split the address by commas to separate the components
-    const addressParts = address.split(',');
-  
-    console.log('Address Parts:', addressParts);  // Log the parts for debugging
-  
-    // If there are at least two parts, assume the second to last part is the state
-    if (addressParts.length >= 2) {
-      const state = addressParts[addressParts.length - 1]?.trim();  // Second last part should be the state
-  
-      // Ensure that the state is a valid non-numeric string
-      if (state && isNaN(parseInt(state))) {
-        return state;
-      } else {
-        console.error('Invalid state detected:', state);
-      }
-    }
-  
-    // If state is missing or invalid, return null
-    return null;
-  } 
-  dicountprice: number = 0;
-  calculateDiscountedTotal(subTotal: number): number {
-    // Apply discount (for example, 2% in this case)
-    const discount = (subTotal * 2) / 100;
-    const discountedTotal = subTotal - discount;
-  
-    // Store discount for display
-    this.dicountprice = discount;  
-  
-    return discountedTotal;
-  }
-  
-
-  calculateGrandTotal(subTotal: number, discount: number, igst: number): number {
-    const discountedSubtotal = subTotal - discount;
-    const igstAmount = (discountedSubtotal * igst) / 100;  // Apply 18% IGST
-    return discountedSubtotal + igstAmount;
-  }
-
-  isSizeAvailable(rows: any[], size: string): boolean {
-    return rows.some((row) => row.quantities[size] > 0);
-  }
-
-
-  addpo() {
-    const cartBody = { ...this.responseData }; // Create a copy of the response data
-  
-    delete cartBody._id;
-
-  
-    // Post the cleaned data to the backend
-    this.authService.post('type2-purchaseorder', cartBody).subscribe(
-      (res: any) => {
-        this.communicationService.customSuccess('Product Successfully Added in Cart');
-      },
-      (error) => {
-        this.communicationService.customError1(error.error.message);
-      }
-    );
-  }
-
-  flattenProductData(productSet: any[]): any[] {
-    const flatList: any[] = [];
-
-    // Iterate through each product in the set
-    productSet.forEach((product) => {
-        const designKey = product.designNumber; // Assuming each product has a designNumber
-
-        // Check if we already have a row for this designNumber + colourName
-        let existingRow = flatList.find(row => row.designNumber === designKey && row.colourName === product.colourName);
-
-        // If no existing row, create a new one
-        if (!existingRow) {
-            existingRow = {
-                designNumber: product.designNumber,
-                colourName: product.colourName,
-                colourImage: product.colourImage,
-                colour: product.colour,
-                quantities: {},
-                totalPrice: 0
-            };
-            flatList.push(existingRow);
-        }
-
-        // Update quantities for this specific size
-        if (product.size && product.quantity) {
-            existingRow.quantities[product.size] = (existingRow.quantities[product.size] || 0) + product.quantity;
-            existingRow.totalPrice += product.quantity * parseFloat(product.price); // Assuming price is a string
-        }
-    });
-
-    return flatList;
-}
-
-printPurchaseOrder(): void {
+  /** Unchanged: your multi-page PDF logic */
+ printPurchaseOrder(): void {
   const fullId = 'purchase-order';
   const pdf = new jsPDF('p', 'mm', 'a4');
   const pageWidth = pdf.internal.pageSize.getWidth();
@@ -473,24 +207,9 @@ printPurchaseOrder(): void {
 }
 
 
-navigateFun() {
-  this.location.back();
-}
-
-getFirstSize(quantities: any): string {
-  return Object.keys(quantities)[0] || 'N/A';
-}
-
-getFirstQty(quantities: any): number {
-  const size = this.getFirstSize(quantities);
-  return quantities[size] || 0;
-}
-
-getFirstPrice(quantities: any, designNumber: string): number {
-  const size = this.getFirstSize(quantities);
-  return this.priceHeaders[size] || 0;
-}
-
+  navigateFun() {
+    this.location.back();
+  }
 
   
 }

@@ -1657,7 +1657,7 @@ export const ROUTES2: RouteInfo[] = [
       },
       {
         path: '/retailer/new/cart-product2-retailer',
-        title: "Wholseller Cart Products",
+        title: "Wholesaler Cart Products",
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -1792,7 +1792,7 @@ export const ROUTES2: RouteInfo[] = [
       // },      
       {
         path: '/retailer/new/view-retailerpo',
-        title: 'Retailer PO',
+        title: 'Retailer To Wholesaler PO',
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -1804,7 +1804,7 @@ export const ROUTES2: RouteInfo[] = [
       },
       {
         path: '/retailer/new/view-retailerpotoman-list',
-        title: 'Retailer To Man PO',
+        title: 'Retailer To Manufacturer PO',
         iconType: '',
         icon: '',
         class: 'ml-menu',

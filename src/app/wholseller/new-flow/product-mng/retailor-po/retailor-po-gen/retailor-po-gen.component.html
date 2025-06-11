@@ -68,6 +68,8 @@
                   <th>Sr. No.</th>
                   <th>Design No.</th>
                   <th>Colour Name</th>
+                  <th>Gender</th>
+                  <th>Clothing</th>
                   <th>Size</th>
                   <th>Rate (₹)</th>
                   <th>Quantity</th>
@@ -80,6 +82,8 @@
                   <td>{{ serialOffset[i] + rowIndex + 1 }}</td>
                   <td>{{ item.designNumber }}</td>
                   <td>{{ item.colourName }}</td>
+                  <td>{{ item.gender }}</td>
+                  <td>{{ item.clothing }}</td>
                   <td>{{ item.size }}</td>
                   <td>{{ item.price | indianCurrency }}</td>
                   <td>{{ item.quantity }}</td>
@@ -90,16 +94,14 @@
               <!-- ✅ Show footer only on last chunk -->
               <ng-template pTemplate="footer" *ngIf="i === tableChunks.length - 1">
                 <!-- Subtotal -->
-                <tr>
-                  <td colspan="5" style="background-color: #f9f9f9; border: none;"></td>
-                  <td style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">Subtotal (₹):</td>
+                <tr> 
+                  <td colspan="8" style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">Subtotal (₹):</td>
                   <td style="text-align: right; border: 1px solid #dee2e6;">{{ Totalsub | indianCurrency }}</td>
                 </tr>
 
                 <!-- Discount -->
                 <tr>
-                  <td colspan="5" style="background-color: #f9f9f9; border: none;"></td>
-                  <td style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">
+                  <td colspan="8" style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">
                     Discount (₹ -{{ purchaseOrder.ProductDiscount }}%):
                   </td>
                   <td style="text-align: right; border: 1px solid #dee2e6;">{{ discountAmount | indianCurrency }}</td>
@@ -107,27 +109,23 @@
 
                 <!-- SGST/CGST -->
                 <tr *ngIf="sgst > 0 && cgst > 0">
-                  <td colspan="5" style="background-color: #f9f9f9; border: none;"></td>
-                  <td style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">SGST (₹ +9%):</td>
+                  <td  colspan="8" style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">SGST (₹ +9%):</td>
                   <td style="text-align: right; border: 1px solid #dee2e6;">{{ sgst | indianCurrency }}</td>
                 </tr>
                 <tr *ngIf="sgst > 0 && cgst > 0">
-                  <td colspan="5" style="background-color: #f9f9f9; border: none;"></td>
-                  <td style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">CGST (₹ +9%):</td>
+                  <td colspan="8" style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">CGST (₹ +9%):</td>
                   <td style="text-align: right; border: 1px solid #dee2e6;">{{ cgst | indianCurrency }}</td>
                 </tr>
 
                 <!-- IGST -->
                 <tr *ngIf="igst > 0">
-                  <td colspan="5" style="background-color: #f9f9f9; border: none;"></td>
-                  <td style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">IGST (₹ +18%):</td>
+                  <td colspan="8" style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">IGST (₹ +18%):</td>
                   <td style="text-align: right; border: 1px solid #dee2e6;">{{ igst | indianCurrency }}</td>
                 </tr>
 
                 <!-- Grand Total -->
                 <tr>
-                  <td colspan="5" style="background-color: #f9f9f9; border: none;"></td>
-                  <td style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">Grand Total (₹):</td>
+                  <td colspan="8" style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">Grand Total (₹):</td>
                   <td style="text-align: right; border: 1px solid #dee2e6;">{{ totalGrandTotal | indianCurrency }}</td>
                 </tr>
               </ng-template>

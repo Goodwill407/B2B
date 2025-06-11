@@ -119,7 +119,7 @@ export class PlaceOrderComponent {
 
   getAllData() {
   this.showFlag = false;
-  this.authService.get(`type2-purchaseorder/get-po/by-wholesaler-email?wholesalerEmail=${this.authService.currentUserValue.email}&page=${this.page}&limit=${this.limit}`)
+  this.authService.get(`po-wholesaler-to-manufacture?wholesalerEmail=${this.authService.currentUserValue.email}&page=${this.page}&limit=${this.limit}`)
     .subscribe((res: any) => {
       this.tableData = res.results || []; // updated
       this.totalResults = res.totalResults || 0;
@@ -231,7 +231,7 @@ export class PlaceOrderComponent {
   placeOrder(data: any): void {
 
     this.router.navigate(['/wholesaler/order-mng/View-place-order'], {
-      queryParams: { memail: data.manufacturer.email, wemail: data.wholesaler.email, poNumber: data.poNumber },
+      queryParams: { memail: data.manufacturer.email, wemail: data.wholesaler.email, poNumber: data.poNumber, id: data.id },
     });
   }
 
