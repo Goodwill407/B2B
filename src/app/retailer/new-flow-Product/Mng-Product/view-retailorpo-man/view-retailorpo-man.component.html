@@ -10,7 +10,7 @@
           <p-table [value]="tableData">
             <ng-template pTemplate="header">
               <tr>
-                <th>Retailer's Name</th>
+                <th>Manufacturer Name</th>
                 <th>Company Name</th>
                 <th>Email</th>
                 <th>PO Number</th>
@@ -21,13 +21,13 @@
 
             <ng-template pTemplate="body" let-data>
               <tr>
-                <td class="text-center">{{ data.retailer?.fullName || 'N/A' }}</td>
-                <td class="text-center">{{ data.retailer?.companyName || 'N/A' }}</td>
-                <td class="text-center">{{ data.retailer?.email || 'N/A' }}</td>
+                <td class="text-center">{{ data.manufacturer?.fullName || 'N/A' }}</td>
+                <td class="text-center">{{ data.manufacturer?.companyName || 'N/A' }}</td>
+                <td class="text-center">{{ data.manufacturer?.email || 'N/A' }}</td>
                 <td class="text-center">{{ data.poNumber || 'N/A' }}</td>
                 <td class="text-center">{{ data.statusAll || 'N/A' }}</td>
                 <td class="text-center">
-                  <a [routerLink]="['/retailer/new/retailerpo-generate', { id: data.id }]">
+                  <a [routerLink]="['/retailer/new/view-retailerpotoman', { id: data.id }]">
                     <button class="btn"><i class="bi bi-eye h5"></i></button>
                   </a>
                 </td>
@@ -35,7 +35,7 @@
             </ng-template>
           </p-table>
 
-          <!-- Conditional messages -->
+          <!-- Empty or Error Messages -->
           <div *ngIf="!tableData" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
             <p>PO List Not Found [Server Error]</p>
           </div>

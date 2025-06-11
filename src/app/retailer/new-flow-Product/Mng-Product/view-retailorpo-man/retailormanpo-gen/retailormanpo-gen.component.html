@@ -59,15 +59,19 @@
       </div>
 
       <!-- Order Details Tables -->
- <section class="order-details">
+<!-- Order Details Tables -->
+<section class="order-details">
   <ng-container *ngFor="let chunk of tableChunks; let i = index">
     <div [id]="'table-part-' + i" class="table-chunk mb-4">
       <p-table [value]="chunk" [responsive]="true" [paginator]="false" class="bordered-table">
+        
+        <!-- Table Header -->
         <ng-template pTemplate="header">
           <tr>
             <th>Sr. No.</th>
             <th>Design No.</th>
             <th>Colour Name</th>
+            <th>Gender</th> <!-- ✅ New Column -->
             <th>Size</th>
             <th>Rate</th>
             <th>Quantity</th>
@@ -75,11 +79,13 @@
           </tr>
         </ng-template>
 
+        <!-- Table Body -->
         <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
           <tr>
             <td>{{ serialOffset[i] + rowIndex + 1 }}</td>
             <td>{{ item.designNumber }}</td>
             <td>{{ item.colourName }}</td>
+            <td>{{ item.gender }}</td> <!-- ✅ New Field -->
             <td>{{ item.size }}</td>
             <td>₹{{ item.price }}</td>
             <td>{{ item.quantity }}</td>
@@ -87,52 +93,57 @@
           </tr>
         </ng-template>
 
+        <!-- Table Footer -->
         <ng-template pTemplate="footer" *ngIf="i === tableChunks.length - 1">
           <tr>
-            <td colspan="5" style="border: none;"></td>
-            <td style="text-align: right; font-weight: bold;">Subtotal:</td>
+            
+            <td colspan="7" style="text-align: right; font-weight: bold;">Subtotal:</td>
             <td>{{ Totalsub | currency: 'INR' }}</td>
           </tr>
           <tr>
-            <td colspan="5" style="border: none;"></td>
-            <td style="text-align: right; font-weight: bold;">Discount ({{ purchaseOrder.ProductDiscount }}%):</td>
+            
+            <td colspan="7" style="text-align: right; font-weight: bold;">
+              Discount ({{ purchaseOrder.ProductDiscount }}%):
+            </td>
             <td>{{ (Totalsub - discountedTotal) | currency: 'INR' }}</td>
           </tr>
           <tr *ngIf="igst === 0 && sgst > 0 && cgst > 0">
-            <td colspan="5" style="border: none;"></td>
-            <td style="text-align: right; font-weight: bold;">SGST (9%):</td>
+            
+            <td colspan="7" style="text-align: right; font-weight: bold;">SGST (9%):</td>
             <td>{{ sgst | currency: 'INR' }}</td>
           </tr>
           <tr *ngIf="igst === 0 && sgst > 0 && cgst > 0">
-            <td colspan="5" style="border: none;"></td>
-            <td style="text-align: right; font-weight: bold;">CGST (9%):</td>
+            
+            <td colspan="7" style="text-align: right; font-weight: bold;">CGST (9%):</td>
             <td>{{ cgst | currency: 'INR' }}</td>
           </tr>
           <tr *ngIf="sgst === 0 && cgst === 0 && igst > 0">
-            <td colspan="5" style="border: none;"></td>
-            <td style="text-align: right; font-weight: bold;">IGST (18%):</td>
+            
+            <td  colspan="7" style="text-align: right; font-weight: bold;">IGST (18%):</td>
             <td>{{ igst | currency: 'INR' }}</td>
           </tr>
           <tr>
-            <td colspan="5" style="border: none;"></td>
-            <td style="text-align: right; font-weight: bold;">Grand Total:</td>
+            
+            <td colspan="7" colspan="7" style="text-align: right; font-weight: bold;">Grand Total:</td>
             <td>{{ totalGrandTotal | currency: 'INR' }}</td>
           </tr>
         </ng-template>
+
       </p-table>
     </div>
   </ng-container>
 </section>
 
+
     </div>
 
     <!-- Footer Button -->
-    <div class="row">
+    <!-- <div class="row">
       <div class="col-12">
         <div class="text-center my-3">
           <button class="btn btn-success" (click)="addpo()">Generate Purchase Order</button>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </section>

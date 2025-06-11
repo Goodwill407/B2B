@@ -1,0 +1,64 @@
+<section class="content">
+  <div class="content-block">
+    <h4 class="mt-4">
+      <!-- <i class="bi bi-person-vcard-fill h3"></i> -->
+      <button class="btn navigate" (click)="navigateFun()">
+        <i class="bi bi-arrow-left-circle h4"></i>
+      </button>
+      Generate DELIVERY CHALLAN
+    </h4>
+
+    <div id="purchase-order" class="challan-container card my-2">
+      <section class="gstin my-0">
+        <h2>DELIVERY CHALLAN</h2>
+      </section>
+      <hr class="my-1" />
+
+<section class="order-details">
+  <div *ngIf="orderedSet && orderedSet.length > 0">
+    <table class="table table-bordered text-center">
+      <thead>
+        <tr>
+          <th>Sr. No.</th>
+          <th>Design No</th>
+          <th>Colour</th>
+          <th>Size</th>
+          <th>Original Qty</th>
+          <th>Edit Qty</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of orderedSet; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ item.designNumber }}</td>
+          <td>{{ item.colourName }}</td>
+          <td>{{ item.size }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>
+            <input type="number"
+                   [(ngModel)]="item.quantity"
+                   (keydown)="preventInvalidInput($event)"
+                   class="form-control form-control-sm"
+                   min="0"
+                   style="width: 80px;" />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+      <div class="row">
+        <div class="col-12 text-center my-3">
+          <button 
+            class="btn btn-success ms-auto" 
+            (click)="addpo()" 
+            *ngIf="purchaseOrder?.status && purchaseOrder.status !== 'shipped'">
+            Generate Purchase Order
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

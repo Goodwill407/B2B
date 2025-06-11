@@ -30,6 +30,10 @@ import { WholsellerPoComponent } from "./new-flow/order-managment/wholseller-po/
 import { ViewWholesalerPoComponent } from "./new-flow/order-managment/wholseller-po/view-wholesaler-po/view-wholesaler-po.component";
 import { ViewWholesellerPendingOrderComponent } from "./new-flow/order-managment/woleseller-pending-orders/view-wholeseller-pending-order/view-wholeseller-pending-order.component";
 import { GenPerformaInvoiceComponent } from "./new-flow/order-managment/view-wholsaler-order/gen-performa-invoice/gen-performa-invoice.component";
+import { RetailerToManPoListComponent } from "./new-flow/order-managment/retailer-to-man-po-list/retailer-to-man-po-list.component";
+import { RetailerToManPoViewComponent } from "./new-flow/order-managment/retailer-to-man-po-list/retailer-to-man-po-view/retailer-to-man-po-view.component";
+import { ViewRetailerOrderComponent } from "./new-flow/order-managment/view-retailer-order/view-retailer-order.component";
+import { GenRetailerOrderPoComponent } from "./new-flow/order-managment/view-retailer-order/gen-retailer-order-po/gen-retailer-order-po.component";
 
 
 export const M_Auth: Route[] = [
@@ -64,5 +68,13 @@ export const M_Auth: Route[] = [
     { path: 'customise_profile', component: CustomiseProfileComponent },
     { path: 'preview-profile', component: PreviewProfileComponent },
     { path: 'product-summary', component: ProductSummaryComponent },
+    
 
+
+    //new flow ret to man
+{ path: 'ret-po-list', component: RetailerToManPoListComponent },
+{ path: 'ret-po-list', component: RetailerToManPoListComponent },
+{ path: 'ret-po-list-view', component: RetailerToManPoViewComponent },
+{ path: 'ret-list', component: ViewRetailerOrderComponent },
+{ path: 'ret-list-single-view', component: GenRetailerOrderPoComponent },
 ]

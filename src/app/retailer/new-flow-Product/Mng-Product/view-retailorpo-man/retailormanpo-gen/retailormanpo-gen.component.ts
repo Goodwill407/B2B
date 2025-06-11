@@ -75,7 +75,7 @@ export class RetailormanpoGenComponent {
     }
 
 getAllProducts(distributorId: string) {
-  const url = `retailer-purchase-order-type2/${distributorId}`;
+  const url = `po-retailer-to-manufacture/${distributorId}`;
   this.authService.get(url).subscribe(
     (res: any) => {
       this.responseData = res;
@@ -83,23 +83,30 @@ getAllProducts(distributorId: string) {
       const productSet = res.set || [];
 
       // Basic PO info
-      this.purchaseOrder = {
-        supplierName: res.wholesaler.companyName,
-        supplierDetails: res.wholesaler.fullName,
-        supplierAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.pinCode} - ${res.wholesaler.state}`,
-        supplierContact: res.wholesaler.mobNumber,
-        supplierGSTIN: res.wholesaler.GSTIN || '',
-        buyerName: res.retailer.companyName,
-        buyerAddress: `${res.retailer.address}, ${res.retailer.city}, ${res.retailer.pinCode} - ${res.retailer.state}`,
-        buyerPhone: res.retailer.mobNumber,
-        buyerEmail: res.retailer.email,
-        buyerPAN: res.retailer.pan || '',
-        logoUrl: res.retailer.profileImg || '',
-        poDate: new Date().toLocaleDateString(),
-        poNumber: res.poNumber,
-        products: productSet,
-        ProductDiscount: res.retailer.discountDetails.productDiscount || 0
-      };
+    this.purchaseOrder = {
+  supplierName: res.manufacturer.companyName,
+  supplierDetails: res.manufacturer.fullName,
+  supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.pinCode} - ${res.manufacturer.state}`,
+  supplierContact: res.manufacturer.mobNumber,
+  supplierGSTIN: res.manufacturer.GSTIN || '',
+  supplierEmail: res.manufacturer.email,
+  supplierPAN: '',
+
+  buyerName: res.retailer.companyName,
+  buyerAddress: `${res.retailer.address}, ${res.retailer.pinCode} - ${res.retailer.state}`,
+  buyerPhone: res.retailer.mobNumber,
+  buyerEmail: res.retailer.email,
+  buyerGSTIN: res.retailer.GSTIN,
+  buyerPAN: '',
+
+  logoUrl: res.retailer.logo || '',
+  poDate: new Date(res.retailerPoDate).toLocaleDateString(),
+  poNumber: res.poNumber,
+  products: productSet,
+ProductDiscount: parseFloat(res.productDiscount || res.retailer.productDiscount || 0),
+
+};
+
 
       // Chunk for printing
       this.chunkArray(productSet);
@@ -125,14 +132,16 @@ calculateTotalsFromRawData(productSet: any[]): void {
 
   this.Totalsub = subtotal;
 
-  const discount = this.purchaseOrder.ProductDiscount || 0;
+  const discount = parseFloat(this.purchaseOrder.ProductDiscount) || 0;
   const discountAmount = (subtotal * discount) / 100;
+
   this.discountedTotal = subtotal - discountAmount;
   this.dicountprice = discountAmount;
 
   this.calculateGST();
   this.totalGrandTotal = this.discountedTotal + this.sgst + this.cgst + this.igst;
 }
+
 
 
 
@@ -158,7 +167,8 @@ calculateTotalsFromRawData(productSet: any[]): void {
       let totalDiscountAmount = 0;
   
       // ✅ Ensure `productDiscount` is fetched correctly from API response
-      const productDiscount = parseFloat(this.responseData?.discountDetails?.productDiscount) || 0;
+const productDiscount = parseFloat(this.responseData?.productDiscount) || 0;
+
       console.log("✅ Extracted Product Discount:", productDiscount); // Debugging
   
       productSet.forEach((product) => {
@@ -238,11 +248,12 @@ group.discountedTotal = group.subTotal - discountAmount;
     
       
   calculateGST(): void {
-  const retailerState = this.responseData.retailer?.state?.trim().toLowerCase();
-  const wholesalerState = this.responseData.wholesaler?.state?.trim().toLowerCase();
+const retailerState = this.responseData.retailer?.state?.trim().toLowerCase();
+const manufacturerState = this.responseData.manufacturer?.state?.trim().toLowerCase();
+
   const discountedTotal = this.discountedTotal;
 
-  if (retailerState === wholesalerState) {
+  if (retailerState === manufacturerState) {
     this.sgst = (discountedTotal * 9) / 100;
     this.cgst = (discountedTotal * 9) / 100;
     this.igst = 0;
@@ -295,7 +306,7 @@ group.discountedTotal = group.subTotal - discountAmount;
       // }
     
       // Post the cleaned data to the backend
-      this.authService.post('retailer-purchase-order-type2', cartBody).subscribe(
+      this.authService.post('po-retailer-to-manufacture', cartBody).subscribe(
         (res: any) => {
           this.communicationService.customSuccess('Purchace Order Genrated Succesfully');
         },

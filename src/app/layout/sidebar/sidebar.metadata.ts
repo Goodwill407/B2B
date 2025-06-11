@@ -1,4 +1,3 @@
-// Sidebar route metadata
 export interface RouteInfo {
   path: string;
   title: string;
@@ -10,4 +9,5 @@ export interface RouteInfo {
   badgeClass: string;
   role: string[];
   submenu: RouteInfo[];
+  isOpen?: boolean; // ✅ Add this line
 }

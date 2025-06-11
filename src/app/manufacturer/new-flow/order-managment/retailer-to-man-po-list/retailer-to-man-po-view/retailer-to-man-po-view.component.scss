@@ -1,0 +1,139 @@
+#purchase-order {
+    width: 800px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+    border: 1px solid #ccc;
+    padding: 20px;
+  }
+  
+  /* Header Section */
+  #purchase-order .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 10px;
+  }
+  
+  #purchase-order .header .company-info h1 {
+    font-size: 24px;
+    margin: 0;
+  }
+  
+  #purchase-order .header .order-info {
+    text-align: right;
+  }
+  
+  #purchase-order .header .order-info p {
+    margin: 5px 0;
+    font-size: 14px;
+  }
+  
+  /* Buyer-Seller Info */
+  #purchase-order .buyer-seller-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+  }
+  
+  #purchase-order .buyer-seller-info .logo {
+    flex: 0 0 20%;
+    text-align: center;
+  }
+  
+  #purchase-order .buyer-seller-info .logo img {
+    max-width: 100px;
+    height: auto;
+  }
+  
+  #purchase-order .buyer-seller-info .order-by,
+  #purchase-order .buyer-seller-info .order-to {
+    flex: 0 0 35%;
+  }
+  
+  #purchase-order .buyer-seller-info h5 {
+    margin-bottom: 10px;
+    font-size: 16px;
+    text-decoration: underline;
+  }
+  
+  #purchase-order .buyer-seller-info p {
+    margin: 5px 0;
+    font-size: 14px;
+  }
+  
+  /* Order Details Table */
+  #purchase-order .bordered-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  #purchase-order .bordered-table th,
+  #purchase-order .bordered-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  #purchase-order .bordered-table th {
+    background-color: #f8f8f8;
+    font-weight: bold;
+  }
+  
+  #purchase-order .bordered-table tfoot td {
+    font-weight: bold;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    #purchase-order {
+      padding: 10px;
+    }
+  
+    #purchase-order .header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    #purchase-order .buyer-seller-info {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    #purchase-order .buyer-seller-info .logo {
+      margin-bottom: 20px;
+    }
+  
+    #purchase-order .buyer-seller-info .order-by,
+    #purchase-order .buyer-seller-info .order-to {
+      width: 100%;
+    }
+  
+    #purchase-order .bordered-table th,
+    #purchase-order .bordered-table td {
+      font-size: 12px;
+      padding: 5px;
+    }
+  }
+  
+  /* Print Styles */
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    #purchase-order,
+    #purchase-order * {
+      visibility: visible;
+    }
+    #purchase-order {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+    }
+  }
+  
