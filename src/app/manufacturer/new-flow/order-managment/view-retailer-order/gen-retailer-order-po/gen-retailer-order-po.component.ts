@@ -1,0 +1,771 @@
+  import { CommonModule, Location } from '@angular/common';
+  import { Component, OnInit } from '@angular/core';
+  import { FormsModule } from '@angular/forms';
+  import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+  import { AuthService, CommunicationService } from '@core';
+  import { AccordionModule } from 'primeng/accordion';
+  import { TableModule } from 'primeng/table';
+  import html2canvas from 'html2canvas';
+  import jsPDF from 'jspdf';
+import { PaginatorModule } from 'primeng/paginator';
+import { TooltipModule } from 'primeng/tooltip';
+import { MatTabsModule } from '@angular/material/tabs';
+
+@Component({
+  selector: 'app-gen-retailer-order-po',
+  standalone: true,
+  imports: [
+      CommonModule,
+      TableModule,
+      PaginatorModule,RouterModule,
+       TooltipModule,
+          TableModule,
+          MatTabsModule
+    ],
+  templateUrl: './gen-retailer-order-po.component.html',
+  styleUrl: './gen-retailer-order-po.component.scss'
+})
+export class GenRetailerOrderPoComponent {
+  purchaseOrder: any = {
+      supplierName: '',
+      supplierDetails: '',
+      supplierAddress: '',
+      supplierContact: '',
+      supplierGSTIN: '',
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/38/MONOGRAM_LOGO_Color_200x200_v.png',
+      orderNo: 'PO123',
+      orderDate: new Date().toLocaleDateString(),
+      deliveryDate: '',
+      buyerName: '',
+      buyerAddress: '',
+      buyerPhone: '',
+      buyerGSTIN: '',
+      products: [],
+      totalAmount: 0,
+      totalInWords: '',
+    };
+    pendingQuantities: { [designNumber: string]: { [size: string]: number } } = {};
+    mergedProducts: any[] = [];
+    qty: any[] = [];
+    mergedProducts2: any[] = [];
+    quantityDifferences: { [key: string]: number } = {};
+    responseData: any; // New variable to store response data
+    distributorId: string = '';
+    distributorId2: string = '';
+    pono: string = '';
+    products: any[] = [];
+    userProfile: any;
+    filteredData: any;
+    Deliverychllanid: any;
+    sizeHeaders: string[] = [];
+    priceHeaders: { [size: string]: number } = {};
+
+    totalGrandTotal: number = 0;
+    gst: number = 0;
+    Totalsub: number = 0;
+  data: any;
+
+    constructor(
+      public authService: AuthService,
+      private location: Location,
+      private communicationService: CommunicationService,
+      private route: ActivatedRoute
+    ) 
+    {
+    }
+
+    ngOnInit(): void {
+      this.distributorId = this.route.snapshot.paramMap.get('id') ?? '';
+      this.userProfile = JSON.parse(localStorage.getItem('currentUser')!);
+      this.getAllProducts();
+    }
+
+    orderedSet: any[] = [];  // Fixed data from API
+avilableSet: any[] = []; // Editable copy of `orderedSet`
+getAllProducts() {
+  const url = `po-retailer-to-manufacture/${this.distributorId}`;
+  
+  this.authService.get(url).subscribe(
+    (res: any) => {
+      this.responseData = res; // Store the response in responseData
+      console.log(res);
+
+      // Update purchaseOrder from the response
+    this.purchaseOrder = {
+  supplierName: res.manufacturer.companyName,
+  supplierDetails: res.manufacturer.fullName,
+  supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.city}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
+  supplierContact: `${res.manufacturer.mobNumber}`,
+  supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
+
+  buyerName: res.retailer.companyName,
+  logoUrl: res.retailer.logo || '',
+  buyerAddress: `${res.retailer.address}, ${res.retailer.city}, ${res.retailer.state} - ${res.retailer.pinCode}`,
+  buyerPhone: res.retailer.mobNumber,
+  buyerEmail: res.retailer.email,
+  buyerDetails: res.retailer.fullName,
+  buyerGSTIN: res.retailer.GSTIN || 'GSTIN_NOT_PROVIDED',
+
+  poDate: new Date().toLocaleDateString(),
+  poNumber: res.poNumber,
+  status: res.status,
+  deliveryChallanNumber: this.Deliverychllanid,
+  products: res.products || [],
+  id: res.id,
+};
+
+      // Fetch Delivery Challan ID
+      const url2 = `mnf-delivery-challan/purchase-orders/genrate-chall-no?manufacturerEmail=${this.purchaseOrder.buyerEmail}`;
+      this.authService.get(url2).subscribe((res: any) => {
+        console.log(res);
+        this.Deliverychllanid = res.deliveryChallanNumber;
+      });
+
+      // Check if `set` exists and is not empty
+      if (res.set && Array.isArray(res.set) && res.set.length > 0) {
+        this.extractSizesAndPrices(res.set);
+
+        // **1️⃣ Store Ordered Set (Fixed Data)**
+        this.orderedSet = res.set.map((product: any) => ({
+          designNumber: product.designNumber,
+          colour: product.colour,
+          colourImage: product.colourImage,
+          colourName: product.colourName,
+          size: product.size,
+          quantity: product.quantity, // Original quantity (unchangeable)
+          editedQuantity: product.totalQuantity ,
+          price: product.price,
+          productBy: res.manufacturer.email,
+        }));
+
+      this.avilableSet.forEach(item => {
+  const key = `${item.designNumber}_${item.colourName}_${item.size}`;
+  this.sizeLevelQtyMap[key] = item.quantity;
+});
+
+
+        // Process grouped products and update mergedProducts
+        this.mergedProducts = this.processGroupedProducts(res.set);
+        this.filteredData = res.set[0];
+
+        if (this.filteredData) {
+          this.mergedProducts = this.flattenProductData(res.set);  // Pass entire set array
+          this.mergedProducts2 = res.set;
+        }
+      } else {
+        this.filteredData = null;
+        this.mergedProducts = [];
+      }
+    },
+    (error) => {
+      console.error("Error fetching purchase order data:", error);
+    }
+  );
+}
+
+    
+
+extractSizesAndPrices(productSet: any[]): void {
+  const uniqueSizes = new Set<string>();
+
+  productSet.forEach((product) => {
+    if (product.size) {
+      uniqueSizes.add(product.size);
+    }
+  });
+
+  this.sizeHeaders = Array.from(uniqueSizes); // Convert Set to Array
+}
+
+
+processGroupedProducts(productSet: any[]): any[] {
+  const groupedProducts: { [key: string]: any } = {};
+
+  productSet.forEach((product) => {
+      const key = `${product.designNumber}-${product.colourName}`;
+
+      if (!groupedProducts[key]) {
+          groupedProducts[key] = {
+              designNumber: product.designNumber,
+              colourName: product.colourName,
+              colourImage: product.colourImage,
+              colour: product.colour,
+              quantities: {} // Grouped by size
+          };
+      }
+
+      // Ensure size exists before assigning
+      if (product.size) {
+          if (!groupedProducts[key].quantities[product.size]) {
+              groupedProducts[key].quantities[product.size] = {
+                  ordered: 0,
+                  available: 0,
+              };
+          }
+
+          // ✅ Sum ordered quantity instead of overwriting
+          groupedProducts[key].quantities[product.size].ordered += product.quantity;
+          groupedProducts[key].quantities[product.size].available = product.quantity; // Keep last value for available
+      }
+  });
+
+  return Object.values(groupedProducts);
+}
+
+
+    calculateTotalPrice(row: any): number {
+      let total = 0;
+      
+      // Iterate over the sizes and calculate total for that size
+      this.sizeHeaders.forEach((size) => {
+        if (row.quantities[size] > 0) {
+          total += row.quantities[size] * (this.priceHeaders[size] || 0);
+        }
+      });
+      
+      return total;
+    }
+    
+    
+
+    calculateGST(subTotal: number): number {
+      return (subTotal * 18) / 100; // 18% GST
+    }
+
+    calculateGrandTotal(subTotal: number, gst: number): number {
+      return subTotal + gst;
+    }
+
+    isSizeAvailable(rows: any[], size: string): boolean {
+      return rows.some((row) => row.quantities[size] > 0);
+    }
+
+   // Function to update original data by subtracting updated quantity
+calculateQuantities(original: any, updated: any) {
+  return original.map((origItem: any) => {
+    const matchingItem = updated.find(
+      (updItem: any) =>
+        origItem.designNumber === updItem.designNumber &&
+        origItem.size === updItem.size &&
+        origItem.colour === updItem.colour
+    );
+
+    if (matchingItem) {
+      const updatedQuantity = origItem.quantity - matchingItem.quantity;
+      return {
+        ...origItem,
+        quantity: updatedQuantity > 0 ? updatedQuantity : 0, // Avoid negative values
+      };
+    }
+
+    return origItem; // If no match, keep original
+  });
+}
+
+// addpo() {
+//   console.log("Response Data:", this.responseData);
+//   console.log("Merged Products:", this.mergedProducts);
+
+//   // Interface for product structure
+//   interface Product {
+//     colour: string;
+//     colourImage: string | null;
+//     colourName: string;
+//     designNumber: string;
+//     price?: string;
+//     totalPrice?: number;
+//     productBy: string;
+//     quantities: { [size: string]: number };
+//   }
+
+//   const productByEmail = this.responseData?.wholesaler?.email || "defaultEmail@example.com";
+
+//   // Step 1: Prepare updatedProducts
+//   const updatedProducts = this.mergedProducts
+//     .map((product: Product) => {
+//       const qty = product.quantities;
+
+//       return Object.entries(qty).map(([size, quantity]) => {
+//         const pendingQuantity = this.getPendingQuantity(product.designNumber, size);
+
+//         const updatedQuantity = Math.max(quantity - pendingQuantity, 0); // Prevent negative quantity
+
+//         return {
+//           colour: product.colour,
+//           colourImage: product.colourImage,
+//           colourName: product.colourName,
+//           designNumber: product.designNumber,
+//           price: product.price || this.calculatePrice(product, qty),
+//           productBy: productByEmail,
+//           quantity: updatedQuantity,
+//           size: size,
+//         };
+//       });
+//     })
+//     .flat();
+
+//   console.log("Updated Data:", updatedProducts);
+
+//   // Step 2: Calculate filtered data
+//   const filteredData = this.calculateQuantities(this.mergedProducts2, updatedProducts);
+
+//   // Step 3: Prepare payloads
+//   const updatedCartBody = this.createPayload("proceed", updatedProducts);
+//   const pendingCartBody = this.createPayload("pending", filteredData);
+
+//   console.log("Updated Cart Body:", updatedCartBody);
+//   console.log("Pending Cart Body:", pendingCartBody);
+
+//   // Step 4: Send payloads to the backend
+//   this.sendToBackend("mnf-delivery-challan", updatedCartBody, "Product Successfully Added in Cart");
+//   this.sendToBackend("mnf-delivery-challan", pendingCartBody, "Pending Quantities Updated Successfully");
+// }
+// addpo() {
+//   console.log("Ordered Set Before Merge:", this.orderedSet);
+//   console.log("Available Set Before Merge:", this.avilableSet);
+
+//   // ✅ **Merge Ordered Set Before Sending API (Summing Ordered Quantities)**
+//   const mergedOrderedSet: { [key: string]: any } = {};
+//   this.orderedSet.forEach(item => {
+//     const key = `${item.designNumber}-${item.colourName}-${item.size}`;
+
+//     if (!mergedOrderedSet[key]) {
+//       mergedOrderedSet[key] = { ...item };
+//     } else {
+//       mergedOrderedSet[key].ordered += item.ordered; // ✅ Sum ordered quantities
+//     }
+//   });
+
+//   const finalOrderedSet = Object.values(mergedOrderedSet); // Convert back to array
+
+//   // ✅ **Merge Available Set Before Sending API (Summing Available Quantities)**
+//   const mergedAvailableSet: { [key: string]: any } = {};
+//   this.avilableSet.forEach(item => {
+//     const key = `${item.designNumber}-${item.colourName}-${item.size}`;
+
+//     if (!mergedAvailableSet[key]) {
+//       mergedAvailableSet[key] = { ...item };
+//     } else {
+//       mergedAvailableSet[key].available += item.available; // ✅ Sum available quantities
+//     }
+//   });
+
+//   const finalAvailableSet = Object.values(mergedAvailableSet); // Convert back to array
+
+//   // ✅ **Prepare Final Payload**
+//   const payload = {
+//       email: this.responseData.wholesaler.email,
+//       productBy: this.responseData.manufacturer.email,
+//       poNumber: this.responseData.poNumber,
+//       deliveryChallanNumber: this.Deliverychllanid,
+//       orderedSet: finalOrderedSet, // ✅ Now merged correctly
+//       avilableSet: finalAvailableSet, // ✅ Now merged correctly
+//       retailerPOs: this.responseData.retailerPOs,
+//       manufacturer: this.responseData.manufacturer,
+//       wholesaler: this.responseData.wholesaler,
+//   };
+
+//   console.log("Final Payload (After Merging):", JSON.stringify(payload, null, 2));
+
+//   // ✅ **Send API Request**
+//   this.authService.post("mnf-delivery-challan", payload).subscribe(
+//       () => {
+//           this.communicationService.customSuccess("Product Successfully Added in Cart");
+//       },
+//       (error) => {
+//           this.communicationService.customError1(error.error.message);
+//       }
+//   );
+// }
+addpo(): void {
+  const payload = { ...this.responseData };
+
+  // Replace the set with edited data only
+  payload.set = this.orderedSet.map(item => ({
+    ...item,
+    totalQuantity: item.editedQuantity,  // Use only the edited qty
+  }));
+
+  // Remove unwanted fields
+  delete payload.__v;
+  delete payload._id;
+  delete payload.productId;
+
+  this.authService
+    .post('po-wholesaler-to-manufacture', payload)
+    .subscribe(
+      () => this.communicationService.customSuccess('PO successfully generated for manufacturer'),
+      (error) => this.communicationService.customError1(error.error.message)
+    );
+}
+
+
+
+// addpo() {
+//   console.log("Ordered Set (Before Merge):", this.orderedSet);
+//   console.log("Available Set (Before Merge):", this.avilableSet);
+//   console.log("Retailer POs:", this.responseData.retailerPOs);
+
+//   // ✅ Merge Ordered and Available Sets Properly
+//   const mergedOrderedSet = this.mergeEntries(this.orderedSet, "ordered");  // ✅ Ensure ordered quantities are correct
+//   const mergedAvailableSet = this.mergeEntries(this.avilableSet, "available"); // ✅ Ensure available quantities are correct
+
+//   // ✅ Correctly merge same `designNumber`, `colourName`, and `size`
+//   const finalMergedSet = mergedAvailableSet.map((item) => {
+//       const matchingOrderedItem = mergedOrderedSet.find(
+//           (ord) =>
+//               ord.designNumber === item.designNumber &&
+//               ord.colourName === item.colourName &&
+//               ord.size === item.size
+//       );
+
+//       if (matchingOrderedItem) {
+//           item.ordered = matchingOrderedItem.ordered; // ✅ Ensure ordered quantity is taken from orderedSet
+//           item.available = item.available - matchingOrderedItem.ordered;
+//           item.available = item.available >= 0 ? item.available : 0; // ✅ Prevent negative values
+//       }
+
+//       return item;
+//   });
+
+//   const payload = {
+//       email: this.responseData.wholesaler.email,
+//       productBy: this.responseData.manufacturer.email,
+//       poNumber: this.responseData.poNumber,
+//       deliveryChallanNumber: this.Deliverychllanid,
+//       orderedSet: mergedOrderedSet,  // ✅ FIXED: Orders now correctly reflect quantity as ordered
+//       avilableSet: finalMergedSet, // ✅ FIXED: Available quantities are correct
+//       retailerPOs: this.responseData.retailerPOs,
+//       manufacturer: this.responseData.manufacturer,
+//       wholesaler: this.responseData.wholesaler,
+//   };
+
+//   console.log("Final Payload (After Correct Merge):", JSON.stringify(payload, null, 2));
+
+//   this.authService.post("mnf-delivery-challan", payload).subscribe(
+//       () => {
+//           this.communicationService.customSuccess("Product Successfully Added in Cart");
+//       },
+//       (error) => {
+//           this.communicationService.customError1(error.error.message);
+//       }
+//   );
+// }
+
+
+// Function to calculate price per product
+calculatePrice(product: any, quantities: { [key: string]: number }): string {
+  return product.totalPrice
+    ? (product.totalPrice / Object.keys(quantities).length).toString()
+    : "0";
+}
+
+// Function to create payload with status
+createPayload(status: string, setData: any, deliveryChallanNumber: any) {
+  return {
+    ...this.responseData,
+    status,
+    deliveryChallanNumber,
+    set: setData,
+  };
+}
+
+// Function to send data to the backend
+sendToBackend(endpoint: string, payload: any, successMessage: string) {
+  this.authService.post(endpoint, payload).subscribe(
+    () => {
+      this.communicationService.customSuccess(successMessage);
+    },
+    (error) => {
+      this.communicationService.customError1(error.error.message);
+    }
+  );
+}
+
+// Function to get pending quantity
+getPendingQuantity(designNumber: string, size: string): number {
+  return this.pendingQuantities?.[designNumber]?.[size] || 0;
+}
+
+  // Example: Method to update `pendingQuantities` globally
+  updatePendingQuantities(designNumber: string, size: string, quantity: number) {
+      if (!this.pendingQuantities[designNumber]) {
+          this.pendingQuantities[designNumber] = {};
+      }
+      this.pendingQuantities[designNumber][size] = quantity;
+  }
+
+    
+
+    
+    // Helper function to generate a unique ID (you can modify this if your backend uses a different ID generation strategy)
+    generateUniqueId() {
+      return 'id-' + Math.random().toString(36).substr(2, 9);
+    }
+    
+    
+    
+
+flattenProductData(set: any[]): any[] {
+  const flatList: any[] = [];
+
+  set.forEach((item) => {
+    const key = `${item.designNumber}-${item.colourName}`;
+    let existing = flatList.find(p =>
+      p.designNumber === item.designNumber && p.colourName === item.colourName
+    );
+
+    if (!existing) {
+      existing = {
+        designNumber: item.designNumber,
+        colourName: item.colourName,
+        originalQty: 0,
+        editQty: 0
+      };
+      flatList.push(existing);
+    }
+
+    existing.originalQty += item.quantity;
+    existing.editQty += item.quantity; // Start with same value
+  });
+
+  return flatList;
+}
+
+
+  printPurchaseOrder(): void {
+    const data = document.getElementById('purchase-order');
+    if (data) {
+      html2canvas(data, {
+        scale: 3,  // Adjust scale for better quality
+        useCORS: true,
+      }).then((canvas) => {
+        const imgWidth = 208;  // A4 page width in mm
+        const pageHeight = 295;  // A4 page height in mm
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+
+        const contentDataURL = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');  // Create new PDF
+        const margin = 10;  // Margin for PDF
+        let position = margin;
+
+        // Add first page
+        pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
+        heightLeft -= pageHeight;
+
+        // Loop over content to add remaining pages if content exceeds one page
+        while (heightLeft > 0) {
+          pdf.addPage();  // Add new page
+          position = margin - heightLeft;  // Position for the next page
+          pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
+          heightLeft -= pageHeight;
+        }
+
+        // Save PDF file
+        pdf.save('purchase-order.pdf');
+      }).catch((error) => {
+        console.error("Error generating PDF:", error);
+      });
+    } else {
+      console.error("Element with id 'purchase-order' not found.");
+    }
+  }
+  onQuantityChange(row: any, size: string) {
+    const productToUpdate = this.avilableSet.find(
+        (p) =>
+            p.designNumber === row.designNumber &&
+            p.colourName === row.colourName &&
+            p.size === size
+    );
+
+    if (productToUpdate) {
+        productToUpdate.quantity = row.quantities[size]; // ✅ Correct field to update
+    } else {
+        console.warn("Matching product not found for", row.designNumber, row.colourName, size);
+    }
+
+    // ✅ **Remove Duplicates from `avilableSet`**
+    const mergedAvailableSet = this.mergeEntries(this.avilableSet, "available");
+    this.avilableSet = mergedAvailableSet; // ✅ Update `avilableSet` with de-duplicated data
+
+    console.log("Updated Available Quantities:", JSON.stringify(this.avilableSet, null, 2));
+}
+
+
+
+  
+  updateTotals(): void {
+    this.Totalsub = this.mergedProducts.reduce((acc: number, group: any) => {
+      return acc + group.rows.reduce((subAcc: number, row: any) => subAcc + this.calculateTotalPrice(row), 0);
+    }, 0);
+  
+    this.gst = (this.Totalsub * 18) / 100; // 18% GST
+    this.totalGrandTotal = this.Totalsub + this.gst;
+  }
+  
+  updateMergedProducts(designNumber: string, colourName: string, size: string, newValue: number): void {
+    const product = this.mergedProducts.find(item =>
+      item.designNumber === designNumber &&
+      item.colourName === colourName
+    );
+  
+    if (product) {
+      product.quantities[size] = newValue; // Update the size-specific quantity
+      product.totalPrice = this.calculateTotalPrice(product); // Recalculate total price
+      this.updateTotals(); // Recalculate overall totals
+    }
+  }
+ getOrderedQty(designNumber: string, colourName: string, size: string): number {
+  return this.orderedSet
+    .filter(item =>
+      item.designNumber === designNumber &&
+      item.colourName === colourName &&
+      item.size === size
+    )
+    .reduce((sum, item) => sum + item.quantity, 0);
+}
+
+// mergeEntries(productSet: any[], type: "ordered" | "available"): any[] {
+//   const mergedMap: { [key: string]: any } = {};
+
+//   productSet.forEach((product) => {
+//     const key = `${product.designNumber}-${product.colourName}-${product.size}`;
+
+//     if (!mergedMap[key]) {
+//       mergedMap[key] = {
+//         ...product,
+//         ordered: type === "ordered" ? product.quantity : 0,  // ✅ Store ordered quantity
+//         available: type === "available" ? product.quantity : 0  // ✅ Store available quantity
+//       };
+//     } else {
+//       if (type === "ordered") {
+//         mergedMap[key].ordered += product.quantity ?? 0; // ✅ Accumulate ordered quantity
+//       } else {
+//         mergedMap[key].available += product.quantity ?? 0; // ✅ Accumulate available quantity
+//       }
+//     }
+//   });
+
+//   return Object.values(mergedMap);
+// }
+// mergeEntries(productSet: any[], type: "ordered" | "available"): any[] {
+//   const mergedMap: { [key: string]: any } = {};
+
+//   productSet.forEach((product) => {
+//     const key = `${product.designNumber}-${product.colourName}-${product.size}`;
+
+//     if (!mergedMap[key]) {
+//       mergedMap[key] = {
+//         ...product,
+//         ordered: type === "ordered" ? product.quantity : 0,  // ✅ Store ordered quantity correctly
+//         available: type === "available" ? product.quantity : 0  // ✅ Store available quantity correctly
+//       };
+//     } else {
+//       if (type === "ordered") {
+//         mergedMap[key].ordered += product.quantity ?? 0; // ✅ Accumulate ordered quantity correctly
+//       } else {
+//         mergedMap[key].available += product.quantity ?? 0; // ✅ Accumulate available quantity correctly
+//       }
+//     }
+//   });
+
+//   return Object.values(mergedMap);
+// }
+
+mergeEntries(productSet: any[], type: "ordered" | "available"): any[] {
+  const mergedMap: { [key: string]: any } = {};
+
+  productSet.forEach((product) => {
+    const key = `${product.designNumber}-${product.colourName}-${product.size}`;
+
+    if (!mergedMap[key]) {
+      mergedMap[key] = {
+        ...product,
+        quantity: product.quantity ?? 0,  // ✅ Store initial quantity
+      };
+    } else {
+      mergedMap[key].quantity += product.quantity ?? 0; // ✅ Sum ordered or available quantity correctly
+    }
+  });
+
+  return Object.values(mergedMap);
+}
+navigateFun() {
+  this.location.back();
+}
+
+getTotalOriginalQty(designNumber: string, colourName: string): number {
+  return this.orderedSet
+    .filter(p => p.designNumber === designNumber && p.colourName === colourName)
+    .reduce((sum, item) => sum + item.quantity, 0);
+}
+preventInvalidInput(event: KeyboardEvent): void {
+  if (['e', 'E', '+', '-'].includes(event.key)) {
+    event.preventDefault();
+  }
+}
+
+
+onQtyUpdate(row: any): void {
+  // Find all matching entries in avilableSet and update their quantity
+  const matches = this.avilableSet.filter(p =>
+    p.designNumber === row.designNumber && p.colourName === row.colourName
+  );
+
+  const eachQty = Math.floor(row.editQty / matches.length);
+
+  matches.forEach((item, index) => {
+    item.quantity = eachQty;
+  });
+
+  console.log("Updated avilableSet:", this.avilableSet);
+}
+
+getOriginalQtyBySize(designNumber: string, colourName: string, size: string): number {
+  return this.orderedSet
+    .filter(p => p.designNumber === designNumber && p.colourName === colourName && p.size === size)
+    .reduce((sum, item) => sum + item.quantity, 0);
+}
+
+getEditableQtyBinding(designNumber: string, colourName: string, size: string): number {
+  const item = this.avilableSet.find(p =>
+    p.designNumber === designNumber &&
+    p.colourName === colourName &&
+    p.size === size
+  );
+  return item?.quantity || 0;
+}
+sizeLevelQtyMap: { [key: string]: number } = {};
+
+
+onSizeQtyChange(designNumber: string, colourName: string, size: string): void {
+  const key = `${designNumber}_${colourName}_${size}`;
+  const updatedValue = this.sizeLevelQtyMap[key] || 0;
+
+  const item = this.avilableSet.find(p =>
+    p.designNumber === designNumber &&
+    p.colourName === colourName &&
+    p.size === size
+  );
+
+  if (item) {
+    item.quantity = updatedValue;
+  }
+
+  // Update main row total
+  const totalQty = this.avilableSet
+    .filter(p => p.designNumber === designNumber && p.colourName === colourName)
+    .reduce((sum, p) => sum + p.quantity, 0);
+
+  const mainRow = this.mergedProducts.find(r =>
+    r.designNumber === designNumber && r.colourName === colourName
+  );
+  if (mainRow) {
+    mainRow.editQty = totalQty;
+  }
+}
+
+
+
+  }

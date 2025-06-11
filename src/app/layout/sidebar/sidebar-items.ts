@@ -13,7 +13,7 @@ export const ROUTES: RouteInfo[] = [
     badgeClass: '',
     role: ['manufacture'],
     submenu: []
-  },     
+  },
   {
     path: '',
     title: `Manufacture's Profile`,
@@ -49,7 +49,7 @@ export const ROUTES: RouteInfo[] = [
         role: [''],
         submenu: [],
       }
-     
+
     ],
   },
   {
@@ -63,7 +63,7 @@ export const ROUTES: RouteInfo[] = [
     badgeClass: '',
     role: ['manufacture'],
     submenu: []
-  },    
+  },
   {
     path: '/mnf/category',
     title: `Add Discounts/Schemes`,
@@ -75,7 +75,7 @@ export const ROUTES: RouteInfo[] = [
     badgeClass: '',
     role: ['manufacture'],
     submenu: []
-  },    
+  },
   {
     path: '',
     title: `Distributor's Management`,
@@ -171,7 +171,7 @@ export const ROUTES: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      },      
+      },
       // {
       //   path: '/mnf/stock-inventory',
       //   title: 'Stock Inventory',
@@ -370,7 +370,7 @@ export const ROUTES: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      },      
+      },
     ],
   },
 
@@ -386,7 +386,7 @@ export const ROUTES: RouteInfo[] = [
     badgeClass: '',
     role: ['retailer'],
     submenu: []
-  }, 
+  },
   {
     path: '/retailer/retailer-profile',
     title: `Retailer's Profile`,
@@ -398,7 +398,7 @@ export const ROUTES: RouteInfo[] = [
     badgeClass: '',
     role: ['retailer'],
     submenu: []
-  },  
+  },
   // {
   //   path: '',
   //   title: `Retailer's Management`,
@@ -495,7 +495,7 @@ export const ROUTES: RouteInfo[] = [
         role: [''],
         submenu: [],
       },
-      
+
       // {
       //   path: '/users/skill-trainer',
       //   title: 'View And Manage Product',
@@ -607,7 +607,7 @@ export const ROUTES: RouteInfo[] = [
         role: [''],
         submenu: [],
       },
-     
+
     ],
   },
   // {
@@ -696,7 +696,7 @@ export const ROUTES: RouteInfo[] = [
     badgeClass: '',
     role: ['wholesaler'],
     submenu: []
-  }, 
+  },
   {
     path: '/wholesaler/profile',
     title: `Wholesaler's Profile`,
@@ -708,7 +708,7 @@ export const ROUTES: RouteInfo[] = [
     badgeClass: '',
     role: ['wholesaler'],
     submenu: []
-  },  
+  },
   {
     path: '/wholesaler/associated-mnf-list',
     title: `Associated Manufacturer-List`,
@@ -720,7 +720,7 @@ export const ROUTES: RouteInfo[] = [
     badgeClass: '',
     role: ['wholesaler'],
     submenu: []
-  },  
+  },
   {
     path: '',
     title: `Retailer's Management`,
@@ -828,7 +828,7 @@ export const ROUTES: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      },    
+      },
       {
         path: '/wholesaler/rejected-retailsers-list',
         title: 'Rejected Retailer List',
@@ -840,7 +840,7 @@ export const ROUTES: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      },      
+      },
     ],
   },
   {
@@ -889,7 +889,7 @@ export const ROUTES: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      },      
+      },
       {
         path: '/wholesaler/product/add-to-cart',
         title: 'Cart Product',
@@ -901,11 +901,11 @@ export const ROUTES: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      },      
+      },
     ],
   },
   // for request
-  
+
   {
     path: '',
     title: `Order Management`,
@@ -940,7 +940,7 @@ export const ROUTES: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      },      
+      },
       // {
       //   path: '/wholesaler/order-mng/ordered-products',
       //   title: 'Ordered Products',
@@ -964,9 +964,9 @@ export const ROUTES: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      }, 
-     
-           
+      },
+
+
     ],
   },
   {
@@ -1052,7 +1052,7 @@ export const ROUTES: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      }, 
+      },
     ],
   },
   // {
@@ -1095,9 +1095,9 @@ export const ROUTES: RouteInfo[] = [
 
   // ----------------------- Student Modules ---------------------
 
- 
- 
-  
+
+
+
 ];
 export const ROUTES2: RouteInfo[] = [
   // Admin Modules
@@ -1113,7 +1113,7 @@ export const ROUTES2: RouteInfo[] = [
     badgeClass: '',
     role: ['manufacture'],
     submenu: []
-  },     
+  },
   {
     path: '',
     title: `Manufacture's Profile`,
@@ -1149,7 +1149,7 @@ export const ROUTES2: RouteInfo[] = [
         role: [''],
         submenu: [],
       }
-     
+
     ],
   },
   {
@@ -1163,7 +1163,7 @@ export const ROUTES2: RouteInfo[] = [
     badgeClass: '',
     role: ['manufacture'],
     submenu: []
-  },    
+  },
   {
     path: '/mnf/category',
     title: `Add Discounts/Schemes`,
@@ -1175,7 +1175,7 @@ export const ROUTES2: RouteInfo[] = [
     badgeClass: '',
     role: ['manufacture'],
     submenu: []
-  },    
+  },
   {
     path: '',
     title: `Distributor's Management`,
@@ -1271,7 +1271,7 @@ export const ROUTES2: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      },      
+      },
       // {
       //   path: '/mnf/stock-inventory',
       //   title: 'Stock Inventory',
@@ -1362,8 +1362,32 @@ export const ROUTES2: RouteInfo[] = [
         submenu: [],
       },
       {
+        path: '/mnf/ret-po-list',
+        title: 'Retailer po list',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+      {
         path: '/mnf/wls-list',
-        title: 'New Orders',
+        title: 'Wholesaler New Orders',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+      {
+        path: '/mnf/ret-list',
+        title: 'Retailer New Orders',
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -1507,9 +1531,64 @@ export const ROUTES2: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      }, 
+      },
     ],
   },
+  {
+    path: '',
+    title: `Retailer`,
+    iconType: 'material-icons-outlined',
+    icon: 'supervised_user_circle',
+    class: 'menu-toggle',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['manufacture'],
+    submenu: [
+    ],
+  },
+  {
+path: '',
+    title: `Wholesaler`,
+    iconType: 'material-icons-outlined',
+    icon: 'supervised_user_circle',
+    class: 'menu-toggle',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['manufacture'],
+    isOpen: false, // 👈 added
+    submenu: [
+      {
+        path: '',
+        title: `Order Management`,
+        iconType: 'material-icons-outlined',
+        icon: 'description',
+        class: 'menu-toggle',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: ['manufacture'],
+        isOpen: false, // 👈 added
+        submenu: [
+          {
+            path: '/orders/list',
+            title: 'All Orders',
+            iconType: 'material-icons-outlined',
+            icon: 'list',
+            class: '',
+            groupTitle: false,
+            badge: '',
+            badgeClass: '',
+            role: ['manufacture'],
+
+            submenu: [],
+          },
+        ],
+      },
+    ]
+}
+,
 
   // -------------------------------------- retailer -------------------------------------//
   {
@@ -1523,7 +1602,7 @@ export const ROUTES2: RouteInfo[] = [
     badgeClass: '',
     role: ['retailer'],
     submenu: []
-  }, 
+  },
   {
     path: '/retailer/retailer-profile',
     title: `Retailer's Profile`,
@@ -1535,7 +1614,7 @@ export const ROUTES2: RouteInfo[] = [
     badgeClass: '',
     role: ['retailer'],
     submenu: []
-  },  
+  },
   {
     path: '/retailer/retailer-mnf-associated-list',
     title: `Associated Manufacturer List`,
@@ -1547,7 +1626,7 @@ export const ROUTES2: RouteInfo[] = [
     badgeClass: '',
     role: ['retailer'],
     submenu: []
-  },  {
+  }, {
     path: '/retailer/retailer-whol-associated-list',
     title: `Associated Wholesaler List`,
     iconType: 'material-icons-outlined',
@@ -1558,7 +1637,7 @@ export const ROUTES2: RouteInfo[] = [
     badgeClass: '',
     role: ['retailer'],
     submenu: []
-  },  
+  },
   // {
   //   path: '',
   //   title: `Retailer's Management`,
@@ -1702,7 +1781,7 @@ export const ROUTES2: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      },      
+      },
     ],
   },
   // for request
@@ -1914,7 +1993,7 @@ export const ROUTES2: RouteInfo[] = [
     badgeClass: '',
     role: ['wholesaler'],
     submenu: []
-  }, 
+  },
   {
     path: '/wholesaler/profile',
     title: `Wholesaler's Profile`,
@@ -1926,7 +2005,7 @@ export const ROUTES2: RouteInfo[] = [
     badgeClass: '',
     role: ['wholesaler'],
     submenu: []
-  },  
+  },
   {
     path: '/wholesaler/associated-mnf-list',
     title: `Associated Manufacturer-List`,
@@ -1938,7 +2017,7 @@ export const ROUTES2: RouteInfo[] = [
     badgeClass: '',
     role: ['wholesaler'],
     submenu: []
-  },  
+  },
   {
     path: '/wholesaler/new/product/wholesaler-discount',
     title: `Retailer's Discount`,
@@ -1950,7 +2029,7 @@ export const ROUTES2: RouteInfo[] = [
     badgeClass: '',
     role: ['wholesaler'],
     submenu: []
-  },   
+  },
   {
     path: '',
     title: `Retailer's Management`,
@@ -2058,7 +2137,7 @@ export const ROUTES2: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      },    
+      },
       {
         path: '/wholesaler/rejected-retailsers-list',
         title: 'Rejected Retailer List',
@@ -2070,7 +2149,7 @@ export const ROUTES2: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      },      
+      },
     ],
   },
   {
@@ -2095,7 +2174,7 @@ export const ROUTES2: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      },    
+      },
     ],
   },
   {
@@ -2144,7 +2223,7 @@ export const ROUTES2: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      },      
+      },
       {
         path: '/wholesaler/new/product/add-to-cart',
         title: 'Cart Product',
@@ -2156,11 +2235,11 @@ export const ROUTES2: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      },      
+      },
     ],
   },
   // for request
-  
+
   {
     path: '',
     title: `Order Management`,
@@ -2195,7 +2274,7 @@ export const ROUTES2: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      },      
+      },
       // {
       //   path: '/wholesaler/order-mng/ordered-products',
       //   title: 'Ordered Products',
@@ -2219,7 +2298,7 @@ export const ROUTES2: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      },  
+      },
       // {
       //   path: '/wholesaler/order-mng/RequestProcess',
       //   title: 'Request Process',
@@ -2243,7 +2322,7 @@ export const ROUTES2: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      }, 
+      },
       {
         path: '/wholesaler/order-mng/MNFDChalan',
         title: 'Manufacturer Delivery Challan',
@@ -2255,7 +2334,7 @@ export const ROUTES2: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      },  
+      },
       {
         path: '/wholesaler/order-mng/okproductlist',
         title: 'Accepted Products',
@@ -2267,7 +2346,7 @@ export const ROUTES2: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      },  
+      },
       {
         path: '/wholesaler/order-mng/Performainvoiceshow',
         title: 'Proforma Invoice',
@@ -2279,8 +2358,8 @@ export const ROUTES2: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      },  
-         
+      },
+
     ],
   },
   {
@@ -2366,7 +2445,7 @@ export const ROUTES2: RouteInfo[] = [
         badgeClass: '',
         role: [''],
         submenu: [],
-      }, 
+      },
     ],
   },
   {
@@ -2380,7 +2459,7 @@ export const ROUTES2: RouteInfo[] = [
     badgeClass: '',
     role: ['superadmin'],
     submenu: []
-  }, 
+  },
   {
     path: '/super/CDN-Mng',
     title: `CDN Management`,
@@ -2392,6 +2471,6 @@ export const ROUTES2: RouteInfo[] = [
     badgeClass: '',
     role: ['superadmin'],
     submenu: []
-  }, 
-  
+  },
+
 ];

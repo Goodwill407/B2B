@@ -1,0 +1,130 @@
+<section class="content">
+  <div class="content-block">
+    <!-- Page Header -->
+    <h4 class="mt-4">
+      <button class="btn navigate" (click)="navigateFun()">
+        <i class="bi bi-arrow-left-circle h4"></i>
+      </button>
+      Generate Purchase Order
+    </h4>
+
+    <!-- Purchase Order Content -->
+    <div id="purchase-order" class="challan-container card my-2">
+      <!-- ✅ First Page Header Only -->
+      <div class="page-header-content">
+        <!-- Title & Order Info -->
+        <div class="header d-flex justify-content-between align-items-center">
+          <div class="company-info text-center">
+            <h1>PURCHASE ORDER</h1>
+          </div>
+          <div class="order-info text-right">
+            <p><strong>Order Date:</strong> {{ purchaseOrder.poDate }}</p>
+            <p><strong>Order No:</strong> {{ purchaseOrder.poNumber }}</p>
+          </div>
+        </div>
+
+        <!-- Buyer & Seller Details -->
+        <div class="buyer-seller-info d-flex justify-content-between">
+          <div class="logo">
+            <img
+              [src]="purchaseOrder.logoUrl"
+              alt="Company Logo"
+              onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';"
+            />
+          </div>
+
+          <div class="buyer-info">
+            <h5>Order By :</h5>
+            <p><strong>{{ purchaseOrder.retailerName }}</strong></p>
+            <p>{{ purchaseOrder.retailerAddress }}</p>
+            <p>Phone No.: {{ purchaseOrder.retailerPhone }}</p>
+            <p>Email: {{ purchaseOrder.retailerEmail }}</p>
+            <p>GSTN: {{ purchaseOrder.retailerGSTIN }}</p>
+            <p>PAN: {{ purchaseOrder.retailerPAN }}</p>
+          </div>
+
+          <div class="seller-info">
+            <h5>Order To :</h5>
+            <p><strong>{{ purchaseOrder.manufacturerName }}</strong></p>
+            <p>{{ purchaseOrder.manufacturerAddress }}</p>
+            <p>Phone No.: {{ purchaseOrder.manufacturerContact }}</p>
+            <p>Email: {{ purchaseOrder.manufacturerEmail }}</p>
+            <p>GSTN: {{ purchaseOrder.manufacturerGSTIN }}</p>
+            <p>PAN: {{ purchaseOrder.manufacturerPAN }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Details Table -->
+      <section class="order-details">
+        <p-table [value]="mergedProducts" class="bordered-table">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Sr. No.</th>
+              <th>Design No.</th>
+              <th>Colour Name</th>
+              <th>Size</th>
+              <th>Rate</th>
+              <th>Quantity</th>
+              <th>Total Price</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-item let-i="rowIndex">
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td>{{ item.designNumber }}</td>
+              <td>{{ item.colourName }}</td>
+              <td>{{ getFirstSize(item.quantities) }}</td>
+              <td>₹{{ getFirstPrice(item.quantities, item.designNumber) }}</td>
+              <td>{{ getFirstQty(item.quantities) }}</td>
+              <td>₹{{ getFirstQty(item.quantities) * getFirstPrice(item.quantities, item.designNumber) }}</td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="footer">
+            <tr>
+              <td colspan="5" style="border: none;"></td>
+              <td style="text-align: right; font-weight: bold;">Subtotal:</td>
+              <td>{{ Totalsub | currency: 'INR' }}</td>
+            </tr>
+            <tr>
+              <td colspan="5" style="border: none;"></td>
+              <td style="text-align: right; font-weight: bold;">Discount ({{ purchaseOrder.ProductDiscount }}%):</td>
+              <td>{{ discountAmount | currency: 'INR' }}</td>
+            </tr>
+            <tr *ngIf="sgst > 0 && cgst > 0">
+              <td colspan="5" style="border: none;"></td>
+              <td style="text-align: right; font-weight: bold;">SGST (9%):</td>
+              <td>{{ sgst | currency: 'INR' }}</td>
+            </tr>
+            <tr *ngIf="sgst > 0 && cgst > 0">
+              <td colspan="5" style="border: none;"></td>
+              <td style="text-align: right; font-weight: bold;">CGST (9%):</td>
+              <td>{{ cgst | currency: 'INR' }}</td>
+            </tr>
+            <tr *ngIf="igst > 0">
+              <td colspan="5" style="border: none;"></td>
+              <td style="text-align: right; font-weight: bold;">IGST (18%):</td>
+              <td>{{ igst | currency: 'INR' }}</td>
+            </tr>
+            <tr>
+              <td colspan="5" style="border: none;"></td>
+              <td style="text-align: right; font-weight: bold;">Grand Total:</td>
+              <td>{{ totalGrandTotal | currency: 'INR' }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </section>
+    </div>
+
+    <!-- Footer Button -->
+    <div class="row">
+      <div class="col-12">
+        <div class="text-center my-3">
+          <button class="btn btn-success" (click)="printPurchaseOrder()">Download Purchase Order</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
