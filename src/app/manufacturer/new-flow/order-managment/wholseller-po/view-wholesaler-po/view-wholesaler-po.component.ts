@@ -50,7 +50,7 @@ export class ViewWholesalerPoComponent {
         // ─── Map PO metadata ────────────────────────────
         this.purchaseOrder = {
           poNumber:        res.poNumber,
-          poDate:          res.wholesalerPODateCreated,
+          poDate:          new Date (res.wholesalerPODateCreated).toLocaleDateString(),
           supplierName:    res.manufacturer.companyName,
           supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.pinCode} - ${res.manufacturer.state}`,
           supplierContact: res.manufacturer.mobNumber,
