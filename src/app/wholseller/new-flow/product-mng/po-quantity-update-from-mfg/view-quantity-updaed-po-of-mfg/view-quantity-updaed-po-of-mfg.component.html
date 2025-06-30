@@ -1,0 +1,151 @@
+<section class="content">
+  <div class="content-block">
+    <!-- Header -->
+    <h4 class="mt-4 d-flex align-items-center">
+      <button class="btn navigate me-2" (click)="navigateFun()">
+        <i class="bi bi-arrow-left-circle h4"></i>
+      </button>
+      <span class="text-dark">Quantity Updated Purchase Order </span>
+    </h4>
+
+    <!-- PO Card -->
+    <div id="purchase-order" class="challan-container card my-2">
+
+      <!-- Title & PO Info -->
+      <div class="header d-flex justify-content-between align-items-center mb-2">
+        <h1 class="m-0">PURCHASE ORDER</h1>
+        <div class="text-end">
+          <p class="m-0"><strong>Order Date:</strong> {{ purchaseOrder.poDate | date:'dd/MM/yyyy' }}</p>
+          <p class="m-0"><strong>Order No:</strong> {{ purchaseOrder.poNumber }}</p>
+        </div>
+      </div>
+      <hr />
+
+      <!-- Buyer & Supplier Details -->
+      <div class="buyer-seller-info d-flex justify-content-between mb-3 p-2 border">
+        <div class="logo text-center">
+          <img
+            [src]="purchaseOrder.manufacturer.profileImg"
+            alt="Company Logo"
+            style="max-height:80px"
+            onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';"
+          />
+        </div>
+
+        <div class="buyer-info">
+          <h5><u>Order By:</u></h5>
+          <p><strong>{{ purchaseOrder.buyerName }}</strong></p>
+          <p>{{ purchaseOrder.buyerAddr }}</p>
+          <p>Phone: {{ purchaseOrder.buyerPhone }}</p>
+          <p>Email: {{ purchaseOrder.buyerEmail }}</p>
+          <p>GSTIN: {{ purchaseOrder.buyerGSTIN }}</p>
+        </div>
+
+        <div class="seller-info">
+          <h5><u>Order To:</u></h5>
+          <p><strong>{{ purchaseOrder.supplierName }}</strong></p>
+          <p>{{ purchaseOrder.supplierAddr }}</p>
+          <p>Phone: {{ purchaseOrder.supplierPhone }}</p>
+          <p>Email: {{ purchaseOrder.supplierEmail }}</p>
+          <p>GSTIN: {{ purchaseOrder.supplierGSTIN }}</p>
+        </div>
+      </div>
+
+      <!-- Order Details -->
+      <h4 class="text-center mt-1 mb-4">Order Details of Available Quantity</h4>
+      <div class="mb-0">
+      <strong>The Estimated Delivery Date For Available Quantity is
+      {{ purchaseOrder.expDeliveryDate 
+          ? (purchaseOrder.expDeliveryDate  | date:'dd/MM/yyyy')
+          : 'N/A' }} </strong>
+      </div>
+      <p-table  [value]="purchaseOrder.set" [responsive]="true" class="bordered-table mt-1">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Sr. No.</th>
+            <th>Design No.</th>
+            <th>Colour Name</th>
+            <th>Gender</th>
+            <th>Clothing</th>
+            <th>Size</th>
+            <th>Rate (₹)</th>
+            <th>Required Qty</th>
+            <th>Available Qty</th>
+            <th>Remove</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+          <tr [ngStyle]="item.status === 'm_partial_delivery' ? { 'background-color': '#FFF9C4' } : {}">
+            <td>{{ rowIndex + 1 }}</td>
+            <td>{{ item.designNumber }}</td>
+            <td>{{ item.colourName }}</td>
+            <td>{{ item.gender }}</td>
+            <td>{{ item.clothing }}</td>
+            <td>{{ item.size }}</td>
+            <td>{{ item.price }}</td>
+            <td>{{ item.totalQuantity }}</td>
+            <td>{{ item.availableQuantity }}</td>
+            <td class="text-center">
+              <button class="btn btn-link p-0" title="Cancel order item">
+                 <i class="bi bi-x-circle-fill text-danger h5"></i> <!-- text-warning -->
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <h4 class="text-center mt-5 mb-3">Order Details of Make To Order Items</h4>
+      <div class="mb-0">
+        <strong>The Partial Delivery Date For Make To Order Items is</strong>
+        {{ purchaseOrder.partialDeliveryDate
+             ? (purchaseOrder.partialDeliveryDate | date:'dd/MM/yyyy')
+             : 'N/A' }}
+      </div>
+      <!-- … above your new p-table … -->
+<p-table [value]="makeToOrderSet" [responsive]="true" class="bordered-table mt-1">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Sr. No.</th>
+      <th>Design No.</th>
+      <th>Colour Name</th>
+      <th>Gender</th>
+      <th>Clothing</th>
+      <th>Size</th>
+      <th>Rate (₹)</th>
+      <th>Quantity</th>
+      <th>Remove</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+    <tr>
+      <td>{{ rowIndex + 1 }}</td>
+      <td>{{ item.designNumber }}</td>
+      <td>{{ item.colourName }}</td>
+      <td>{{ item.gender }}</td>
+      <td>{{ item.clothing }}</td>
+      <td>{{ item.size }}</td>
+      <td>{{ item.price }}</td>
+      <td>{{ item.quantity }}</td>
+      <td class="text-center">
+        <button
+          class="btn btn-link p-0"
+          title="Remove this item"
+          (click)="removeMakeToOrderItemByItem(item)">
+          <!-- (click)="removeMakeToOrderItem(rowIndex)" -->
+          <i class="bi bi-x-circle-fill text-danger h5"></i>
+        </button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+
+    </div>
+
+    <!-- Actions -->
+    <div class="text-center my-3">
+      <button class="btn btn-success me-2" (click)="confirmPO()">Confirm PO</button>
+      <button class="btn btn-danger" (click)="deletePO()">Cancel PO</button>
+    </div>
+  </div>
+</section>

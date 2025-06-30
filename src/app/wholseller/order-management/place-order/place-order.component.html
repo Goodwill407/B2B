@@ -120,6 +120,7 @@
                                 <th>Company Name</th>
                                 <th>Email</th>
                                 <th>PO Number</th>
+                                <th>Status</th>
                                 <!-- <th>PO Date</th> -->
                                 <th>View</th>
 
@@ -131,6 +132,13 @@
                                 <td class="text-center">{{data.manufacturer.companyName}}</td>
                                 <td class="text-center">{{data.manufacturer.email}}</td>
                                 <td class="text-center">{{data.poNumber}}</td>
+                                <td class="text-center"> {{
+                                    data.statusAll === 'm_order_confirmed'
+                                    ? 'Order Confirmed'
+                                    : data.statusAll === 'm_partial_delivery'
+                                        ? 'Partial Delivery'
+                                        : data.statusAll
+                                }}</td>
                                 <!-- <td class="text-center">{{data.poDate}}</td> -->
                                 <td class="text-center"><button  (click)="placeOrder(data)" class="btn"><i
                                             class="bi bi-eye h5"></i></button></td>

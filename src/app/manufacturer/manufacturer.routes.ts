@@ -34,6 +34,7 @@ import { RetailerToManPoListComponent } from "./new-flow/order-managment/retaile
 import { RetailerToManPoViewComponent } from "./new-flow/order-managment/retailer-to-man-po-list/retailer-to-man-po-view/retailer-to-man-po-view.component";
 import { ViewRetailerOrderComponent } from "./new-flow/order-managment/view-retailer-order/view-retailer-order.component";
 import { GenRetailerOrderPoComponent } from "./new-flow/order-managment/view-retailer-order/gen-retailer-order-po/gen-retailer-order-po.component";
+import { EditGenWholsalerPoOrderComponent } from "./new-flow/order-managment/view-wholsaler-order/edit-gen-wholsaler-po-order/edit-gen-wholsaler-po-order.component";
 
 
 export const M_Auth: Route[] = [
@@ -68,7 +69,9 @@ export const M_Auth: Route[] = [
     { path: 'customise_profile', component: CustomiseProfileComponent },
     { path: 'preview-profile', component: PreviewProfileComponent },
     { path: 'product-summary', component: ProductSummaryComponent },
-    
+
+    // new created by sk for edit qty page
+    { path: 'edit-gen-wh-po-order', component: EditGenWholsalerPoOrderComponent},
 
 
     //new flow ret to man

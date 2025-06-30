@@ -361,6 +361,7 @@ addpo() {
     (res: any) => {
       console.log('PO Response:', res);
       this.communicationService.customSuccess('Purchase Order Generated Successfully');
+      this.navigateFun();
     },
     (error) => {
       console.error('PO Creation Error:', error);

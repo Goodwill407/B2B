@@ -13,6 +13,9 @@ import { WholesalerDiscountComponent } from "./wholesaler-discount/wholesaler-di
 import { ReMaPoShowComponent } from "./retailer-manifacturer-po/re-ma-po-show/re-ma-po-show.component";
 import { ViewMdeliveryChallanComponent } from "./mdelivery-challan/view-mdelivery-challan/view-mdelivery-challan.component";
 import { MdeliveryChallanComponent } from "./mdelivery-challan/mdelivery-challan.component";
+import { PoQuantityUpdateFromMfgComponent } from "./po-quantity-update-from-mfg/po-quantity-update-from-mfg.component";
+import { ViewQuantityUpdaedPoOfMfgComponent } from "./po-quantity-update-from-mfg/view-quantity-updaed-po-of-mfg/view-quantity-updaed-po-of-mfg.component";
+import { ViewPartialQuantityRetPoComponent } from "./po-quantity-update-from-mfg/view-partial-quantity-ret-po/view-partial-quantity-ret-po.component";
 
 
 export const ProductMng:Route[]=[
@@ -27,6 +30,9 @@ export const ProductMng:Route[]=[
     {path: 'viewpo/:id', component: GenratepoComponent },
     {path: 'wholesaler-discount', component: WholesalerDiscountComponent},
     {path: 'getmanpo', component: ReMaPoShowComponent },
+    {path: 'po-quantity-updated-bymfg', component: PoQuantityUpdateFromMfgComponent},
+    {path: 'view-po-quantity-updated-bymfg', component: ViewQuantityUpdaedPoOfMfgComponent},
+    {path: 'view-partial-quantity-ret-po', component:ViewPartialQuantityRetPoComponent}
     
     
     // {path: 'ordered-products', component:OrderedProductComponent},

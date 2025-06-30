@@ -117,7 +117,7 @@
           <div class="col-md-3">
             <label>Color:</label>
             <select [(ngModel)]="selectedColor" (change)="onColorChange()" class="form-control select">
-              <option value="null" disabled> Select Color</option>
+              <option value="" disabled> Select Color</option>
               <option *ngFor="let color of colours" [value]="color.name">{{ color.name }}</option>
             </select>
           </div>

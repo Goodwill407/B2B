@@ -1,0 +1,203 @@
+<section class="content">
+  <div class="content-block">
+    <!-- Header -->
+    <h4 class="mt-4 d-flex align-items-center">
+      <button class="btn navigate me-2" (click)="navigateFun()">
+        <i class="bi bi-arrow-left-circle h4"></i>
+      </button>
+      <span class="text-dark">Quantity Updated Purchase Order</span>
+    </h4>
+
+    <!-- PO Card -->
+    <div id="purchase-order" class="challan-container card my-2">
+
+      <!-- Title & PO Info -->
+      <div class="header d-flex justify-content-between align-items-center mb-2">
+        <h1 class="m-0">PURCHASE ORDER</h1>
+        <div class="text-end">
+          <p class="m-0">
+            <strong>Order Date:</strong>
+            {{ purchaseOrder.poDate | date:'dd/MM/yyyy' }}
+          </p>
+          <p class="m-0">
+            <strong>Order No:</strong> {{ purchaseOrder.poNumber }}
+          </p>
+        </div>
+      </div>
+      <hr/>
+
+      <!-- Buyer & Supplier Details -->
+      <div class="buyer-seller-info d-flex justify-content-between mb-3 p-2 border">
+        <div class="logo text-center">
+          <img
+            [src]="purchaseOrder.manufacturer.profileImg"
+            alt="Company Logo"
+            style="max-height:80px"
+            onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';"
+          />
+        </div>
+        <div class="buyer-info">
+          <h5><u>Order By:</u></h5>
+          <p><strong>{{ purchaseOrder.buyerName }}</strong></p>
+          <p>{{ purchaseOrder.buyerAddr }}</p>
+          <p>Phone: {{ purchaseOrder.buyerPhone }}</p>
+          <p>Email: {{ purchaseOrder.buyerEmail }}</p>
+          <p>GSTIN: {{ purchaseOrder.buyerGSTIN }}</p>
+        </div>
+        <div class="seller-info">
+          <h5><u>Order To:</u></h5>
+          <p><strong>{{ purchaseOrder.supplierName }}</strong></p>
+          <p>{{ purchaseOrder.supplierAddr }}</p>
+          <p>Phone: {{ purchaseOrder.supplierPhone }}</p>
+          <p>Email: {{ purchaseOrder.supplierEmail }}</p>
+          <p>GSTIN: {{ purchaseOrder.supplierGSTIN }}</p>
+        </div>
+      </div>
+
+      <!-- Order Details of Available Quantity -->
+      <h4 class="text-center mt-1 mb-2">Allocation Summary for Upcoming Stock</h4>
+
+      <div class="row text-center m-2">
+        <div class="mb-2">
+          <strong>The Estimated Delivery Date For Available Quantity is</strong>
+          <u class="px-2 py-1 d-inline-block text-dark"
+            [ngClass]="purchaseOrder.expDeliveryDate ? 'bg-success' : ''">
+            <b>
+            {{ purchaseOrder.expDeliveryDate
+              ? (purchaseOrder.expDeliveryDate | date:'dd/MM/yyyy')
+              : 'N/A' }}
+            </b>
+          </u> 
+        </div>
+
+        <div class="mb-2">
+          <strong>
+            The Partial Delivery Date For Make To Order Items is</strong>
+            <u [ngClass]="purchaseOrder.partialDeliveryDate ? 'text-warning' : ''">
+                <b>
+                {{ purchaseOrder.partialDeliveryDate
+                  ? (purchaseOrder.partialDeliveryDate | date:'dd/MM/yyyy')
+                  : 'N/A' }}
+                </b>
+              </u>
+        </div>
+      </div>
+   
+      <mat-tab-group class="mb-4">
+         <!-- 1) Automatic Allocation -->
+          <mat-tab label="Automatic Allocation">
+            <!-- Allocation Summary (click to expand) -->
+              <!-- <h5 class="mt-3 mb-2">Allocation Summary for Upcoming Stock</h5> -->
+              <div *ngFor="let poId of purchaseOrder.createdFromRetailerPoIds" class="mt-3 mb-3">
+                <!-- Summary Header -->
+                <div
+                  (click)="toggleAllocation(poId)"
+                  class="p-2 border rounded d-flex justify-content-between align-items-center"
+                  style="cursor: pointer;"
+                >
+                  <div><strong>Retailer PO: {{ poId }}</strong></div>
+                  <!-- <div>
+                    {{ purchaseOrder.expDeliveryDate
+              ? (purchaseOrder.expDeliveryDate | date:'dd/MM/yyyy')
+              : 'N/A' }}
+                  </div> -->
+                  <div class="d-flex align-items-center">
+                    <span [ngClass]="{
+                        'text-success': allocations[poId].fullySatisfied,
+                        'text-warning': !allocations[poId].fullySatisfied
+                      }">
+                      {{ allocations[poId].fullySatisfied
+                        ? '✅ Fully Satisfied'
+                        : '⚠️ Partially Satisfied' }}
+                    </span>
+                    <i
+                      class="bi ms-2"
+                      [ngClass]="expandedAllocations[poId] ? 'bi-chevron-up' : 'bi-chevron-down'"
+                    ></i>
+                  </div>
+                </div>
+
+                <!-- Expanded Allocation Table -->
+                <div
+                  *ngIf="expandedAllocations[poId]"
+                  class="p-2 border rounded-bottom border-top-0"
+                >
+                  <p-table
+                    [value]="allocations[poId].items"
+                    [responsive]="true"
+                    class="table-sm"
+                  >
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th>Sr. No.</th>
+                        <th>Design No.</th>
+                        <th>Size</th>
+                        <th>Demanded</th>
+                        <th>Allocated</th>
+                        <th *ngIf="!allocations[poId].fullySatisfied">Remove</th>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-line let-rowIndex="rowIndex">
+                      <tr>
+                        <td>{{ rowIndex + 1 }}</td>
+                        <td>{{ line.designNumber }}</td>
+                        <td>{{ line.size }}</td>
+                        <td>{{ line.demanded }}</td>
+                        <td>{{ line.allocated }}</td>
+                        <td
+                          *ngIf="!allocations[poId].fullySatisfied"
+                          class="text-center"
+                        >
+                          <button
+                            pButton
+                            type="button"
+                            icon="pi pi-times"
+                            class="p-button-rounded p-button-danger p-button-sm"
+                            (click)="removeAllocation(poId, line)"
+                          ></button>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+              </div>
+          </mat-tab>
+          <mat-tab label="Manual Allocation">
+
+          </mat-tab>
+      </mat-tab-group  >
+      
+
+      <!-- Available Qty Table (unchanged) -->
+      <p-table
+        [value]="purchaseOrder.set"
+        dataKey="_id"
+        [responsive]="true"
+        class="bordered-table mt-1"
+      >
+        <!-- … your existing header/body with expand-row logic … -->
+      </p-table>
+
+      <!-- Make To Order Table (unchanged) -->
+      <!-- <h4 class="text-center mt-5 mb-3">Order Details of Make To Order Items</h4>
+      
+      <p-table
+        [value]="makeToOrderSet"
+        [responsive]="true"
+        class="bordered-table mt-1"
+      > -->
+        <!-- … your existing make-to-order table … -->
+      <!-- </p-table> -->
+
+      <!-- Actions -->
+      <div class="text-center my-3">
+        <button class="btn btn-success me-2" (click)="confirmPO()">
+          Confirm PO
+        </button>
+        <button class="btn btn-danger" (click)="deletePO()">
+          Cancel PO
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

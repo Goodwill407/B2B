@@ -99,7 +99,7 @@
         // Calculate subtotal
         const items = this.purchaseOrder.products;
         this.Totalsub = items.reduce((sum:any, p:any) => 
-          sum + (p.totalQuantity * parseFloat(p.price)), 0
+          sum + (p.totalQuantity * parseFloat(p.manufacturerPrice)), 0
         );
 
         // Calculate discount & post-discount total
@@ -140,8 +140,13 @@
   this.authService
     .post('po-wholesaler-to-manufacture', payload)
     .subscribe(
-      () => this.communicationService.customSuccess('PO successfully generated for manufacturer'),
-      (error) => this.communicationService.customError1(error.error.message)
+      () =>{
+      this.communicationService.customSuccess('PO successfully generated for manufacturer');
+      this.navigateFun();
+      },
+      (error) => {
+        this.communicationService.customError1(error.error.message)
+      }
     );
 }
 

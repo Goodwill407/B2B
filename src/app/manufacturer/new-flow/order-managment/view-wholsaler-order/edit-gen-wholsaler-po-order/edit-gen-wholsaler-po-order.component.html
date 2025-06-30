@@ -1,0 +1,170 @@
+<section class="content">
+  <div class="content-block">
+    <!-- Page Header -->
+    <h4 class="mt-4">
+      <button class="btn navigate" (click)="navigateFun()">
+        <i class="bi bi-arrow-left-circle h4"></i>
+      </button>
+      <span *ngIf="isEditable">Update Available Quantities of Wholesaler's Purchase Order</span>
+      <span *ngIf="!isEditable">Updated Quantities of Wholesaler's Purchase Order</span>
+      <!-- Update Available Quantity of Wholesaler's Purchase Order -->
+    </h4>
+
+    <!-- Purchase Order Container -->
+    <div id="purchase-order" class="challan-container card  my-2">
+      <!-- Header -->
+      <div class="page-header-content ">
+        <div class="header d-flex justify-content-between align-items-center">
+          <div class="company-info">
+            <h1>PURCHASE ORDER</h1>
+          </div>
+          <div class="order-info text-end">
+            <p><strong>Order Date:</strong> {{ poDate | date:'dd/MM/yyyy' }}</p>
+            <p><strong>Order No:</strong> {{ poNumber }}</p>
+          </div>
+        </div>
+      </div>
+      <!-- <hr class="my-1"/> -->
+
+      <!-- Wholesaler info box -->
+    <div class="border rounded mt-2 p-3 mb-4 d-flex align-items-start">
+    <!-- Logo -->
+    <div class="me-4">
+        <img
+        [src]="wholesalerLogo"
+        alt="Logo"
+        class="d-block"
+        style="width:80px; height:80px; object-fit:cover;"
+        />
+    </div>
+
+    <!-- Details -->
+    <div>
+        <h5 class="mb-2"><u>Order From:</u></h5>
+        <p class="mb-1"><strong>{{ wholesalerCompany }}</strong></p>
+        <p class="mb-1">{{ wholesalerEmail }} &bull; {{ wholesalerMobile }}</p>
+        <p class="mb-1">GSTIN: {{ wholesalerGSTIN }} &bull; PAN: {{ wholesalerPAN }}</p>
+        <p class="mb-1">{{ wholesalerAddress }}</p>
+    </div>
+</div>
+
+      <!-- Order Details Table -->
+      <section class="order-details">
+        <div *ngIf="orderedSet?.length">
+          <table class="table table-bordered text-center">
+            <thead class="table-light">
+              <tr>
+                <th>Sr. No.</th>
+                <th>Clothing</th>
+                <th>Gender</th>
+                <th>Colour Name</th>
+                <th>Design No.</th>
+                <th>Size</th>
+                <th>Required Qty</th>
+                <th>{{ isEditable ? 'Edit Qty' : 'Updated Qty' }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of orderedSet; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ item.clothing }}</td>
+                <td>{{ item.gender }}</td>
+                <td>{{ item.colourName }}</td>
+                <td>{{ item.designNumber }}</td>
+                <td>{{ item.size }}</td>
+                <td>{{ item.requiredQuantity }}</td>
+                <td>
+                <ng-container *ngIf="isEditable; else showQty">
+                  <input
+                    type="number"
+                    class="form-control form-control-sm mx-auto"
+                    style="width: 80px;"
+                    [(ngModel)]="item.availableQuantity"
+                    (ngModelChange)="onAvailableQuantityChange(item)"
+                    (blur)="clampAvailableQuantity(item)"
+                    (keydown)="preventInvalidInput($event)"
+                    [min]="0"
+                    [max]="item.requiredQuantity"
+                    [ngClass]="{ 'is-invalid': item.availableQuantity > item.requiredQuantity }"
+                  />
+                <div *ngIf="item.availableQuantity > item.requiredQuantity"
+                    class="text-danger small mt-1">
+                  <!-- Quantity exceeds required ({{ item.requiredQuantity }}) -->
+                </div>
+                </ng-container>
+                <ng-template #showQty>
+                  {{ item.availableQuantity }}
+                </ng-template>
+              </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+        <!-- Estimated Delivery Dates -->
+      <div class="mt-4">
+        <ng-container *ngIf="isEditable; else viewDates">
+          <!-- EDIT MODE: date-pickers -->
+          <div class="row align-items-center mb-3">
+            <label class="col-sm-6 col-form-label">
+              Estimated Delivery Date for Available Quantity:
+            </label>
+            <div class="col-sm-4">
+              <input
+                type="date"
+                name="expDeliveryDate"
+                class="form-control form-control-sm"
+                [(ngModel)]="expDeliveryDate"
+                [min]="minDate"
+              />
+            </div>
+          </div>
+          <div
+            class="row align-items-center"
+            *ngIf="hasPartialDelivery()"
+          >
+            <label class="col-sm-6 col-form-label">
+              Estimated Delivery Date for Make-to-Order Items:
+            </label>
+            <div class="col-sm-4">
+              <input
+                type="date"
+                name="partialDeliveryDate"
+                class="form-control form-control-sm"
+                [(ngModel)]="partialDeliveryDate"
+                [min]="minDate"
+              />
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- VIEW MODE: just show text -->
+        <ng-template #viewDates>
+          <div class="mb-2">
+            <strong>Estimated Delivery Date for Available Quantity:</strong>
+            {{ expDeliveryDate | date:'dd/MM/yyyy' }}
+          </div>
+          <div *ngIf="hasPartialDelivery()" class="mb-2">
+            <strong>Estimated Delivery Date for Make-to-Order Items:</strong>
+            {{ partialDeliveryDate | date:'dd/MM/yyyy' }}
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Generate Button -->
+    <div class="text-center my-3" *ngIf="isEditable">
+      <button
+        class="btn btn-success"
+        [disabled]="!orderedSet.length || hasInvalidQuantities()"
+        (click)="updatePoData()"
+      >
+        Update PO
+      </button>
+      
+    </div>
+    <button
+      (click)="patchtemp()"
+      >Revert</button>
+  </div>
+</section>

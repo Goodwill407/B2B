@@ -1,0 +1,20 @@
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  color: #fff;
+  min-width: 130px;
+  text-align: center;
+}
+
+// .status-badge.success {
+//   background-color: #28a745; // Bootstrap green
+// }
+
+.status-badge.warning {
+  background-color: #ffc107; // Bootstrap yellow
+  color: #212529;            // dark text on yellow
+}

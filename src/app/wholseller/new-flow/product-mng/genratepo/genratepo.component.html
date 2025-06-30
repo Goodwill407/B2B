@@ -96,15 +96,15 @@
                 <!-- Subtotal -->
                 <tr>
                  
-                  <td colspan="8" style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">Subtotal:</td>
-                  <td style="border: 1px solid #dee2e6;">{{ Totalsub | currency: 'INR' }}</td>
+                  <td colspan="8" style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">Subtotal (₹):</td>
+                  <td style="text-align: right; border: 1px solid #dee2e6;">{{ Totalsub | indianCurrency }}</td>
                 </tr>
 
                 <!-- Discount -->
                 <tr>
                  
                   <td colspan="8" style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">
-                    Discount ({{ purchaseOrder.ProductDiscount }}%):
+                    Discount (₹ -{{ purchaseOrder.ProductDiscount }}%):
                   </td>
                   <td style="text-align: right; border: 1px solid #dee2e6;">{{ discountAmount | indianCurrency }}</td>
                 </tr>
@@ -112,27 +112,27 @@
                 <!-- SGST/CGST -->
                 <tr *ngIf="sgst > 0 && cgst > 0">
                   
-                  <td  colspan="8" style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">SGST (9%):</td>
-                  <td style="border: 1px solid #dee2e6;">{{ sgst | currency: 'INR' }}</td>
+                  <td  colspan="8" style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">SGST (₹ +9%):</td>
+                  <td style="text-align: right; border: 1px solid #dee2e6;">{{ sgst | indianCurrency }}</td>
                 </tr>
                 <tr *ngIf="sgst > 0 && cgst > 0">
                  
-                  <td style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">CGST (9%):</td>
-                  <td style="border: 1px solid #dee2e6;">{{ cgst | currency: 'INR' }}</td>
+                  <td style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">CGST (₹ +9%):</td>
+                  <td style="text-align: right; border: 1px solid #dee2e6;">{{ cgst | indianCurrency }}</td>
                 </tr>
 
                 <!-- IGST -->
                 <tr *ngIf="igst > 0">
                 
-                  <td colspan="8"  style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">IGST (18%):</td>
-                  <td style="border: 1px solid #dee2e6;">{{ igst | currency: 'INR' }}</td>
+                  <td colspan="8"  style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">IGST(₹ +18%):</td>
+                  <td style="text-align: right; border: 1px solid #dee2e6;">{{ igst | indianCurrency }}</td>
                 </tr>
 
                 <!-- Grand Total -->
                 <tr>
                  
-                  <td colspan="8"  style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">Grand Total:</td>
-                  <td style="border: 1px solid #dee2e6;">{{ totalGrandTotal | currency: 'INR' }}</td>
+                  <td colspan="8"  style="text-align: right; font-weight: bold; border: 1px solid #dee2e6;">Grand Total (₹):</td>
+                  <td style="text-align: right; border: 1px solid #dee2e6;">{{ totalGrandTotal | indianCurrency }}</td>
                 </tr>
               </ng-template>
             </p-table>

@@ -356,6 +356,7 @@ export class GenraterpoComponent {
 
     (res: any) => {
       this.communicationService.customSuccess('Purchase Order Generated Successfully');
+      this.navigateFun();
     },
     (error) => {
       this.communicationService.customError1(error.error.message);

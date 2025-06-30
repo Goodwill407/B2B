@@ -81,9 +81,9 @@
                 <td>{{ product.gender }}</td>
                 <td>{{ product.clothing }}</td>
                 <td>{{ product.size }}</td>
-                <td>{{ product.price }}</td>
+                <td>{{ product.manufacturerPrice }}</td>
                 <td>{{ product.totalQuantity }}</td>
-                <td style="text-align: right;">{{ product.price * product.totalQuantity | number: '1.0-2' }}</td>
+                <td style="text-align: right;">{{ product.manufacturerPrice * product.totalQuantity | number: '1.0-2' }}</td>
               </tr>
             </ng-template>
 

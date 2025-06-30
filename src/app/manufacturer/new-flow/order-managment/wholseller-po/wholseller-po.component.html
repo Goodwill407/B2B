@@ -23,7 +23,16 @@
                                 <td class="text-center">{{data.wholesaler.companyName}}</td>
                                 <td class="text-center">{{data.wholesaler.email}}</td>
                                 <td class="text-center">{{data.poNumber}}</td>
-                                <td class="text-center">{{data.statusAll}}</td>
+                               <td class="text-center">
+                                {{
+                                    data.statusAll === 'm_order_confirmed'
+                                    ? 'Order Confirmed'
+                                    : data.statusAll === 'm_partial_delivery'
+                                        ? 'Partial Delivery'
+                                        : data.statusAll
+                                }}
+                                    <!-- {{data.statusAll === 'm_order_updated' ? 'Manufacturer Updated' : data.statusAll}} -->
+                                </td>
                                 <!-- <td class="text-center">{{data.poDate}}</td> -->
                                 <td class="text-center" [routerLink]="['/mnf/wls-po-listview',{id: data.id}]"><button class="btn"><i class="bi bi-eye h5"></i></button></td>
                             </tr>
