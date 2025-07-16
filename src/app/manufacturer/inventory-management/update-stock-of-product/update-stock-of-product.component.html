@@ -1,0 +1,170 @@
+<section class="content">
+  <div class="content-block">
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-4 flex-wrap">
+      <h4 class="mb-0">
+        <i class="bi bi-person-vcard-fill h3"></i> View And Update Stock for Product
+      </h4>
+
+      <div class="d-flex align-items-center gap-2">
+        <input
+          type="text"
+          class="form-control"
+          style="width: 3000px"
+          placeholder="Search Design No"
+          [(ngModel)]="searchText"
+        />
+        <button class="btn btn-sm btn-outline-secondary" (click)="search()">Search</button>
+        <button class="btn btn-sm btn-outline-danger" (click)="clearSearch()" *ngIf="searchText">
+          ✖
+        </button>
+      </div>
+    </div>
+
+    <!-- Loop through each design -->
+    <p-panel
+      *ngFor="let design of inventoryStock; let i = index"
+      [attr.id]="'panel-' + design._id"
+      [toggleable]="true"
+      [collapsed]="!design.expanded"
+      styleClass="mb-3 shadow-sm"
+    >
+    <ng-template pTemplate="header">
+      <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+
+        <!-- Left Section: Design and Total Quantity -->
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-4">
+          <div class="me-5"><strong>Design No:</strong> {{ design._id }}</div>
+          <div class="me-5"><strong>Total Quantity:</strong> {{ design.totalQuantity }}</div>
+
+          <!-- 🔴 Critical Low -->
+          <ng-container class="me-5" *ngIf="countCriticalLow(design.entries) > 0">
+            <span class="badge bg-danger text-white py-2 px-3 fs-6 rounded-pill">
+              Critical Low: {{ countCriticalLow(design.entries) }}
+            </span>
+          </ng-container>
+
+          <!-- 🟡 Near Low -->
+          <ng-container class="me-5" *ngIf="countNearLow(design.entries) > 0">
+            <span class="badge bg-warning text-dark py-2 px-3 fs-6 rounded-pill">
+              Near Low: {{ countNearLow(design.entries) }}
+            </span>
+          </ng-container>
+        </div>
+
+        <!-- Right Side: Collapse Icon is handled by PrimeNG -->
+      </div>
+    </ng-template>
+
+      <!-- Universal Input Block -->
+      <div class="d-flex flex-wrap align-items-center gap-4 mb-3">
+
+        <!-- Add Quantity -->
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <label class="fw-semibold mb-0">Add Quantity in All Items:</label>
+          <input
+            type="number"
+            class="form-control"
+            [(ngModel)]="universalQuantity"
+            placeholder="e.g. 10"
+            min="0"
+            style="width: 120px"
+          />
+          <button class="btn btn-sm btn-light-muted" (click)="applyUniversalQuantity(design)">
+            Add
+          </button>
+        </div>
+
+        <!-- Add Min Quantity Alert -->
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <label class="fw-semibold mb-0" style="white-space: nowrap;">Set Min Quantity Alert for All Items:</label>
+          <input
+            type="number"
+            class="form-control"
+            [(ngModel)]="universalAlert"
+            placeholder="e.g. 5"
+            min="0"
+            style="width: 120px;"
+          />
+          <button class="btn btn-sm btn-light-muted" (click)="applyUniversalAlert(design)">
+            Set
+          </button>
+        </div>
+
+        <!-- Total Quantity -->
+        <div class="d-flex align-items-center my-2 mb-4">
+          <label class="fw-bold text-primary">
+            Current Total Quantity: {{ getLiveTotalQuantity(design.entries) }}
+          </label>
+        </div>
+
+      </div>
+
+      <p-table [value]="design.entries" [scrollable]="true" scrollHeight="300px" class="p-datatable-sm">  <!-- [value]="design.entries" -->
+        <ng-template pTemplate="header">
+          <tr>
+            <th>#</th>
+            <th>Brand</th>
+            <th>Design No.</th>
+            <th>Colour</th>
+            <th>Color Name</th>
+            <th>Standard Size</th>
+            <th>Brand Size</th>
+            <th>Quantity</th>
+            <th>Min Quantity Alert</th>
+          </tr>
+        </ng-template>
+
+        <!-- RED: quantity <= minimumQuantityAlert | YELLOW: quantity within 10 of alert -->
+        <ng-template pTemplate="body" let-product let-rowIndex="rowIndex">
+          <tr
+            [ngClass]="{
+              'bg-danger text-white': product.quantity <= product.minimumQuantityAlert,
+              'bg-warning text-dark': product.quantity > product.minimumQuantityAlert && product.quantity <= product.minimumQuantityAlert + 10
+            }"
+          >
+            <td>{{ rowIndex + 1 }}</td>
+            <td>{{ product.brandName }}</td>
+            <td>{{ product.designNumber }}</td>
+            <td>
+              <div class="color-box" [style.background]="product.colour" [title]="product.colour"></div>
+            </td>
+            <td>{{ product.colourName }}</td>
+            <td>{{ product.standardSize }}</td>
+            <td>{{ product.brandSize }}</td>
+           <td style="text-align: center; vertical-align: middle;">
+                <div class="input-wrapper">
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="product.quantity"
+                min="0"
+                (ngModelChange)="validateQuantity(product)"
+                (keydown)="blockInvalidKeys($event)"
+              />
+              </div>
+            </td>
+            <td style="text-align: center; vertical-align: middle;">
+                <div class="input-wrapper">
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="product.minimumQuantityAlert"
+                min="0"
+                (ngModelChange)="validateAlert(product)"
+                (keydown)="blockInvalidKeys($event)"
+              />
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <div class="text-end mt-3">
+        <button class="btn btn-danger px-4 py-2">Dump All Stock</button> &nbsp;
+        <button type="button" class="btn btn-primary px-4 py-2" (click)="submitStockForDesign(design)">
+          <i class="bi bi-box-arrow-in-down"></i> Update Stock
+        </button>
+      </div>
+    </p-panel>
+  </div>
+</section>

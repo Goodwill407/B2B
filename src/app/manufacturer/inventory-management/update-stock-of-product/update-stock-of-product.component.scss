@@ -1,0 +1,41 @@
+.color-box {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  display: inline-block;
+}
+
+input.form-control {
+  border-radius: 8px !important;
+  padding: 0.3rem 0.6rem !important;
+  height: 34px;
+  font-size: 14px;
+  border: 1px solid #ced4da;
+  box-shadow: none;
+   width: 90px; /* 👈 reduce width here */  
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+}
+
+.input-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  .form-control {
+  max-width: 160px;
+}
+
+.btn-light-muted {
+  background-color: #40bfed;
+  color: #333;
+  border: 1px solid #ccc;
+}   
+

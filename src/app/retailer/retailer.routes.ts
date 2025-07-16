@@ -10,6 +10,8 @@ import { ViewWholeselerProductComponent } from "./product-management/wholeseler-
 import { RetailerMnfAssociatedListComponent } from "./retailer-mnf-associated-list/retailer-mnf-associated-list/retailer-mnf-associated-list.component";
 import { RetailerWholAssociatedListComponent } from "./retailer-whol-associated-list/retailer-whol-associated-list/retailer-whol-associated-list.component";
 import { ListOfAssoMfgComponent } from "./new-flow-Product/Mng-Product/product-management/product-list-of-mfg/list-of-asso-mfg/list-of-asso-mfg/list-of-asso-mfg.component";
+import { RetAddStockOfProductComponent } from "./inventory-management/ret-add-stock-of-product/ret-add-stock-of-product.component";
+import { RetUpdateStockOfProductComponent } from "./inventory-management/ret-update-stock-of-product/ret-update-stock-of-product.component";
 
 export const Retailer_Route :Route[]=[ 
     { path: 'new', loadChildren:()=> import('./new-flow-Product/new_flow.routes').then((m)=>m.NewFlow)},
@@ -24,6 +26,10 @@ export const Retailer_Route :Route[]=[
     {path:'wholeseler-list', component:WholeselerListComponent},
     {path:'wholeseler-Products', component:WholeselerProductsComponent},
     {path:'view-product', component:ViewWholeselerProductComponent},
-    {path:'product-list-of-mfg', component:ListOfAssoMfgComponent}
+    {path:'product-list-of-mfg', component:ListOfAssoMfgComponent},
+
+    // New routes by SK 
+    { path: 'ret-add-stock-of-product', component: RetAddStockOfProductComponent},
+    { path: 'ret-update-stock-of-product', component: RetUpdateStockOfProductComponent }
 
 ]

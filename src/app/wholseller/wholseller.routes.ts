@@ -19,6 +19,8 @@ import { RetailerManifacturerPoComponent } from "./new-flow/product-mng/retailer
 import { ViewMdeliveryChallanComponent } from "./new-flow/product-mng/mdelivery-challan/view-mdelivery-challan/view-mdelivery-challan.component";
 import { ViewDeliveryFinalComponent } from "./new-flow/product-mng/mdelivery-challan/view-delivery-final/view-delivery-final.component";
 import { ViewProductRePriceComponent } from "./new-flow/view-product-re-price/view-product-re-price.component";
+import { WhAddStockOfProductComponent } from "./inventory-management/wh-add-stock-of-product/wh-add-stock-of-product.component";
+import { WhUpdateStockOfProductComponent } from "./inventory-management/wh-update-stock-of-product/wh-update-stock-of-product.component";
 
 export const R_Auth: Route[] = [
     { path: 'new', loadChildren: () => import('./new-flow/new_flow.route').then((m) => m.NewFlow) },
@@ -53,4 +55,8 @@ export const R_Auth: Route[] = [
     { path: 'view-retailser-Details', component: ViewRetailersDetailsComponent },
     {path: 'View-MNFDChalan', component: ViewMdeliveryChallanComponent },
     {path: 'View-MNFDChalan-sfinal', component: ViewDeliveryFinalComponent },
+
+    // New Routes by SK for Inventory
+    { path: 'wh-add-stock-of-product', component: WhAddStockOfProductComponent},
+    { path: 'wh-update-stock-of-product', component: WhUpdateStockOfProductComponent }
 ]

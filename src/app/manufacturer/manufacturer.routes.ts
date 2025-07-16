@@ -35,6 +35,10 @@ import { RetailerToManPoViewComponent } from "./new-flow/order-managment/retaile
 import { ViewRetailerOrderComponent } from "./new-flow/order-managment/view-retailer-order/view-retailer-order.component";
 import { GenRetailerOrderPoComponent } from "./new-flow/order-managment/view-retailer-order/gen-retailer-order-po/gen-retailer-order-po.component";
 import { EditGenWholsalerPoOrderComponent } from "./new-flow/order-managment/view-wholsaler-order/edit-gen-wholsaler-po-order/edit-gen-wholsaler-po-order.component";
+import { AddStockOfProductComponent } from "./inventory-management/add-stock-of-product/add-stock-of-product.component";
+import { UpdateStockOfProductComponent } from "./inventory-management/update-stock-of-product/update-stock-of-product.component";
+import { InventoryLogsComponent } from "./inventory-management/inventory-logs/inventory-logs.component";
+import { ViewInventoryLogComponent } from "./inventory-management/view-inventory-log/view-inventory-log.component";
 
 
 export const M_Auth: Route[] = [
@@ -72,6 +76,10 @@ export const M_Auth: Route[] = [
 
     // new created by sk for edit qty page
     { path: 'edit-gen-wh-po-order', component: EditGenWholsalerPoOrderComponent},
+    { path: 'add-stocks-for-product', component: AddStockOfProductComponent },
+    { path: 'update-stocks-for-product', component: UpdateStockOfProductComponent },
+    { path: 'inventory-logs', component: InventoryLogsComponent},
+    { path: 'view-inventory-log', component:ViewInventoryLogComponent},
 
 
     //new flow ret to man

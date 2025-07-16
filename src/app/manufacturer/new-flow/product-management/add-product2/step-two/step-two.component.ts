@@ -188,11 +188,33 @@ export class StepTwoComponent {
   // }
 
   // This method skips the step 3 & 4 and directly create product as we dont have to take min and max Quantity
-  goToNextStep() {  
-    if (this.colourCollections.length > 0){
-      this.navigateOnProduct();
+  // goToNextStep() {  
+  //   if (this.colourCollections.length > 0){
+  //     this.navigateOnProduct();
+  //   } 
+  //   else this.communicationService.showNotification('snackbar-error', 'First add any collection then go to the next page', 'bottom', 'center');
+  // }
+
+  //  Add Inventory Stock Details
+  goToNextStep(){  
+  if (this.colourCollections.length > 0){
+      this.updateInventory();
     } 
     else this.communicationService.showNotification('snackbar-error', 'First add any collection then go to the next page', 'bottom', 'center');
+  }
+
+  updateInventory(){
+    this.communicationService.showNotification(
+        'snackbar-success',
+        'Saved Successfully...!!!',
+        'bottom',
+        'center'
+      );
+      setTimeout(() => {
+        this.router.navigate(['mnf/add-stocks-for-product'],
+          { queryParams: { id: this.productId } }
+        );
+      }, 1500); 
   }
 
   navigateOnProduct() {

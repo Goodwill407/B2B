@@ -1,0 +1,72 @@
+<section class="content">
+  <div class="content-block">
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-4 flex-wrap">
+        <h4 class="mb-0">
+            <i class="bi bi-person-vcard-fill h3"></i>
+            Inventory Logs
+        </h4>
+        <div class="d-flex align-items-center gap-2">
+            <input
+            type="text"
+            class="form-control"
+            style="width: 300px"
+            placeholder="Search Design No"
+            [(ngModel)]="searchText"
+            (keydown.enter)="search()"
+            />
+            <button class="btn btn-sm btn-outline-secondary" (click)="search()">Search</button>
+            <button class="btn btn-sm btn-outline-danger" (click)="clearSearch()" *ngIf="searchText">
+            ✖
+            </button>
+        </div>
+    </div>
+    <div class="card mt-3 p-4">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 text-center">
+          <p-table [value]="tableData">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Design No</th>
+                <th>Brand</th>
+                <th>Total Updates</th>
+                <th>Total Qty Added</th>
+                <th>Latest Update</th>
+                <th>View</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-data>
+              <tr>
+                <td>{{ data.designNumber }}</td>
+                <td>{{ data.brandName }}</td>
+                <td>{{ data.totalUpdates }}</td>
+                <td>{{ data.totalQuantityAdded }}</td>
+                <td>{{ data.latestUpdatedAt | date: 'dd/MMM/yyyy h:mm a' }}</td>
+                <td>
+                  <button class="btn btn-outline-primary btn-sm" (click)="viewRow(data)">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+
+          <div *ngIf="!tableData" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
+            <p>Inventory Logs Not Found. [Server Error]</p>
+          </div>
+          <div *ngIf="tableData?.length === 0" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
+            <p>No Inventory Logs available.</p>
+          </div>
+
+          <!-- Pagination -->
+          <p-paginator *ngIf="tableData && tableData.length > 0"
+            (onPageChange)="onPageChange($event)"
+            [first]="first"
+            [rows]="rows"
+            [totalRecords]="totalResults"
+            [rowsPerPageOptions]="[10, 20, 30]">
+          </p-paginator>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

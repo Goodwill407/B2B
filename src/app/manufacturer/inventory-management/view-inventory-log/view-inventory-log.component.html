@@ -1,0 +1,83 @@
+<section class="content">
+  <div class="content-block">
+
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-4 flex-wrap">
+      <h4 class="mb-0">
+        <i class="bi bi-journal-text h3"></i>
+        Inventory Log Details
+      </h4>
+      <button class="btn btn-outline-primary" (click)="downloadPDFTable()">
+        <i class="bi bi-download"></i> Download PDF
+      </button>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="summary-box mb-4 p-3">
+      <div><b>Design No:</b> {{ logData?.designNumber }}</div>
+      <div><b>Brand Name:</b> {{ logData?.brandName }}</div>
+      <div class="d-flex flex-wrap mt-2 gap-3">
+        <span><b>Total Updates:</b> {{ logData?.totalUpdates }}</span>
+        <span><b>Total Qty Added:</b> {{ logData?.totalQuantityAdded }}</span>
+        <span><b>Total Qty Removed:</b> {{ logData?.totalQuantityRemoved }}</span>
+        <span><b>Latest Update:</b> {{ formatDate(logData?.latestUpdatedAt) }}</span>
+      </div>
+    </div>
+
+    <!-- Grouped Stock Movement History -->
+    <div *ngIf="grouped && stockData">
+      <h5 class="mt-4 mb-2">Stock Movement History</h5>
+      <ng-container *ngFor="let key of groupedKeys">
+        <div class="group-block p-2 mb-4 border rounded-3">
+          <!-- Parse key: colourName|||brandSize|||standardSize -->
+          <div class="group-heading mb-2 fw-bold">
+            <span class="color-dot me-2" [style.background]="grouped[key][0]?.colour"></span>
+            Color: <b>{{ grouped[key][0]?.colourName }}</b> |
+            Brand Size: <b>{{ grouped[key][0]?.brandSize }}</b> |
+            Standard Size: <b>{{ grouped[key][0]?.standardSize }}</b>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-bordered table-sm mb-0">
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Qty Changed</th>
+                  <th>Prev Qty</th>
+                  <th>Updated Date</th>
+                  <th>Updated By</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let entry of grouped[key]">
+                  <td>
+                    <span [ngClass]="{'text-success': entry.records.status === 'stock_added', 'text-danger': entry.records.status === 'stock_removed'}">
+                      {{ entry.records.status === 'stock_added' ? 'Added' : 'Removed' }}
+                    </span>
+                  </td>
+                  <td>{{ entry.records.updatedQuantity }}</td>
+                  <td>{{ entry.records.previousRemainingQuantity }}</td>
+                  <td>{{ formatDate(entry.records.lastUpdatedAt) }}</td>
+                  <td>{{ entry.records.lastUpdatedBy }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- Current Stock Footer for this color/size -->
+          <div class="current-stock-summary mt-2">
+            <ng-container *ngIf="findCurrentStock(grouped[key][0]?.colourName, grouped[key][0]?.brandSize, grouped[key][0]?.standardSize) as curStock">
+              <b>Current stock for this color & size:</b> &nbsp;
+              <span>{{ curStock.quantity }}</span> &nbsp;
+              <span class="ms-2">Minimum: {{ curStock.minimumQuantityAlert }}</span>
+              <span class="ms-2" [ngClass]="{'text-danger': curStock.isLowStock, 'text-success': !curStock.isLowStock}">
+                Low Stock: {{ curStock.isLowStock ? 'Yes' : 'No' }}
+              </span>
+            </ng-container>
+            <ng-container *ngIf="!findCurrentStock(grouped[key][0]?.colourName, grouped[key][0]?.brandSize, grouped[key][0]?.standardSize)">
+              <em>Stock not found in summary data</em>
+            </ng-container>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+  </div>
+</section>

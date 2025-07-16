@@ -1,0 +1,28 @@
+.inventory-log-header {
+  .btn { min-width: 150px; }
+}
+.summary-box {
+  background: #f6f8fa;
+  border-radius: 10px;
+}
+.group-block {
+  background: #fcfcfd;
+}
+.color-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid #888;
+  vertical-align: middle;
+}
+.current-stock-summary {
+  font-size: 1rem;
+  background: #f3f3f3;
+  border-radius: 8px;
+  padding: 5px 12px;
+  margin-top: 6px;
+}
+.table-sm th, .table-sm td {
+  padding: 0.3rem 0.6rem;
+}
