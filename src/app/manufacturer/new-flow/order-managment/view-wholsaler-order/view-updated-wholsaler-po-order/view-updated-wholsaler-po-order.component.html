@@ -1,0 +1,106 @@
+<section class="content">
+  <div class="content-block">
+    <h4 class="mt-4">
+      <button class="btn navigate" (click)="navigateBack()">
+        <i class="bi bi-arrow-left-circle h4"></i>
+      </button>
+      <span>
+        {{ statusAll === 'm_order_confirmed'
+          ? 'Updated Quantities of Wholesaler\'s Purchase Order'
+          : 'Partially Updated Quantities of Wholesaler\'s Purchase Order'
+        }}
+      </span>
+    </h4>
+
+    <div id="purchase-order" class="challan-container card my-2">
+      <div class="page-header-content">
+        <div class="header d-flex justify-content-between align-items-center">
+          <div class="company-info">
+            <h1>PURCHASE ORDER</h1>
+          </div>
+          <div class="order-info text-end">
+            <p><strong>Order Date:</strong> {{ poDate | date:'dd/MM/yyyy' }}</p>
+            <p><strong>Order No:</strong> {{ poNumber }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wholesaler info box -->
+      <div class="border rounded mt-2 p-3 mb-4 d-flex align-items-start">
+        <div class="me-4">
+          <img [src]="wholesaler.profileImg"
+            alt="Logo"
+            class="d-block"
+            style="width:80px; height:80px; object-fit:cover;" />
+        </div>
+        <div>
+          <h5 class="mb-2"><u>Order From:</u></h5>
+          <p class="mb-1"><strong>{{ wholesaler.companyName }}</strong></p>
+          <p class="mb-1">{{ wholesaler.email }} &bull; {{ wholesaler.mobNumber }}</p>
+          <p class="mb-1">GSTIN: {{ wholesaler.GSTIN }}</p>
+          <p class="mb-1">{{ wholesaler.address }}, {{ wholesaler.pinCode }} – {{ wholesaler.state }}</p>
+        </div>
+      </div>
+
+      <!-- Order Details Table -->
+      <section class="order-details">
+        <ng-container *ngIf="isLoading">
+          <div class="text-center my-4">Loading...</div>
+        </ng-container>
+        <div *ngIf="orderedSet?.length && !isLoading">
+          <table class="table table-bordered text-center">
+            <thead class="table-light">
+              <tr>
+                <th>Sr. No.</th>
+                <th>Clothing</th>
+                <th>Gender</th>
+                <th>Colour Name</th>
+                <th>Design No.</th>
+                <th>Size</th>
+                <th>Required Qty</th>
+                <th>Updated Qty</th>
+                <th *ngIf="statusAll !== 'm_order_confirmed'">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of orderedSet"
+                  [ngClass]="{'partial-row': isPartialRow(item)}">
+                <td>{{ item.srNo }}</td>
+                <td>{{ item.clothing }}</td>
+                <td>{{ item.gender }}</td>
+                <td>{{ item.colourName }}</td>
+                <td>{{ item.designNumber }}</td>
+                <td>{{ item.size }}</td>
+                <td>{{ item.totalQuantity }}</td>
+                <td>{{ item.availableQuantity }}</td>
+                <td *ngIf="statusAll !== 'm_order_confirmed'">
+                  <span [ngClass]="{
+                    'badge bg-success': item.status === 'm_confirmed',
+                    'badge bg-warning text-dark': item.status === 'm_partial_delivery'
+                  }">
+                    {{ item.status === 'm_confirmed' ? 'Confirmed' : (item.status === 'm_partial_delivery' ? 'Partial' : item.status) }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="!orderedSet?.length && !isLoading" class="text-center text-muted py-3">
+          No PO items found.
+        </div>
+      </section>
+
+      <!-- Delivery Dates -->
+      <div class="mt-4">
+        <div class="mb-2">
+          <strong>Estimated Delivery Date for Available Quantity:</strong>
+          {{ expDeliveryDate | date:'dd/MM/yyyy' }}
+        </div>
+        <div *ngIf="partialDeliveryDate" class="mb-2">
+          <strong>Estimated Delivery Date for Make-to-Order Items:</strong>
+          {{ partialDeliveryDate | date:'dd/MM/yyyy' }}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

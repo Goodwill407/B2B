@@ -80,15 +80,15 @@ downloadPDFTable() {
 
   // Summary block with background
   doc.setFillColor(230, 240, 255);
-  doc.rect(10, 22, 190, 22, 'F');
+  doc.rect(10, 24, 190, 22, 'F');
   doc.setFontSize(12);
   doc.setTextColor(0,0,0);
-  doc.text(`Design No: ${this.logData?.designNumber || ''}`, 14, 30);
-  doc.text(`Brand Name: ${this.logData?.brandName || ''}`, 110, 30);
-  doc.text(`Total Updates: ${this.logData?.totalUpdates || 0}`, 14, 38);
-  doc.text(`Total Qty Added: ${this.logData?.totalQuantityAdded || 0}`, 70, 38);
-  doc.text(`Total Qty Removed: ${this.logData?.totalQuantityRemoved || 0}`, 130, 38);
-  doc.text(`Latest Update: ${this.formatDate(this.logData?.latestUpdatedAt) || ''}`, 14, 46);
+  doc.text(`Design No: ${this.logData?.designNumber || ''}`, 14, 28);
+  doc.text(`Brand Name: ${this.logData?.brandName || ''}`, 110, 28);
+  doc.text(`Total Updates: ${this.logData?.totalUpdates || 0}`, 14, 36);
+  doc.text(`Total Qty Added: ${this.logData?.totalQuantityAdded || 0}`, 110, 36);
+  doc.text(`Total Qty Removed: ${this.logData?.totalQuantityRemoved || 0}`, 14, 44);
+  doc.text(`Latest Update: ${this.formatDate(this.logData?.latestUpdatedAt) || ''}`, 110, 44);
 
   let currentY = 54;
 
@@ -186,7 +186,7 @@ downloadPDFTable() {
     );
   }
 
-  doc.save(`${this.logData?.designNumber || 'inventory-log'}.pdf`);
+  doc.save(`${this.logData?.designNumber || 'unkown'}   inventory-log.pdf`);
 }
 
 }

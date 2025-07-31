@@ -10,6 +10,8 @@ import { DropdownModule } from 'primeng/dropdown';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { catchError, of } from 'rxjs';
 import Swal from 'sweetalert2';  // Import SweetAlert2
+import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 
 @Component({
   selector: 'app-step-one',
@@ -22,6 +24,7 @@ import Swal from 'sweetalert2';  // Import SweetAlert2
     CommonModule,
     NgxSpinnerModule,
     DropdownModule,
+    AutoCompleteModule,
     CommonModule],
   templateUrl: './step-one.component.html',
   styleUrl: './step-one.component.scss',
@@ -43,12 +46,12 @@ export class StepOneComponent {
   foundSizeSet: any
   sizeChartFields: any[] = [];
   showFlag2: boolean = false;
-
+  
   videoSizeError: string = '';
   userProfile: any
   brandErrorMessage: string = '';
   productDetails: any
-
+  
   // form step
   currentStep = 1;
 
@@ -58,7 +61,7 @@ export class StepOneComponent {
   currencies: any = {}
   // currencyOptions = Object.values(this.currencies);
   selectedCurrency = 'INR'
-
+  
   amount: number | null = null;
   // allProductType = ["Clothing", "Bags", "Jewellery", "Shoes", "accessories", "Footwear"];
   allGender:any=[]
@@ -117,6 +120,10 @@ export class StepOneComponent {
   allTrourserPocket:any=[];
   allIncludedComponent:any=[];  
   allItemLength:any=[];
+  filteredHsnList: any[] = [];
+  // description: string = '';
+  showHsnDropdown: boolean = false;
+
   constructor(private fb: FormBuilder,    
     private authService: AuthService,
     private cd: ChangeDetectorRef,
@@ -126,7 +133,7 @@ export class StepOneComponent {
     private datePipe: DatePipe,
     private direction: DirectionService,
     private router:Router) {
-    this.stepOne = this.fb.group({
+      this.stepOne = this.fb.group({
       
         designNumber: ['', Validators.required],
         brand: ['', Validators.required],
@@ -136,16 +143,24 @@ export class StepOneComponent {
         gender: ['', Validators.required],
         clothing: ['', Validators.required],
         subCategory: ['', Validators.required],      
+        hsnCode:['',Validators.required],
+        hsnGst:['',Validators.required],
+        hsnDescription:[''],
+        dimensions: this.fb.group({
+        length: [''],
+        width: [''],
+        height: [''],
+        weight: ['']
+      }),
+      sizes: this.fb.array([]),        
 
-        sizes: this.fb.array([]),        
-
-        dateOfManufacture: ['', [Validators.required]],
+      dateOfManufacture: ['', [Validators.required]],
         dateOfListing: ['', [Validators.required]],
       }),
+      
+      // set cdn path
 
-    // set cdn path
-    
-
+      
     // get product id from view
     this.route.queryParamMap.subscribe(params => {
       this.productId = params.get('id');
@@ -209,8 +224,50 @@ export class StepOneComponent {
     if (this.productId) {
       this.getProductDataById()
     }
+  }
+
+ private fetchHsnList(search: string) {
+    if (!search || search.trim().length < 1) {
+      return of([]); // Return an empty array if the search term is empty
+    }
     
-  } 
+    const url = `/hsn-gst?hsnCode=${encodeURIComponent(search)}&limit=10&page=1`;
+    
+    // This uses your actual authService to make the API call
+    return this.authService.get(url).pipe(
+      map((res: any) => res.results || []), // Safely access the results array
+      catchError(() => of([])) // Handle any API errors gracefully by returning an empty list
+    );
+  }
+
+   onHsnClear(): void {
+    this.stepOne.patchValue({
+      hsnGst: '',
+      hsnDescription: ''
+    });
+    // this.description = '';
+  }
+
+   onHsnSelect(event: any): void {
+    const selectedHsn = event; // In onSelect, the event itself is the selected object
+    if (selectedHsn) {
+      // console.log(selectedHsn)
+      this.stepOne.patchValue({
+        hsnCode: selectedHsn.value.hsnCode, // Set the control value to the code string
+        hsnGst: selectedHsn.value.gstRate,
+        hsnDescription: selectedHsn.value.description
+      });
+      // this.description = selectedHsn.value.description;
+    }
+  }
+
+   onHsnSearch(event: any): void {
+    const query = event.query;
+    this.fetchHsnList(query).subscribe((results: any[]) => {
+      this.filteredHsnList = results;
+    });
+  }
+
   // stepOne vlidation
   get f() {
     return this.stepOne.controls
@@ -226,7 +283,7 @@ export class StepOneComponent {
     }
 
   }
-
+  
   createFormControls(fields: string[]): void {
     fields.forEach(field => {
       // Define initial value and validators for each field if needed

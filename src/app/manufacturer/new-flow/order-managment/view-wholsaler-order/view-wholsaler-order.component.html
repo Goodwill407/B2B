@@ -82,7 +82,7 @@
                           {{ data.statusAll === 'm_partial_delivery' ? 'Partial Delivery' : data.statusAll }}
                         </td>
                         <td class="text-center">
-                          <button class="btn" [routerLink]="['/mnf/edit-gen-wh-po-order', { id: data.id }]">
+                          <button class="btn" [routerLink]="['/mnf/view-updated-wh-po-order', { id: data.id }]">
                             <i class="bi bi-eye h5"></i>
                           </button>
                         </td>
@@ -134,7 +134,7 @@
                         <td class="text-center">{{ data.poNumber }}</td>
                         <td class="text-center"> {{data.statusAll === 'm_order_confirmed' ? 'Manufacturer Confirmed' : data.statusAll}}</td>
                         <td class="text-center">
-                          <button class="btn" [routerLink]="['/mnf/edit-gen-wh-po-order', { id: data.id }]">
+                          <button class="btn" [routerLink]="['/mnf/view-updated-wh-po-order', { id: data.id }]">
                             <i class="bi bi-eye h5"></i>
                           </button>
                         </td>

@@ -31,7 +31,7 @@ export class InventoryLogsComponent implements OnInit {
   const currentUser = JSON.parse(localStorage.getItem('currentUser')!);
   let apiUrl = `manufacture-inventory-logs?userEmail=${currentUser.email}&limit=${this.rows}&page=${this.page}`;
   if (this.searchText?.trim()) {
-    apiUrl += `&designNumber=${encodeURIComponent(this.searchText.trim())}`;
+    apiUrl += `&search=${encodeURIComponent(this.searchText.trim())}`;
   }
   this.authService.get(apiUrl).subscribe((res: any) => {
     this.tableData = res.results;

@@ -39,6 +39,7 @@ import { AddStockOfProductComponent } from "./inventory-management/add-stock-of-
 import { UpdateStockOfProductComponent } from "./inventory-management/update-stock-of-product/update-stock-of-product.component";
 import { InventoryLogsComponent } from "./inventory-management/inventory-logs/inventory-logs.component";
 import { ViewInventoryLogComponent } from "./inventory-management/view-inventory-log/view-inventory-log.component";
+import { ViewUpdatedWholsalerPoOrderComponent } from "./new-flow/order-managment/view-wholsaler-order/view-updated-wholsaler-po-order/view-updated-wholsaler-po-order.component";
 
 
 export const M_Auth: Route[] = [
@@ -76,6 +77,7 @@ export const M_Auth: Route[] = [
 
     // new created by sk for edit qty page
     { path: 'edit-gen-wh-po-order', component: EditGenWholsalerPoOrderComponent},
+    { path: 'view-updated-wh-po-order', component: ViewUpdatedWholsalerPoOrderComponent},
     { path: 'add-stocks-for-product', component: AddStockOfProductComponent },
     { path: 'update-stocks-for-product', component: UpdateStockOfProductComponent },
     { path: 'inventory-logs', component: InventoryLogsComponent},

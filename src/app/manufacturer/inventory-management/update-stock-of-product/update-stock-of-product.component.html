@@ -1,26 +1,31 @@
 <section class="content">
   <div class="content-block">
+
     <div class="d-flex justify-content-between align-items-center mt-4 mb-4 flex-wrap">
       <h4 class="mb-0">
-        <i class="bi bi-person-vcard-fill h3"></i> View And Update Stock for Product
+        <i class="bi bi-person-vcard-fill h3"></i>
+        View And Update Stock for Product
       </h4>
 
-      <div class="d-flex align-items-center gap-2">
+      <!-- Unified Search Input -->
+      <div class="d-flex align-items-center gap-3">
         <input
           type="text"
           class="form-control"
-          style="width: 3000px"
-          placeholder="Search Design No"
+          style="width: 400px"
+          placeholder="Search by Design or Brand"
           [(ngModel)]="searchText"
         />
         <button class="btn btn-sm btn-outline-secondary" (click)="search()">Search</button>
-        <button class="btn btn-sm btn-outline-danger" (click)="clearSearch()" *ngIf="searchText">
-          ✖
-        </button>
+        <button
+          class="btn btn-sm btn-outline-danger"
+          (click)="clearSearch()"
+          *ngIf="searchText"
+        >✖</button>
       </div>
     </div>
 
-    <!-- Loop through each design -->
+    <!-- Panels -->
     <p-panel
       *ngFor="let design of inventoryStock; let i = index"
       [attr.id]="'panel-' + design._id"
@@ -28,37 +33,28 @@
       [collapsed]="!design.expanded"
       styleClass="mb-3 shadow-sm"
     >
-    <ng-template pTemplate="header">
-      <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-
-        <!-- Left Section: Design and Total Quantity -->
-        <div class="d-flex align-items-center justify-content-between flex-wrap gap-4">
-          <div class="me-5"><strong>Design No:</strong> {{ design._id }}</div>
-          <div class="me-5"><strong>Total Quantity:</strong> {{ design.totalQuantity }}</div>
-
-          <!-- 🔴 Critical Low -->
-          <ng-container class="me-5" *ngIf="countCriticalLow(design.entries) > 0">
-            <span class="badge bg-danger text-white py-2 px-3 fs-6 rounded-pill">
-              Critical Low: {{ countCriticalLow(design.entries) }}
-            </span>
-          </ng-container>
-
-          <!-- 🟡 Near Low -->
-          <ng-container class="me-5" *ngIf="countNearLow(design.entries) > 0">
-            <span class="badge bg-warning text-dark py-2 px-3 fs-6 rounded-pill">
-              Near Low: {{ countNearLow(design.entries) }}
-            </span>
-          </ng-container>
+      <ng-template pTemplate="header">
+        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+          <div class="d-flex align-items-center gap-4 flex-wrap">
+            <div class="me-5"><strong>Design No:</strong> {{ design._id }}</div>
+            <div class="me-5"><strong>Brand Name:</strong> {{ design.entries[0].brandName }}</div>
+            <div class="me-5"><strong>Total Quantity:</strong> {{ design.totalQuantity }}</div>
+            <ng-container *ngIf="countCriticalLow(design.entries) > 0" class="me-5">
+              <span class="badge bg-danger text-white py-2 px-3 fs-6 rounded-pill">
+                Critical Low: {{ countCriticalLow(design.entries) }}
+              </span>
+            </ng-container>
+            <ng-container *ngIf="countNearLow(design.entries) > 0" class="me-5">
+              <span class="badge bg-warning text-dark py-2 px-3 fs-6 rounded-pill">
+                Near Low: {{ countNearLow(design.entries) }}
+              </span>
+            </ng-container>
+          </div>
         </div>
-
-        <!-- Right Side: Collapse Icon is handled by PrimeNG -->
-      </div>
-    </ng-template>
+      </ng-template>
 
       <!-- Universal Input Block -->
       <div class="d-flex flex-wrap align-items-center gap-4 mb-3">
-
-        <!-- Add Quantity -->
         <div class="d-flex align-items-center gap-2 mb-3">
           <label class="fw-semibold mb-0">Add Quantity in All Items:</label>
           <input
@@ -74,9 +70,10 @@
           </button>
         </div>
 
-        <!-- Add Min Quantity Alert -->
         <div class="d-flex align-items-center gap-2 mb-3">
-          <label class="fw-semibold mb-0" style="white-space: nowrap;">Set Min Quantity Alert for All Items:</label>
+          <label class="fw-semibold mb-0" style="white-space: nowrap;">
+            Set Min Quantity Alert for All Items:
+          </label>
           <input
             type="number"
             class="form-control"
@@ -90,16 +87,15 @@
           </button>
         </div>
 
-        <!-- Total Quantity -->
         <div class="d-flex align-items-center my-2 mb-4">
           <label class="fw-bold text-primary">
             Current Total Quantity: {{ getLiveTotalQuantity(design.entries) }}
           </label>
         </div>
-
       </div>
 
-      <p-table [value]="design.entries" [scrollable]="true" scrollHeight="300px" class="p-datatable-sm">  <!-- [value]="design.entries" -->
+      <!-- Entries Table -->
+      <p-table [value]="design.entries" [scrollable]="true" scrollHeight="300px" class="p-datatable-sm">
         <ng-template pTemplate="header">
           <tr>
             <th>#</th>
@@ -113,13 +109,13 @@
             <th>Min Quantity Alert</th>
           </tr>
         </ng-template>
-
-        <!-- RED: quantity <= minimumQuantityAlert | YELLOW: quantity within 10 of alert -->
         <ng-template pTemplate="body" let-product let-rowIndex="rowIndex">
           <tr
             [ngClass]="{
               'bg-danger text-white': product.quantity <= product.minimumQuantityAlert,
-              'bg-warning text-dark': product.quantity > product.minimumQuantityAlert && product.quantity <= product.minimumQuantityAlert + 10
+              'bg-warning text-dark':
+                product.quantity > product.minimumQuantityAlert &&
+                product.quantity <= product.minimumQuantityAlert + 10
             }"
           >
             <td>{{ rowIndex + 1 }}</td>
@@ -131,40 +127,52 @@
             <td>{{ product.colourName }}</td>
             <td>{{ product.standardSize }}</td>
             <td>{{ product.brandSize }}</td>
-           <td style="text-align: center; vertical-align: middle;">
-                <div class="input-wrapper">
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="product.quantity"
-                min="0"
-                (ngModelChange)="validateQuantity(product)"
-                (keydown)="blockInvalidKeys($event)"
-              />
+            <td style="text-align: center; vertical-align: middle;">
+              <div class="input-wrapper">
+                <input
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="product.quantity"
+                  min="0"
+                  (ngModelChange)="validateQuantity(product)"
+                  (keydown)="blockInvalidKeys($event)"
+                />
               </div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
-                <div class="input-wrapper">
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="product.minimumQuantityAlert"
-                min="0"
-                (ngModelChange)="validateAlert(product)"
-                (keydown)="blockInvalidKeys($event)"
-              />
+              <div class="input-wrapper">
+                <input
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="product.minimumQuantityAlert"
+                  min="0"
+                  (ngModelChange)="validateAlert(product)"
+                  (keydown)="blockInvalidKeys($event)"
+                />
               </div>
             </td>
           </tr>
         </ng-template>
       </p-table>
 
+      <!-- Actions -->
       <div class="text-end mt-3">
-        <button class="btn btn-danger px-4 py-2">Dump All Stock</button> &nbsp;
-        <button type="button" class="btn btn-primary px-4 py-2" (click)="submitStockForDesign(design)">
+        <button class="btn btn-danger px-4 py-2">Dump All Stock</button>
+        &nbsp;
+        <button class="btn btn-primary px-4 py-2" (click)="submitStockForDesign(design)">
           <i class="bi bi-box-arrow-in-down"></i> Update Stock
         </button>
       </div>
     </p-panel>
+
+    <!-- Paginator at bottom -->
+    <p-paginator
+      [first]="(page - 1) * rows"
+      [rows]="rows"
+      [totalRecords]="totalRecords"
+      [rowsPerPageOptions]="[10]"
+      (onPageChange)="onPageChange($event)"
+      styleClass="mt-3"
+    ></p-paginator>
   </div>
 </section>

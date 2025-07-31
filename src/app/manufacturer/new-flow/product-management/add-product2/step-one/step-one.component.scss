@@ -86,3 +86,17 @@
       }
     }
   }
+
+  .vertical-line {
+  border-right: 1px solid #ccc; /* or any color you prefer */
+  height: 100%; /* make sure it spans full height */
+  position: relative;
+}
+
+::ng-deep .p-autocomplete-input {
+  height: 16px !important; /* standard Bootstrap input height */
+  border-radius: 4px !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+  /* Add any other input styling as needed */
+}

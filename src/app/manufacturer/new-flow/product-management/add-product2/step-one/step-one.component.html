@@ -860,38 +860,125 @@
                 </div>
             </div>
         </div>
-<!-- new filds for date -->
-        <div *ngIf="showFlag2" class="row mt-2">
-            <div  class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="productTitle">Date Of Manufacture<span
-                        class="required">*</span></label>
-                <input type="date" id="dateOfManufacture" formControlName="dateOfManufacture"
-                    class="form-control"
-                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('dateOfManufacture')?.invalid}">
+            
+    <div class="row mt-2">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+            <!-- The 'align-items-end' class ensures the bottoms of all form controls line up -->
+            <div class="row mt-1">
 
-                <div *ngIf="submittedStep1 && stepOne.get('dateOfManufacture')?.invalid"
-                    class="invalid-feedback">
-                    <div *ngIf="stepOne.get('dateOfManufacture')?.hasError('required')">
-                        Date Of Manufacture is required
+                <!-- HSN Code Autocomplete -->
+                <div class="col-md-2 mb-1">
+                    <label for="hsnCode" class="label-input">
+                        HSN Code<span class="required">*</span>
+                    </label>
+                    <span class="p-fluid">
+                        <p-autoComplete
+                            formControlName="hsnCode"
+                            [suggestions]="filteredHsnList"
+                            (completeMethod)="onHsnSearch($event)"
+                            (onSelect)="onHsnSelect($event)"
+                            (onClear)="onHsnClear()"
+                            field="hsnCode"
+                            [forceSelection]="true"
+                            [minLength]="1"
+                            placeholder="Enter HSN Code"
+                            [dropdown]="false" 
+                            inputStyleClass="form-control"
+                            >
+                            <ng-template let-hsn pTemplate="item">
+                                <div><strong>{{ hsn.hsnCode }}</strong> - {{ hsn.description }}</div>
+                            </ng-template>
+                        </p-autoComplete>
+                    </span>
+                </div>
+
+                <!-- GST Rate -->
+                <div class="col-md-2">
+                    <label for="hsnGst" class="label-input">GST Rate %</label>
+                    <input 
+                        type="text"
+                        formControlName="hsnGst"
+                        class="form-control"
+                        readonly
+                        placeholder="GST rate" />
+                </div>
+
+                <!-- Description -->
+                <div class="col-md-8">
+                    <label for="descriptionDisplay">Description</label>
+                    <!-- Using a readonly input ensures it has the same height as the others for perfect alignment -->
+                    <input
+                        id="descriptionDisplay"
+                        type="text"
+                        formControlName="hsnDescription"
+                        class="form-control"
+                        readonly
+                        placeholder="Description will be auto-filled"
+                        style="background-color: #f8f9fa; cursor: default;" />
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+        <div class="row mt-2">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 vertical-line" formGroupName="dimensions">
+                <label for=""><u>Packaging Dimensions:- </u></label>
+                <div class="row mt-1">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                        <label for="length" class="label-input">Length</label>
+                        <input type="number" id="length" class="form-control" placeholder="in cm" formControlName="length">
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                        <label for="width" class="label-input">Width</label>
+                        <input type="number" id="width" class="form-control" placeholder="in cm" formControlName="width">
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                        <label for="height" class="label-input">Height</label>
+                        <input type="number" id="height" class="form-control" placeholder="in cm" formControlName="height">
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                        <label for="weight" class="label-input">Weight</label>
+                        <input type="number" id="weight" class="form-control" placeholder="in gm" formControlName="weight">
                     </div>
                 </div>
             </div>
-            <div  class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-                <label class="label-input" for="dateOfListing">Date Of Listing<span
-                        class="required">*</span></label>
-                <input type="date" id="dateOfListing" formControlName="dateOfListing"
-                    class="form-control"
-                    [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('dateOfListing')?.invalid}">
-                <!-- Validation feedback for the Product Title field -->
-                <div *ngIf="submittedStep1 && stepOne.get('dateOfListing')?.invalid"
-                    class="invalid-feedback">
-                    <div *ngIf="stepOne.get('dateOfListing')?.hasError('required')">
-                        Date Of Listing is required
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                <label for=""></label>
+                <div *ngIf="showFlag2" class="row mt-1">
+                    <div  class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                        <label class="label-input" for="productTitle">Date Of Manufacture<span
+                                class="required">*</span></label>
+                        <input type="date" id="dateOfManufacture" formControlName="dateOfManufacture"
+                            class="form-control"
+                            [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('dateOfManufacture')?.invalid}">
+
+                        <div *ngIf="submittedStep1 && stepOne.get('dateOfManufacture')?.invalid"
+                            class="invalid-feedback">
+                            <div *ngIf="stepOne.get('dateOfManufacture')?.hasError('required')">
+                                Date Of Manufacture is required
+                            </div>
+                        </div>
+                    </div>
+                    <div  class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                        <label class="label-input" for="dateOfListing">Date Of Listing<span
+                                class="required">*</span></label>
+                        <input type="date" id="dateOfListing" formControlName="dateOfListing"
+                            class="form-control"
+                            [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('dateOfListing')?.invalid}">
+                        <!-- Validation feedback for the Product Title field -->
+                        <div *ngIf="submittedStep1 && stepOne.get('dateOfListing')?.invalid"
+                            class="invalid-feedback">
+                            <div *ngIf="stepOne.get('dateOfListing')?.hasError('required')">
+                                Date Of Listing is required
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 
     <div class="d-flex justify-content-center  mt-4">

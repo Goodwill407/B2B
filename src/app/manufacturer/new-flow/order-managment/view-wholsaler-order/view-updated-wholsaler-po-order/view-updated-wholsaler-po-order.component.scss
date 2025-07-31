@@ -1,0 +1,68 @@
+#purchase-order {
+  width: 900px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  border: 1px solid #ccc;
+  padding: 24px;
+}
+
+#purchase-order .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 10px;
+}
+
+#purchase-order .header .company-info h1 {
+  font-size: 26px;
+  margin: 0;
+}
+
+#purchase-order .header .order-info {
+  text-align: right;
+}
+
+#purchase-order .header .order-info p {
+  margin: 4px 0;
+  font-size: 15px;
+}
+
+/* Info section */
+#purchase-order .border {
+  background: #fafbff;
+}
+
+/* Table styles */
+#purchase-order .table td,
+#purchase-order .table th {
+  padding: 6px 10px;
+  font-size: 15px;
+  white-space: nowrap;
+  vertical-align: middle;
+  max-width: 150px;
+  word-break: break-word;
+}
+#purchase-order .table th {
+  background-color: #f8f8f8;
+  font-weight: bold;
+}
+.partial-row {
+  background: #fff9e2 !important; /* light yellow for partial rows */
+}
+.badge {
+  font-size: 13px;
+  padding: 4px 12px;
+}
+
+@media (max-width: 900px) {
+  #purchase-order {
+    width: 100%;
+    padding: 6px;
+  }
+  #purchase-order .table th,
+  #purchase-order .table td {
+    font-size: 12px;
+    padding: 4px 5px;
+  }
+}
