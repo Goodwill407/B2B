@@ -1734,18 +1734,7 @@ path: '',
     badgeClass: '',
     role: ['retailer'],
     submenu: [
-      {
-        path: '/retailer/ret-update-stock-of-product',
-        title: "Product List of Manufacturer",
-        iconType: '',
-        icon: '',
-        class: 'ml-menu',
-        groupTitle: false,
-        badge: '',
-        badgeClass: '',
-        role: [''],
-        submenu: [],
-      },
+      
       {
         path: '/retailer/product-list-of-mfg',
         title: "Product List of Manufacturer",

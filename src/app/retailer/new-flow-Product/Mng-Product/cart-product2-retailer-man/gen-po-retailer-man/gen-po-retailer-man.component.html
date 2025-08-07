@@ -9,9 +9,9 @@
     </h4>
 
     <!-- Button to Download PDF -->
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-success" (click)="printPO()">Download PDF</button>
-    </div>
+    <!-- <div class="d-flex justify-content-end">
+      <button class="btn btn-success" (click)="downloadPO()">Download PDF</button>
+    </div> -->
 
     <!-- Purchase Order Container -->
     <div id="purchase-order" class="challan-container card my-2">
@@ -52,74 +52,92 @@
       </div>
 
       <!-- Order Details Section -->
-      <section class="order-details">
-        <h4 class="text-center mb-3">Order Details</h4>
+      <!-- ORDER DETAILS SECTION - Single Table, Clean Design -->
+        <section class="order-details">
+          <h4 class="text-center mb-3">Order Details</h4>
 
-        <ng-container *ngFor="let chunk of tableChunks; let i = index">
-          <div [id]="'table-part-' + i" class="table-chunk mb-4">
-            <p-table [value]="chunk" [responsive]="true" [paginator]="false" class="bordered-table">
+          <div class="table-responsive">
+            <p-table [value]="purchaseOrder.products" [responsive]="true" [paginator]="false" class="bordered-table">
               <ng-template pTemplate="header">
                 <tr>
                   <th>Sr. No.</th>
                   <th>Design No.</th>
+                  <th>HSN Code</th>
                   <th>Colour Name</th>
-                    <th>Gender</th>
+                  <th>Gender</th>
                   <th>Size</th>
                   <th>Rate (₹)</th>
-                  <th>Quantity</th>
-                  <th>Total Price (₹)</th>
+                  <th>Qty</th>
+                  <th>Taxable Value (₹)</th>
+                  <th>GST (%)</th>
+                  <th *ngIf="isIntraState">CGST (₹)</th>
+                  <th *ngIf="isIntraState">SGST (₹)</th>
+                  <th *ngIf="!isIntraState">IGST (₹)</th>
+                  <th>Total with GST (₹)</th>
                 </tr>
               </ng-template>
 
               <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
                 <tr>
-                  <td>{{ i * 20 + rowIndex + 1 }}</td>
+                  <td>{{ rowIndex + 1 }}</td>
                   <td>{{ item.designNumber }}</td>
+                  <td>{{ item.hsnCode }}</td>
                   <td>{{ item.colourName }}</td>
-                   <td>{{ item.gender }}</td>
+                  <td>{{ item.gender }}</td>
                   <td>{{ item.size }}</td>
-                  <td>{{ item.price | indianCurrency}}</td>
+                  <td>{{ item.price | indianCurrency }}</td>
                   <td>{{ item.quantity }}</td>
-                  <td class="text-end">{{ item.quantity * item.price | indianCurrency }}</td>
+                  <td class="text-end">{{ getGstAmounts(item).taxable | indianCurrency }}</td>
+                  <td>{{ item.hsnGst }}%</td>
+                  <td class="text-end" *ngIf="isIntraState">{{ getGstAmounts(item).cgst | indianCurrency }}</td>
+                  <td class="text-end" *ngIf="isIntraState">{{ getGstAmounts(item).sgst | indianCurrency }}</td>
+                  <td class="text-end" *ngIf="!isIntraState">{{ getGstAmounts(item).igst | indianCurrency }}</td>
+                  <td class="text-end" >{{ getGstAmounts(item).totalWithGst | indianCurrency }}</td>
                 </tr>
               </ng-template>
 
-              <ng-template pTemplate="footer" *ngIf="i === tableChunks.length - 1">
+              <ng-template pTemplate="footer">
+                <!-- Total Row -->
+                <tr style="background: #f0f6f9; font-weight: bold;">
+                  <td colspan="7" style="text-align:right; padding-right: 20px;">Total:</td>
+                  <td>{{ orderTotals.totalQty }}</td>
+                  <td class="text-end">{{ orderTotals.totalTaxable | indianCurrency }}</td>
+                  <td></td>
+                  <td *ngIf="isIntraState" class="text-end">{{ orderTotals.totalCGST | indianCurrency }}</td>
+                  <td *ngIf="isIntraState" class="text-end">{{ orderTotals.totalSGST | indianCurrency }}</td>
+                  <td *ngIf="!isIntraState" class="text-end">{{ orderTotals.totalIGST | indianCurrency }}</td>
+                  <td class="text-end">{{ orderTotals.totalWithGST | indianCurrency }}</td>
+                </tr>
+                <!-- Discount on Final Total -->
                 <tr>
-                  
-                  <td colspan="7" style="text-align: right; font-weight: bold;">Subtotal (₹):</td>
-                  <td class="text-end">{{ Totalsub | indianCurrency }}</td>
+                  <td [attr.colspan]="colspan" style="text-align: right; font-weight: bold;">Discount ({{ purchaseOrder.ProductDiscount }}%):</td>
+                  <td class="text-end">
+                    -{{ discountAmount | indianCurrency }}
+                  </td>
+                </tr>
+                <!-- Grand Total (after discount) -->
+                <tr>
+                  <td [attr.colspan]="colspan" style="text-align: right; font-size: 1.1em; font-weight: bold; color: #002080;">Grand Total (₹):</td>
+                  <td class="text-end" style="font-size: 1.1em; font-weight: bold; color: #002080;">
+                    {{ actualGrandTotal | indianCurrency }}
+                  </td>
+                </tr>
+                <!-- Grand Total in Words -->
+                <tr>
+                  <td [attr.colspan]="colspan+1" style="font-weight: bold; font-size: 1.1em; color: #002080;">
+                    Grand Total (in words): {{ actualGrandTotal | amountInWords }}
+                  </td>
                 </tr>
                 <tr>
-                  
-                  <td colspan="7" style="text-align: right; font-weight: bold;">Discount (₹ -{{ purchaseOrder.ProductDiscount }}%):</td>
-                  <td class="text-end">{{ (Totalsub - discountedTotal) | indianCurrency }}</td>
-                </tr>
-                <tr *ngIf="sgst && cgst">
-                  
-                  <td colspan="7" style="text-align: right; font-weight: bold;">SGST (₹ +9%):</td>
-                  <td class="text-end">{{ sgst | indianCurrency }}</td>
-                </tr>
-                <tr *ngIf="sgst && cgst">
-                  
-                  <td  colspan="7" style="text-align: right; font-weight: bold;">CGST (₹ +9%):</td>
-                  <td class="text-end">{{ cgst | indianCurrency }}</td>
-                </tr>
-                <tr *ngIf="igst">
-                  
-                  <td colspan="7" style="text-align: right; font-weight: bold;">IGST (₹ +18%):</td>
-                  <td class="text-end">{{ igst | indianCurrency }}</td>
-                </tr>
-                <tr>
-                  
-                  <td colspan="7" style="text-align: right; font-weight: bold;">Grand Total (₹):</td>
-                  <td class="text-end">{{ totalGrandTotal | indianCurrency }}</td>
+                  <td [attr.colspan]="colspan+1" style="font-weight: bold; font-size: 1.0em; color: #006600;">
+                    Total GST Paid: ₹ {{totalGSTAmount}} -  {{ totalGSTAmount | amountInWords }}
+                  </td>
                 </tr>
               </ng-template>
+
             </p-table>
           </div>
-        </ng-container>
-      </section>
+        </section>
     </div>
 
     <!-- Footer Button -->

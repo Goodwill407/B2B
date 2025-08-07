@@ -8,7 +8,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 import {  RouterModule } from '@angular/router';
 import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
-
+import { statusAllPoDisplayPipe } from "../../../../statusAll-po";
 @Component({
   selector: 'app-view-retailorpo-man',
   standalone: true,
@@ -16,7 +16,8 @@ import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-
       CommonModule,
     TableModule,
     PaginatorModule,RouterModule,
-    BottomSideAdvertiseComponent
+    BottomSideAdvertiseComponent,
+    statusAllPoDisplayPipe
   ],
   templateUrl: './view-retailorpo-man.component.html',
   styleUrl: './view-retailorpo-man.component.scss'

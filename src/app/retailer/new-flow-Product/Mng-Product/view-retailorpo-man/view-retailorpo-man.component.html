@@ -25,7 +25,7 @@
                 <td class="text-center">{{ data.manufacturer?.companyName || 'N/A' }}</td>
                 <td class="text-center">{{ data.manufacturer?.email || 'N/A' }}</td>
                 <td class="text-center">{{ data.poNumber || 'N/A' }}</td>
-                <td class="text-center">{{ data.statusAll || 'N/A' }}</td>
+                <td class="text-center">{{ data.statusAll | statusAllPoDisplay }}</td>
                 <td class="text-center">
                   <a [routerLink]="['/retailer/new/view-retailerpotoman', { id: data.id }]">
                     <button class="btn"><i class="bi bi-eye h5"></i></button>

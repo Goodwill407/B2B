@@ -28,6 +28,8 @@ export class ViewProductDetailsComponent {
   hoveredColourName: string = '';
   colours: any;
   productType: any;
+  hsnCode: any;
+  hsnGst: any;
   constructor(private location: Location, private renderer: Renderer2, private route: ActivatedRoute, public authService: AuthService, private fb: FormBuilder, private communicationService: CommunicationService, private dialog: MatDialog) { }
   @ViewChild('mainImage') mainImage!: ElementRef; // Reference to the main image element
   zoomed: boolean = false;
@@ -61,7 +63,9 @@ export class ViewProductDetailsComponent {
     price: any;
     designNumber: any;
     colour: any,
-    colourImage: any
+    colourImage: any,
+    hsnCode:any,
+    hsnGst:any
   }> = [];
 
   ngOnInit(): void {
@@ -138,6 +142,8 @@ export class ViewProductDetailsComponent {
         this.selectColourCollection(this.product.colours[0]);
         this.quantity = this.product.minimumOrderQty;
         this.designno = res.designNumber;
+        this.hsnCode = res.hsnCode;
+        this.hsnGst = res.hsnGst;
       }
       this.checkWishlist();
     });
@@ -470,7 +476,9 @@ export class ViewProductDetailsComponent {
         price: this.calculatedPrice.toString(),
         designNumber: this.designno,
         colour: colourHex,
-        colourImage: colourImage
+        colourImage: colourImage,
+        hsnCode: this.hsnCode,
+        hsnGst: this.hsnGst
       });
     }
 
