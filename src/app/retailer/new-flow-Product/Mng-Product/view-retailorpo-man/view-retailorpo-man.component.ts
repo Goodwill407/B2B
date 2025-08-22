@@ -1,21 +1,23 @@
-import { CommonModule, NgFor } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
-import {  RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
+import { MatTabsModule } from '@angular/material/tabs';
 import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 import { statusAllPoDisplayPipe } from "../../../../statusAll-po";
+
 @Component({
   selector: 'app-view-retailorpo-man',
   standalone: true,
   imports: [
-      CommonModule,
+    CommonModule,
     TableModule,
-    PaginatorModule,RouterModule,
+    PaginatorModule,
+    RouterModule,
+    MatTabsModule,
     BottomSideAdvertiseComponent,
     statusAllPoDisplayPipe
   ],
@@ -23,159 +25,96 @@ import { statusAllPoDisplayPipe } from "../../../../statusAll-po";
   styleUrl: './view-retailorpo-man.component.scss'
 })
 export class ViewRetailorpoManComponent {
-purchaseOrder: any = {
-    supplierName: '',
-    supplierDetails: '',
-    supplierAddress: '',
-    supplierContact: '',
-    supplierGSTIN: '',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/38/MONOGRAM_LOGO_Color_200x200_v.png',
-    orderNo: 'PO123',
-    orderDate: new Date().toLocaleDateString(),
-    deliveryDate: '',
-    buyerName: '',
-    buyerAddress: '',
-    buyerPhone: '',
-    buyerGSTIN: '',
-    products: [],
-    totalAmount: 0,
-    totalInWords: ''
-  };
-  email: string | null = null;
-  productBy: string | null = null;
-  userProfile: any;
-  showFlag: boolean = false;
-  tableData: any;
-  totalResults: any;
+  
+  // Data arrays for different status tabs
+  pendingData: any[] = [];
+  partialData: any[] = [];
+  confirmedData: any[] = [];
+
+  // Pagination variables for each tab
+  firstPending: number = 0;
+  firstPartial: number = 0;
+  firstConfirmed: number = 0;
+
+  totalPendingResults: number = 0;
+  totalPartialResults: number = 0;
+  totalConfirmedResults: number = 0;
+
   limit = 10;
-  page: number = 1
-  first: number = 0;
-  rows: number = 10;
-  isNewPO: boolean = false;
+  userProfile: any;
+
   bottomAdImage: string[] = [
     'assets/images/adv/ads2.jpg',
-  'assets/images/adv/ads.jpg'
+    'assets/images/adv/ads.jpg'
   ];
 
-
-  constructor(private route: ActivatedRoute, private authService: AuthService, private communicationService: CommunicationService) { }
+  constructor(
+    private route: ActivatedRoute, 
+    private authService: AuthService, 
+    private communicationService: CommunicationService
+  ) { }
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe(params => {
       this.userProfile = JSON.parse(localStorage.getItem('currentUser')!);
-      this.userProfile.email
-
-  
-        this.getAllData();
-    
+      
+      // Load all tab data on init
+      this.getPendingData();
+      this.getPartialData();
+      this.getConfirmedData();
     });
   }
 
-  getAllData() {
-    this.showFlag = false;
-    this.authService.get(`po-retailer-to-manufacture?email=${this.authService.currentUserValue.email}&page=${this.page}&limit=${this.limit}`).subscribe((res: any) => {
-      this.tableData = res.results;
-      console.log(res)
-      this.totalResults = res.totalResults;
-    })
-  }
+  // Individual methods for each status
+  getPendingData() {
+    const skip = this.firstPending;
+    const limit = this.limit;
 
-  patchData(data: any) {
-    this.purchaseOrder = data;
-    this.isNewPO = false;  // Set to false to hide the "Generate PO" button
-    this.showFlag = true;  // Show the purchase order details
-  }
-
-  generatePO(obj: any) {
-    this.authService.post('product-order', obj).subscribe((res: any) => {
-      this.communicationService.showNotification('snackbar-success', 'PO Generated Successfully .. !', 'bottom', 'center');
-      this.getAllData();
-      this.isNewPO = false;  // After generating, ensure the button is hidden
-    });
-  }
-
-  onPageChange(event: any) {
-    this.page = event.page + 1;
-    this.limit = event.rows;
-    this.getAllData();
-  }
-
-  convertNumberToWords(amount: number): string {
-    const units = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
-    const teens = ["Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
-    const tens = ["", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
-    const thousands = ["", "Thousand", "Million", "Billion"];
-
-    if (amount === 0) return "Zero";
-
-    let words = '';
-
-    function numberToWords(num: number, index: number): string {
-      let str = '';
-      if (num > 99) {
-        str += units[Math.floor(num / 100)] + " Hundred ";
-        num %= 100;
-      }
-      if (num > 10 && num < 20) {
-        str += teens[num - 11] + " ";
-      } else {
-        str += tens[Math.floor(num / 10)] + " ";
-        str += units[num % 10] + " ";
-      }
-      if (str.trim().length > 0) {
-        str += thousands[index] + " ";
-      }
-      return str;
-    }
-
-    let i = 0;
-    while (amount > 0) {
-      words = numberToWords(amount % 1000, i) + words;
-      amount = Math.floor(amount / 1000);
-      i++;
-    }
-
-    return words.trim();
-  }
-
-
-  printPurchaseOrder(): void {
-    const data = document.getElementById('purchase-order');
-    if (data) {
-      html2canvas(data, {
-        scale: 3,  // Adjust scale for better quality
-        useCORS: true,
-      }).then((canvas) => {
-        const imgWidth = 208;  // A4 page width in mm
-        const pageHeight = 295;  // A4 page height in mm
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        let heightLeft = imgHeight;
-  
-        const contentDataURL = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');  // Create new PDF
-        const margin = 10;  // Margin for PDF
-        let position = margin;
-  
-        // Add first page
-        pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
-        heightLeft -= pageHeight;
-  
-        // Loop over content to add remaining pages if content exceeds one page
-        while (heightLeft > 0) {
-          pdf.addPage();  // Add new page
-          position = margin - heightLeft;  // Position for the next page
-          pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
-          heightLeft -= pageHeight;
-        }
-  
-        // Save PDF file
-        pdf.save('purchase-order.pdf');
-      }).catch((error) => {
-        console.error("Error generating PDF:", error);
+    this.authService.get(`po-retailer-to-manufacture?email=${this.authService.currentUserValue.email}&statusAll=pending&skip=${skip}&limit=${limit}`)
+      .subscribe((res: any) => {
+        this.pendingData = res.results || [];
+        this.totalPendingResults = res.totalResults || 0;
       });
-    } else {
-      console.error("Element with id 'purchase-order' not found.");
-    }
   }
-  
+
+  getPartialData() {
+    const skip = this.firstPartial;
+    const limit = this.limit;
+
+    this.authService.get(`po-retailer-to-manufacture?email=${this.authService.currentUserValue.email}&statusAll=m_partial_delivery&skip=${skip}&limit=${limit}`)
+      .subscribe((res: any) => {
+        this.partialData = res.results || [];
+        this.totalPartialResults = res.totalResults || 0;
+      });
+  }
+
+  getConfirmedData() {
+    const skip = this.firstConfirmed;
+    const limit = this.limit;
+
+    this.authService.get(`po-retailer-to-manufacture?email=${this.authService.currentUserValue.email}&statusAll=m_order_confirmed&skip=${skip}&limit=${limit}`)
+      .subscribe((res: any) => {
+        this.confirmedData = res.results || [];
+        this.totalConfirmedResults = res.totalResults || 0;
+      });
+  }
+
+  // Pagination handlers for each tab
+  onPendingPageChange(event: any) {
+    this.firstPending = event.first;
+    this.limit = event.rows;
+    this.getPendingData();
+  }
+
+  onPartialPageChange(event: any) {
+    this.firstPartial = event.first;
+    this.limit = event.rows;
+    this.getPartialData();
+  }
+
+  onConfirmedPageChange(event: any) {
+    this.firstConfirmed = event.first;
+    this.limit = event.rows;
+    this.getConfirmedData();
+  }
 }

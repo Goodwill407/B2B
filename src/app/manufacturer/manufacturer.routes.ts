@@ -41,6 +41,7 @@ import { InventoryLogsComponent } from "./inventory-management/inventory-logs/in
 import { ViewInventoryLogComponent } from "./inventory-management/view-inventory-log/view-inventory-log.component";
 import { ViewUpdatedWholsalerPoOrderComponent } from "./new-flow/order-managment/view-wholsaler-order/view-updated-wholsaler-po-order/view-updated-wholsaler-po-order.component";
 
+import { ViewQtyUpdatedPoComponent } from "./new-flow/order-managment/view-retailer-order/view-qty-updated-po/view-qty-updated-po.component";
 
 export const M_Auth: Route[] = [
     { path: 'new', loadChildren:()=> import('./new-flow/new_flow.route').then((m)=>m.NewFlow)},
@@ -90,4 +91,6 @@ export const M_Auth: Route[] = [
 { path: 'ret-po-list-view', component: RetailerToManPoViewComponent },
 { path: 'ret-list', component: ViewRetailerOrderComponent },
 { path: 'ret-list-single-view', component: GenRetailerOrderPoComponent },
+
+{ path:'ret-updated-qty-po-view', component: ViewQtyUpdatedPoComponent }
 ]

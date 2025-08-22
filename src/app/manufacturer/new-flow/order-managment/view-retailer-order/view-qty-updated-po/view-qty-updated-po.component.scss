@@ -1,8 +1,8 @@
-/* gen-retailer-order-po.component.scss */
+/* view-qty-updated-po.component.scss */
 
 /* Main purchase order container */
 #purchase-order {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
   font-family: Arial, sans-serif;
   border: 1px solid #ccc;
@@ -40,12 +40,12 @@
   border: none;
   padding: 0;
   margin-right: 10px;
-  // color: #007bff;
+//   color: #007bff;
   transition: color 0.3s ease;
 }
 
 .btn.navigate:hover {
-  color: #0056b3;
+//   color: #0056b3;
 }
 
 .btn.navigate i {
@@ -64,7 +64,7 @@
   margin-left: 10px;
 }
 
-/* Info cards styling - uniform for all cards */
+/* Info cards styling */
 #purchase-order .border {
   background: #f8f9fa;
   border: 1px solid #dee2e6 !important;
@@ -80,7 +80,7 @@
 #purchase-order .border h5 {
   color: #495057;
   font-weight: 600;
-  // border-bottom: 2px solid #007bff;
+//   border-bottom: 2px solid #007bff;
   padding-bottom: 5px;
   margin-bottom: 15px;
 }
@@ -99,18 +99,34 @@
   display: inline-block;
 }
 
+/* Status badges */
+.badge-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.badge-warning {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.badge-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
 /* Table styling */
 #purchase-order .table.table-bordered {
   margin-top: 20px;
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 #purchase-order .table th {
   background-color: #f1f3f4;
-  padding: 8px 6px;
-  font-size: 13px;
+  padding: 8px 4px;
+  font-size: 12px;
   font-weight: 600;
   vertical-align: middle;
   text-align: center;
@@ -120,33 +136,22 @@
 
 #purchase-order .table td {
   padding: 6px 4px;
-  font-size: 13px;
+  font-size: 12px;
   vertical-align: middle;
   text-align: center;
   border: 1px solid #dee2e6;
   color: #333;
 }
 
-/* Enhanced row highlighting */
+/* Row highlighting - YELLOW for partial delivery */
 #purchase-order .partial-row {
-  background-color: #fff8e1 !important;
-  border-left: 4px solid #ff9800;
-}
-
-/* Enhanced stock level indicators */
-#purchase-order .low-stock {
   background-color: #fff3cd !important;
-  color: #856404;
-  font-weight: 600;
-  border: 2px solid #ffc107;
+  border-left: 4px solid #ffc107;
 }
 
-#purchase-order .out-of-stock {
-  background-color: #f8d7da !important;
-  color: #b71c1c;
-  font-weight: bold;
-  border: 2px solid #dc3545;
-  animation: pulse 1.5s ease-in-out infinite alternate;
+#purchase-order .confirmed-row {
+  background-color: #d4edda !important;
+  border-left: 4px solid #28a745;
 }
 
 /* Quantity mismatch highlighting */
@@ -154,104 +159,52 @@
   background-color: #fff3cd !important;
   color: #856404;
   font-weight: 600;
-  border: 2px solid #ffc107 !important;
 }
 
-/* Pulse animation for critical alerts */
-@keyframes pulse {
-  from { opacity: 1; }
-  to { opacity: 0.7; }
-}
-
-/* Input field styling */
-#purchase-order input[type="number"] {
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  font-size: 13px;
-  text-align: center;
-  padding: 4px 6px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-#purchase-order input[type="number"]:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-  outline: none;
-}
-
-/* Invalid input styling */
-input.is-invalid {
-  border: 2px solid #dc3545 !important;
-  box-shadow: 0 0 5px rgba(220, 53, 69, 0.4) !important;
-  background-color: #fff5f5;
-}
-
-/* Error message styling */
-.text-danger.small {
-  font-size: 11px;
-  font-weight: 500;
-  margin-top: 2px;
-}
-
-/* Delivery date section */
-.row .col-form-label {
-  font-weight: 500;
-  color: #495057;
-  font-size: 14px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-}
-
-#purchase-order input[type="date"] {
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  padding: 6px 8px;
-  font-size: 14px;
-  transition: border-color 0.3s ease;
-}
-
-#purchase-order input[type="date"]:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-  outline: none;
-}
-
-/* Update button styling */
-.btn-success {
-  background-color: #28a745;
-  border-color: #28a745;
-  padding: 12px 35px;
+#purchase-order .confirmed-qty {
+  background-color: #d4edda !important;
+  color: #155724;
   font-weight: 600;
-  border-radius: 5px;
-  transition: all 0.3s ease;
-  font-size: 16px;
 }
 
-.btn-success:hover:not(:disabled) {
-  background-color: #218838;
-  border-color: #1e7e34;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+#purchase-order .pending-qty.has-pending {
+  background-color: #f8d7da !important;
+  color: #721c24;
+  font-weight: 600;
 }
 
-.btn-success:disabled {
-  background-color: #6c757d;
-  border-color: #6c757d;
-  cursor: not-allowed;
-  opacity: 0.65;
+/* Item images */
+.item-image {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
 }
 
-/* Transport and Bank details styling */
-#purchase-order .border .row {
-  margin: 0;
+/* Color display */
+.color-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
 
-#purchase-order .border .col-md-6 {
-  padding-left: 0;
-  padding-right: 15px;
+.color-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  display: inline-block;
 }
 
-/* Enhanced responsive design */
+/* Table footer */
+#purchase-order .table tfoot td {
+  font-weight: 600;
+  background-color: #f8f9fa;
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
   #purchase-order .header {
     flex-direction: column;
@@ -274,7 +227,7 @@ input.is-invalid {
   }
   
   #purchase-order .table {
-    font-size: 12px;
+    font-size: 11px;
   }
   
   #purchase-order .table th,
@@ -292,9 +245,14 @@ input.is-invalid {
     margin-left: 0;
   }
 
-  #purchase-order .border .col-md-6 {
-    padding-right: 0;
-    margin-bottom: 10px;
+  .item-image {
+    width: 30px;
+    height: 30px;
+  }
+
+  .color-swatch {
+    width: 15px;
+    height: 15px;
   }
 }
 
@@ -304,19 +262,10 @@ input.is-invalid {
     padding: 15px !important;
   }
   
-  .row .col-form-label {
-    font-size: 13px;
-    margin-bottom: 5px;
-  }
-  
-  #purchase-order input[type="number"] {
-    width: 60px !important;
-    font-size: 12px;
-  }
-  
-  .btn-success {
-    padding: 10px 25px;
-    font-size: 14px;
+  #purchase-order .table th,
+  #purchase-order .table td {
+    padding: 3px 1px;
+    font-size: 10px;
   }
 }
 
@@ -333,12 +282,7 @@ input.is-invalid {
     display: none !important;
   }
   
-  #purchase-order input {
-    border: none;
-    background: transparent;
-  }
-  
-  .qty-mismatch, .low-stock, .out-of-stock {
+  .partial-row, .confirmed-row, .qty-mismatch, .confirmed-qty, .has-pending {
     background: transparent !important;
     border: 1px solid #000 !important;
   }

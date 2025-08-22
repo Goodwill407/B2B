@@ -1,11 +1,11 @@
 <section class="content">
   <div class="content-block">
-    <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> {{ isNewPO ? 'Generate PO' : 'PO List' }}</h4>
+    <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Retailer's PO List via Status</h4>
     <div class="card mt-3 p-4">
       <mat-tab-group>
       
         <!-- PENDING TAB -->
-        <mat-tab label="Pending">
+        <mat-tab label="Recieved Order">
           <div class="card mt-3 p-4">
             <div class="p-grid p-fluid">
               <div class="p-col-12 text-center">
@@ -16,7 +16,7 @@
                       <th>Company Name</th>
                       <th>Email</th>
                       <th>PO Number</th>
-                      <th>Status</th>
+                      <!-- <th>Status</th> -->
                       <th>View</th>
                     </tr>
                   </ng-template>
@@ -26,7 +26,7 @@
                       <td class="text-center">{{ data.retailer.companyName }}</td>
                       <td class="text-center">{{ data.retailer.email }}</td>
                       <td class="text-center">{{ data.poNumber }}</td>
-                      <td class="text-center">{{ data.status }}</td>
+                      <!-- <td class="text-center">{{ data.status }}</td> -->
                       <td class="text-center">
                         <button class="btn" [routerLink]="['/mnf/ret-list-single-view', { id: data.id }]">
                           <i class="bi bi-eye h5"></i>
@@ -40,7 +40,7 @@
                   <p>PO List Data Not Found. [Server Error]</p>
                 </div>
                 <div *ngIf="pendingData.length == 0" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
-                  <p>Your PO List is Currently Empty.</p>
+                  <p>Your Pending PO List is Currently Empty.</p>
                 </div>
 
                 <p-paginator
@@ -56,8 +56,60 @@
           </div>
         </mat-tab>
 
+        <!-- PARTIAL DELIVERY TAB -->
+        <mat-tab label="Partial Delivery">
+          <div class="card mt-3 p-4">
+            <div class="p-grid p-fluid">
+              <div class="p-col-12 text-center">
+                <p-table [value]="partialData">
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th>Retailer's Name</th>
+                      <th>Company Name</th>
+                      <th>Email</th>
+                      <th>PO Number</th>
+                      <!-- <th>Status</th> -->
+                      <th>View</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-data>
+                    <tr>
+                      <td class="text-center">{{ data.retailer.fullName }}</td>
+                      <td class="text-center">{{ data.retailer.companyName }}</td>
+                      <td class="text-center">{{ data.retailer.email }}</td>
+                      <td class="text-center">{{ data.poNumber }}</td>
+                      <!-- <td class="text-center">{{ data.status }}</td> -->
+                      <td class="text-center">
+                        <button class="btn" [routerLink]="['/mnf/ret-updated-qty-po-view', { id: data.id }]">
+                          <i class="bi bi-eye h5"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+
+                <div *ngIf="!partialData" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
+                  <p>PO List Data Not Found. [Server Error]</p>
+                </div>
+                <div *ngIf="partialData.length == 0" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
+                  <p>Your Partial Delivery PO List is Currently Empty.</p>
+                </div>
+
+                <p-paginator
+                  *ngIf="partialData.length > 0"
+                  (onPageChange)="onPartialPageChange($event)"
+                  [first]="firstPartial"
+                  [rows]="limit"
+                  [totalRecords]="totalPartialResults"
+                  [rowsPerPageOptions]="[10, 20, 30]">
+                </p-paginator>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
         <!-- UPDATED TAB -->
-        <mat-tab label="Updated">
+        <mat-tab label="Confirmed Order">
           <div class="card mt-3 p-4">
             <div class="p-grid p-fluid">
               <div class="p-col-12 text-center">
@@ -68,7 +120,7 @@
                       <th>Company Name</th>
                       <th>Email</th>
                       <th>PO Number</th>
-                      <th>Status</th>
+                      <!-- <th>Status</th> -->
                       <th>View</th>
                     </tr>
                   </ng-template>
@@ -78,9 +130,9 @@
                       <td class="text-center">{{ data.retailer.companyName }}</td>
                       <td class="text-center">{{ data.retailer.email }}</td>
                       <td class="text-center">{{ data.poNumber }}</td>
-                      <td class="text-center">{{ data.status }}</td>
+                      <!-- <td class="text-center">{{ data.statusAll | statusAllPoDisplay }}</td> -->
                       <td class="text-center">
-                        <button class="btn" [routerLink]="['/mnf/ret-list-single-view', { id: data.id }]">
+                        <button class="btn" [routerLink]="['/mnf/ret-updated-qty-po-view', { id: data.id }]">
                           <i class="bi bi-eye h5"></i>
                         </button>
                       </td>
@@ -92,7 +144,7 @@
                   <p>PO List Data Not Found. [Server Error]</p>
                 </div>
                 <div *ngIf="updatedData.length == 0" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
-                  <p>Your PO List is Currently Empty.</p>
+                  <p>Your Confirmed PO List is Currently Empty.</p>
                 </div>
 
                 <p-paginator

@@ -65,7 +65,8 @@ export class ViewProductDetailsComponent {
     colour: any,
     colourImage: any,
     hsnCode:any,
-    hsnGst:any
+    hsnGst:any,
+    brandName:any
   }> = [];
 
   ngOnInit(): void {
@@ -478,7 +479,8 @@ export class ViewProductDetailsComponent {
         colour: colourHex,
         colourImage: colourImage,
         hsnCode: this.hsnCode,
-        hsnGst: this.hsnGst
+        hsnGst: this.hsnGst,
+        brandName: this.product.brand,
       });
     }
 

@@ -1,0 +1,173 @@
+<section class="content">
+  <div class="content-block">
+    <h4 class="mt-4">
+      <button class="btn navigate" (click)="navigateBack()">
+        <i class="bi bi-arrow-left-circle h4"></i>
+      </button>
+      <span>
+        Purchase Order Details - {{ getStatusText() }}
+      </span>
+      <span class="badge ms-3" [class]="getStatusBadgeClass()">{{ getStatusText() }}</span>
+    </h4>
+    
+    <div id="purchase-order" class="card p-3 my-2">
+      <!-- Header -->
+      <div class="header d-flex justify-content-between align-items-center">
+        <h1>PURCHASE ORDER</h1>
+        <div class="text-end">
+          <p><strong>Order Date:</strong> {{ poDate | date:'dd/MM/yyyy' }}</p>
+          <p><strong>Order No:</strong> {{ poNumber }}</p>
+        </div>
+      </div>
+
+      <!-- Retailer Info -->
+      <div class="border rounded mt-3 p-3 d-flex align-items-start">
+        <img [src]="retailerLogo" alt="Logo" class="me-3" style="width:80px; height:80px; object-fit:cover;" />
+        <div>
+          <h5 class="mb-2"><u>Order From (Retailer):</u></h5>
+          <p class="mb-1"><strong>{{ retailerCompany }}</strong></p>
+          <p class="mb-1">{{ retailerEmail }} &bull; {{ retailerMobile }}</p>
+          <p class="mb-1">GSTIN: {{ retailerGSTIN }} &bull; PAN: {{ retailerPAN }}</p>
+          <p class="mb-1">{{ retailerAddress }}</p>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="border rounded mt-3 p-3" *ngIf="isPartialDelivery()">
+        <h5 class="mb-2"><u>Order Summary:</u></h5>
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Confirmed Items:</strong> {{ totalConfirmedItems }}</p>
+            <p class="mb-1"><strong>Pending Items:</strong> {{ totalPendingItems }}</p>
+          </div>
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Confirmed Amount:</strong> ₹{{ totalConfirmedAmount | number:'1.2-2' }}</p>
+            <p class="mb-1"><strong>Pending Amount:</strong> ₹{{ totalPendingAmount | number:'1.2-2' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Items Table -->
+      <div *ngIf="orderedSet.length" class="mt-3">
+        <table class="table table-bordered text-center">
+          <thead class="table-light">
+            <tr>
+              <th>Sr. No.</th>
+              <th>Image</th>
+              <th>Clothing</th>
+              <th>Gender</th>
+              <th>Brand</th>
+              <th>Design No.</th>
+              <th>Color</th>
+              <th>Size</th>
+              <th>Required Qty</th>
+              <th>Confirmed Qty</th>
+              <th>Pending Qty</th>
+              <th>Price</th>
+              <th>Total</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of orderedSet; let i = index"
+                [class.partial-row]="hasQuantityMismatch(item)"
+                [class.confirmed-row]="!hasQuantityMismatch(item)">
+              <td>{{ i + 1 }}</td>
+              <td>
+                <img [src]="item.colourImage" alt="{{ item.colourName }}" class="item-image" />
+              </td>
+              <td>{{ item.clothing }}</td>
+              <td>{{ item.gender }}</td>
+              <td>{{ item.brandName || 'N/A' }}</td>
+              <td>{{ item.designNumber }}</td>
+              <td>
+                <div class="color-display">
+                  <span class="color-swatch" [style.background-color]="item.colour"></span>
+                  {{ item.colourName }}
+                </div>
+              </td>
+              <td>{{ item.size }}</td>
+              <td [class.qty-mismatch]="hasQuantityMismatch(item)">{{ item.quantity }}</td>
+              <td [class.qty-mismatch]="hasQuantityMismatch(item)">{{ item.availableQuantity }}</td>
+              <td class="pending-qty" 
+                  [class.has-pending]="(item.quantity - item.availableQuantity) > 0">
+                {{ item.quantity - item.availableQuantity }}
+              </td>
+              <td>₹{{ item.price }}</td>
+              <td><strong>₹{{ getItemTotal(item) | number:'1.2-2' }}</strong></td>
+              <td>
+                <span class="badge" 
+                      [class.badge-success]="item.status === 'm_confirmed'"
+                      [class.badge-warning]="item.status === 'm_partial_delivery'">
+                  {{ item.status === 'm_confirmed' ? 'Confirmed' : 'Partial' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot class="table-light">
+            <tr>
+              <td colspan="12"><strong>Total Confirmed Amount:</strong></td>
+              <td><strong>₹{{ getTotalAmount() | number:'1.2-2' }}</strong></td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Delivery Information -->
+      <div class="mt-4">
+        <div class="row">
+          <div class="col-md-6" *ngIf="expDeliveryDate">
+            <p><strong>Expected Delivery Date:</strong> {{ expDeliveryDate | date:'dd/MM/yyyy' }}</p>
+          </div>
+          <div class="col-md-6" *ngIf="partialDeliveryDate">
+            <p><strong>Partial Delivery Date:</strong> {{ partialDeliveryDate | date:'dd/MM/yyyy' }}</p>
+          </div>
+        </div>
+        <div *ngIf="manufacturerNote" class="mt-2">
+          <p><strong>Manufacturer Note:</strong> {{ manufacturerNote }}</p>
+        </div>
+      </div>
+
+      <!-- Transport Details Card -->
+      <div class="border rounded mt-3 p-3" *ngIf="transportDetails">
+        <h5 class="mb-2"><u>Transport Details:</u></h5>
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Transport Type:</strong> {{ transportDetails.transportType || 'N/A' }}</p>
+            <p class="mb-1"><strong>Company:</strong> {{ transportDetails.transporterCompanyName || 'N/A' }}</p>
+            <p class="mb-1"><strong>Mode:</strong> {{ transportDetails.modeOfTransport || 'N/A' }}</p>
+            <p class="mb-1"><strong>Contact Person:</strong> {{ transportDetails.contactPersonName || 'N/A' }}</p>
+          </div>
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Contact Number:</strong> {{ transportDetails.contactNumber || 'N/A' }}</p>
+            <p class="mb-1"><strong>Vehicle Number:</strong> {{ transportDetails.vehicleNumber || 'N/A' }}</p>
+            <p class="mb-1"><strong>Tracking ID:</strong> {{ transportDetails.trackingId || 'N/A' }}</p>
+            <p class="mb-1"><strong>Delivery Address:</strong> {{ transportDetails.deliveryAddress || 'N/A' }}</p>
+          </div>
+        </div>
+        <div *ngIf="transportDetails.remarks || transportDetails.note" class="mt-2">
+          <p class="mb-1" *ngIf="transportDetails.remarks"><strong>Remarks:</strong> {{ transportDetails.remarks }}</p>
+          <p class="mb-1" *ngIf="transportDetails.note"><strong>Note:</strong> {{ transportDetails.note }}</p>
+        </div>
+      </div>
+
+      <!-- Manufacturer Info -->
+      <div class="border rounded mt-3 p-3">
+        <h5 class="mb-2"><u>Manufacturer Details:</u></h5>
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Company:</strong> {{ manufacturerCompany }}</p>
+            <p class="mb-1"><strong>Contact:</strong> {{ manufacturerEmail }}</p>
+            <p class="mb-1"><strong>Phone:</strong> {{ manufacturerMobile }}</p>
+          </div>
+          <div class="col-md-6">
+            <p class="mb-1"><strong>GSTIN:</strong> {{ manufacturerGSTIN }}</p>
+            <p class="mb-1"><strong>PAN:</strong> {{ manufacturerPAN }}</p>
+            <p class="mb-1"><strong>Address:</strong> {{ manufacturerAddress }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

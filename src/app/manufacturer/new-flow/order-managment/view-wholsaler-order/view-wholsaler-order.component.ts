@@ -16,7 +16,7 @@ import { MatTabsModule } from '@angular/material/tabs';
     CommonModule,
     TableModule,
     PaginatorModule,RouterModule,
-     TooltipModule,
+    TooltipModule,
         TableModule,
         MatTabsModule
   ],

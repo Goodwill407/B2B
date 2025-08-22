@@ -1,18 +1,21 @@
-  import { CommonModule } from '@angular/common';
-    import { Component, OnInit } from '@angular/core';
-    import { FormsModule } from '@angular/forms';
-    import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-    import { AuthService, CommunicationService } from '@core';
-    import { AccordionModule } from 'primeng/accordion';
-    import { TableModule } from 'primeng/table';
-    import html2canvas from 'html2canvas';
-    import jsPDF from 'jspdf';
-    import { Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { AuthService, CommunicationService } from '@core';
+import { AccordionModule } from 'primeng/accordion';
+import { TableModule } from 'primeng/table';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { Location } from '@angular/common';
+import { IndianCurrencyPipe } from 'app/custom.pipe';
+import { AmountInWordsPipe } from 'app/amount-in-words.pipe';
 
 @Component({
   selector: 'app-retailormanpo-gen',
   standalone: true,
-imports: [CommonModule, FormsModule, AccordionModule, TableModule],
+imports: [CommonModule, FormsModule, AccordionModule, TableModule, IndianCurrencyPipe, AmountInWordsPipe],
   templateUrl: './retailormanpo-gen.component.html',
   styleUrl: './retailormanpo-gen.component.scss'
 })
@@ -55,12 +58,15 @@ export class RetailormanpoGenComponent {
     igst: any
     cgst: any
 
+    isIntraState: boolean = false;
+
     constructor(
       public authService: AuthService,
       private router: Router,
       private communicationService: CommunicationService,
       private route: ActivatedRoute,
-      private location: Location
+      private location: Location,
+      private amountInWordsPipe: AmountInWordsPipe
     ) {
       this.distributorId = this.route.snapshot.paramMap.get('id') ?? '';
 
@@ -79,40 +85,39 @@ getAllProducts(distributorId: string) {
   this.authService.get(url).subscribe(
     (res: any) => {
       this.responseData = res;
-
       const productSet = res.set || [];
 
-      // Basic PO info
-    this.purchaseOrder = {
-  supplierName: res.manufacturer.companyName,
-  supplierDetails: res.manufacturer.fullName,
-  supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.pinCode} - ${res.manufacturer.state}`,
-  supplierContact: res.manufacturer.mobNumber,
-  supplierGSTIN: res.manufacturer.GSTIN || '',
-  supplierEmail: res.manufacturer.email,
-  supplierPAN: '',
+      // Basic PO info - using the same structure as reference
+      this.purchaseOrder = {
+        supplierName: res.manufacturer.companyName,
+        supplierDetails: res.manufacturer.fullName,
+        supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.pinCode} - ${res.manufacturer.state}`,
+        supplierContact: res.manufacturer.mobNumber,
+        supplierGSTIN: res.manufacturer.GSTIN || '',
+        supplierEmail: res.manufacturer.email,
+        supplierPAN: '',
 
-  buyerName: res.retailer.companyName,
-  buyerAddress: `${res.retailer.address}, ${res.retailer.pinCode} - ${res.retailer.state}`,
-  buyerPhone: res.retailer.mobNumber,
-  buyerEmail: res.retailer.email,
-  buyerGSTIN: res.retailer.GSTIN,
-  buyerPAN: '',
+        buyerName: res.retailer.companyName,
+        buyerAddress: `${res.retailer.address}, ${res.retailer.pinCode} - ${res.retailer.state}`,
+        buyerPhone: res.retailer.mobNumber,
+        buyerEmail: res.retailer.email,
+        buyerGSTIN: res.retailer.GSTIN,
+        buyerPAN: '',
 
-  logoUrl: res.retailer.logo || '',
-  poDate: new Date(res.retailerPoDate).toLocaleDateString(),
-  poNumber: res.poNumber,
-  products: productSet,
-ProductDiscount: parseFloat(res.productDiscount || res.retailer.productDiscount || 0),
+        logoUrl: res.retailer.logo || '',
+        poDate: new Date(res.retailerPoDate).toLocaleDateString(),
+        orderNumber: res.poNumber,
+        products: productSet,
+        ProductDiscount: parseFloat(res.discount || res.retailer.productDiscount || 0),
 
-};
+        transportDetails: res.transportDetails,
+      };
 
+      // Update state type
+      this.updateStateType();
 
-      // Chunk for printing
-      this.chunkArray(productSet);
+      // Calculate totals
 
-      // Totals
-      this.calculateTotalsFromRawData(productSet);
     },
     (err) => {
       console.error('Error:', err);
@@ -121,109 +126,358 @@ ProductDiscount: parseFloat(res.productDiscount || res.retailer.productDiscount 
 }
 
 
-calculateTotalsFromRawData(productSet: any[]): void {
-  let subtotal = 0;
+updateStateType() {
+  const buyerState = this.responseData?.retailer?.state?.trim().toLowerCase();
+  const supplierState = this.responseData?.manufacturer?.state?.trim().toLowerCase();
+  this.isIntraState = buyerState && supplierState && (buyerState === supplierState);
+}
 
-  productSet.forEach((item) => {
-    const quantity = item.quantity || 0;
-    const rate = parseFloat(item.price) || 0;
-    subtotal += quantity * rate;
+get colspan(): number {
+  return this.isIntraState ? 12 : 11;
+}
+
+get orderTotals() {
+  let totalQty = 0;
+  let totalTaxable = 0;
+  let totalCGST = 0;
+  let totalSGST = 0;
+  let totalIGST = 0;
+  let totalWithGST = 0;
+
+  for (const item of this.purchaseOrder.products) {
+    const gst = this.getGstAmounts(item);
+    totalQty += Number(item.quantity) || 0;
+    totalTaxable += gst.taxable || 0;
+    totalCGST += gst.cgst || 0;
+    totalSGST += gst.sgst || 0;
+    totalIGST += gst.igst || 0;
+    totalWithGST += gst.totalWithGst || 0;
+  }
+
+  return { totalQty, totalTaxable, totalCGST, totalSGST, totalIGST, totalWithGST };
+}
+
+getGstAmounts(item: any) {
+  const quantity = +item.quantity;
+  const rate = +item.price;
+  const taxable = quantity * rate;
+  const gstRate = +item.hsnGst;
+
+  let cgst = 0, sgst = 0, igst = 0;
+
+  if (this.isIntraState) {
+    cgst = (taxable * gstRate / 2) / 100;
+    sgst = (taxable * gstRate / 2) / 100;
+  } else {
+    igst = (taxable * gstRate) / 100;
+  }
+
+  const totalWithGst = taxable + cgst + sgst + igst;
+  return { taxable, gstRate, cgst, sgst, igst, totalWithGst };
+}
+
+get discountAmount(): number {
+  const discountPercent = Number(this.purchaseOrder.ProductDiscount) || 0;
+  return (this.orderTotals.totalWithGST * discountPercent) / 100;
+}
+
+get actualGrandTotal(): number {
+  return this.orderTotals.totalWithGST - this.discountAmount;
+}
+
+get totalGSTAmount(): number {
+  const totals = this.orderTotals;
+  return totals.totalCGST + totals.totalSGST + totals.totalIGST;
+}
+
+downloadPO() {
+  const doc = new jsPDF('p', 'mm', 'a4');
+  let yPosition = 20;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+
+  // Header Section
+  doc.setFontSize(18);
+  doc.setFont('helvetica', 'bold');
+  doc.text('PURCHASE ORDER', pageWidth/2, yPosition, { align: 'center' });
+  yPosition += 15;
+
+  // Order Info - Right aligned
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Order Date: ${this.purchaseOrder.poDate}`, pageWidth - 20, yPosition, { align: 'right' });
+  doc.text(`Order No: ${this.purchaseOrder.orderNumber}`, pageWidth - 20, yPosition + 5, { align: 'right' });
+  yPosition += 20;
+
+  // Buyer and Seller Information
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Order By :', 20, yPosition);
+  doc.text('Order To :', 110, yPosition);
+  yPosition += 8;
+
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+
+  // Buyer Info (Left Column)
+  const buyerInfo = [
+    this.purchaseOrder.buyerName || '',
+    this.purchaseOrder.buyerAddress || '',
+    `Phone: ${this.purchaseOrder.buyerPhone || 'N/A'}`,
+    `Email: ${this.purchaseOrder.buyerEmail || 'N/A'}`,
+    `GSTIN: ${this.purchaseOrder.buyerGSTIN || 'N/A'}`
+  ];
+
+  // Supplier Info (Right Column)
+  const supplierInfo = [
+    this.purchaseOrder.supplierName || '',
+    this.purchaseOrder.supplierAddress || '',
+    `Phone: ${this.purchaseOrder.supplierContact || 'N/A'}`,
+    `Email: ${this.purchaseOrder.supplierEmail || 'N/A'}`,
+    `GSTIN: ${this.purchaseOrder.supplierGSTIN || 'N/A'}`
+  ];
+
+  for (let i = 0; i < Math.max(buyerInfo.length, supplierInfo.length); i++) {
+    if (buyerInfo[i]) doc.text(buyerInfo[i], 20, yPosition);
+    if (supplierInfo[i]) doc.text(supplierInfo[i], 110, yPosition);
+    yPosition += 5;
+  }
+
+  yPosition += 10;
+
+  // Products Table
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Order Details', pageWidth/2, yPosition, { align: 'center' });
+  yPosition += 10;
+
+  // Dynamic table headers and column widths based on GST type
+  let tableHeaders: string[];
+  let columnWidths: number[];
+  
+  if (this.isIntraState) {
+    tableHeaders = ['Sr.', 'Design No.', 'HSN', 'Colour', 'Gender', 'Size', 'Rate (Rs.)', 'Qty', 'Taxable (Rs.)', 'GST%', 'CGST (Rs.)', 'SGST (Rs.)', 'Total (Rs.)'];
+    columnWidths = [8, 20, 15, 15, 12, 12, 18, 10, 20, 12, 18, 18, 22];
+  } else {
+    tableHeaders = ['Sr.', 'Design No.', 'HSN', 'Colour', 'Gender', 'Size', 'Rate (Rs.)', 'Qty', 'Taxable (Rs.)', 'GST%', 'IGST (Rs.)', 'Total (Rs.)'];
+    columnWidths = [8, 22, 16, 16, 14, 14, 20, 12, 22, 14, 22, 24];
+  }
+
+  // Prepare table data
+  const tableData = this.purchaseOrder.products.map((item: any, index: number) => {
+    const gstAmounts = this.getGstAmounts(item);
+    
+    const baseRow = [
+      (index + 1).toString(),
+      item.designNumber || '',
+      item.hsnCode || '',
+      item.colourName || '',
+      item.gender || '',
+      item.size || '',
+      (parseFloat(item.price) || 0).toFixed(2),
+      item.quantity?.toString() || '0',
+      gstAmounts.taxable?.toFixed(2) || '0.00',
+      `${item.hsnGst || 0}%`
+    ];
+
+    if (this.isIntraState) {
+      return [
+        ...baseRow,
+        gstAmounts.cgst?.toFixed(2) || '0.00',
+        gstAmounts.sgst?.toFixed(2) || '0.00',
+        gstAmounts.totalWithGst?.toFixed(2) || '0.00'
+      ];
+    } else {
+      return [
+        ...baseRow,
+        gstAmounts.igst?.toFixed(2) || '0.00',
+        gstAmounts.totalWithGst?.toFixed(2) || '0.00'
+      ];
+    }
   });
 
-  this.Totalsub = subtotal;
+  // Add totals row
+  const totals = this.orderTotals;
+  let totalRow: string[];
+  
+  if (this.isIntraState) {
+    totalRow = ['', '', '', '', '', '', 'Total:', totals.totalQty.toString(), totals.totalTaxable.toFixed(2), '', 
+               totals.totalCGST.toFixed(2), totals.totalSGST.toFixed(2), totals.totalWithGST.toFixed(2)];
+  } else {
+    totalRow = ['', '', '', '', '', '', 'Total:', totals.totalQty.toString(), totals.totalTaxable.toFixed(2), '', 
+               totals.totalIGST.toFixed(2), totals.totalWithGST.toFixed(2)];
+  }
 
-  const discount = parseFloat(this.purchaseOrder.ProductDiscount) || 0;
-  const discountAmount = (subtotal * discount) / 100;
+  tableData.push(totalRow);
 
-  this.discountedTotal = subtotal - discountAmount;
-  this.dicountprice = discountAmount;
+  // Generate table with proper column widths
+  autoTable(doc, {
+    startY: yPosition,
+    head: [tableHeaders],
+    body: tableData,
+    columnStyles: this.getColumnStyles(),
+    styles: {
+      fontSize: 8,
+      cellPadding: 1.5,
+      overflow: 'linebreak',
+      halign: 'center',
+      valign: 'middle'
+    },
+    headStyles: {
+      fillColor: [240, 246, 249],
+      textColor: [0, 0, 0],
+      fontStyle: 'bold',
+      fontSize: 7
+    },
+    alternateRowStyles: {
+      fillColor: [250, 250, 250]
+    },
+    didParseCell: (data) => {
+      // Highlight total row
+      if (data.row.index === tableData.length - 1) {
+        data.cell.styles.fillColor = [220, 235, 255];
+        data.cell.styles.fontStyle = 'bold';
+        data.cell.styles.fontSize = 8;
+      }
+    },
+    margin: { top: 10, right: 10, bottom: 30, left: 10 }
+  });
 
-  this.calculateGST();
-  this.totalGrandTotal = this.discountedTotal + this.sgst + this.cgst + this.igst;
+  // Get final Y position after table
+  yPosition = (doc as any).lastAutoTable.finalY + 15;
+
+  // Check if we need a new page for financial summary
+  if (yPosition > pageHeight - 60) {
+    doc.addPage();
+    yPosition = 30;
+  }
+
+  // Financial Summary - Better positioned and formatted
+  this.addFinancialSummary(doc, yPosition, pageWidth);
+  yPosition += 40;
+
+  // Transport Details
+  if (this.purchaseOrder.transportDetails) {
+    // Check if we need a new page for transport details
+    if (yPosition > pageHeight - 80) {
+      doc.addPage();
+      yPosition = 30;
+    }
+    this.addTransportDetails(doc, yPosition, pageWidth);
+  }
+
+  // Save PDF
+  const poDate = this.purchaseOrder.poDate?.replace(/\//g, '-') || 'no-date';
+  const poNumber = this.purchaseOrder.orderNumber || 'no-number';
+  doc.save(`PO_${poDate}_${poNumber}.pdf`);
+}
+
+// Helper method for column styles
+getColumnStyles(): { [key: string]: Partial<any> } {
+  const baseStyles = {
+    6: { halign: 'right' as const }, // Rate
+    7: { halign: 'center' as const }, // Qty
+    8: { halign: 'right' as const }, // Taxable
+    9: { halign: 'center' as const }, // GST%
+    10: { halign: 'right' as const }, // CGST/IGST
+    11: { halign: 'right' as const } // SGST/Total
+  };
+
+  // Add column 12 only for intra-state (CGST/SGST scenario)
+  if (this.isIntraState) {
+    return {
+      ...baseStyles,
+      12: { halign: 'right' as const } // Total column for intra-state
+    };
+  }
+  
+  // For inter-state (IGST scenario) - don't include column 12
+  return baseStyles;
 }
 
 
 
+// Helper method for financial summary
+addFinancialSummary(doc: jsPDF, startY: number, pageWidth: number) {
+  const totals = this.orderTotals;
+  const rightAlign = pageWidth - 20;
+  
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  
+  // Subtotal
+  doc.text(`Subtotal: Rs. ${totals.totalWithGST.toFixed(2)}`, rightAlign, startY, { align: 'right' });
+  
+  // Discount
+  doc.text(`Discount (${this.purchaseOrder.ProductDiscount}%): - Rs. ${this.discountAmount.toFixed(2)}`, 
+           rightAlign, startY + 6, { align: 'right' });
+  
+  // Grand Total
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.text(`Grand Total: Rs. ${this.actualGrandTotal.toFixed(2)}`, rightAlign, startY + 15, { align: 'right' });
+  
+  // Amount in Words - Left aligned
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+ const amountInWords = this.amountInWordsPipe.transform(this.actualGrandTotal);
+  doc.text(`Amount in Words: ${amountInWords}`, 20, startY + 25);
 
-    extractSizesAndPrices(productSet: any[]): void {
-      const uniqueSizes = new Set<string>();
-      this.priceHeaders = {}; // Reset size-price mapping
+  doc.text(`Total GST: Rs. ${this.totalGSTAmount.toFixed(2)} - ${this.amountInWordsPipe.transform(this.totalGSTAmount)}`, 
+          20, startY + 30);
+  }
 
-      productSet.forEach((product) => {
-        if (product.size && product.price > 0) {
-          uniqueSizes.add(product.size);
-          this.priceHeaders[product.size] = product.price;
-        }
-      });
+// Helper method for transport details
+addTransportDetails(doc: jsPDF, startY: number, pageWidth: number) {
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Transport Details', pageWidth/2, startY, { align: 'center' });
+  startY += 10;
 
-      this.sizeHeaders = Array.from(uniqueSizes); // Convert Set to Array for the table header
-    }
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+
+  const transport = this.purchaseOrder.transportDetails;
+  
+  // Left column transport info
+  const leftInfo = [
+    `Transport Type: ${transport.transportType || 'N/A'}`,
+    `Company: ${transport.transporterCompanyName || 'N/A'}`,
+    `Contact Person: ${transport.contactPersonName || 'N/A'}`,
+    `Contact: ${transport.contactNumber || 'N/A'}`,
+    `Alt Contact: ${transport.altContactNumber || 'N/A'}`
+  ];
+  
+  // Right column transport info
+  const rightInfo = [
+    `Vehicle Number: ${transport.vehicleNumber || 'N/A'}`,
+    `Tracking ID: ${transport.trackingId || 'N/A'}`,
+    `Mode: ${transport.modeOfTransport || 'N/A'}`,
+    `Delivery Address: ${transport.deliveryAddress || 'N/A'}`,
+    ''
+  ];
+
+  for (let i = 0; i < leftInfo.length; i++) {
+    doc.text(leftInfo[i], 20, startY);
+    if (rightInfo[i]) doc.text(rightInfo[i], 110, startY);
+    startY += 5;
+  }
+
+  // Remarks and notes
+  if (transport.remarks) {
+    startY += 3;
+    doc.text(`Remarks: ${transport.remarks}`, 20, startY);
+    startY += 5;
+  }
+  
+  if (transport.note) {
+    doc.text(`Note: ${transport.note}`, 20, startY);
+  }
+}
+
 
     discountedTotal: number = 0; // Add this property
 
-    processGroupedProducts(productSet: any[]): any[] {
-      const groupedByDesignNumber: any = {};
-      let totalSub = 0;
-      let totalDiscountAmount = 0;
-  
-      // ✅ Ensure `productDiscount` is fetched correctly from API response
-const productDiscount = parseFloat(this.responseData?.productDiscount) || 0;
-
-      console.log("✅ Extracted Product Discount:", productDiscount); // Debugging
-  
-      productSet.forEach((product) => {
-          const designKey = product.designNumber;
-          if (!groupedByDesignNumber[designKey]) {
-              groupedByDesignNumber[designKey] = {
-                  designNumber: product.designNumber,
-                  rows: [],
-                  subTotal: 0,
-                  discountedTotal: 0,
-                  grandTotal: 0,
-              };
-          }
-  
-          let existingRow = groupedByDesignNumber[designKey].rows.find(
-              (row: any) => row.colourName === product.colourName
-          );
-  
-          if (!existingRow) {
-              existingRow = {
-                  colourName: product.colourName,
-                  quantities: {},
-                  totalPrice: 0,
-              };
-              groupedByDesignNumber[designKey].rows.push(existingRow);
-          }
-  
-          existingRow.quantities[product.size] = (existingRow.quantities[product.size] || 0) + product.quantity;
-          existingRow.totalPrice += product.quantity * product.price;
-      });
-  
-      Object.values(groupedByDesignNumber).forEach((group: any) => {
-          group.subTotal = group.rows.reduce((acc: number, row: any) => acc + this.calculateTotalPrice(row, false), 0);
-  
-        // ✅ Correct Discount Calculation
-const discountAmount = (group.subTotal * this.purchaseOrder.ProductDiscount) / 100; 
-group.discountedTotal = group.subTotal - discountAmount;
-
-          totalSub += group.subTotal;
-          totalDiscountAmount += discountAmount;
-      });
-  
-      // ✅ Assign to Class Properties
-      this.Totalsub = totalSub;
-      this.dicountprice = totalDiscountAmount; // ✅ Ensure discount amount is stored correctly
-      this.discountedTotal = totalSub - totalDiscountAmount; // ✅ Apply discount to subtotal
-  
-      console.log("✅ Final Discount Amount Stored:", this.dicountprice); // Debugging
-  
-      // ✅ Fix GST Calculation
-      this.calculateGST();
-  
-      return Object.values(groupedByDesignNumber);
-  }
-  
     
     calculateTotalPrice(row: any, applyDiscount: boolean = true): number {
       let total = 0;
@@ -246,50 +500,8 @@ group.discountedTotal = group.subTotal - discountAmount;
       return total;
     }
     
-      
-  calculateGST(): void {
-const retailerState = this.responseData.retailer?.state?.trim().toLowerCase();
-const manufacturerState = this.responseData.manufacturer?.state?.trim().toLowerCase();
-
-  const discountedTotal = this.discountedTotal;
-
-  if (retailerState === manufacturerState) {
-    this.sgst = (discountedTotal * 9) / 100;
-    this.cgst = (discountedTotal * 9) / 100;
-    this.igst = 0;
-  } else {
-    this.sgst = 0;
-    this.cgst = 0;
-    this.igst = (discountedTotal * 18) / 100;
-  }
-}
 
   
-    
-    
-    
-    calculateDiscountedTotal(subTotal: number): number {
-      // Apply discount (for example, 2% in this case)
-      const discount = (subTotal * 2) / 100;
-      const discountedTotal = subTotal - discount;
-    
-      // Store discount for display
-      this.dicountprice = discount;  
-    
-      return discountedTotal;
-    }
-    
-
-    calculateGrandTotal(subTotal: number, discount: number, igst: number): number {
-      const discountedSubtotal = subTotal - discount;
-      const igstAmount = (discountedSubtotal * igst) / 100;  // Apply 18% IGST
-      return discountedSubtotal + igstAmount;
-    }
-    
-
-    isSizeAvailable(rows: any[], size: string): boolean {
-      return rows.some((row) => row.quantities[size] > 0);
-    }
 
     addpo() {
       const cartBody = { ...this.responseData };
@@ -316,132 +528,14 @@ const manufacturerState = this.responseData.manufacturer?.state?.trim().toLowerC
       );
     }
 
-    flattenProductData(productSet: any[]): any[] {
-      const flatList: any[] = [];
 
-      // Iterate through each product in the set
-      productSet.forEach((product) => {
-          const designKey = product.designNumber; // Assuming each product has a designNumber
-
-          // Check if we already have a row for this designNumber + colourName
-          let existingRow = flatList.find(row => row.designNumber === designKey && row.colourName === product.colourName);
-
-          // If no existing row, create a new one
-          if (!existingRow) {
-              existingRow = {
-                  designNumber: product.designNumber,
-                  colourName: product.colourName,
-                  colourImage: product.colourImage,
-                  colour: product.colour,
-                  quantities: {},
-                  totalPrice: 0
-              };
-              flatList.push(existingRow);
-          }
-
-          // Update quantities for this specific size
-          if (product.size && product.quantity) {
-              existingRow.quantities[product.size] = (existingRow.quantities[product.size] || 0) + product.quantity;
-              existingRow.totalPrice += product.quantity * parseFloat(product.price); // Assuming price is a string
-          }
-      });
-
-      return flatList;
-  }
 
 tableChunks: any[][] = [];
 serialOffset: number[] = [];
 
-chunkArray(array: any[]): void {
-  this.tableChunks = [];
-  this.serialOffset = [];
-
-  const firstPage = 20;
-  const restPages = 40;
-
-  if (array.length <= firstPage) {
-    this.tableChunks.push(array);
-    this.serialOffset.push(0);
-  } else {
-    this.tableChunks.push(array.slice(0, firstPage));
-    this.serialOffset.push(0);
-
-    let start = firstPage;
-    while (start < array.length) {
-      this.tableChunks.push(array.slice(start, start + restPages));
-      this.serialOffset.push(start);
-      start += restPages;
-    }
-  }
-}
 
 
- printPO(): void {
-  const fullId = 'purchase-order';
-  const pdf = new jsPDF('p', 'mm', 'a4');
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const margin = 10;
-  const chunkCount = this.tableChunks.length;
-  let currentChunk = 0;
 
-  const renderChunk = () => {
-    const fullContent = document.getElementById(fullId);
-    if (!fullContent) return;
-
-    const fullClone = fullContent.cloneNode(true) as HTMLElement;
-
-    const chunks = fullClone.querySelectorAll('.table-chunk');
-    chunks.forEach((div, i) => {
-      (div as HTMLElement).style.display = i === currentChunk ? 'block' : 'none';
-    });
-
-    if (currentChunk > 0) {
-      const header = fullClone.querySelector('.header');
-      if (header) header.remove();
-    }
-
-    const styles = document.querySelectorAll('style, link[rel="stylesheet"]');
-    styles.forEach((tag) => fullClone.appendChild(tag.cloneNode(true)));
-
-    const tempWrapper = document.createElement('div');
-    tempWrapper.style.position = 'fixed';
-    tempWrapper.style.top = '-10000px';
-    tempWrapper.style.left = '-10000px';
-    tempWrapper.style.width = '1000px';
-    tempWrapper.style.zIndex = '-9999';
-    tempWrapper.style.opacity = '0';
-    tempWrapper.appendChild(fullClone);
-    document.body.appendChild(tempWrapper);
-
-    html2canvas(fullClone, {
-      scale: 2,
-      useCORS: true,
-      scrollY: -window.scrollY,
-    }).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      const imgProps = pdf.getImageProperties(imgData);
-      const imgWidth = pageWidth - margin * 2;
-      const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-
-      if (currentChunk > 0) pdf.addPage();
-      pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
-
-      document.body.removeChild(tempWrapper);
-
-      currentChunk++;
-      if (currentChunk < chunkCount) {
-        renderChunk();
-      } else {
-       const poDate = this.purchaseOrder.poDate?.replace(/\//g, '-') || 'no-date';
-const poNumber = this.purchaseOrder.poNumber || 'no-number';
-pdf.save(`PO_${poDate}_${poNumber}.pdf`);
-
-      }
-    });
-  };
-
-  renderChunk();
-}
 
 navigateFun() {
     this.location.back();

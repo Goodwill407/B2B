@@ -1,5 +1,5 @@
 #purchase-order {
-  width: 800px;
+  width: 900px;
   margin: 0 auto;
   font-family: Arial, sans-serif;
   border: 1px solid #ccc;
@@ -172,4 +172,85 @@
 
 .table-chunk {
   page-break-inside: avoid;
+}
+
+// Transport Details Section
+.transport-details {
+  border-top: 2px solid #e0e0e0;
+  padding-top: 20px;
+  
+  h4 {
+    color: #002080;
+    font-weight: bold;
+  }
+  
+  .transport-info {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    
+    p {
+      margin-bottom: 8px;
+      font-size: 14px;
+      
+      strong {
+        color: #333;
+        width: 150px;
+        display: inline-block;
+      }
+    }
+  }
+  
+  .transport-notes {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    padding: 15px;
+    border-radius: 5px;
+    
+    p {
+      margin-bottom: 8px;
+      font-size: 14px;
+      
+      strong {
+        color: #856404;
+      }
+    }
+  }
+}
+
+// Terms and Conditions
+.terms-conditions {
+  border-top: 2px solid #e0e0e0;
+  padding-top: 20px;
+  
+  h4 {
+    color: #002080;
+    font-weight: bold;
+  }
+  
+  .terms-content {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    
+    ul {
+      margin: 0;
+      padding-left: 20px;
+      
+      li {
+        margin-bottom: 5px;
+        font-size: 14px;
+        color: #555;
+      }
+    }
+  }
+}
+
+// Print styles
+@media print {
+  .transport-details,
+  .terms-conditions {
+    page-break-inside: avoid;
+  }
 }

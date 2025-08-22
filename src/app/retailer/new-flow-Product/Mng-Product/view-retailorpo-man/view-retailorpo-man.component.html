@@ -1,60 +1,163 @@
 <section class="content">
   <div class="content-block">
     <h4 class="mt-4">
-      <i class="bi bi-person-vcard-fill h3"></i> {{ isNewPO ? 'Generate PO' : 'PO List' }}
+      <i class="bi bi-person-vcard-fill h3"></i> Retailer's PO List To Manufacturer
     </h4>
 
     <div class="card mt-3 p-4">
-      <div class="p-grid p-fluid">
-        <div class="p-col-12 text-center">
-          <p-table [value]="tableData">
-            <ng-template pTemplate="header">
-              <tr>
-                <th>Manufacturer Name</th>
-                <th>Company Name</th>
-                <th>Email</th>
-                <th>PO Number</th>
-                <th>Status</th>
-                <th>View</th>
-              </tr>
-            </ng-template>
+      <mat-tab-group>
+      
+        <!-- PENDING TAB -->
+        <mat-tab label="Sent to Manufacturer">
+          <div class="card mt-3 p-4">
+            <div class="p-grid p-fluid">
+              <div class="p-col-12 text-center">
+                <p-table [value]="pendingData">
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th>Manufacturer Name</th>
+                      <th>Company Name</th>
+                      <th>Email</th>
+                      <th>PO Number</th>
+                      <th>View</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-data>
+                    <tr>
+                      <td class="text-center">{{ data.manufacturer?.fullName || 'N/A' }}</td>
+                      <td class="text-center">{{ data.manufacturer?.companyName || 'N/A' }}</td>
+                      <td class="text-center">{{ data.manufacturer?.email || 'N/A' }}</td>
+                      <td class="text-center">{{ data.poNumber || 'N/A' }}</td>
+                      <td class="text-center">
+                        <a [routerLink]="['/retailer/new/view-retailerpotoman', { id: data.id }]">
+                          <button class="btn"><i class="bi bi-eye h5"></i></button>
+                        </a>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
 
-            <ng-template pTemplate="body" let-data>
-              <tr>
-                <td class="text-center">{{ data.manufacturer?.fullName || 'N/A' }}</td>
-                <td class="text-center">{{ data.manufacturer?.companyName || 'N/A' }}</td>
-                <td class="text-center">{{ data.manufacturer?.email || 'N/A' }}</td>
-                <td class="text-center">{{ data.poNumber || 'N/A' }}</td>
-                <td class="text-center">{{ data.statusAll | statusAllPoDisplay }}</td>
-                <td class="text-center">
-                  <a [routerLink]="['/retailer/new/view-retailerpotoman', { id: data.id }]">
-                    <button class="btn"><i class="bi bi-eye h5"></i></button>
-                  </a>
-                </td>
-              </tr>
-            </ng-template>
-          </p-table>
+                <div *ngIf="!pendingData" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
+                  <p>Pending PO List Data Not Found. [Server Error]</p>
+                </div>
+                <div *ngIf="pendingData?.length === 0" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
+                  <p>Your Pending PO List is Currently Empty.</p>
+                </div>
 
-          <!-- Empty or Error Messages -->
-          <div *ngIf="!tableData" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
-            <p>PO List Not Found [Server Error]</p>
+                <p-paginator
+                  *ngIf="pendingData && pendingData.length > 0"
+                  (onPageChange)="onPendingPageChange($event)"
+                  [first]="firstPending"
+                  [rows]="limit"
+                  [totalRecords]="totalPendingResults"
+                  [rowsPerPageOptions]="[10, 20, 30]">
+                </p-paginator>
+              </div>
+            </div>
           </div>
+        </mat-tab>
 
-          <div *ngIf="tableData?.length === 0" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
-            <p>Your PO List is Currently Empty.</p>
+        <!-- PARTIAL DELIVERY TAB -->
+        <mat-tab label="Partial Delivery">
+          <div class="card mt-3 p-4">
+            <div class="p-grid p-fluid">
+              <div class="p-col-12 text-center">
+                <p-table [value]="partialData">
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th>Manufacturer Name</th>
+                      <th>Company Name</th>
+                      <th>Email</th>
+                      <th>PO Number</th>
+                      <th>View</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-data>
+                    <tr>
+                      <td class="text-center">{{ data.manufacturer?.fullName || 'N/A' }}</td>
+                      <td class="text-center">{{ data.manufacturer?.companyName || 'N/A' }}</td>
+                      <td class="text-center">{{ data.manufacturer?.email || 'N/A' }}</td>
+                      <td class="text-center">{{ data.poNumber || 'N/A' }}</td>
+                      <td class="text-center">
+                        <a [routerLink]="['/retailer/new/view-retailerpotoman', { id: data.id }]">
+                          <button class="btn"><i class="bi bi-eye h5"></i></button>
+                        </a>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+
+                <div *ngIf="!partialData" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
+                  <p>Partial Delivery PO List Data Not Found. [Server Error]</p>
+                </div>
+                <div *ngIf="partialData?.length === 0" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
+                  <p>Your Partial Delivery PO List is Currently Empty.</p>
+                </div>
+
+                <p-paginator
+                  *ngIf="partialData && partialData.length > 0"
+                  (onPageChange)="onPartialPageChange($event)"
+                  [first]="firstPartial"
+                  [rows]="limit"
+                  [totalRecords]="totalPartialResults"
+                  [rowsPerPageOptions]="[10, 20, 30]">
+                </p-paginator>
+              </div>
+            </div>
           </div>
+        </mat-tab>
 
-          <!-- Pagination -->
-          <p-paginator
-            *ngIf="tableData && tableData.length > 0"
-            (onPageChange)="onPageChange($event)"
-            [first]="first"
-            [rows]="rows"
-            [totalRecords]="totalResults"
-            [rowsPerPageOptions]="[10, 20, 30]"
-          ></p-paginator>
-        </div>
-      </div>
+        <!-- CONFIRMED TAB -->
+        <mat-tab label="Confirmed Orders">
+          <div class="card mt-3 p-4">
+            <div class="p-grid p-fluid">
+              <div class="p-col-12 text-center">
+                <p-table [value]="confirmedData">
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th>Manufacturer Name</th>
+                      <th>Company Name</th>
+                      <th>Email</th>
+                      <th>PO Number</th>
+                      <th>View</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-data>
+                    <tr>
+                      <td class="text-center">{{ data.manufacturer?.fullName || 'N/A' }}</td>
+                      <td class="text-center">{{ data.manufacturer?.companyName || 'N/A' }}</td>
+                      <td class="text-center">{{ data.manufacturer?.email || 'N/A' }}</td>
+                      <td class="text-center">{{ data.poNumber || 'N/A' }}</td>
+                      <td class="text-center">
+                        <a [routerLink]="['/retailer/new/view-retailerpotoman', { id: data.id }]">
+                          <button class="btn"><i class="bi bi-eye h5"></i></button>
+                        </a>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+
+                <div *ngIf="!confirmedData" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
+                  <p>Confirmed PO List Data Not Found. [Server Error]</p>
+                </div>
+                <div *ngIf="confirmedData?.length === 0" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
+                  <p>Your Confirmed PO List is Currently Empty.</p>
+                </div>
+
+                <p-paginator
+                  *ngIf="confirmedData && confirmedData.length > 0"
+                  (onPageChange)="onConfirmedPageChange($event)"
+                  [first]="firstConfirmed"
+                  [rows]="limit"
+                  [totalRecords]="totalConfirmedResults"
+                  [rowsPerPageOptions]="[10, 20, 30]">
+                </p-paginator>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+      </mat-tab-group>
     </div>
 
     <!-- Advertisement -->

@@ -1,771 +1,567 @@
-  import { CommonModule, Location } from '@angular/common';
-  import { Component, OnInit } from '@angular/core';
-  import { FormsModule } from '@angular/forms';
-  import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-  import { AuthService, CommunicationService } from '@core';
-  import { AccordionModule } from 'primeng/accordion';
-  import { TableModule } from 'primeng/table';
-  import html2canvas from 'html2canvas';
-  import jsPDF from 'jspdf';
-import { PaginatorModule } from 'primeng/paginator';
-import { TooltipModule } from 'primeng/tooltip';
-import { MatTabsModule } from '@angular/material/tabs';
+import { CommonModule, Location } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { forkJoin, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { AuthService, CommunicationService } from '@core';
+
+interface PoItem {
+  _id: string;
+  clothing: string;
+  gender: string;
+  designNumber: string;
+  colourName: string;
+  size: string;
+  quantity: number; // Required quantity
+  availableQuantity: number; // Input quantity
+  inventoryQuantity: number; // Current stock
+  minimumQuantityAlert: number; // Alert threshold
+  price: string;
+  hsnCode: string;
+  hsnGst: number;
+  status: string;
+  productId?: string;
+  inventoryId?: string;
+  colour?: string;
+  confirmed: boolean;
+  rejected: boolean;
+  productType: string;
+  colourImage: string;
+  brandName: any; // Fixed: Added proper brandName
+}
+
+interface TransportDetails {
+  _id?: string;
+  modeOfTransport: string;
+  transportType: string;
+  transporterCompanyName: string;
+  contactNumber: number;
+  contactPersonName: string;
+  vehicleNumber?: string;
+  altContactNumber?: number;
+  trackingId?: string;
+  dispatchDate?: Date;
+  expectedDeliveryDate?: Date;
+  deliveryDate?: Date;
+  deliveryAddress?: string;
+  remarks?: string;
+  gstNumber?: string;
+  note?: string;
+}
+
+interface BankDetails {
+  accountNumber: string;
+  accountType: string;
+  bankName: string;
+  IFSCcode: string;
+  swiftCode: string;
+  country: string;
+  city: string;
+  branch: string;
+}
+
+interface ManufacturerProfile {
+  fullName: string;
+  companyName: string;
+  email: string;
+  address: string;
+  state: string;
+  country: string;
+  pinCode: string;
+  mobNumber: string;
+  GSTIN: string;
+  BankDetails: BankDetails;
+}
 
 @Component({
   selector: 'app-gen-retailer-order-po',
   standalone: true,
-  imports: [
-      CommonModule,
-      TableModule,
-      PaginatorModule,RouterModule,
-       TooltipModule,
-          TableModule,
-          MatTabsModule
-    ],
+  imports: [CommonModule, FormsModule],
   templateUrl: './gen-retailer-order-po.component.html',
-  styleUrl: './gen-retailer-order-po.component.scss'
+  styleUrls: ['./gen-retailer-order-po.component.scss']
 })
-export class GenRetailerOrderPoComponent {
-  purchaseOrder: any = {
-      supplierName: '',
-      supplierDetails: '',
-      supplierAddress: '',
-      supplierContact: '',
-      supplierGSTIN: '',
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/38/MONOGRAM_LOGO_Color_200x200_v.png',
-      orderNo: 'PO123',
-      orderDate: new Date().toLocaleDateString(),
-      deliveryDate: '',
-      buyerName: '',
-      buyerAddress: '',
-      buyerPhone: '',
-      buyerGSTIN: '',
-      products: [],
-      totalAmount: 0,
-      totalInWords: '',
-    };
-    pendingQuantities: { [designNumber: string]: { [size: string]: number } } = {};
-    mergedProducts: any[] = [];
-    qty: any[] = [];
-    mergedProducts2: any[] = [];
-    quantityDifferences: { [key: string]: number } = {};
-    responseData: any; // New variable to store response data
-    distributorId: string = '';
-    distributorId2: string = '';
-    pono: string = '';
-    products: any[] = [];
-    userProfile: any;
-    filteredData: any;
-    Deliverychllanid: any;
-    sizeHeaders: string[] = [];
-    priceHeaders: { [size: string]: number } = {};
-
-    totalGrandTotal: number = 0;
-    gst: number = 0;
-    Totalsub: number = 0;
-  data: any;
-
-    constructor(
-      public authService: AuthService,
-      private location: Location,
-      private communicationService: CommunicationService,
-      private route: ActivatedRoute
-    ) 
-    {
-    }
-
-    ngOnInit(): void {
-      this.distributorId = this.route.snapshot.paramMap.get('id') ?? '';
-      this.userProfile = JSON.parse(localStorage.getItem('currentUser')!);
-      this.getAllProducts();
-    }
-
-    orderedSet: any[] = [];  // Fixed data from API
-avilableSet: any[] = []; // Editable copy of `orderedSet`
-getAllProducts() {
-  const url = `po-retailer-to-manufacture/${this.distributorId}`;
+export class GenRetailerOrderPoComponent implements OnInit {
+  // Retailer details
+  retailerCompany!: string;
+  retailerEmail!: string;
+  retailerMobile!: string;
+  retailerGSTIN!: string;
+  retailerPAN!: string;
+  retailerLogo!: string;
+  retailerAddress!: string;
   
-  this.authService.get(url).subscribe(
-    (res: any) => {
-      this.responseData = res; // Store the response in responseData
-      console.log(res);
+  // Manufacturer details
+  manufacturerProfile!: ManufacturerProfile;
+  
+  // Order details
+  poNumber!: number;
+  poDate!: Date;
+  expDeliveryDate: Date | null = null;
+  partialDeliveryDate: Date | null = null;
+  minDate!: string;
+  orderedSet: PoItem[] = [];
+  PoId!: string;
+  discount!: number;
+  
+  // Transport and Bank details
+  transportDetails!: TransportDetails;
+  bankDetails!: BankDetails;
+  
+  // Status tracking
+  currentStatusAll: string = 'pending';
 
-      // Update purchaseOrder from the response
-    this.purchaseOrder = {
-  supplierName: res.manufacturer.companyName,
-  supplierDetails: res.manufacturer.fullName,
-  supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.city}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
-  supplierContact: `${res.manufacturer.mobNumber}`,
-  supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
+  constructor(
+    private authService: AuthService,
+    private route: ActivatedRoute,
+    private location: Location,
+    private communicationService: CommunicationService
+  ) {}
 
-  buyerName: res.retailer.companyName,
-  logoUrl: res.retailer.logo || '',
-  buyerAddress: `${res.retailer.address}, ${res.retailer.city}, ${res.retailer.state} - ${res.retailer.pinCode}`,
-  buyerPhone: res.retailer.mobNumber,
-  buyerEmail: res.retailer.email,
-  buyerDetails: res.retailer.fullName,
-  buyerGSTIN: res.retailer.GSTIN || 'GSTIN_NOT_PROVIDED',
+  ngOnInit() {
+    this.PoId = this.route.snapshot.paramMap.get('id') || '';
+    const today = new Date();
+    this.minDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    this.loadData();
+  }
 
-  poDate: new Date().toLocaleDateString(),
-  poNumber: res.poNumber,
-  status: res.status,
-  deliveryChallanNumber: this.Deliverychllanid,
-  products: res.products || [],
-  id: res.id,
-};
-
-      // Fetch Delivery Challan ID
-      const url2 = `mnf-delivery-challan/purchase-orders/genrate-chall-no?manufacturerEmail=${this.purchaseOrder.buyerEmail}`;
-      this.authService.get(url2).subscribe((res: any) => {
-        console.log(res);
-        this.Deliverychllanid = res.deliveryChallanNumber;
+  private loadData() {
+    this.authService
+      .get(`po-retailer-to-manufacture/${this.PoId}`)
+      .pipe(
+        switchMap((rawPo: any) => {
+          const designNumbers = Array.from(new Set(rawPo.set.map((i: any) => i.designNumber)));
+          const manufacturerEmail = rawPo.manufacturerEmail;
+          
+          return forkJoin({
+            po: of(rawPo),
+            inventoryRes: this.authService.post(
+              'manufacture-inventory/by-designs',
+              { designNumbers }
+            ),
+            manufacturerProfile: this.authService.get(`manufacturers/${manufacturerEmail}`)
+          });
+        })
+      )
+      .subscribe({
+        next: ({ po, inventoryRes, manufacturerProfile }) => {
+          const flatInv = inventoryRes?.data || [];
+          this.mapResponses(po, flatInv, manufacturerProfile);
+        },
+        error: err => console.error('Load failed', err)
       });
+  }
 
-      // Check if `set` exists and is not empty
-      if (res.set && Array.isArray(res.set) && res.set.length > 0) {
-        this.extractSizesAndPrices(res.set);
-
-        // **1️⃣ Store Ordered Set (Fixed Data)**
-        this.orderedSet = res.set.map((product: any) => ({
-          designNumber: product.designNumber,
-          colour: product.colour,
-          colourImage: product.colourImage,
-          colourName: product.colourName,
-          size: product.size,
-          quantity: product.quantity, // Original quantity (unchangeable)
-          editedQuantity: product.totalQuantity ,
-          price: product.price,
-          productBy: res.manufacturer.email,
-        }));
-
-      this.avilableSet.forEach(item => {
-  const key = `${item.designNumber}_${item.colourName}_${item.size}`;
-  this.sizeLevelQtyMap[key] = item.quantity;
-});
-
-
-        // Process grouped products and update mergedProducts
-        this.mergedProducts = this.processGroupedProducts(res.set);
-        this.filteredData = res.set[0];
-
-        if (this.filteredData) {
-          this.mergedProducts = this.flattenProductData(res.set);  // Pass entire set array
-          this.mergedProducts2 = res.set;
-        }
-      } else {
-        this.filteredData = null;
-        this.mergedProducts = [];
-      }
-    },
-    (error) => {
-      console.error("Error fetching purchase order data:", error);
+  private mapResponses(po: any, flatInventory: any[], manufacturerProfile: any) {
+  // Group inventory by designNumber with ALL needed fields including inventory ID
+  const inventoryMap = new Map<string, any[]>();
+  for (const item of flatInventory) {
+    if (!inventoryMap.has(item.designNumber)) {
+      inventoryMap.set(item.designNumber, []);
     }
-  );
-}
+    inventoryMap.get(item.designNumber)!.push({
+      standardSize: item.standardSize,
+      colourName: item.colourName,
+      quantity: item.quantity,
+      minimumQuantityAlert: item.minimumQuantityAlert || 0,
+      productId: item.productId || '',
+      inventoryId: item.id || item._id || '', // NEW: Store inventory object ID
+      brandName: item.brandName || ''
+    });
+  }
 
+  // Map retailer details... (keep existing code)
+  const r = po.retailer;
+  this.retailerCompany = r.companyName;
+  this.retailerEmail = r.email;
+  this.retailerMobile = r.mobNumber;
+  this.retailerGSTIN = r.GSTIN;
+  this.retailerPAN = r.GSTIN ? r.GSTIN.substring(2, 12) : '';
+  this.retailerLogo = r.logo || '';
+  this.retailerAddress = `${r.address}, ${r.pinCode} – ${r.state}`;
+  
+  // Store manufacturer profile and bank details
+  this.manufacturerProfile = manufacturerProfile;
+  this.bankDetails = manufacturerProfile.BankDetails;
+  
+  // Order details
+  this.poNumber = po.poNumber;
+  this.poDate = new Date(po.retailerPoDate);
+  this.discount = po.discount;
+  this.currentStatusAll = po.statusAll;
+  
+  // Transport details
+  this.transportDetails = po.transportDetails || {};
+  
+  // Set delivery dates
+  this.expDeliveryDate = po.expDeliveryDate ? new Date(po.expDeliveryDate) : null;
+  this.partialDeliveryDate = po.partialDeliveryDate ? new Date(po.partialDeliveryDate) : null;
+
+  // Build table rows with inventory ID for updates
+  this.orderedSet = po.set.map((item: any) => {
+    const entries = inventoryMap.get(item.designNumber) || [];
+    const match = entries.find((e: any) =>
+      e.colourName.toLowerCase() === item.colourName.toLowerCase() &&
+      e.standardSize.toLowerCase() === item.size.toLowerCase()
+    );
     
+    const invQty = match ? match.quantity : 0;
+    const minAlert = match ? match.minimumQuantityAlert : 0;
+    const defaultQty = item.availableQuantity || Math.min(item.quantity, invQty);
 
-extractSizesAndPrices(productSet: any[]): void {
-  const uniqueSizes = new Set<string>();
-
-  productSet.forEach((product) => {
-    if (product.size) {
-      uniqueSizes.add(product.size);
-    }
+    return {
+      _id: item._id,
+      clothing: item.clothing,
+      gender: item.gender,
+      designNumber: item.designNumber,
+      colourName: item.colourName,
+      size: item.size,
+      quantity: item.quantity,
+      availableQuantity: defaultQty,
+      inventoryQuantity: invQty,
+      minimumQuantityAlert: minAlert,
+      price: item.price,
+      hsnCode: item.hsnCode,
+      hsnGst: item.hsnGst,
+      status: item.status,
+      productId: match ? match.productId : '', // Keep for reference
+      inventoryId: match ? match.inventoryId : '', // NEW: For inventory updates
+      colour: item.colour,
+      confirmed: item.confirmed || false,
+      rejected: item.rejected || false,
+      productType: item.productType,
+      colourImage: item.colourImage,
+      brandName: match ? match.brandName : ''
+    };
   });
+}
 
-  this.sizeHeaders = Array.from(uniqueSizes); // Convert Set to Array
+  // Enhanced validation methods
+  hasInvalidQuantities(): boolean {
+    return this.orderedSet.some(i =>
+      i.availableQuantity > i.quantity ||
+      i.availableQuantity > i.inventoryQuantity ||
+      i.availableQuantity < 0
+    );
+  }
+
+  hasInvalidQuantitiesForItem(item: PoItem): boolean {
+    return item.availableQuantity > item.quantity ||
+           item.availableQuantity > item.inventoryQuantity ||
+           item.availableQuantity < 0;
+  }
+
+  hasPartialDelivery(): boolean {
+  return this.orderedSet.some(i => i.quantity !== i.availableQuantity);
+}
+
+  // New methods for enhanced UI logic
+  isLowStock(item: PoItem): boolean {
+    return item.inventoryQuantity < item.minimumQuantityAlert && item.inventoryQuantity > 0;
+  }
+
+  isOutOfStock(item: PoItem): boolean {
+    return item.inventoryQuantity === 0;
+  }
+
+  hasQuantityMismatch(item: PoItem): boolean {
+    return item.quantity !== item.availableQuantity;
+  }
+
+  clampAvailableQuantity(item: PoItem) {
+    if (item.availableQuantity < 0) item.availableQuantity = 0;
+    const max = Math.min(item.quantity, item.inventoryQuantity);
+    if (item.availableQuantity > max) item.availableQuantity = max;
+  }
+
+  preventInvalidInput(evt: KeyboardEvent) {
+    if (['e', 'E', '+', '-', '.'].includes(evt.key)) evt.preventDefault();
+  }
+
+  navigateBack() {
+    this.location.back();
+  }
+
+  // Status calculation methods (only partial and confirmed)
+  private calculateItemStatus(item: PoItem): string {
+    if (item.quantity !== item.availableQuantity) {
+      return 'm_partial_delivery';
+    } else {
+      return 'm_confirmed';
+    }
+  }
+
+  private calculateOverallStatus(): string {
+  // Simple rule: If ANY item has Required Qty !== Input Qty, then partial
+  const hasPartial = this.orderedSet.some(item => 
+    item.quantity !== item.availableQuantity
+  );
+  
+  // If all items have Required Qty === Input Qty, then confirmed
+  const allConfirmed = this.orderedSet.every(item => 
+    item.quantity === item.availableQuantity
+  ) && this.orderedSet.length > 0;
+
+  if (hasPartial) {
+    return 'm_partial_delivery';
+  } else if (allConfirmed) {
+    return 'm_order_confirmed';
+  } else {
+    return 'pending'; // Edge case: empty set
+  }
+}
+
+  // Bulk inventory update methods
+private prepareBulkInventoryUpdate(): any {
+  const userProfile = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  const manufacturerEmail = userProfile.email || '';
+
+  const updates = this.orderedSet
+    .filter(item => item.availableQuantity > 0 && item.inventoryId) // Check for inventoryId
+    .map(item => ({
+      _id: item.inventoryId, // NEW: Use inventory object ID
+      quantity: item.availableQuantity,
+      status: "remove",
+      lastUpdatedBy: manufacturerEmail
+    }));
+
+  return { updates };
 }
 
 
-processGroupedProducts(productSet: any[]): any[] {
-  const groupedProducts: { [key: string]: any } = {};
+  private async updateBulkInventory(): Promise<{success: boolean, message: string}> {
+  const payload = this.prepareBulkInventoryUpdate();
+  
+  if (payload.updates.length === 0) {
+    console.log('No inventory updates needed - no valid inventory IDs found');
+    return { success: false, message: 'No valid inventory records found for update' };
+  }
 
-  productSet.forEach((product) => {
-      const key = `${product.designNumber}-${product.colourName}`;
+  // Check for missing inventory IDs
+  const itemsWithoutInventoryId = this.orderedSet.filter(item => 
+    item.availableQuantity > 0 && !item.inventoryId
+  );
+  
+  if (itemsWithoutInventoryId.length > 0) {
+    console.warn('⚠️ Some items missing inventory IDs:', itemsWithoutInventoryId.map(i => 
+      `${i.designNumber}-${i.colourName}-${i.size}`
+    ));
+  }
 
-      if (!groupedProducts[key]) {
-          groupedProducts[key] = {
-              designNumber: product.designNumber,
-              colourName: product.colourName,
-              colourImage: product.colourImage,
-              colour: product.colour,
-              quantities: {} // Grouped by size
-          };
-      }
+  try {
+    console.log('Simplified bulk inventory update payload:', payload);
+    const response = await this.authService.post('manufacture-inventory/update-bulk', payload).toPromise();
+    console.log('Inventory updated successfully:', response);
+    return { success: true, message: 'Inventory updated successfully' };
+  } catch (error) {
+    console.error('Inventory update failed:', error);
+    return { success: false, message: 'Inventory update failed' };
+  }
+}
 
-      // Ensure size exists before assigning
-      if (product.size) {
-          if (!groupedProducts[key].quantities[product.size]) {
-              groupedProducts[key].quantities[product.size] = {
-                  ordered: 0,
-                  available: 0,
-              };
+
+  // Invoice generation method
+  private async generateInvoice(): Promise<{success: boolean, message: string}> {
+    const invoicePayload = {
+      poId: this.PoId,
+      poNumber: this.poNumber,
+      invoiceNumber: `INV-${this.poNumber}-${Date.now()}`,
+      invoiceDate: new Date().toISOString(),
+      statusAll: "created",
+      bankDetails: {
+        accountHolderName: this.manufacturerProfile.companyName,
+        accountNumber: this.bankDetails.accountNumber,
+        bankName: this.bankDetails.bankName,
+        branchName: this.bankDetails.branch,
+        ifscCode: this.bankDetails.IFSCcode,
+        swiftCode: this.bankDetails.swiftCode,
+        upiId: "",
+        bankAddress: `${this.bankDetails.city}, ${this.bankDetails.country}`
+      },
+      manufacturerEmail: this.manufacturerProfile.email,
+      retailerEmail: this.retailerEmail,
+      deliveryItems: this.orderedSet
+        .filter(item => item.availableQuantity > 0)
+        .map(item => ({
+          designNumber: item.designNumber,
+          colour: item.colour,
+          colourName: item.colourName,
+          colourImage: item.colourImage,
+          size: item.size,
+          quantity: item.availableQuantity,
+          productType: item.productType,
+          gender: item.gender,
+          clothing: item.clothing,
+          subCategory: item.clothing,
+          hsnCode: item.hsnCode,
+          hsnGst: item.hsnGst,
+          hsnDescription: `${item.gender}'s ${item.clothing}`,
+          status: "pending"
+        })),
+      manufacturer: this.manufacturerProfile,
+      retailer: {
+        email: this.retailerEmail,
+        fullName: this.retailerCompany,
+        companyName: this.retailerCompany,
+        address: this.retailerAddress,
+        state: "",
+        country: "India",
+        pinCode: "",
+        mobNumber: this.retailerMobile,
+        GSTIN: this.retailerGSTIN,
+        logo: this.retailerLogo,
+        productDiscount: this.discount.toString(),
+        category: "Retail"
+      },
+      totalQuantity: this.orderedSet.reduce((sum, item) => sum + item.availableQuantity, 0),
+      transportDetails: this.transportDetails,
+      totalAmount: this.getTotalAmount(),
+      discountApplied: this.getTotalAmount() * (this.discount / 100),
+      finalAmount: this.getTotalAmount() * (1 - this.discount / 100)
+    };
+
+    try {
+      const invoiceResponse = await this.authService.post('pi-manufacture-to-retailer', invoicePayload).toPromise();
+      console.log('Invoice created successfully:', invoiceResponse);
+      return { success: true, message: 'Invoice generated successfully' };
+    } catch (error) {
+      console.error('Invoice creation failed:', error);
+      return { success: false, message: 'Invoice generation failed' };
+    }
+  }
+
+  // BUSINESS CONTINUITY APPROACH - Main update method
+  updatePoData() {
+    if (this.hasInvalidQuantities()) {
+      alert('Please fix invalid quantities before updating');
+      return;
+    }
+
+    // Calculate statuses
+    const updatedItems = this.orderedSet.map(item => ({
+      _id: item._id,
+      availableQuantity: item.availableQuantity,
+      confirmed: item.availableQuantity > 0,
+      rejected: false,
+      status: this.calculateItemStatus(item)
+    }));
+
+    const calculatedStatusAll = this.calculateOverallStatus();
+
+    // Prepare PO update data
+    const poUpdateData = {
+      set: updatedItems,
+      statusAll: calculatedStatusAll,
+      expDeliveryDate: this.expDeliveryDate,
+      partialDeliveryDate: this.partialDeliveryDate,
+      manufacturerNote: '',
+      transportDetails: this.transportDetails
+    };
+
+    console.log('Updating PO with data:', poUpdateData);
+
+    // STEP 1: Update PO (CRITICAL - Must succeed or stop everything)
+    this.authService.patchpimage(`po-retailer-to-manufacture/update-po-data/${this.PoId}`, poUpdateData)
+      .subscribe({
+        next: async (poResponse) => {
+          console.log('✅ PO updated successfully:', poResponse);
+          
+          let inventorySuccess = false;
+          let inventoryMessage = '';
+          let invoiceSuccess = false;
+          let invoiceMessage = '';
+
+          // STEP 2: Update Inventory (CONTINUE EVEN IF FAILS)
+          try {
+            const inventoryResult = await this.updateBulkInventory();
+            inventorySuccess = inventoryResult.success;
+            inventoryMessage = inventoryResult.message;
+          } catch (inventoryError) {
+            console.warn('⚠️ Inventory update failed, but continuing:', inventoryError);
+            inventorySuccess = false;
+            inventoryMessage = 'Inventory sync failed';
           }
 
-          // ✅ Sum ordered quantity instead of overwriting
-          groupedProducts[key].quantities[product.size].ordered += product.quantity;
-          groupedProducts[key].quantities[product.size].available = product.quantity; // Keep last value for available
-      }
-  });
+          // STEP 3: Generate Invoice (Only if confirmed, regardless of inventory status)
+          if (calculatedStatusAll === 'm_order_confirmed') {
+            try {
+              const invoiceResult = await this.generateInvoice();
+              invoiceSuccess = invoiceResult.success;
+              invoiceMessage = invoiceResult.message;
+            } catch (invoiceError) {
+              console.error('❌ Invoice generation failed:', invoiceError);
+              invoiceSuccess = false;
+              invoiceMessage = 'Invoice generation failed';
+            }
+          }
 
-  return Object.values(groupedProducts);
-}
-
-
-    calculateTotalPrice(row: any): number {
-      let total = 0;
-      
-      // Iterate over the sizes and calculate total for that size
-      this.sizeHeaders.forEach((size) => {
-        if (row.quantities[size] > 0) {
-          total += row.quantities[size] * (this.priceHeaders[size] || 0);
+          // BUSINESS CONTINUITY SUCCESS MESSAGES
+          this.showBusinessContinuityMessage(
+            calculatedStatusAll,
+            inventorySuccess,
+            invoiceSuccess,
+            inventoryMessage,
+            invoiceMessage
+          );
+          
+          this.navigateBack();
+        },
+        error: (error) => {
+          // PO UPDATE FAILED - STOP EVERYTHING
+          console.error('❌ Critical: PO update failed - stopping all operations:', error);
+          alert('❌ Failed to update Purchase Order. No changes were made.');
         }
       });
-      
-      return total;
-    }
-    
-    
-
-    calculateGST(subTotal: number): number {
-      return (subTotal * 18) / 100; // 18% GST
-    }
-
-    calculateGrandTotal(subTotal: number, gst: number): number {
-      return subTotal + gst;
-    }
-
-    isSizeAvailable(rows: any[], size: string): boolean {
-      return rows.some((row) => row.quantities[size] > 0);
-    }
-
-   // Function to update original data by subtracting updated quantity
-calculateQuantities(original: any, updated: any) {
-  return original.map((origItem: any) => {
-    const matchingItem = updated.find(
-      (updItem: any) =>
-        origItem.designNumber === updItem.designNumber &&
-        origItem.size === updItem.size &&
-        origItem.colour === updItem.colour
-    );
-
-    if (matchingItem) {
-      const updatedQuantity = origItem.quantity - matchingItem.quantity;
-      return {
-        ...origItem,
-        quantity: updatedQuantity > 0 ? updatedQuantity : 0, // Avoid negative values
-      };
-    }
-
-    return origItem; // If no match, keep original
-  });
-}
-
-// addpo() {
-//   console.log("Response Data:", this.responseData);
-//   console.log("Merged Products:", this.mergedProducts);
-
-//   // Interface for product structure
-//   interface Product {
-//     colour: string;
-//     colourImage: string | null;
-//     colourName: string;
-//     designNumber: string;
-//     price?: string;
-//     totalPrice?: number;
-//     productBy: string;
-//     quantities: { [size: string]: number };
-//   }
-
-//   const productByEmail = this.responseData?.wholesaler?.email || "defaultEmail@example.com";
-
-//   // Step 1: Prepare updatedProducts
-//   const updatedProducts = this.mergedProducts
-//     .map((product: Product) => {
-//       const qty = product.quantities;
-
-//       return Object.entries(qty).map(([size, quantity]) => {
-//         const pendingQuantity = this.getPendingQuantity(product.designNumber, size);
-
-//         const updatedQuantity = Math.max(quantity - pendingQuantity, 0); // Prevent negative quantity
-
-//         return {
-//           colour: product.colour,
-//           colourImage: product.colourImage,
-//           colourName: product.colourName,
-//           designNumber: product.designNumber,
-//           price: product.price || this.calculatePrice(product, qty),
-//           productBy: productByEmail,
-//           quantity: updatedQuantity,
-//           size: size,
-//         };
-//       });
-//     })
-//     .flat();
-
-//   console.log("Updated Data:", updatedProducts);
-
-//   // Step 2: Calculate filtered data
-//   const filteredData = this.calculateQuantities(this.mergedProducts2, updatedProducts);
-
-//   // Step 3: Prepare payloads
-//   const updatedCartBody = this.createPayload("proceed", updatedProducts);
-//   const pendingCartBody = this.createPayload("pending", filteredData);
-
-//   console.log("Updated Cart Body:", updatedCartBody);
-//   console.log("Pending Cart Body:", pendingCartBody);
-
-//   // Step 4: Send payloads to the backend
-//   this.sendToBackend("mnf-delivery-challan", updatedCartBody, "Product Successfully Added in Cart");
-//   this.sendToBackend("mnf-delivery-challan", pendingCartBody, "Pending Quantities Updated Successfully");
-// }
-// addpo() {
-//   console.log("Ordered Set Before Merge:", this.orderedSet);
-//   console.log("Available Set Before Merge:", this.avilableSet);
-
-//   // ✅ **Merge Ordered Set Before Sending API (Summing Ordered Quantities)**
-//   const mergedOrderedSet: { [key: string]: any } = {};
-//   this.orderedSet.forEach(item => {
-//     const key = `${item.designNumber}-${item.colourName}-${item.size}`;
-
-//     if (!mergedOrderedSet[key]) {
-//       mergedOrderedSet[key] = { ...item };
-//     } else {
-//       mergedOrderedSet[key].ordered += item.ordered; // ✅ Sum ordered quantities
-//     }
-//   });
-
-//   const finalOrderedSet = Object.values(mergedOrderedSet); // Convert back to array
-
-//   // ✅ **Merge Available Set Before Sending API (Summing Available Quantities)**
-//   const mergedAvailableSet: { [key: string]: any } = {};
-//   this.avilableSet.forEach(item => {
-//     const key = `${item.designNumber}-${item.colourName}-${item.size}`;
-
-//     if (!mergedAvailableSet[key]) {
-//       mergedAvailableSet[key] = { ...item };
-//     } else {
-//       mergedAvailableSet[key].available += item.available; // ✅ Sum available quantities
-//     }
-//   });
-
-//   const finalAvailableSet = Object.values(mergedAvailableSet); // Convert back to array
-
-//   // ✅ **Prepare Final Payload**
-//   const payload = {
-//       email: this.responseData.wholesaler.email,
-//       productBy: this.responseData.manufacturer.email,
-//       poNumber: this.responseData.poNumber,
-//       deliveryChallanNumber: this.Deliverychllanid,
-//       orderedSet: finalOrderedSet, // ✅ Now merged correctly
-//       avilableSet: finalAvailableSet, // ✅ Now merged correctly
-//       retailerPOs: this.responseData.retailerPOs,
-//       manufacturer: this.responseData.manufacturer,
-//       wholesaler: this.responseData.wholesaler,
-//   };
-
-//   console.log("Final Payload (After Merging):", JSON.stringify(payload, null, 2));
-
-//   // ✅ **Send API Request**
-//   this.authService.post("mnf-delivery-challan", payload).subscribe(
-//       () => {
-//           this.communicationService.customSuccess("Product Successfully Added in Cart");
-//       },
-//       (error) => {
-//           this.communicationService.customError1(error.error.message);
-//       }
-//   );
-// }
-addpo(): void {
-  const payload = { ...this.responseData };
-
-  // Replace the set with edited data only
-  payload.set = this.orderedSet.map(item => ({
-    ...item,
-    totalQuantity: item.editedQuantity,  // Use only the edited qty
-  }));
-
-  // Remove unwanted fields
-  delete payload.__v;
-  delete payload._id;
-  delete payload.productId;
-
-  this.authService
-    .post('po-wholesaler-to-manufacture', payload)
-    .subscribe(
-      () => this.communicationService.customSuccess('PO successfully generated for manufacturer'),
-      (error) => this.communicationService.customError1(error.error.message)
-    );
-}
-
-
-
-// addpo() {
-//   console.log("Ordered Set (Before Merge):", this.orderedSet);
-//   console.log("Available Set (Before Merge):", this.avilableSet);
-//   console.log("Retailer POs:", this.responseData.retailerPOs);
-
-//   // ✅ Merge Ordered and Available Sets Properly
-//   const mergedOrderedSet = this.mergeEntries(this.orderedSet, "ordered");  // ✅ Ensure ordered quantities are correct
-//   const mergedAvailableSet = this.mergeEntries(this.avilableSet, "available"); // ✅ Ensure available quantities are correct
-
-//   // ✅ Correctly merge same `designNumber`, `colourName`, and `size`
-//   const finalMergedSet = mergedAvailableSet.map((item) => {
-//       const matchingOrderedItem = mergedOrderedSet.find(
-//           (ord) =>
-//               ord.designNumber === item.designNumber &&
-//               ord.colourName === item.colourName &&
-//               ord.size === item.size
-//       );
-
-//       if (matchingOrderedItem) {
-//           item.ordered = matchingOrderedItem.ordered; // ✅ Ensure ordered quantity is taken from orderedSet
-//           item.available = item.available - matchingOrderedItem.ordered;
-//           item.available = item.available >= 0 ? item.available : 0; // ✅ Prevent negative values
-//       }
-
-//       return item;
-//   });
-
-//   const payload = {
-//       email: this.responseData.wholesaler.email,
-//       productBy: this.responseData.manufacturer.email,
-//       poNumber: this.responseData.poNumber,
-//       deliveryChallanNumber: this.Deliverychllanid,
-//       orderedSet: mergedOrderedSet,  // ✅ FIXED: Orders now correctly reflect quantity as ordered
-//       avilableSet: finalMergedSet, // ✅ FIXED: Available quantities are correct
-//       retailerPOs: this.responseData.retailerPOs,
-//       manufacturer: this.responseData.manufacturer,
-//       wholesaler: this.responseData.wholesaler,
-//   };
-
-//   console.log("Final Payload (After Correct Merge):", JSON.stringify(payload, null, 2));
-
-//   this.authService.post("mnf-delivery-challan", payload).subscribe(
-//       () => {
-//           this.communicationService.customSuccess("Product Successfully Added in Cart");
-//       },
-//       (error) => {
-//           this.communicationService.customError1(error.error.message);
-//       }
-//   );
-// }
-
-
-// Function to calculate price per product
-calculatePrice(product: any, quantities: { [key: string]: number }): string {
-  return product.totalPrice
-    ? (product.totalPrice / Object.keys(quantities).length).toString()
-    : "0";
-}
-
-// Function to create payload with status
-createPayload(status: string, setData: any, deliveryChallanNumber: any) {
-  return {
-    ...this.responseData,
-    status,
-    deliveryChallanNumber,
-    set: setData,
-  };
-}
-
-// Function to send data to the backend
-sendToBackend(endpoint: string, payload: any, successMessage: string) {
-  this.authService.post(endpoint, payload).subscribe(
-    () => {
-      this.communicationService.customSuccess(successMessage);
-    },
-    (error) => {
-      this.communicationService.customError1(error.error.message);
-    }
-  );
-}
-
-// Function to get pending quantity
-getPendingQuantity(designNumber: string, size: string): number {
-  return this.pendingQuantities?.[designNumber]?.[size] || 0;
-}
-
-  // Example: Method to update `pendingQuantities` globally
-  updatePendingQuantities(designNumber: string, size: string, quantity: number) {
-      if (!this.pendingQuantities[designNumber]) {
-          this.pendingQuantities[designNumber] = {};
-      }
-      this.pendingQuantities[designNumber][size] = quantity;
   }
 
-    
+  private showBusinessContinuityMessage(
+  statusAll: string, 
+  inventorySuccess: boolean, 
+  invoiceSuccess: boolean,
+  inventoryMessage: string,
+  invoiceMessage: string
+) {
+  const isFullyConfirmed = statusAll === 'm_order_confirmed';
+  const isPartialDelivery = statusAll === 'm_partial_delivery';
 
-    
-    // Helper function to generate a unique ID (you can modify this if your backend uses a different ID generation strategy)
-    generateUniqueId() {
-      return 'id-' + Math.random().toString(36).substr(2, 9);
-    }
-    
-    
-    
-
-flattenProductData(set: any[]): any[] {
-  const flatList: any[] = [];
-
-  set.forEach((item) => {
-    const key = `${item.designNumber}-${item.colourName}`;
-    let existing = flatList.find(p =>
-      p.designNumber === item.designNumber && p.colourName === item.colourName
-    );
-
-    if (!existing) {
-      existing = {
-        designNumber: item.designNumber,
-        colourName: item.colourName,
-        originalQty: 0,
-        editQty: 0
-      };
-      flatList.push(existing);
-    }
-
-    existing.originalQty += item.quantity;
-    existing.editQty += item.quantity; // Start with same value
-  });
-
-  return flatList;
-}
-
-
-  printPurchaseOrder(): void {
-    const data = document.getElementById('purchase-order');
-    if (data) {
-      html2canvas(data, {
-        scale: 3,  // Adjust scale for better quality
-        useCORS: true,
-      }).then((canvas) => {
-        const imgWidth = 208;  // A4 page width in mm
-        const pageHeight = 295;  // A4 page height in mm
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        let heightLeft = imgHeight;
-
-        const contentDataURL = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');  // Create new PDF
-        const margin = 10;  // Margin for PDF
-        let position = margin;
-
-        // Add first page
-        pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
-        heightLeft -= pageHeight;
-
-        // Loop over content to add remaining pages if content exceeds one page
-        while (heightLeft > 0) {
-          pdf.addPage();  // Add new page
-          position = margin - heightLeft;  // Position for the next page
-          pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
-          heightLeft -= pageHeight;
-        }
-
-        // Save PDF file
-        pdf.save('purchase-order.pdf');
-      }).catch((error) => {
-        console.error("Error generating PDF:", error);
-      });
+  if (isFullyConfirmed) {
+    if (inventorySuccess && invoiceSuccess) {
+      this.communicationService.customSuccess('Purchase Order confirmed, inventory updated, and invoice generated successfully!');
+    } else if (inventorySuccess && !invoiceSuccess) {
+      alert('✅ Purchase Order confirmed and inventory updated.\n⚠️ Invoice generation failed - please generate manually.');
+    } else if (!inventorySuccess && invoiceSuccess) {
+      alert('✅ Purchase Order confirmed and invoice generated.\n⚠️ Inventory sync failed - please update inventory manually.');
     } else {
-      console.error("Element with id 'purchase-order' not found.");
+      alert('✅ Purchase Order confirmed.\n⚠️ Please update inventory and generate invoice manually.');
+    }
+  } else if (isPartialDelivery) {
+    if (inventorySuccess) {
+      alert('✅ Purchase Order updated with partial delivery and inventory allocated!');
+    } else {
+      alert('✅ Purchase Order updated with partial delivery.\n⚠️ Inventory allocation failed - please update manually.');
+    }
+  } else {
+    if (inventorySuccess) {
+      alert('✅ Purchase Order updated and inventory allocated!');
+    } else {
+      alert('✅ Purchase Order updated.\n⚠️ Inventory allocation failed - please update manually.');
     }
   }
-  onQuantityChange(row: any, size: string) {
-    const productToUpdate = this.avilableSet.find(
-        (p) =>
-            p.designNumber === row.designNumber &&
-            p.colourName === row.colourName &&
-            p.size === size
-    );
-
-    if (productToUpdate) {
-        productToUpdate.quantity = row.quantities[size]; // ✅ Correct field to update
-    } else {
-        console.warn("Matching product not found for", row.designNumber, row.colourName, size);
-    }
-
-    // ✅ **Remove Duplicates from `avilableSet`**
-    const mergedAvailableSet = this.mergeEntries(this.avilableSet, "available");
-    this.avilableSet = mergedAvailableSet; // ✅ Update `avilableSet` with de-duplicated data
-
-    console.log("Updated Available Quantities:", JSON.stringify(this.avilableSet, null, 2));
 }
 
-
-
-  
-  updateTotals(): void {
-    this.Totalsub = this.mergedProducts.reduce((acc: number, group: any) => {
-      return acc + group.rows.reduce((subAcc: number, row: any) => subAcc + this.calculateTotalPrice(row), 0);
+  // Helper calculation methods
+  getTotalAmount(): number {
+    return this.orderedSet.reduce((total, item) => {
+      const itemTotal = item.availableQuantity * parseFloat(item.price);
+      return total + itemTotal;
     }, 0);
-  
-    this.gst = (this.Totalsub * 18) / 100; // 18% GST
-    this.totalGrandTotal = this.Totalsub + this.gst;
-  }
-  
-  updateMergedProducts(designNumber: string, colourName: string, size: string, newValue: number): void {
-    const product = this.mergedProducts.find(item =>
-      item.designNumber === designNumber &&
-      item.colourName === colourName
-    );
-  
-    if (product) {
-      product.quantities[size] = newValue; // Update the size-specific quantity
-      product.totalPrice = this.calculateTotalPrice(product); // Recalculate total price
-      this.updateTotals(); // Recalculate overall totals
-    }
-  }
- getOrderedQty(designNumber: string, colourName: string, size: string): number {
-  return this.orderedSet
-    .filter(item =>
-      item.designNumber === designNumber &&
-      item.colourName === colourName &&
-      item.size === size
-    )
-    .reduce((sum, item) => sum + item.quantity, 0);
-}
-
-// mergeEntries(productSet: any[], type: "ordered" | "available"): any[] {
-//   const mergedMap: { [key: string]: any } = {};
-
-//   productSet.forEach((product) => {
-//     const key = `${product.designNumber}-${product.colourName}-${product.size}`;
-
-//     if (!mergedMap[key]) {
-//       mergedMap[key] = {
-//         ...product,
-//         ordered: type === "ordered" ? product.quantity : 0,  // ✅ Store ordered quantity
-//         available: type === "available" ? product.quantity : 0  // ✅ Store available quantity
-//       };
-//     } else {
-//       if (type === "ordered") {
-//         mergedMap[key].ordered += product.quantity ?? 0; // ✅ Accumulate ordered quantity
-//       } else {
-//         mergedMap[key].available += product.quantity ?? 0; // ✅ Accumulate available quantity
-//       }
-//     }
-//   });
-
-//   return Object.values(mergedMap);
-// }
-// mergeEntries(productSet: any[], type: "ordered" | "available"): any[] {
-//   const mergedMap: { [key: string]: any } = {};
-
-//   productSet.forEach((product) => {
-//     const key = `${product.designNumber}-${product.colourName}-${product.size}`;
-
-//     if (!mergedMap[key]) {
-//       mergedMap[key] = {
-//         ...product,
-//         ordered: type === "ordered" ? product.quantity : 0,  // ✅ Store ordered quantity correctly
-//         available: type === "available" ? product.quantity : 0  // ✅ Store available quantity correctly
-//       };
-//     } else {
-//       if (type === "ordered") {
-//         mergedMap[key].ordered += product.quantity ?? 0; // ✅ Accumulate ordered quantity correctly
-//       } else {
-//         mergedMap[key].available += product.quantity ?? 0; // ✅ Accumulate available quantity correctly
-//       }
-//     }
-//   });
-
-//   return Object.values(mergedMap);
-// }
-
-mergeEntries(productSet: any[], type: "ordered" | "available"): any[] {
-  const mergedMap: { [key: string]: any } = {};
-
-  productSet.forEach((product) => {
-    const key = `${product.designNumber}-${product.colourName}-${product.size}`;
-
-    if (!mergedMap[key]) {
-      mergedMap[key] = {
-        ...product,
-        quantity: product.quantity ?? 0,  // ✅ Store initial quantity
-      };
-    } else {
-      mergedMap[key].quantity += product.quantity ?? 0; // ✅ Sum ordered or available quantity correctly
-    }
-  });
-
-  return Object.values(mergedMap);
-}
-navigateFun() {
-  this.location.back();
-}
-
-getTotalOriginalQty(designNumber: string, colourName: string): number {
-  return this.orderedSet
-    .filter(p => p.designNumber === designNumber && p.colourName === colourName)
-    .reduce((sum, item) => sum + item.quantity, 0);
-}
-preventInvalidInput(event: KeyboardEvent): void {
-  if (['e', 'E', '+', '-'].includes(event.key)) {
-    event.preventDefault();
-  }
-}
-
-
-onQtyUpdate(row: any): void {
-  // Find all matching entries in avilableSet and update their quantity
-  const matches = this.avilableSet.filter(p =>
-    p.designNumber === row.designNumber && p.colourName === row.colourName
-  );
-
-  const eachQty = Math.floor(row.editQty / matches.length);
-
-  matches.forEach((item, index) => {
-    item.quantity = eachQty;
-  });
-
-  console.log("Updated avilableSet:", this.avilableSet);
-}
-
-getOriginalQtyBySize(designNumber: string, colourName: string, size: string): number {
-  return this.orderedSet
-    .filter(p => p.designNumber === designNumber && p.colourName === colourName && p.size === size)
-    .reduce((sum, item) => sum + item.quantity, 0);
-}
-
-getEditableQtyBinding(designNumber: string, colourName: string, size: string): number {
-  const item = this.avilableSet.find(p =>
-    p.designNumber === designNumber &&
-    p.colourName === colourName &&
-    p.size === size
-  );
-  return item?.quantity || 0;
-}
-sizeLevelQtyMap: { [key: string]: number } = {};
-
-
-onSizeQtyChange(designNumber: string, colourName: string, size: string): void {
-  const key = `${designNumber}_${colourName}_${size}`;
-  const updatedValue = this.sizeLevelQtyMap[key] || 0;
-
-  const item = this.avilableSet.find(p =>
-    p.designNumber === designNumber &&
-    p.colourName === colourName &&
-    p.size === size
-  );
-
-  if (item) {
-    item.quantity = updatedValue;
   }
 
-  // Update main row total
-  const totalQty = this.avilableSet
-    .filter(p => p.designNumber === designNumber && p.colourName === colourName)
-    .reduce((sum, p) => sum + p.quantity, 0);
-
-  const mainRow = this.mergedProducts.find(r =>
-    r.designNumber === designNumber && r.colourName === colourName
-  );
-  if (mainRow) {
-    mainRow.editQty = totalQty;
+  getTotalWithGST(): number {
+    return this.orderedSet.reduce((total, item) => {
+      const itemTotal = item.availableQuantity * parseFloat(item.price);
+      const gstAmount = (itemTotal * item.hsnGst) / 100;
+      return total + itemTotal + gstAmount;
+    }, 0);
   }
 }
-
-
-
-  }

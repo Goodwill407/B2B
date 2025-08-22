@@ -216,6 +216,7 @@ export class ViewWholeselerProductComponent {
         gender: this.product.gender,
         clothing: this.product.clothingType,
         subCategory: this.product.subCategory,
+        brandName:this.product.brand
       })),
       productId: this.product._id,
       email: this.userProfile.email,

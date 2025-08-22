@@ -1,62 +1,150 @@
 <section class="content">
   <div class="content-block">
     <h4 class="mt-4">
-      <!-- <i class="bi bi-person-vcard-fill h3"></i> -->
-      <button class="btn navigate" (click)="navigateFun()">
+      <button class="btn navigate" (click)="navigateBack()">
         <i class="bi bi-arrow-left-circle h4"></i>
       </button>
-      Generate DELIVERY CHALLAN
+      <span>
+        Update Available Quantities of Retailer's Purchase Order 
+      </span>
     </h4>
+    <div id="purchase-order" class="card p-3 my-2">
+      <!-- Header -->
+      <div class="header d-flex justify-content-between align-items-center">
+        <h1>PURCHASE ORDER</h1>
+        <div class="text-end">
+          <p><strong>Order Date:</strong> {{ poDate | date:'dd/MM/yyyy' }}</p>
+          <p><strong>Order No:</strong> {{ poNumber }}</p>
+        </div>
+      </div>
 
-    <div id="purchase-order" class="challan-container card my-2">
-      <section class="gstin my-0">
-        <h2>DELIVERY CHALLAN</h2>
-      </section>
-      <hr class="my-1" />
+      <!-- Retailer Info -->
+      <div class="border rounded mt-3 p-3 d-flex align-items-start">
+        <img [src]="retailerLogo" alt="Logo" class="me-3" style="width:80px; height:80px; object-fit:cover;" />
+        <div>
+          <h5 class="mb-2"><u>Order From (Retailer):</u></h5>
+          <p class="mb-1"><strong>{{ retailerCompany }}</strong></p>
+          <p class="mb-1">{{ retailerEmail }} &bull; {{ retailerMobile }}</p>
+          <p class="mb-1">GSTIN: {{ retailerGSTIN }} &bull; PAN: {{ retailerPAN }}</p>
+          <p class="mb-1">{{ retailerAddress }}</p>
+        </div>
+      </div>
 
-<section class="order-details">
-  <div *ngIf="orderedSet && orderedSet.length > 0">
-    <table class="table table-bordered text-center">
-      <thead>
-        <tr>
-          <th>Sr. No.</th>
-          <th>Design No</th>
-          <th>Colour</th>
-          <th>Size</th>
-          <th>Original Qty</th>
-          <th>Edit Qty</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of orderedSet; let i = index">
-          <td>{{ i + 1 }}</td>
-          <td>{{ item.designNumber }}</td>
-          <td>{{ item.colourName }}</td>
-          <td>{{ item.size }}</td>
-          <td>{{ item.quantity }}</td>
-          <td>
-            <input type="number"
-                   [(ngModel)]="item.quantity"
-                   (keydown)="preventInvalidInput($event)"
-                   class="form-control form-control-sm"
-                   min="0"
-                   style="width: 80px;" />
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</section>
+      <!-- Items Table -->
+      <div *ngIf="orderedSet.length" class="mt-3">
+        <table class="table table-bordered text-center">
+          <thead class="table-light">
+            <tr>
+              <th>Sr. No.</th>
+              <th>Clothing</th>
+              <th>Gender</th>
+              <th>Colour Name</th>
+              <th>Design No.</th>
+              <th>Size</th>
+              <th>Required Qty</th>
+              <th>Input Qty</th>
+              <th>Current Stock</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of orderedSet; let i = index"
+                [class.partial-row]="hasQuantityMismatch(item)">
+              <td>{{ i + 1 }}</td>
+              <td>{{ item.clothing }}</td>    
+              <td>{{ item.gender }}</td>      
+              <td>{{ item.colourName }}</td>
+              <td>{{ item.designNumber }}</td>
+              <td>{{ item.size }}</td>
+              <td [class.qty-mismatch]="hasQuantityMismatch(item)">{{ item.quantity }}</td>
+              <td>
+                <input
+                  type="number"
+                  class="form-control form-control-sm mx-auto"
+                  style="width:80px;"
+                  [(ngModel)]="item.availableQuantity"
+                  (blur)="clampAvailableQuantity(item)"
+                  (keydown)="preventInvalidInput($event)"
+                  [min]="0"
+                  [max]="item.inventoryQuantity"
+                  [class.is-invalid]="hasInvalidQuantitiesForItem(item)"
+                  [class.qty-mismatch]="hasQuantityMismatch(item)"
+                />
+                <div *ngIf="hasInvalidQuantitiesForItem(item)" class="text-danger small mt-1">
+                  Invalid Quantity
+                </div>
+              </td>
+              <td [class.low-stock]="isLowStock(item)"
+                  [class.out-of-stock]="isOutOfStock(item)">
+                {{ item.inventoryQuantity }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
+      <!-- Dispatch Dates -->
+      <div class="mt-4">
+        <div class="row mb-3">
+          <label class="col-sm-4 col-form-label">Estimated Dispatch Date for Available Quantity:</label>
+          <div class="col-sm-4">
+            <input type="date" class="form-control form-control-sm" [(ngModel)]="expDeliveryDate" [min]="minDate" />
+          </div>
+        </div>
+        <div class="row" *ngIf="hasPartialDelivery()">
+          <label class="col-sm-4 col-form-label">Estimated Dispatch Date for Make-to-Order Items:</label>
+          <div class="col-sm-4">
+            <input type="date" class="form-control form-control-sm" [(ngModel)]="partialDeliveryDate" [min]="minDate" />
+          </div>
+        </div>
+      </div>
 
-      <div class="row">
-        <div class="col-12 text-center my-3">
-          <button 
-            class="btn btn-success ms-auto" 
-            (click)="addpo()" 
-            *ngIf="purchaseOrder?.status && purchaseOrder.status !== 'shipped'">
-            Generate Purchase Order
-          </button>
+      <div class="text-center my-3">
+        <button class="btn btn-success" [disabled]="!orderedSet.length || hasInvalidQuantities()" (click)="updatePoData()">
+          Update PO
+        </button>
+      </div>
+
+      <!-- Transport Details Card -->
+      <div class="border rounded mt-3 p-3" *ngIf="transportDetails">
+        <h5 class="mb-2"><u>Transport Details:</u></h5>
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Transport Type:</strong> {{ transportDetails.transportType || 'N/A' }}</p>
+            <p class="mb-1"><strong>Contact Person:</strong> {{ transportDetails.contactPersonName || 'N/A' }}</p>
+            <p class="mb-1"><strong>Mode:</strong> {{ transportDetails.modeOfTransport || 'N/A' }}</p>
+            <p class="mb-1"><strong>GST Number:</strong> {{ transportDetails.gstNumber || 'N/A' }}</p>
+          </div>
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Company:</strong> {{ transportDetails.transporterCompanyName || 'N/A' }}</p>
+            <p class="mb-1"><strong>Contact Number:</strong> {{ transportDetails.contactNumber || 'N/A' }}</p>
+            <p class="mb-1"><strong>Vehicle Number:</strong> {{ transportDetails.vehicleNumber || 'N/A' }}</p>
+            <p class="mb-1"><strong>Tracking ID:</strong> {{ transportDetails.trackingId || 'N/A' }}</p>
+          </div>
+        </div>
+        <div *ngIf="transportDetails.remarks" class="mt-2">
+          <p class="mb-1"><strong>Remarks:</strong> {{ transportDetails.remarks }}</p>
+        </div>
+        <div *ngIf="transportDetails.note" class="mt-2">
+          <p class="mb-1"><strong>Note:</strong> {{ transportDetails.note }}</p>
+        </div>
+      </div>
+
+      <!-- Bank Details Card -->
+      <div class="border rounded mt-3 p-3" *ngIf="bankDetails">
+        <h5 class="mb-2"><u>Bank Details (Manufacturer):</u></h5>
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Account Holder:</strong> {{ manufacturerProfile?.companyName }}</p>
+            <p class="mb-1"><strong>Account Number:</strong> {{ bankDetails.accountNumber }}</p>
+            <p class="mb-1"><strong>Account Type:</strong> {{ bankDetails.accountType | titlecase }}</p>
+            <p class="mb-1"><strong>Bank Name:</strong> {{ bankDetails.bankName }}</p>
+          </div>
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Branch:</strong> {{ bankDetails.branch }}</p>
+            <p class="mb-1"><strong>IFSC Code:</strong> {{ bankDetails.IFSCcode }}</p>
+            <p class="mb-1"><strong>Swift Code:</strong> {{ bankDetails.swiftCode || 'N/A' }}</p>
+            <p class="mb-1"><strong>Location:</strong> {{ bankDetails.city }}, {{ bankDetails.country }}</p>
+          </div>
         </div>
       </div>
     </div>
