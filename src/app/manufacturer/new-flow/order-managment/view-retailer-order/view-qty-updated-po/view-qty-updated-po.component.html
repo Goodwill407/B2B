@@ -41,8 +41,13 @@
             <p class="mb-1"><strong>Pending Items:</strong> {{ totalPendingItems }}</p>
           </div>
           <div class="col-md-6">
-            <p class="mb-1"><strong>Confirmed Amount:</strong> ₹{{ totalConfirmedAmount | number:'1.2-2' }}</p>
-            <p class="mb-1"><strong>Pending Amount:</strong> ₹{{ totalPendingAmount | number:'1.2-2' }}</p>
+            <!-- <p class="mb-1"><strong>Confirmed Amount:</strong> ₹{{ totalConfirmedAmount | number:'1.2-2' }}</p>
+            <p class="mb-1"><strong>Pending Amount:</strong> ₹{{ totalPendingAmount | number:'1.2-2' }}</p> -->
+            <p class="mb-1" ><strong>Expected Dispatch Date:</strong> {{ expDeliveryDate | date:'dd/MM/yyyy' }}</p>
+            <p class="mb-1" ><strong>Partial Dispatch Date:</strong> {{ partialDeliveryDate | date:'dd/MM/yyyy' }}</p>
+          </div>
+          <div *ngIf="manufacturerNote" class="col-md-12">
+            <p><strong>Manufacturer Note:</strong> {{ manufacturerNote }}</p>
           </div>
         </div>
       </div>
@@ -62,9 +67,9 @@
               <th>Size</th>
               <th>Required Qty</th>
               <th>Confirmed Qty</th>
-              <th>Pending Qty</th>
-              <th>Price</th>
-              <th>Total</th>
+              <th *ngIf="isPartialDelivery()" >Pending Qty</th>
+              <!-- <th>Price</th>
+              <th>Total</th> -->
               <th>Status</th>
             </tr>
           </thead>
@@ -89,12 +94,12 @@
               <td>{{ item.size }}</td>
               <td [class.qty-mismatch]="hasQuantityMismatch(item)">{{ item.quantity }}</td>
               <td [class.qty-mismatch]="hasQuantityMismatch(item)">{{ item.availableQuantity }}</td>
-              <td class="pending-qty" 
+              <td class="pending-qty"  *ngIf="isPartialDelivery()"
                   [class.has-pending]="(item.quantity - item.availableQuantity) > 0">
                 {{ item.quantity - item.availableQuantity }}
               </td>
-              <td>₹{{ item.price }}</td>
-              <td><strong>₹{{ getItemTotal(item) | number:'1.2-2' }}</strong></td>
+              <!-- <td>₹{{ item.price }}</td>
+              <td><strong>₹{{ getItemTotal(item) | number:'1.2-2' }}</strong></td> -->
               <td>
                 <span class="badge" 
                       [class.badge-success]="item.status === 'm_confirmed'"
@@ -104,27 +109,27 @@
               </td>
             </tr>
           </tbody>
-          <tfoot class="table-light">
+          <!-- <tfoot class="table-light">
             <tr>
               <td colspan="12"><strong>Total Confirmed Amount:</strong></td>
               <td><strong>₹{{ getTotalAmount() | number:'1.2-2' }}</strong></td>
               <td></td>
             </tr>
-          </tfoot>
+          </tfoot> -->
         </table>
       </div>
 
       <!-- Delivery Information -->
       <div class="mt-4">
         <div class="row">
-          <div class="col-md-6" *ngIf="expDeliveryDate">
-            <p><strong>Expected Delivery Date:</strong> {{ expDeliveryDate | date:'dd/MM/yyyy' }}</p>
+          <div class="col-md-6" *ngIf="isFullyConfirmed()">
+            <p><strong>Expected Dispatch Date:</strong> {{ expDeliveryDate | date:'dd/MM/yyyy' }}</p>
           </div>
-          <div class="col-md-6" *ngIf="partialDeliveryDate">
+          <!-- <div class="col-md-6" *ngIf="partialDeliveryDate">
             <p><strong>Partial Delivery Date:</strong> {{ partialDeliveryDate | date:'dd/MM/yyyy' }}</p>
-          </div>
+          </div> -->
         </div>
-        <div *ngIf="manufacturerNote" class="mt-2">
+        <div *ngIf="manufacturerNote && isFullyConfirmed()" class="mt-2">
           <p><strong>Manufacturer Note:</strong> {{ manufacturerNote }}</p>
         </div>
       </div>
@@ -135,12 +140,12 @@
         <div class="row">
           <div class="col-md-6">
             <p class="mb-1"><strong>Transport Type:</strong> {{ transportDetails.transportType || 'N/A' }}</p>
-            <p class="mb-1"><strong>Company:</strong> {{ transportDetails.transporterCompanyName || 'N/A' }}</p>
+            <p class="mb-1"><strong>Transport Company:</strong> {{ transportDetails.transporterCompanyName || 'N/A' }}</p>
             <p class="mb-1"><strong>Mode:</strong> {{ transportDetails.modeOfTransport || 'N/A' }}</p>
             <p class="mb-1"><strong>Contact Person:</strong> {{ transportDetails.contactPersonName || 'N/A' }}</p>
           </div>
           <div class="col-md-6">
-            <p class="mb-1"><strong>Contact Number:</strong> {{ transportDetails.contactNumber || 'N/A' }}</p>
+            <p class="mb-1"><strong>Contact Number:</strong> {{ transportDetails.contactNumber }} / {{ transportDetails.altContactNumber || 'N/A' }}</p>
             <p class="mb-1"><strong>Vehicle Number:</strong> {{ transportDetails.vehicleNumber || 'N/A' }}</p>
             <p class="mb-1"><strong>Tracking ID:</strong> {{ transportDetails.trackingId || 'N/A' }}</p>
             <p class="mb-1"><strong>Delivery Address:</strong> {{ transportDetails.deliveryAddress || 'N/A' }}</p>
@@ -152,19 +157,22 @@
         </div>
       </div>
 
-      <!-- Manufacturer Info -->
-      <div class="border rounded mt-3 p-3">
-        <h5 class="mb-2"><u>Manufacturer Details:</u></h5>
+      <!-- Bank Details Card -->
+      <div class="border rounded mt-3 p-3" *ngIf="bankDetails">
+        <h5 class="mb-2"><u>Bank Details (Manufacturer):</u></h5>
         <div class="row">
           <div class="col-md-6">
-            <p class="mb-1"><strong>Company:</strong> {{ manufacturerCompany }}</p>
-            <p class="mb-1"><strong>Contact:</strong> {{ manufacturerEmail }}</p>
-            <p class="mb-1"><strong>Phone:</strong> {{ manufacturerMobile }}</p>
+            <p class="mb-1"><strong>Account Holder:</strong> {{ bankDetails.accountHolderName || 'N/A' }}</p>
+            <p class="mb-1"><strong>Account Number:</strong> {{ bankDetails.accountNumber  || 'N/A'  }}</p>
+            <p class="mb-1"><strong>Account Type:</strong> {{ bankDetails.accountType? (bankDetails.accountType | titlecase) : 'N/A' }}</p>
+            <p class="mb-1"><strong>Bank Name:</strong> {{ bankDetails.bankName  || 'N/A' }}</p>
+            <p class="mb-1"><strong>UPI Id:</strong> {{ bankDetails.upiId || 'N/A'}}</p>
           </div>
           <div class="col-md-6">
-            <p class="mb-1"><strong>GSTIN:</strong> {{ manufacturerGSTIN }}</p>
-            <p class="mb-1"><strong>PAN:</strong> {{ manufacturerPAN }}</p>
-            <p class="mb-1"><strong>Address:</strong> {{ manufacturerAddress }}</p>
+            <p class="mb-1"><strong>Branch:</strong> {{ bankDetails.branchName  || 'N/A' }}</p>
+            <p class="mb-1"><strong>IFSC Code:</strong> {{ bankDetails.ifscCode  || 'N/A' }}</p>
+            <p class="mb-1"><strong>Swift Code:</strong> {{ bankDetails.swiftCode || 'N/A' }}</p>
+            <p class="mb-1"><strong>Location:</strong> {{ bankDetails.bankAddress  || 'N/A' }}</p>
           </div>
         </div>
       </div>

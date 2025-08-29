@@ -70,6 +70,19 @@ interface Manufacturer {
   GSTIN: string;
 }
 
+// Add BankDetails interface
+interface BankDetails {
+  accountHolderName: string;
+  accountNumber: string;
+  accountType: string;
+  bankName: string;
+  branchName: string;
+  ifscCode: string;
+  swiftCode?: string;
+  upiId:string;
+  bankAddress: string;
+}
+
 @Component({
   selector: 'app-view-qty-updated-po',
   standalone: true,
@@ -87,13 +100,17 @@ export class ViewQtyUpdatedPoComponent implements OnInit {
   retailerLogo!: string;
   retailerAddress!: string;
   
-  // Manufacturer details
+  // Manufacturer details (keeping these for reference if needed)
   manufacturerCompany!: string;
   manufacturerEmail!: string;
   manufacturerMobile!: string;
   manufacturerGSTIN!: string;
   manufacturerPAN!: string;
   manufacturerAddress!: string;
+  
+  // Add bank details and manufacturer profile properties
+  bankDetails!: BankDetails;
+  manufacturerProfile!: Manufacturer;
   
   // Order details
   poNumber!: number;
@@ -156,6 +173,25 @@ export class ViewQtyUpdatedPoComponent implements OnInit {
     this.manufacturerPAN = m.GSTIN ? m.GSTIN.substring(2, 12) : '';
     this.manufacturerAddress = `${m.address}, ${m.pinCode} – ${m.state}`;
     
+    // Store manufacturer profile for bank details display
+    this.manufacturerProfile = m;
+    
+    // Map bank details (assuming it comes from the API response)
+    if (po.bankDetails || po.manufacturer?.bankDetails) {
+      const bankData = po.bankDetails || po.manufacturer.bankDetails;
+      this.bankDetails = {
+        accountHolderName:bankData.accountHolderName,
+        accountNumber: bankData.accountNumber,
+        accountType: bankData.accountType,
+        bankName: bankData.bankName,
+        branchName: bankData.branchName,
+        ifscCode: bankData.ifscCode,
+        swiftCode: bankData.swiftCode,
+        upiId: bankData.upiId,
+        bankAddress: bankData.bankAddress
+      };
+    }
+    
     // Order details
     this.poNumber = po.poNumber;
     this.poDate = new Date(po.retailerPoDate);
@@ -197,17 +233,17 @@ export class ViewQtyUpdatedPoComponent implements OnInit {
   }
 
   private calculateSummaries() {
-  this.totalConfirmedItems = this.orderedSet.filter(item => item.confirmed).length;
-  this.totalPendingItems = this.orderedSet.filter(item => !item.confirmed).length;
-  
-  this.totalConfirmedAmount = this.orderedSet
-    .filter(item => item.confirmed)
-    .reduce((sum, item) => sum + this.getItemTotal(item), 0);
-  
-  this.totalPendingAmount = this.orderedSet
-    .filter(item => !item.confirmed)
-    .reduce((sum, item) => sum + this.getPendingAmount(item), 0);
-}
+    this.totalConfirmedItems = this.orderedSet.filter(item => item.confirmed).length;
+    this.totalPendingItems = this.orderedSet.filter(item => !item.confirmed).length;
+    
+    this.totalConfirmedAmount = this.orderedSet
+      .filter(item => item.confirmed)
+      .reduce((sum, item) => sum + this.getItemTotal(item), 0);
+    
+    this.totalPendingAmount = this.orderedSet
+      .filter(item => !item.confirmed)
+      .reduce((sum, item) => sum + this.getPendingAmount(item), 0);
+  }
 
   // UI helper methods
   isPartialDelivery(): boolean {
@@ -248,27 +284,25 @@ export class ViewQtyUpdatedPoComponent implements OnInit {
     this.location.back();
   }
 
-getItemTotal(item: ViewPoItem): number {
-  return item.availableQuantity * parseFloat(item.price);
-}
+  getItemTotal(item: ViewPoItem): number {
+    return item.availableQuantity * parseFloat(item.price);
+  }
 
-getPendingAmount(item: ViewPoItem): number {
-  return (item.quantity - item.availableQuantity) * parseFloat(item.price);
-}
+  getPendingAmount(item: ViewPoItem): number {
+    return (item.quantity - item.availableQuantity) * parseFloat(item.price);
+  }
 
-getTotalAmount(): number {
-  return this.orderedSet.reduce((total, item) => {
-    return total + this.getItemTotal(item);
-  }, 0);
-}
+  getTotalAmount(): number {
+    return this.orderedSet.reduce((total, item) => {
+      return total + this.getItemTotal(item);
+    }, 0);
+  }
 
-getTotalWithGST(): number {
-  return this.orderedSet.reduce((total, item) => {
-    const itemTotal = this.getItemTotal(item);
-    const gstAmount = (itemTotal * item.hsnGst) / 100;
-    return total + itemTotal + gstAmount;
-  }, 0);
+  getTotalWithGST(): number {
+    return this.orderedSet.reduce((total, item) => {
+      const itemTotal = this.getItemTotal(item);
+      const gstAmount = (itemTotal * item.hsnGst) / 100;
+      return total + itemTotal + gstAmount;
+    }, 0);
+  }
 }
-
-}
-

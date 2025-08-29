@@ -1,0 +1,481 @@
+<section class="content">
+  <div class="content-block">
+    <!-- Page Header -->
+    <h4 class="mt-4">
+      <button class="btn navigate" (click)="navigateBack()">
+        <i class="bi bi-arrow-left-circle h4"></i>
+      </button>
+      <span>Update Purchase Order - Partial Delivery</span>
+    </h4>
+
+    <!-- Step Progress Indicator -->
+    <div class="step-progress mb-4">
+      <div class="step" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">
+        <div class="step-number">1</div>
+        <div class="step-title">Review & Update</div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step" [class.active]="currentStep === 2">
+        <div class="step-number">2</div>
+        <div class="step-title">Confirm & Submit</div>
+      </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div *ngIf="isLoading" class="loading-overlay">
+      <div class="loading-content">
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+        <p>Processing your request...</p>
+      </div>
+    </div>
+
+    <!-- Step 1: Review and Update Items -->
+    <div *ngIf="currentStep === 1 && !isLoading">
+      <!-- PO Summary Card -->
+      <p-card class="po-summary-card mb-3">
+        <div class="row">
+          <div class="col-md-3">
+            <h6><strong>PO Number:</strong></h6>
+            <p>{{ originalPO.orderNumber }}</p>
+          </div>
+          <div class="col-md-3">
+            <h6><strong>PO Date:</strong></h6>
+            <p>{{ originalPO.poDate }}</p>
+          </div>
+          <div class="col-md-3">
+            <h6><strong>Supplier:</strong></h6>
+            <p>{{ originalPO.supplierName }}</p>
+          </div>
+          <div class="col-md-3">
+            <h6><strong>Status:</strong></h6>
+            <div class="status-display status-warning">
+              <i class="pi pi-clock"></i>
+              <span>Partial Delivery</span>
+            </div>
+          </div>
+        </div>
+      </p-card>
+
+      <!-- Quick Actions -->
+      <p-card class="quick-actions-card mb-3">
+        <div class="card-header">
+          <h5><i class="pi pi-bolt"></i> Quick Actions</h5>
+        </div>
+        <div class="quick-action-buttons">
+          <button pButton type="button" 
+                  class="p-button-outlined p-button-success p-button-sm"
+                  (click)="acceptAllConfirmed()"
+                  icon="pi pi-check">
+            Accept All Confirmed
+          </button>
+          <button pButton type="button" 
+                  class="p-button-outlined p-button-warning p-button-sm"
+                  (click)="acceptAllPartial()"
+                  icon="pi pi-minus">
+            Accept All Partial
+          </button>
+          <button pButton type="button" 
+                  class="p-button-outlined p-button-info p-button-sm"
+                  (click)="makeAllToOrder()"
+                  icon="pi pi-clock">
+            Make All to Order
+          </button>
+          <button pButton type="button" 
+                  class="p-button-outlined p-button-danger p-button-sm"
+                  (click)="cancelAllPartial()"
+                  icon="pi pi-times">
+            Cancel All Partial
+          </button>
+        </div>
+      </p-card>
+
+      <!-- Items Table -->
+      <p-card class="items-table-card">
+        <div class="card-header">
+          <h5><i class="pi pi-list"></i> Order Items Review</h5>
+        </div>
+        
+        <p-table [value]="originalPO.products" [responsive]="true" styleClass="p-datatable-gridlines">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Item</th>
+              <th>Current Status</th>
+              <th>Quantities</th>
+              <th>Availability</th>
+              <th>Action</th>
+              <th>Accept Qty</th>
+              <th>Make to Order</th>
+              <th>Expected Date</th>
+              <th>Rate</th>
+              <th>Total Value</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+            <tr *ngIf="itemDecisions[rowIndex]">
+              <!-- Item Info -->
+              <td>
+                <div class="item-info">
+                  <img [src]="item.colourImage" alt="{{ item.colourName }}" class="item-image" />
+                  <div class="item-details">
+                    <strong>{{ item.designNumber }}</strong>
+                    <div class="item-meta">
+                      <span class="color-display">
+                        <span class="color-swatch" [style.background-color]="item.colour"></span>
+                        {{ item.colourName }}
+                      </span>
+                      <span class="size-badge">{{ item.size }}</span>
+                    </div>
+                    <small>{{ item.clothing }} | {{ item.gender }}</small>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Status -->
+              <td>
+                <div class="status-display" [ngClass]="'status-' + getItemStatusBadge(item).severity">
+                  <i class="pi pi-check-circle" *ngIf="item.status === 'm_confirmed'"></i>
+                  <i class="pi pi-clock" *ngIf="item.status === 'm_partial_delivery'"></i>
+                  <i class="pi pi-info-circle" *ngIf="item.status !== 'm_confirmed' && item.status !== 'm_partial_delivery'"></i>
+                  <span>{{ getItemStatusBadge(item).value }}</span>
+                </div>
+              </td>
+
+              <!-- Quantities -->
+              <td>
+                <div class="quantity-info">
+                  <div><strong>Ordered:</strong> {{ itemDecisions[rowIndex].originalQuantity }}</div>
+                  <div><strong>Available:</strong> {{ itemDecisions[rowIndex].availableQuantity }}</div>
+                  <div class="shortage" *ngIf="item.status === 'm_partial_delivery'">
+                    <strong>Short:</strong> {{ itemDecisions[rowIndex].originalQuantity - itemDecisions[rowIndex].availableQuantity }}
+                  </div>
+                </div>
+              </td>
+
+              <!-- Availability Progress -->
+              <td>
+                <div class="availability-progress">
+                  <p-progressBar 
+                    [value]="getAvailabilityProgress(item)"
+                    [showValue]="true"
+                    unit="%"
+                    [style]="{'height': '20px'}">
+                  </p-progressBar>
+                  <small>{{ itemDecisions[rowIndex].availableQuantity }} / {{ itemDecisions[rowIndex].originalQuantity }}</small>
+                </div>
+              </td>
+
+              <!-- Action Dropdown - FIXED: Removed optional chaining -->
+              <td>
+                <p-dropdown 
+                  [options]="actionOptions"
+                  [(ngModel)]="itemDecisions[rowIndex].action"
+                  (onChange)="onItemActionChange(itemDecisions[rowIndex], $event.value)"
+                  optionLabel="label" 
+                  optionValue="value"
+                  [style]="{'width': '180px'}"
+                  [showClear]="false">
+                  <ng-template pTemplate="selectedItem">
+                    <div class="action-option">
+                      <i [class]="getActionIcon(itemDecisions[rowIndex].action)"></i>
+                      <span>{{ getActionLabel(itemDecisions[rowIndex].action) }}</span>
+                    </div>
+                  </ng-template>
+                  <ng-template pTemplate="item" let-option>
+                    <div class="action-option">
+                      <i [class]="option.icon"></i>
+                      <span>{{ option.label }}</span>
+                    </div>
+                  </ng-template>
+                </p-dropdown>
+              </td>
+
+              <!-- Accept Quantity - FIXED: Removed optional chaining -->
+              <td>
+                <p-inputNumber
+                  [(ngModel)]="itemDecisions[rowIndex].acceptedQuantity"
+                  (onInput)="onQuantityChange(itemDecisions[rowIndex], 'accepted')"
+                  [min]="0"
+                  [max]="itemDecisions[rowIndex].originalQuantity"
+                  [disabled]="itemDecisions[rowIndex].action === 'cancel' || itemDecisions[rowIndex].action === 'make_to_order'"
+                  [style]="{'width': '80px'}"
+                  [showButtons]="true"
+                  buttonLayout="horizontal"
+                  spinnerMode="horizontal"
+                  incrementButtonIcon="pi pi-plus"
+                  decrementButtonIcon="pi pi-minus">
+                </p-inputNumber>
+              </td>
+
+              <!-- Make to Order Quantity - FIXED: Removed optional chaining -->
+              <td>
+                <p-inputNumber
+                  [(ngModel)]="itemDecisions[rowIndex].makeToOrderQuantity"
+                  (onInput)="onQuantityChange(itemDecisions[rowIndex], 'makeToOrder')"
+                  [min]="0"
+                  [max]="itemDecisions[rowIndex].originalQuantity"
+                  [disabled]="itemDecisions[rowIndex].action === 'cancel' || itemDecisions[rowIndex].action === 'accept_full' || itemDecisions[rowIndex].action === 'accept_partial'"
+                  [style]="{'width': '80px'}"
+                  [showButtons]="true"
+                  buttonLayout="horizontal"
+                  spinnerMode="horizontal"
+                  incrementButtonIcon="pi pi-plus"
+                  decrementButtonIcon="pi pi-minus">
+                </p-inputNumber>
+              </td>
+
+              <!-- Expected Date - FIXED: Removed optional chaining -->
+              <td>
+                <p-calendar
+                  [(ngModel)]="itemDecisions[rowIndex].expectedDeliveryDate"
+                  [disabled]="!itemDecisions[rowIndex].makeToOrderQuantity"
+                  [minDate]="minDate"
+                  dateFormat="dd/mm/yy"
+                  [showIcon]="true"
+                  [style]="{'width': '150px'}">
+                </p-calendar>
+              </td>
+
+              <!-- Rate -->
+              <td>
+                <span class="rate-display">{{ item.price | indianCurrency }}</span>
+              </td>
+
+              <!-- Total Value -->
+              <td>
+                <div class="total-value">
+                  <div *ngIf="itemDecisions[rowIndex].acceptedQuantity > 0">
+                    <strong>Immediate:</strong>
+                    {{ (itemDecisions[rowIndex].acceptedQuantity * item.price) | indianCurrency }}
+                  </div>
+                  <div *ngIf="itemDecisions[rowIndex].makeToOrderQuantity > 0" class="make-to-order-value">
+                    <strong>Make to Order:</strong>
+                    {{ (itemDecisions[rowIndex].makeToOrderQuantity * item.price) | indianCurrency }}
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+
+      <!-- Business Reason -->
+      <p-card class="business-reason-card mt-3">
+        <div class="card-header">
+          <h5><i class="pi pi-comment"></i> Business Information</h5>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="businessReason">Business Reason</label>
+            <p-dropdown
+              id="businessReason"
+              [(ngModel)]="updateData.businessReason"
+              [options]="businessReasons"
+              placeholder="Select reason for changes"
+              [style]="{'width': '100%'}">
+            </p-dropdown>
+          </div>
+          <div class="col-md-6">
+            <label for="prioritizeSpeed">Delivery Preference</label>
+            <div class="delivery-preference">
+              <p-checkbox
+                id="prioritizeSpeed"
+                [(ngModel)]="updateData.prioritizeSpeed"
+                binary="true">
+              </p-checkbox>
+              <label for="prioritizeSpeed">Prioritize speed over completeness</label>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-12">
+            <label for="remarks">Additional Remarks</label>
+            <textarea 
+              pInputTextarea 
+              id="remarks"
+              [(ngModel)]="updateData.remarks"
+              rows="3" 
+              cols="30"
+              placeholder="Any additional comments or special instructions..."
+              [style]="{'width': '100%'}">
+            </textarea>
+          </div>
+        </div>
+      </p-card>
+    </div>
+
+    <!-- Step 2: Preview and Confirmation -->
+    <div *ngIf="currentStep === 2 && showPreview">
+      <p-tabView>
+        <!-- Immediate Delivery PO Preview -->
+        <p-tabPanel header="Immediate Delivery PO" *ngIf="hasImmediateDelivery">
+          <div class="po-preview">
+            <div class="preview-header">
+              <h5>Purchase Order - Immediate Delivery</h5>
+              <div class="status-display status-success">
+                <i class="pi pi-truck"></i>
+                <span>Ready to Ship</span>
+              </div>
+            </div>
+            
+            <p-table [value]="poSplit.immediate" [responsive]="true" styleClass="p-datatable-gridlines">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Item</th>
+                  <th>Quantity</th>
+                  <th>Rate</th>
+                  <th>Taxable Value</th>
+                  <th>GST</th>
+                  <th *ngIf="isIntraState">CGST</th>
+                  <th *ngIf="isIntraState">SGST</th>
+                  <th *ngIf="!isIntraState">IGST</th>
+                  <th>Total</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-item>
+                <tr>
+                  <td>
+                    <div class="preview-item">
+                      <strong>{{ item.designNumber }}</strong>
+                      <small>{{ item.colourName }} | {{ item.size }}</small>
+                    </div>
+                  </td>
+                  <td>{{ item.quantity }}</td>
+                  <td>{{ item.price | indianCurrency }}</td>
+                  <td>{{ getGstAmounts(item).taxable | indianCurrency }}</td>
+                  <td>{{ item.hsnGst }}%</td>
+                  <td *ngIf="isIntraState">{{ getGstAmounts(item).cgst | indianCurrency }}</td>
+                  <td *ngIf="isIntraState">{{ getGstAmounts(item).sgst | indianCurrency }}</td>
+                  <td *ngIf="!isIntraState">{{ getGstAmounts(item).igst | indianCurrency }}</td>
+                  <td>{{ getGstAmounts(item).totalWithGst | indianCurrency }}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="footer">
+                <tr class="totals-row">
+                  <td [attr.colspan]="isIntraState ? 7 : 6"><strong>Total:</strong></td>
+                  <td><strong>{{ poSplit.immediateTotals.totalQty }}</strong></td>
+                  <td><strong>{{ poSplit.immediateTotals.finalTotal | indianCurrency }}</strong></td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </p-tabPanel>
+
+        <!-- Make to Order PO Preview -->
+        <p-tabPanel header="Make to Order PO" *ngIf="hasMakeToOrder">
+          <div class="po-preview">
+            <div class="preview-header">
+              <h5>Purchase Order - Make to Order</h5>
+              <div class="status-display status-info">
+                <i class="pi pi-clock"></i>
+                <span>Future Delivery</span>
+              </div>
+            </div>
+            
+            <p-table [value]="poSplit.makeToOrder" [responsive]="true" styleClass="p-datatable-gridlines">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Item</th>
+                  <th>Quantity</th>
+                  <th>Expected Date</th>
+                  <th>Rate</th>
+                  <th>Taxable Value</th>
+                  <th>GST</th>
+                  <th *ngIf="isIntraState">CGST</th>
+                  <th *ngIf="isIntraState">SGST</th>
+                  <th *ngIf="!isIntraState">IGST</th>
+                  <th>Total</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-item let-i="rowIndex">
+                <tr>
+                  <td>
+                    <div class="preview-item">
+                      <strong>{{ item.designNumber }}</strong>
+                      <small>{{ item.colourName }} | {{ item.size }}</small>
+                    </div>
+                  </td>
+                  <td>{{ item.quantity }}</td>
+                  <td>{{ item.expectedDeliveryDate | date:'dd/MM/yyyy' }}</td>
+                  <td>{{ item.price | indianCurrency }}</td>
+                  <td>{{ getGstAmounts(item).taxable | indianCurrency }}</td>
+                  <td>{{ item.hsnGst }}%</td>
+                  <td *ngIf="isIntraState">{{ getGstAmounts(item).cgst | indianCurrency }}</td>
+                  <td *ngIf="isIntraState">{{ getGstAmounts(item).sgst | indianCurrency }}</td>
+                  <td *ngIf="!isIntraState">{{ getGstAmounts(item).igst | indianCurrency }}</td>
+                  <td>{{ getGstAmounts(item).totalWithGst | indianCurrency }}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="footer">
+                <tr class="totals-row">
+                  <td [attr.colspan]="isIntraState ? 8 : 7"><strong>Total:</strong></td>
+                  <td><strong>{{ poSplit.makeToOrderTotals.totalQty }}</strong></td>
+                  <td><strong>{{ poSplit.makeToOrderTotals.finalTotal | indianCurrency }}</strong></td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </p-tabPanel>
+
+        <!-- Summary Tab -->
+        <p-tabPanel header="Summary">
+          <div class="summary-content">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="summary-card">
+                  <h6><i class="pi pi-truck"></i> Immediate Delivery</h6>
+                  <div class="summary-details">
+                    <p><strong>Items:</strong> {{ poSplit.immediate.length }}</p>
+                    <p><strong>Quantity:</strong> {{ poSplit.immediateTotals.totalQty }}</p>
+                    <p><strong>Value:</strong> {{ poSplit.immediateTotals.finalTotal | indianCurrency }}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="summary-card">
+                  <h6><i class="pi pi-clock"></i> Make to Order</h6>
+                  <div class="summary-details">
+                    <p><strong>Items:</strong> {{ poSplit.makeToOrder.length }}</p>
+                    <p><strong>Quantity:</strong> {{ poSplit.makeToOrderTotals.totalQty }}</p>
+                    <p><strong>Value:</strong> {{ poSplit.makeToOrderTotals.finalTotal | indianCurrency }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="business-summary mt-4" *ngIf="updateData.businessReason || updateData.remarks">
+              <h6><i class="pi pi-info-circle"></i> Business Information</h6>
+              <p *ngIf="updateData.businessReason"><strong>Reason:</strong> {{ updateData.businessReason }}</p>
+              <p *ngIf="updateData.remarks"><strong>Remarks:</strong> {{ updateData.remarks }}</p>
+            </div>
+            
+            <div class="split-warning mt-4" *ngIf="willSplitPO">
+              <p-message severity="info" 
+                text="This order will be split into two separate Purchase Orders - one for immediate delivery and one for make-to-order items.">
+              </p-message>
+            </div>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons mt-4">
+      <button pButton type="button" 
+              class="p-button-secondary"
+              (click)="previousStep()"
+              [disabled]="currentStep === 1 || isLoading"
+              icon="pi pi-arrow-left"
+              label="Previous">
+      </button>
+      
+      <button pButton type="button" 
+              class="p-button-primary"
+              (click)="nextStep()"
+              [disabled]="isLoading"
+              [icon]="currentStep === 1 ? 'pi pi-arrow-right' : 'pi pi-check'"
+              [label]="currentStep === 1 ? 'Review Changes' : 'Confirm & Submit'">
+      </button>
+    </div>
+  </div>
+</section>

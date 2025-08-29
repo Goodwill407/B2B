@@ -61,10 +61,13 @@
               <ng-template pTemplate="header">
                 <tr>
                   <th>Sr. No.</th>
+                  <th>Image</th>
+                  <th>Clothing</th>
+                  <th>Gender</th>
+                  <th>Brand</th>
                   <th>Design No.</th>
                   <th>HSN Code</th>
-                  <th>Colour Name</th>
-                  <th>Gender</th>
+                  <th>Colour</th>
                   <th>Size</th>
                   <th>Rate (₹)</th>
                   <th>Qty</th>
@@ -80,12 +83,22 @@
               <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
                 <tr>
                   <td>{{ rowIndex + 1 }}</td>
-                  <td>{{ item.designNumber }}</td>
-                  <td>{{ item.hsnCode }}</td>
-                  <td>{{ item.colourName }}</td>
-                  <td>{{ item.gender }}</td>
-                  <td>{{ item.size }}</td>
-                  <td>{{ item.price | indianCurrency }}</td>
+                <td>
+                  <img [src]="item.colourImage" alt="{{ item.colourName }}" class="item-image" />
+                </td>
+                <td>{{ item.clothing }}</td>
+                <td>{{ item.gender }}</td>
+                <td>{{ item.brandName || 'N/A' }}</td>
+                <td>{{ item.designNumber }}</td>
+                <td>{{ item.hsnCode }}</td>
+                <td>
+                  <div class="color-display">
+                    <span class="color-swatch" [style.background-color]="item.colour"></span>
+                    {{ item.colourName }}
+                  </div>
+                </td>
+                <td>{{ item.size }}</td>
+                <td>{{ item.price | indianCurrency }}</td>
                   <td>{{ item.quantity }}</td>
                   <td class="text-end">{{ getGstAmounts(item).taxable | indianCurrency }}</td>
                   <td>{{ item.hsnGst }}%</td>
@@ -99,7 +112,7 @@
               <ng-template pTemplate="footer">
                 <!-- Total Row -->
                 <tr style="background: #f0f6f9; font-weight: bold;">
-                  <td colspan="7" style="text-align:right; padding-right: 20px;">Total:</td>
+                  <td colspan="10" style="text-align:right; padding-right: 20px;">Total:</td>
                   <td>{{ orderTotals.totalQty }}</td>
                   <td class="text-end">{{ orderTotals.totalTaxable | indianCurrency }}</td>
                   <td></td>
@@ -124,12 +137,12 @@
                 </tr>
                 <!-- Grand Total in Words -->
                 <tr>
-                  <td [attr.colspan]="colspan+1" style="font-weight: bold; font-size: 1.1em; color: #002080;">
+                  <td [attr.colspan]="colspan+1" style="text-align: left; font-weight: bold; font-size: 1.1em; color: #002080;">
                     Grand Total (in words): {{ actualGrandTotal | amountInWords }}
                   </td>
                 </tr>
                 <tr>
-                  <td [attr.colspan]="colspan+1" style="font-weight: bold; font-size: 1.0em; color: #006600;">
+                  <td [attr.colspan]="colspan+1" style="text-align: left; font-weight: bold; font-size: 1.0em; color: #006600;">
                     Total GST Paid: ₹ {{totalGSTAmount}} -  {{ totalGSTAmount | amountInWords }}
                   </td>
                 </tr>

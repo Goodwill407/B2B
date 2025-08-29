@@ -18,6 +18,7 @@ import { RetailorManOrderReqComponent } from "./Mng-Product/retailor-man-order-r
 import { ViewRetailorManOrderReqComponent } from "./Mng-Product/retailor-man-order-req/view-retailor-man-order-req/view-retailor-man-order-req.component";
 import { ViewRetailorpoManComponent } from "./Mng-Product/view-retailorpo-man/view-retailorpo-man.component";
 import { RetailormanpoGenComponent } from "./Mng-Product/view-retailorpo-man/retailormanpo-gen/retailormanpo-gen.component";
+import { UpdateRetMfgPoPartialDelComponent } from "./Mng-Product/view-retailorpo-man/update-ret-mfg-po-partial-del/update-ret-mfg-po-partial-del.component";
 
 
 export const NewFlow:Route[]=[
@@ -40,5 +41,7 @@ export const NewFlow:Route[]=[
     {path:'cart-product2-MAn', component:CartProduct2RetailerManComponent},
     {path:'view-retailerpotoman-list',component:ViewRetailorpoManComponent},
      {path:'view-retailerpotoman',component:RetailormanpoGenComponent},
+     {path:'update-retailerpotoman-partial',component:UpdateRetMfgPoPartialDelComponent},
+
     
 ]

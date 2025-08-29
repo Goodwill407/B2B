@@ -314,7 +314,7 @@ export class GenPoRetailerManComponent {
   }
 
   get colspan(): number {
-    return this.isIntraState ? 12 : 11;
+    return this.isIntraState ? 15 : 14;
   }
 
   getGstAmounts(item: any) {

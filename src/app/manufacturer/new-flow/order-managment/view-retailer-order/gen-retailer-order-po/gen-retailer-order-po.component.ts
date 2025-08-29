@@ -59,6 +59,7 @@ interface BankDetails {
   country: string;
   city: string;
   branch: string;
+  upiId: string;
 }
 
 interface ManufacturerProfile {
@@ -110,6 +111,8 @@ export class GenRetailerOrderPoComponent implements OnInit {
   
   // Status tracking
   currentStatusAll: string = 'pending';
+
+  manufacturerNote: string = '';
 
   constructor(
     private authService: AuthService,
@@ -196,6 +199,8 @@ export class GenRetailerOrderPoComponent implements OnInit {
   // Set delivery dates
   this.expDeliveryDate = po.expDeliveryDate ? new Date(po.expDeliveryDate) : null;
   this.partialDeliveryDate = po.partialDeliveryDate ? new Date(po.partialDeliveryDate) : null;
+
+  this.manufacturerNote = po.manufacturerNote || '';
 
   // Build table rows with inventory ID for updates
   this.orderedSet = po.set.map((item: any) => {
@@ -373,6 +378,7 @@ private prepareBulkInventoryUpdate(): any {
         accountNumber: this.bankDetails.accountNumber,
         bankName: this.bankDetails.bankName,
         branchName: this.bankDetails.branch,
+        accountType: this.bankDetails.accountType,
         ifscCode: this.bankDetails.IFSCcode,
         swiftCode: this.bankDetails.swiftCode,
         upiId: "",
@@ -454,8 +460,19 @@ private prepareBulkInventoryUpdate(): any {
       statusAll: calculatedStatusAll,
       expDeliveryDate: this.expDeliveryDate,
       partialDeliveryDate: this.partialDeliveryDate,
-      manufacturerNote: '',
-      transportDetails: this.transportDetails
+      manufacturerNote: this.manufacturerNote,
+      transportDetails: this.transportDetails,
+      bankDetails: {
+        accountHolderName: this.manufacturerProfile.companyName,
+        accountNumber: this.bankDetails.accountNumber,
+        bankName: this.bankDetails.bankName,
+        branchName: this.bankDetails.branch,
+        accountType: this.bankDetails.accountType,
+        ifscCode: this.bankDetails.IFSCcode,
+        swiftCode: this.bankDetails.swiftCode,
+        upiId: "",
+        bankAddress: `${this.bankDetails.city}, ${this.bankDetails.country}`
+      },
     };
 
     console.log('Updating PO with data:', poUpdateData);

@@ -36,13 +36,14 @@
           <thead class="table-light">
             <tr>
               <th>Sr. No.</th>
+              <th>Image</th>
               <th>Clothing</th>
               <th>Gender</th>
-              <th>Colour Name</th>
               <th>Design No.</th>
+              <th>Colour</th>
               <th>Size</th>
               <th>Required Qty</th>
-              <th>Input Qty</th>
+              <th>Available Qty</th>
               <th>Current Stock</th>
             </tr>
           </thead>
@@ -50,10 +51,18 @@
             <tr *ngFor="let item of orderedSet; let i = index"
                 [class.partial-row]="hasQuantityMismatch(item)">
               <td>{{ i + 1 }}</td>
+              <td>
+                <img [src]="item.colourImage" alt="{{ item.colourName }}" class="item-image" />
+              </td>
               <td>{{ item.clothing }}</td>    
               <td>{{ item.gender }}</td>      
-              <td>{{ item.colourName }}</td>
               <td>{{ item.designNumber }}</td>
+              <td>
+                <div class="color-display">
+                  <span class="color-swatch" [style.background-color]="item.colour"></span>
+                  {{ item.colourName }}
+                </div>
+              </td>
               <td>{{ item.size }}</td>
               <td [class.qty-mismatch]="hasQuantityMismatch(item)">{{ item.quantity }}</td>
               <td>
@@ -98,6 +107,24 @@
         </div>
       </div>
 
+      <div class="mt-2">
+        <div class="row">
+          <label class="col-sm-4 col-form-label">Manufacturer Note:</label>
+          <div class="col-sm-4">
+            <textarea 
+              class="form-control" 
+              [(ngModel)]="manufacturerNote"
+              placeholder="Add any notes or instructions for this order..."
+              rows="3"
+              maxlength="500">
+            </textarea>
+            <!-- <div class="form-text">
+              Optional: Add manufacturing instructions, delivery notes, or special requirements
+            </div> -->
+          </div>
+        </div>
+      </div>
+
       <div class="text-center my-3">
         <button class="btn btn-success" [disabled]="!orderedSet.length || hasInvalidQuantities()" (click)="updatePoData()">
           Update PO
@@ -138,6 +165,7 @@
             <p class="mb-1"><strong>Account Number:</strong> {{ bankDetails.accountNumber }}</p>
             <p class="mb-1"><strong>Account Type:</strong> {{ bankDetails.accountType | titlecase }}</p>
             <p class="mb-1"><strong>Bank Name:</strong> {{ bankDetails.bankName }}</p>
+            <p class="mb-1"><strong>UPI Id:</strong> {{ bankDetails.upiId || 'N/A'}}</p>
           </div>
           <div class="col-md-6">
             <p class="mb-1"><strong>Branch:</strong> {{ bankDetails.branch }}</p>

@@ -1,5 +1,5 @@
 #purchase-order {
-    width: 900px;
+    width: 1200px;
     margin: 0 auto;
     font-family: Arial, sans-serif;
     border: 1px solid #ccc;
@@ -158,4 +158,30 @@
     font-size: 0.93em;
     padding: 5px;
   }
+}
+
+
+/* Item images */
+.item-image {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+}
+
+/* Color display */
+.color-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.color-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  display: inline-block;
 }

@@ -5,65 +5,62 @@
       <button class="btn navigate" (click)="navigateFun()">
         <i class="bi bi-arrow-left-circle h4"></i>
       </button>
-      Generate Purchase Order
+      <span>View / Download Purchase Order</span>
     </h4>
 
     <!-- Button to Download PDF -->
-    <div class="d-flex justify-content-end">
+    <div class="d-flex justify-content-end mb-2">
       <button class="btn btn-success" (click)="downloadPO()">Download PDF</button>
     </div>
 
     <!-- Purchase Order Container -->
-    <div id="purchase-order" class="challan-container card my-2">
+    <div id="purchase-order" class="card p-3 my-2">
       <!-- Header Section -->
       <div class="header d-flex justify-content-between align-items-center">
-        <div class="company-info text-center">
-          <h1>PURCHASE ORDER</h1>
-        </div>
-        <div class="order-info text-right">
+        <h1>PURCHASE ORDER</h1>
+        <div class="text-end">
           <p><strong>Order Date:</strong> {{ purchaseOrder.poDate }}</p>
           <p><strong>Order No:</strong> {{ purchaseOrder.orderNumber }}</p>
         </div>
       </div>
 
       <!-- Buyer and Seller Information -->
-      <div class="buyer-seller-info d-flex justify-content-between">
-        <div class="logo">
-          <img [src]="purchaseOrder.logoUrl" alt="Company Logo" onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';" />
-        </div>
-        <div class="buyer-info">
-          <h5>Order By:</h5>
-          <p><strong>{{ purchaseOrder.buyerName }}</strong></p>
-          <p>{{ purchaseOrder.buyerAddress}}</p>
-          <p>Phone No.: {{ purchaseOrder.buyerPhone }}</p>
-          <p>Email: {{ purchaseOrder.buyerEmail }}</p>
-          <p>GSTN: {{ purchaseOrder.buyerGSTIN }}</p>
-          <p>PAN: {{ purchaseOrder.buyerPAN }}</p>
-        </div>
-        <div class="seller-info">
-          <h5>Order To:</h5>
-          <p><strong>{{ purchaseOrder.supplierName }}</strong></p>
-          <p>{{ purchaseOrder.supplierAddress }}</p>
-          <p>Phone No.: {{ purchaseOrder.supplierContact }}</p>
-          <p>Email: {{ purchaseOrder.supplierEmail }}</p>
-          <p>GSTN: {{ purchaseOrder.supplierGSTIN }}</p>
-          <p>PAN: {{ purchaseOrder.supplierPAN }}</p>
+      <div class="border rounded mt-3 p-3 d-flex align-items-start">
+        <img [src]="purchaseOrder.logoUrl" alt="Company Logo" class="me-3" style="width:80px; height:80px; object-fit:cover;" 
+             onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';" />
+        <div class="row w-100">
+          <div class="col-md-6">
+            <h5 class="mb-2"><u>Order By:</u></h5>
+            <p class="mb-1"><strong>{{ purchaseOrder.buyerName }}</strong></p>
+            <p class="mb-1">{{ purchaseOrder.buyerEmail }} &bull; {{ purchaseOrder.buyerPhone }}</p>
+            <p class="mb-1">GSTIN: {{ purchaseOrder.buyerGSTIN }} &bull; PAN: {{ purchaseOrder.buyerPAN }}</p>
+            <p class="mb-1">{{ purchaseOrder.buyerAddress }}</p>
+          </div>
+          <div class="col-md-6">
+            <h5 class="mb-2"><u>Order To:</u></h5>
+            <p class="mb-1"><strong>{{ purchaseOrder.supplierName }}</strong></p>
+            <p class="mb-1">{{ purchaseOrder.supplierEmail }} &bull; {{ purchaseOrder.supplierContact }}</p>
+            <p class="mb-1">GSTIN: {{ purchaseOrder.supplierGSTIN }} &bull; PAN: {{ purchaseOrder.supplierPAN }}</p>
+            <p class="mb-1">{{ purchaseOrder.supplierAddress }}</p>
+          </div>
         </div>
       </div>
 
       <!-- Order Details Section -->
-      <section class="order-details">
+      <section class="order-details mt-3">
         <h4 class="text-center mb-3">Order Details</h4>
 
-        <div class="table-responsive">
-          <p-table [value]="purchaseOrder.products" [responsive]="true" [paginator]="false" class="bordered-table">
+          <p-table [value]="purchaseOrder.products" [responsive]="true"  [paginator]="false" class="bordered-table">
             <ng-template pTemplate="header">
               <tr>
                 <th>Sr. No.</th>
+                <th>Image</th>
+                <th>Clothing</th>
+                <th>Gender</th>
+                <th>Brand</th>
                 <th>Design No.</th>
                 <th>HSN Code</th>
-                <th>Colour Name</th>
-                <th>Gender</th>
+                <th>Colour</th>
                 <th>Size</th>
                 <th>Rate (₹)</th>
                 <th>Qty</th>
@@ -79,10 +76,20 @@
             <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
               <tr>
                 <td>{{ rowIndex + 1 }}</td>
+                <td>
+                  <img [src]="item.colourImage" alt="{{ item.colourName }}" class="item-image" />
+                </td>
+                <td>{{ item.clothing }}</td>
+                <td>{{ item.gender }}</td>
+                <td>{{ item.brandName || 'N/A' }}</td>
                 <td>{{ item.designNumber }}</td>
                 <td>{{ item.hsnCode }}</td>
-                <td>{{ item.colourName }}</td>
-                <td>{{ item.gender }}</td>
+                <td>
+                  <div class="color-display">
+                    <span class="color-swatch" [style.background-color]="item.colour"></span>
+                    {{ item.colourName }}
+                  </div>
+                </td>
                 <td>{{ item.size }}</td>
                 <td>{{ item.price | indianCurrency }}</td>
                 <td>{{ item.quantity }}</td>
@@ -98,7 +105,7 @@
             <ng-template pTemplate="footer">
               <!-- Total Row -->
               <tr style="background: #f0f6f9; font-weight: bold;">
-                <td colspan="7" style="text-align:right; padding-right: 20px;">Total:</td>
+                <td colspan="10" style="text-align:right; padding-right: 20px;">Total:</td>
                 <td>{{ orderTotals.totalQty }}</td>
                 <td class="text-end">{{ orderTotals.totalTaxable | indianCurrency }}</td>
                 <td></td>
@@ -130,44 +137,52 @@
               </tr>
             </ng-template>
           </p-table>
-        </div>
       </section>
 
-            <!-- Transport Details Section -->
-      <section class="transport-details mt-4">
-        <h4 class="text-center mb-3">Transport Details</h4>
-        
-        <div class="row" *ngIf="purchaseOrder.transportDetails">
+      <!-- Transport Details Section - Consistent with GenRetailerOrderPoComponent -->
+      <div class="border rounded mt-3 p-3" *ngIf="purchaseOrder.transportDetails">
+        <h5 class="mb-2"><u>Transport Details:</u></h5>
+        <div class="row">
           <div class="col-md-6">
-            <div class="transport-info">
-              <p><strong>Transport Type:</strong> {{ purchaseOrder.transportDetails?.transportType || 'N/A' }}</p>
-              <p><strong>Transporter Company:</strong> {{ purchaseOrder.transportDetails?.transporterCompanyName || 'N/A' }}</p>
-              <p><strong>Contact Person:</strong> {{ purchaseOrder.transportDetails?.contactPersonName || 'N/A' }}</p>
-              <p><strong>Contact Number:</strong> {{ purchaseOrder.transportDetails?.contactNumber || 'N/A' }}</p>
-              <p><strong>Alt Contact Number:</strong> {{ purchaseOrder.transportDetails?.altContactNumber || 'N/A' }}</p>
-            </div>
+            <p class="mb-1"><strong>Transport Type:</strong> {{ purchaseOrder.transportDetails.transportType || 'N/A' }}</p>
+            <p class="mb-1"><strong>Contact Person:</strong> {{ purchaseOrder.transportDetails.contactPersonName || 'N/A' }}</p>
+            <p class="mb-1"><strong>Mode:</strong> {{ purchaseOrder.transportDetails.modeOfTransport || 'N/A' }}</p>
+            <p class="mb-1"><strong>GST Number:</strong> {{ purchaseOrder.transportDetails.gstNumber || 'N/A' }}</p>
           </div>
-          
           <div class="col-md-6">
-            <div class="transport-info">
-              <p><strong>Vehicle Number:</strong> {{ purchaseOrder.transportDetails?.vehicleNumber || 'N/A' }}</p>
-              <p><strong>Tracking ID:</strong> {{ purchaseOrder.transportDetails?.trackingId || 'N/A' }}</p>
-              <p><strong>Mode of Transport:</strong> {{ purchaseOrder.transportDetails?.modeOfTransport || 'N/A' }}</p>
-              <p><strong>Delivery Address:</strong> {{ purchaseOrder.transportDetails?.deliveryAddress || 'N/A' }}</p>
-            </div>
+            <p class="mb-1"><strong>Company:</strong> {{ purchaseOrder.transportDetails.transporterCompanyName || 'N/A' }}</p>
+            <p class="mb-1"><strong>Contact Number:</strong> {{ purchaseOrder.transportDetails.contactNumber || 'N/A' }}</p>
+            <p class="mb-1"><strong>Vehicle Number:</strong> {{ purchaseOrder.transportDetails.vehicleNumber || 'N/A' }}</p>
+            <p class="mb-1"><strong>Tracking ID:</strong> {{ purchaseOrder.transportDetails.trackingId || 'N/A' }}</p>
           </div>
         </div>
+        <div *ngIf="purchaseOrder.transportDetails.remarks" class="mt-2">
+          <p class="mb-1"><strong>Remarks:</strong> {{ purchaseOrder.transportDetails.remarks }}</p>
+        </div>
+        <div *ngIf="purchaseOrder.transportDetails.note" class="mt-2">
+          <p class="mb-1"><strong>Note:</strong> {{ purchaseOrder.transportDetails.note }}</p>
+        </div>
+      </div>
 
-        <div class="row mt-3" *ngIf="purchaseOrder.transportDetails?.remarks || purchaseOrder.transportDetails?.note">
-          <div class="col-md-12">
-            <div class="transport-notes">
-              <p *ngIf="purchaseOrder.transportDetails?.remarks"><strong>Remarks:</strong> {{ purchaseOrder.transportDetails.remarks }}</p>
-              <p *ngIf="purchaseOrder.transportDetails?.note"><strong>Note:</strong> {{ purchaseOrder.transportDetails.note }}</p>
-            </div>
+      <!-- Bank Details Card -->
+      <div class="border rounded mt-3 p-3" *ngIf="bankDetails">
+        <h5 class="mb-2"><u>Bank Details (Manufacturer):</u></h5>
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Account Holder:</strong> {{ bankDetails.accountHolderName || 'N/A' }}</p>
+            <p class="mb-1"><strong>Account Number:</strong> {{ bankDetails.accountNumber  || 'N/A'  }}</p>
+            <p class="mb-1"><strong>Account Type:</strong> {{ bankDetails.accountType? (bankDetails.accountType | titlecase) : 'N/A' }}</p>
+            <p class="mb-1"><strong>Bank Name:</strong> {{ bankDetails.bankName  || 'N/A' }}</p>
+            <p class="mb-1"><strong>UPI Id:</strong> {{ bankDetails.upiId || 'N/A'}}</p>
+          </div>
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Branch:</strong> {{ bankDetails.branchName  || 'N/A' }}</p>
+            <p class="mb-1"><strong>IFSC Code:</strong> {{ bankDetails.ifscCode  || 'N/A' }}</p>
+            <p class="mb-1"><strong>Swift Code:</strong> {{ bankDetails.swiftCode || 'N/A' }}</p>
+            <p class="mb-1"><strong>Location:</strong> {{ bankDetails.bankAddress  || 'N/A' }}</p>
           </div>
         </div>
-      </section>
-
+      </div>
     </div>
   </div>
 </section>
