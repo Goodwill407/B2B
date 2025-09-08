@@ -21,7 +21,7 @@ interface BankDetails {
   branchName: string;
   ifscCode: string;
   swiftCode?: string;
-  upiId:string;
+  upiId: string;
   bankAddress: string;
 }
 
@@ -39,13 +39,13 @@ interface ManufacturerProfile {
 }
 
 @Component({
-  selector: 'app-retailormanpo-gen',
+  selector: 'app-confirmed-mto-po-mfg-ret',
   standalone: true,
-  imports: [CommonModule, FormsModule, AccordionModule, TableModule, IndianCurrencyPipe, AmountInWordsPipe],
-  templateUrl: './retailormanpo-gen.component.html',
-  styleUrl: './retailormanpo-gen.component.scss'
+  imports: [CommonModule, FormsModule, AccordionModule, TableModule, RouterModule, IndianCurrencyPipe, AmountInWordsPipe],
+  templateUrl: './confirmed-mto-po-mfg-ret.component.html',
+  styleUrl: './confirmed-mto-po-mfg-ret.component.scss'
 })
-export class RetailormanpoGenComponent {
+export class ConfirmedMtoPoMfgRetComponent implements OnInit {
   purchaseOrder: any = {
     supplierName: '',
     supplierDetails: '',
@@ -65,32 +65,22 @@ export class RetailormanpoGenComponent {
     totalInWords: '',
   };
 
-  mergedProducts: any[] = [];
   responseData: any; // New variable to store response data
-  distributorId: string;
-  products: any[] = [];
+  poId: string;
   userProfile: any;
-  filteredData: any;
-  ProductDiscount: any;
-  sizeHeaders: string[] = [];
-  priceHeaders: { [size: string]: number } = {};
 
   // Add bank details and manufacturer profile properties
   bankDetails!: BankDetails;
   manufacturerProfile!: ManufacturerProfile;
 
-  totalGrandTotal: number = 0;
-  gst: number = 0;
-  Totalsub: number = 0;
-  dicountprice: number = 0;
-  sgst: any
-  igst: any
-  cgst: any
-
   isIntraState: boolean = false;
-
   expDeliveryDate: Date | string = '';
   manufacturerNote: string = '';
+
+  // Additional properties for MTO functionality
+  statusAll: string = '';
+  previousPoId: string = '';
+  previousPoNumber: string = '';
 
   constructor(
     public authService: AuthService,
@@ -100,22 +90,23 @@ export class RetailormanpoGenComponent {
     private location: Location,
     private amountInWordsPipe: AmountInWordsPipe
   ) {
-    this.distributorId = this.route.snapshot.paramMap.get('id') ?? '';
+    this.poId = this.route.snapshot.paramMap.get('id') ?? '';
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false; //This line to reload source PO when we are on Make to Order PO
   }
 
   ngOnInit(): void {
     this.userProfile = JSON.parse(localStorage.getItem('currentUser')!);
-    this.getAllProducts(this.distributorId);
+    this.getAllProducts(this.poId);
   }
 
-  getAllProducts(distributorId: string) {
-    const url = `po-retailer-to-manufacture/${distributorId}`;
+  getAllProducts(poId: string) {
+    const url = `po-retailer-to-manufacture/${poId}`;
     this.authService.get(url).subscribe(
       (res: any) => {
         this.responseData = res;
         const productSet = res.set || [];
 
-        const filteredProductSet = productSet.filter((item: any) => 
+        const filteredProductSet = productSet.filter((item: any) =>
           item.quantity && parseInt(item.quantity) > 0
         );
 
@@ -128,7 +119,6 @@ export class RetailormanpoGenComponent {
           supplierGSTIN: res.manufacturer.GSTIN || '',
           supplierEmail: res.manufacturer.email,
           supplierPAN: this.extractPanFromGstin(res.manufacturer.GSTIN) || res.manufacturer.PAN || '',
-        
 
           buyerName: res.retailer.companyName,
           buyerAddress: `${res.retailer.address}, ${res.retailer.pinCode} - ${res.retailer.state}`,
@@ -152,11 +142,16 @@ export class RetailormanpoGenComponent {
         // Store manufacturer profile for bank details display
         this.manufacturerProfile = res.manufacturer;
 
-        // Map bank details (assuming it comes from the API response)
+        // MTO specific properties
+        this.statusAll = res.statusAll || '';
+        this.previousPoId = res.previousPoId || '';
+        this.previousPoNumber = res.previousPoNumber || '';
+
+        // Map bank details
         if (res.bankDetails || res.manufacturer?.bankDetails) {
           const bankData = res.bankDetails || res.manufacturer.bankDetails;
           this.bankDetails = {
-            accountHolderName:bankData.accountHolderName,
+            accountHolderName: bankData.accountHolderName,
             accountNumber: bankData.accountNumber,
             accountType: bankData.accountType,
             bankName: bankData.bankName,
@@ -241,6 +236,93 @@ export class RetailormanpoGenComponent {
     return totals.totalCGST + totals.totalSGST + totals.totalIGST;
   }
 
+  // NEW METHOD: Generate Invoice (from GenRetailerOrderPoComponent)
+  async generateInvoice() {
+    const invoicePayload = {
+      poId: this.poId,
+      poNumber: this.purchaseOrder.orderNumber,
+      invoiceNumber: `INV-${this.purchaseOrder.orderNumber}-${Date.now()}`,
+      invoiceDate: new Date().toISOString(),
+      statusAll: "created",
+      bankDetails: {
+        accountHolderName: this.manufacturerProfile.companyName,
+        accountNumber: this.bankDetails.accountNumber,
+        bankName: this.bankDetails.bankName,
+        branchName: this.bankDetails.branchName,
+        accountType: this.bankDetails.accountType,
+        ifscCode: this.bankDetails.ifscCode,
+        swiftCode: this.bankDetails.swiftCode,
+        upiId: this.bankDetails.upiId || "",
+        bankAddress: this.bankDetails.bankAddress
+      },
+      manufacturerEmail: this.manufacturerProfile.email,
+      retailerEmail: this.purchaseOrder.buyerEmail,
+      deliveryItems: this.purchaseOrder.products
+        .filter((item: any) => item.quantity > 0)
+        .map((item: any) => ({
+          designNumber: item.designNumber,
+          colour: item.colour,
+          colourName: item.colourName,
+          colourImage: item.colourImage,
+          size: item.size,
+          quantity: item.quantity,
+          productType: item.productType,
+          gender: item.gender,
+          clothing: item.clothing,
+          subCategory: item.clothing,
+          hsnCode: item.hsnCode,
+          hsnGst: item.hsnGst,
+          hsnDescription: `${item.gender}'s ${item.clothing}`,
+          status: "pending"
+        })),
+      manufacturer: this.manufacturerProfile,
+      retailer: {
+        email: this.purchaseOrder.buyerEmail,
+        fullName: this.purchaseOrder.buyerName,
+        companyName: this.purchaseOrder.buyerName,
+        address: this.purchaseOrder.buyerAddress,
+        state: this.responseData?.retailer?.state || "",
+        country: "India",
+        pinCode: this.responseData?.retailer?.pinCode || "",
+        mobNumber: this.purchaseOrder.buyerPhone,
+        GSTIN: this.purchaseOrder.buyerGSTIN,
+        logo: this.purchaseOrder.logoUrl,
+        productDiscount: this.purchaseOrder.ProductDiscount.toString(),
+        category: "Retail"
+      },
+      totalQuantity: this.purchaseOrder.products.reduce((sum: number, item: any) => sum + item.quantity, 0),
+      transportDetails: this.purchaseOrder.transportDetails,
+      totalAmount: this.getTotalAmount(),
+      discountApplied: this.getTotalAmount() * (this.purchaseOrder.ProductDiscount / 100),
+      finalAmount: this.getTotalAmount() * (1 - this.purchaseOrder.ProductDiscount / 100)
+    };
+
+    try {
+      const invoiceResponse = await this.authService.post('pi-manufacture-to-retailer', invoicePayload).toPromise();
+      this.communicationService.customSuccess('Invoice generated successfully!');
+      console.log('Invoice created successfully:', invoiceResponse);
+    } catch (error) {
+      console.error('Invoice creation failed:', error);
+      this.communicationService.customError1('Invoice generation failed');
+    }
+  }
+
+  // Helper calculation methods
+  getTotalAmount(): number {
+    return this.purchaseOrder.products.reduce((total: number, item: any) => {
+      const itemTotal = item.quantity * parseFloat(item.price);
+      return total + itemTotal;
+    }, 0);
+  }
+
+  getTotalWithGST(): number {
+    return this.purchaseOrder.products.reduce((total: number, item: any) => {
+      const itemTotal = item.quantity * parseFloat(item.price);
+      const gstAmount = (itemTotal * item.hsnGst) / 100;
+      return total + itemTotal + gstAmount;
+    }, 0);
+  }
+
   downloadPO() {
     const doc = new jsPDF('p', 'mm', 'a4');
     let yPosition = 20;
@@ -250,7 +332,7 @@ export class RetailormanpoGenComponent {
     // Header Section
     doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
-    doc.text('PURCHASE ORDER', pageWidth/2, yPosition, { align: 'center' });
+    doc.text('PURCHASE ORDER', pageWidth / 2, yPosition, { align: 'center' });
     yPosition += 15;
 
     // Order Info - Right aligned
@@ -301,13 +383,13 @@ export class RetailormanpoGenComponent {
     // Products Table
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
-    doc.text('Order Details', pageWidth/2, yPosition, { align: 'center' });
+    doc.text('Order Details', pageWidth / 2, yPosition, { align: 'center' });
     yPosition += 10;
 
     // Dynamic table headers and column widths based on GST type
     let tableHeaders: string[];
     let columnWidths: number[];
-    
+
     if (this.isIntraState) {
       tableHeaders = ['Sr.', 'Design No.', 'HSN', 'Colour', 'Gender', 'Size', 'Rate (Rs.)', 'Qty', 'Taxable (Rs.)', 'GST%', 'CGST (Rs.)', 'SGST (Rs.)', 'Total (Rs.)'];
       columnWidths = [8, 20, 15, 15, 12, 12, 18, 10, 20, 12, 18, 18, 22];
@@ -319,7 +401,7 @@ export class RetailormanpoGenComponent {
     // Prepare table data
     const tableData = this.purchaseOrder.products.map((item: any, index: number) => {
       const gstAmounts = this.getGstAmounts(item);
-      
+
       const baseRow = [
         (index + 1).toString(),
         item.designNumber || '',
@@ -352,13 +434,13 @@ export class RetailormanpoGenComponent {
     // Add totals row
     const totals = this.orderTotals;
     let totalRow: string[];
-    
+
     if (this.isIntraState) {
-      totalRow = ['', '', '', '', '', '', 'Total:', totals.totalQty.toString(), totals.totalTaxable.toFixed(2), '', 
-                 totals.totalCGST.toFixed(2), totals.totalSGST.toFixed(2), totals.totalWithGST.toFixed(2)];
+      totalRow = ['', '', '', '', '', '', 'Total:', totals.totalQty.toString(), totals.totalTaxable.toFixed(2), '',
+        totals.totalCGST.toFixed(2), totals.totalSGST.toFixed(2), totals.totalWithGST.toFixed(2)];
     } else {
-      totalRow = ['', '', '', '', '', '', 'Total:', totals.totalQty.toString(), totals.totalTaxable.toFixed(2), '', 
-                 totals.totalIGST.toFixed(2), totals.totalWithGST.toFixed(2)];
+      totalRow = ['', '', '', '', '', '', 'Total:', totals.totalQty.toString(), totals.totalTaxable.toFixed(2), '',
+        totals.totalIGST.toFixed(2), totals.totalWithGST.toFixed(2)];
     }
 
     tableData.push(totalRow);
@@ -454,7 +536,7 @@ export class RetailormanpoGenComponent {
         12: { halign: 'right' as const } // Total column for intra-state
       };
     }
-    
+
     // For inter-state (IGST scenario) - don't include column 12
     return baseStyles;
   }
@@ -463,44 +545,44 @@ export class RetailormanpoGenComponent {
   addFinancialSummary(doc: jsPDF, startY: number, pageWidth: number) {
     const totals = this.orderTotals;
     const rightAlign = pageWidth - 20;
-    
+
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    
+
     // Subtotal
     doc.text(`Subtotal: Rs. ${totals.totalWithGST.toFixed(2)}`, rightAlign, startY, { align: 'right' });
-    
+
     // Discount
-    doc.text(`Discount (${this.purchaseOrder.ProductDiscount}%): - Rs. ${this.discountAmount.toFixed(2)}`, 
-             rightAlign, startY + 6, { align: 'right' });
-    
+    doc.text(`Discount (${this.purchaseOrder.ProductDiscount}%): - Rs. ${this.discountAmount.toFixed(2)}`,
+      rightAlign, startY + 6, { align: 'right' });
+
     // Grand Total
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
     doc.text(`Grand Total: Rs. ${this.actualGrandTotal.toFixed(2)}`, rightAlign, startY + 15, { align: 'right' });
-    
+
     // Amount in Words - Left aligned
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
     const amountInWords = this.amountInWordsPipe.transform(this.actualGrandTotal);
     doc.text(`Amount in Words: ${amountInWords}`, 20, startY + 25);
 
-    doc.text(`Total GST: Rs. ${this.totalGSTAmount.toFixed(2)} - ${this.amountInWordsPipe.transform(this.totalGSTAmount)}`, 
-            20, startY + 30);
+    doc.text(`Total GST: Rs. ${this.totalGSTAmount.toFixed(2)} - ${this.amountInWordsPipe.transform(this.totalGSTAmount)}`,
+      20, startY + 30);
   }
 
   // Helper method for transport details
   addTransportDetails(doc: jsPDF, startY: number, pageWidth: number): number {
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
-    doc.text('Transport Details', pageWidth/2, startY, { align: 'center' });
+    doc.text('Transport Details', pageWidth / 2, startY, { align: 'center' });
     startY += 10;
 
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
 
     const transport = this.purchaseOrder.transportDetails;
-    
+
     // Left column transport info
     const leftInfo = [
       `Transport Type: ${transport.transportType || 'N/A'}`,
@@ -509,7 +591,7 @@ export class RetailormanpoGenComponent {
       `Contact: ${transport.contactNumber || 'N/A'}`,
       `Alt Contact: ${transport.altContactNumber || 'N/A'}`
     ];
-    
+
     // Right column transport info
     const rightInfo = [
       `Vehicle Number: ${transport.vehicleNumber || 'N/A'}`,
@@ -531,7 +613,7 @@ export class RetailormanpoGenComponent {
       doc.text(`Remarks: ${transport.remarks}`, 20, startY);
       startY += 5;
     }
-    
+
     if (transport.note) {
       doc.text(`Note: ${transport.note}`, 20, startY);
       startY += 5;
@@ -540,11 +622,11 @@ export class RetailormanpoGenComponent {
     return startY;
   }
 
-  // NEW METHOD: Helper method for bank details in PDF
+  // Helper method for bank details in PDF
   addBankDetails(doc: jsPDF, startY: number, pageWidth: number): number {
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
-    doc.text('Bank Details (Manufacturer)', pageWidth/2, startY, { align: 'center' });
+    doc.text('Bank Details (Manufacturer)', pageWidth / 2, startY, { align: 'center' });
     startY += 10;
 
     doc.setFontSize(9);
@@ -558,7 +640,7 @@ export class RetailormanpoGenComponent {
       `Bank Name: ${this.bankDetails.bankName || 'N/A'}`,
       `UPI ID: ${this.bankDetails.upiId || 'N/A'}`
     ];
-    
+
     // Right column bank info
     const rightInfo = [
       `Branch: ${this.bankDetails.branchName || 'N/A'}`,
@@ -577,72 +659,21 @@ export class RetailormanpoGenComponent {
     return startY;
   }
 
-  discountedTotal: number = 0; // Add this property
-  
-  calculateTotalPrice(row: any, applyDiscount: boolean = true): number {
-    let total = 0;
-  
-    // Loop through each size header and calculate the total price
-    this.sizeHeaders.forEach((size) => {
-      // If there is a quantity for the current size, add to the total
-      if (row.quantities[size] > 0) {
-        total += row.quantities[size] * (this.priceHeaders[size] || 0);
-      }
-    });
-  
-    // Apply the discount if flag is true and discount is greater than 0
-    if (applyDiscount && this.purchaseOrder.ProductDiscount > 0) {
-      const discount = (total * this.purchaseOrder.ProductDiscount) / 100;
-      total -= discount;
-    }
-  
-    // Return the final calculated total price
-    return total;
-  }
-
-  addpo() {
-    const cartBody = { ...this.responseData };
-    // Create a copy of the response data
-  
-    // Remove unwanted fields
-    delete cartBody.__v;
-    delete cartBody._id;
-    delete cartBody.productId;
-    // if (cartBody.set && Array.isArray(cartBody.set)) {
-    //   cartBody.set.forEach((product: any) => {
-    //     product.productBy = this.responseData.productBy; // Add productBy to each product in the set
-    //   });
-    // }
-  
-    // Post the cleaned data to the backend
-    this.authService.post('po-retailer-to-manufacture', cartBody).subscribe(
-      (res: any) => {
-        this.communicationService.customSuccess('Purchace Order Genrated Succesfully');
-      },
-      (error) => {
-        this.communicationService.customError1(error.error.message);
-      }
-    );
-  }
-
-  tableChunks: any[][] = [];
-  serialOffset: number[] = [];
-
   navigateFun() {
     this.location.back();
   }
 
   //  PAN extraction method
-extractPanFromGstin(gstin: string): string {
-  if (!gstin || gstin.length !== 15) {
-    return '';
+  extractPanFromGstin(gstin: string): string {
+    if (!gstin || gstin.length !== 15) {
+      return '';
+    }
+
+    try {
+      return gstin.substring(2, 12).toUpperCase();
+    } catch (error) {
+      console.error('Error extracting PAN from GSTIN:', error);
+      return '';
+    }
   }
-  
-  try {
-    return gstin.substring(2, 12).toUpperCase();
-  } catch (error) {
-    console.error('Error extracting PAN from GSTIN:', error);
-    return '';
-  }
-}
 }

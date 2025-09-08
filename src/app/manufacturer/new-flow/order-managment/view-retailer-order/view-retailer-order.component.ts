@@ -49,15 +49,24 @@ export class ViewRetailerOrderComponent {
   // Data arrays
   pendingData: any[] = [];
   partialData: any[] = [];
+  makeToOrderData: any[] = [];
   updatedData: any[] = [];
 
-  // Pagination variables
+  // Pagination variables (changed to page numbers)
+  pagePending: number = 1;
+  pagePartial: number = 1;
+  pageMakeToOrder: number = 1;
+  pageUpdated: number = 1;
+
+  // Keep first values for paginator component
   firstPending: number = 0;
   firstPartial: number = 0;
+  firstMakeToOrder: number = 0;
   firstUpdated: number = 0;
 
   totalPendingResults: number = 0;
   totalPartialResults: number = 0;
+  totalMakeToOrderResults: number = 0;
   totalUpdatedResults: number = 0;
 
   limit = 10;
@@ -81,16 +90,17 @@ export class ViewRetailerOrderComponent {
       // Load all data on init
       this.getPendingData();
       this.getPartialData();
+      this.getMakeToOrderData();
       this.getUpdatedData();
     });
   }
 
-  // Individual methods for each statusAll
+  // Individual methods for each statusAll (updated to use page parameter)
   getPendingData() {
-    const skip = this.firstPending;
+    const page = this.pagePending;
     const limit = this.limit;
 
-    this.authService.get(`po-retailer-to-manufacture?manufacturerEmail=${this.authService.currentUserValue.email}&statusAll=pending&skip=${skip}&limit=${limit}`) //&sortBy=createdAt:desc
+    this.authService.get(`po-retailer-to-manufacture?manufacturerEmail=${this.authService.currentUserValue.email}&statusAll=pending&page=${page}&limit=${limit}`)
       .subscribe((res: any) => {
         this.pendingData = res.results;
         this.totalPendingResults = res.totalResults;
@@ -98,134 +108,65 @@ export class ViewRetailerOrderComponent {
   }
 
   getPartialData() {
-    const skip = this.firstPartial;
+    const page = this.pagePartial;
     const limit = this.limit;
 
-    this.authService.get(`po-retailer-to-manufacture?manufacturerEmail=${this.authService.currentUserValue.email}&sortBy=createdAt:desc&statusAll=m_partial_delivery&skip=${skip}&limit=${limit}`)
+    this.authService.get(`po-retailer-to-manufacture?manufacturerEmail=${this.authService.currentUserValue.email}&sortBy=createdAt:desc&statusAll=m_partial_delivery&page=${page}&limit=${limit}`)
       .subscribe((res: any) => {
         this.partialData = res.results;
         this.totalPartialResults = res.totalResults;
       });
   }
 
-  getUpdatedData() {
-    const skip = this.firstUpdated;
+  getMakeToOrderData() {
+    const page = this.pageMakeToOrder;
     const limit = this.limit;
 
-    this.authService.get(`po-retailer-to-manufacture?manufacturerEmail=${this.authService.currentUserValue.email}&sortBy=createdAt:desc&statusAll=m_order_confirmed&skip=${skip}&limit=${limit}`)
+    this.authService.get(`po-retailer-to-manufacture?manufacturerEmail=${this.authService.currentUserValue.email}&statusAll=make_to_order&sortBy=createdAt:desc&page=${page}&limit=${limit}`)
+      .subscribe((res: any) => {
+        this.makeToOrderData = res.results;
+        this.totalMakeToOrderResults = res.totalResults;
+      });
+  }
+
+  getUpdatedData() {
+    const page = this.pageUpdated;
+    const limit = this.limit;
+
+    this.authService.get(`po-retailer-to-manufacture?manufacturerEmail=${this.authService.currentUserValue.email}&sortBy=createdAt:desc&statusAll=m_order_confirmed&page=${page}&limit=${limit}`)
       .subscribe((res: any) => {
         this.updatedData = res.results;
         this.totalUpdatedResults = res.totalResults;
       });
   }
 
-  // Pagination handlers
+  // Pagination handlers (updated to calculate page numbers)
   onPendingPageChange(event: any) {
     this.firstPending = event.first;
+    this.pagePending = Math.floor(event.first / event.rows) + 1;
     this.limit = event.rows;
     this.getPendingData();
   }
 
   onPartialPageChange(event: any) {
     this.firstPartial = event.first;
+    this.pagePartial = Math.floor(event.first / event.rows) + 1;
     this.limit = event.rows;
     this.getPartialData();
   }
 
+  onMakeToOrderPageChange(event: any) {
+    this.firstMakeToOrder = event.first;
+    this.pageMakeToOrder = Math.floor(event.first / event.rows) + 1;
+    this.limit = event.rows;
+    this.getMakeToOrderData();
+  }
+
   onUpdatedPageChange(event: any) {
     this.firstUpdated = event.first;
+    this.pageUpdated = Math.floor(event.first / event.rows) + 1;
     this.limit = event.rows;
     this.getUpdatedData();
   }
 
-  // patchData(data: any) {
-  //   this.purchaseOrder = data;
-  //   this.isNewPO = false;
-  //   this.showFlag = true;
-  // }
-
-  // generatePO(obj: any) {
-  //   this.authService.post('product-order', obj).subscribe((res: any) => {
-  //     this.communicationService.showNotification('snackbar-success', 'PO Generated Successfully .. !', 'bottom', 'center');
-  //     // Refresh all data
-  //     this.getPendingData();
-  //     this.getPartialData();
-  //     this.getUpdatedData();
-  //     this.isNewPO = false;
-  //   });
-  // }
-
-  // convertNumberToWords(amount: number): string {
-  //   const units = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
-  //   const teens = ["Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
-  //   const tens = ["", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
-  //   const thousands = ["", "Thousand", "Million", "Billion"];
-
-  //   if (amount === 0) return "Zero";
-
-  //   let words = '';
-
-  //   function numberToWords(num: number, index: number): string {
-  //     let str = '';
-  //     if (num > 99) {
-  //       str += units[Math.floor(num / 100)] + " Hundred ";
-  //       num %= 100;
-  //     }
-  //     if (num > 10 && num < 20) {
-  //       str += teens[num - 11] + " ";
-  //     } else {
-  //       str += tens[Math.floor(num / 10)] + " ";
-  //       str += units[num % 10] + " ";
-  //     }
-  //     if (str.trim().length > 0) {
-  //       str += thousands[index] + " ";
-  //     }
-  //     return str;
-  //   }
-
-  //   let i = 0;
-  //   while (amount > 0) {
-  //     words = numberToWords(amount % 1000, i) + words;
-  //     amount = Math.floor(amount / 1000);
-  //     i++;
-  //   }
-
-  //   return words.trim();
-  // }
-
-  // printPurchaseOrder(): void {
-  //   const data = document.getElementById('purchase-order');
-  //   if (data) {
-  //     html2canvas(data, {
-  //       scale: 3,
-  //       useCORS: true,
-  //     }).then((canvas) => {
-  //       const imgWidth = 208;
-  //       const pageHeight = 295;
-  //       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-  //       let heightLeft = imgHeight;
-
-  //       const contentDataURL = canvas.toDataURL('image/png');
-  //       const pdf = new jsPDF('p', 'mm', 'a4');
-  //       const margin = 10;
-  //       let position = margin;
-
-  //       pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
-  //       heightLeft -= pageHeight;
-
-  //       while (heightLeft > 0) {
-  //         pdf.addPage();
-  //         position = margin - heightLeft;
-  //         pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
-  //         heightLeft -= pageHeight;
-  //       }
-
-  //       pdf.save('purchase-order.pdf');
-  //     }).catch((error) => {
-  //       console.error("Error generating PDF:", error);
-  //     });
-  //   } else {
-  //     console.error("Element with id 'purchase-order' not found.");
-  //   }
-  // }
 }

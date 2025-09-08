@@ -428,7 +428,7 @@ private prepareBulkInventoryUpdate(): any {
 
     try {
       const invoiceResponse = await this.authService.post('pi-manufacture-to-retailer', invoicePayload).toPromise();
-      console.log('Invoice created successfully:', invoiceResponse);
+      // console.log('Invoice created successfully:', invoiceResponse);
       return { success: true, message: 'Invoice generated successfully' };
     } catch (error) {
       console.error('Invoice creation failed:', error);

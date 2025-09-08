@@ -107,6 +107,56 @@
           </div>
         </mat-tab>
 
+        <!-- MAKE TO ORDER TAB -->
+        <mat-tab label="Make To Order">
+          <div class="card mt-3 p-4">
+            <div class="p-grid p-fluid">
+              <div class="p-col-12 text-center">
+                <p-table [value]="makeToOrderData">
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th>Manufacturer Name</th>
+                      <th>Company Name</th>
+                      <th>Email</th>
+                      <th>PO Number</th>
+                      <th>View</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-data>
+                    <tr>
+                      <td class="text-center">{{ data.manufacturer?.fullName || 'N/A' }}</td>
+                      <td class="text-center">{{ data.manufacturer?.companyName || 'N/A' }}</td>
+                      <td class="text-center">{{ data.manufacturer?.email || 'N/A' }}</td>
+                      <td class="text-center">{{ data.poNumber || 'N/A' }}</td>
+                      <td class="text-center">
+                        <a [routerLink]="['/retailer/new/view-retailerpotoman', { id: data.id }]">
+                          <button class="btn"><i class="bi bi-eye h5"></i></button>
+                        </a>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+
+                <div *ngIf="!makeToOrderData" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
+                  <p>Make To Order PO List Data Not Found. [Server Error]</p>
+                </div>
+                <div *ngIf="makeToOrderData?.length === 0" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
+                  <p>Your Make To Order PO List is Currently Empty.</p>
+                </div>
+
+                <p-paginator
+                  *ngIf="makeToOrderData && makeToOrderData.length > 0"
+                  (onPageChange)="onMakeToOrderPageChange($event)"
+                  [first]="firstMakeToOrder"
+                  [rows]="limit"
+                  [totalRecords]="totalMakeToOrderResults"
+                  [rowsPerPageOptions]="[10, 20, 30]">
+                </p-paginator>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
         <!-- CONFIRMED TAB -->
         <mat-tab label="Confirmed Orders">
           <div class="card mt-3 p-4">

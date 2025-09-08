@@ -5,13 +5,30 @@
       <button class="btn navigate" (click)="navigateFun()">
         <i class="bi bi-arrow-left-circle h4"></i>
       </button>
-      <span>View / Download Purchase Order</span>
+      <span>View / Download Retailer's Purchase Order</span>
     </h4>
 
-    <!-- Button to Download PDF -->
+    <!-- Button to Download PDF
     <div class="d-flex justify-content-end mb-2">
       <button class="btn btn-success" (click)="downloadPO()">Download PDF</button>
-    </div>
+    </div> -->
+
+    <!-- Button Section - Updated -->
+<div class="d-flex justify-content-end mb-2 gap-2 p-2">
+  <button class="btn btn-success" (click)="downloadPO()">Download PDF</button>
+  
+  <!-- NEW: Generate Invoice Button -->
+  <button class="btn btn-primary" (click)="generateInvoice()">
+    <i class="bi bi-file-earmark-text me-1"></i>Generate Invoice
+  </button>
+  
+  <!-- NEW: View Source Order Button (conditional) -->
+ <button *ngIf="statusAll === 'make_to_order' && previousPoId" 
+          class="btn btn-info" 
+          [routerLink]="['/mnf/confirmed-mto-po-mfg-ret-view', { id: previousPoId }]">
+    <i class="bi bi-arrow-up-circle me-1"></i>View Source Order
+  </button>
+</div>
 
     <!-- Purchase Order Container -->
     <div id="purchase-order" class="card p-3 my-2">
