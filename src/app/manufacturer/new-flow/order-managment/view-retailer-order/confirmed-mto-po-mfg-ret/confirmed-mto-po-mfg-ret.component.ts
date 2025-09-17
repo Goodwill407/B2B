@@ -82,6 +82,9 @@ export class ConfirmedMtoPoMfgRetComponent implements OnInit {
   previousPoId: string = '';
   previousPoNumber: string = '';
 
+  invoiceGenerated: boolean = false;
+  generatedInvoiceId: any;
+
   constructor(
     public authService: AuthService,
     private router: Router,
@@ -135,6 +138,7 @@ export class ConfirmedMtoPoMfgRetComponent implements OnInit {
 
           transportDetails: res.transportDetails,
         };
+        this.generatedInvoiceId = res.invoiceId || '';
 
         this.expDeliveryDate = res.expDeliveryDate || res.expectedDeliveryDate || res.deliveryDate || '';
         this.manufacturerNote = res.manufacturerNote || res.note || res.manufacturer?.notes || '';
@@ -146,6 +150,8 @@ export class ConfirmedMtoPoMfgRetComponent implements OnInit {
         this.statusAll = res.statusAll || '';
         this.previousPoId = res.previousPoId || '';
         this.previousPoNumber = res.previousPoNumber || '';
+
+        this.invoiceGenerated = res.invoiceGenerated || false;
 
         // Map bank details
         if (res.bankDetails || res.manufacturer?.bankDetails) {
@@ -183,58 +189,78 @@ export class ConfirmedMtoPoMfgRetComponent implements OnInit {
   }
 
   get orderTotals() {
-    let totalQty = 0;
-    let totalTaxable = 0;
-    let totalCGST = 0;
-    let totalSGST = 0;
-    let totalIGST = 0;
-    let totalWithGST = 0;
+  let totalQty = 0;
+  let totalTaxable = 0;
+  let totalCGST = 0;
+  let totalSGST = 0;
+  let totalIGST = 0;
+  let totalWithGST = 0;
 
-    for (const item of this.purchaseOrder.products) {
-      const gst = this.getGstAmounts(item);
-      totalQty += Number(item.quantity) || 0;
-      totalTaxable += gst.taxable || 0;
-      totalCGST += gst.cgst || 0;
-      totalSGST += gst.sgst || 0;
-      totalIGST += gst.igst || 0;
-      totalWithGST += gst.totalWithGst || 0;
-    }
-
-    return { totalQty, totalTaxable, totalCGST, totalSGST, totalIGST, totalWithGST };
+  for (const item of this.purchaseOrder.products) {
+    const gst = this.getGstAmounts(item);
+    totalQty += Number(item.quantity) || 0;
+    totalTaxable += gst.taxable || 0;
+    totalCGST += gst.cgst || 0;
+    totalSGST += gst.sgst || 0;
+    totalIGST += gst.igst || 0;
+    totalWithGST += gst.totalWithGst || 0;
   }
+
+  return { 
+    totalQty: isNaN(totalQty) ? 0 : totalQty,
+    totalTaxable: isNaN(totalTaxable) ? 0 : totalTaxable,
+    totalCGST: isNaN(totalCGST) ? 0 : totalCGST,
+    totalSGST: isNaN(totalSGST) ? 0 : totalSGST,
+    totalIGST: isNaN(totalIGST) ? 0 : totalIGST,
+    totalWithGST: isNaN(totalWithGST) ? 0 : totalWithGST
+  };
+}
 
   getGstAmounts(item: any) {
-    const quantity = +item.quantity;
-    const rate = +item.price;
-    const taxable = quantity * rate;
-    const gstRate = +item.hsnGst;
+  // Add null/undefined checks and default values
+  const quantity = Number(item.quantity) || 0;
+  const rate = Number(item.price) || 0;
+  const gstRate = Number(item.hsnGst) || 0; // Default GST rate to 0 if not provided
+  
+  const taxable = quantity * rate;
 
-    let cgst = 0, sgst = 0, igst = 0;
+  let cgst = 0, sgst = 0, igst = 0;
 
-    if (this.isIntraState) {
-      cgst = (taxable * gstRate / 2) / 100;
-      sgst = (taxable * gstRate / 2) / 100;
-    } else {
-      igst = (taxable * gstRate) / 100;
-    }
-
-    const totalWithGst = taxable + cgst + sgst + igst;
-    return { taxable, gstRate, cgst, sgst, igst, totalWithGst };
+  if (this.isIntraState) {
+    cgst = (taxable * gstRate / 2) / 100;
+    sgst = (taxable * gstRate / 2) / 100;
+  } else {
+    igst = (taxable * gstRate) / 100;
   }
 
-  get discountAmount(): number {
-    const discountPercent = Number(this.purchaseOrder.ProductDiscount) || 0;
-    return (this.orderTotals.totalWithGST * discountPercent) / 100;
-  }
+  const totalWithGst = taxable + cgst + sgst + igst;
+  
+  return { 
+    taxable: isNaN(taxable) ? 0 : taxable, 
+    gstRate: isNaN(gstRate) ? 0 : gstRate, 
+    cgst: isNaN(cgst) ? 0 : cgst, 
+    sgst: isNaN(sgst) ? 0 : sgst, 
+    igst: isNaN(igst) ? 0 : igst, 
+    totalWithGst: isNaN(totalWithGst) ? 0 : totalWithGst 
+  };
+}
 
-  get actualGrandTotal(): number {
-    return this.orderTotals.totalWithGST - this.discountAmount;
-  }
+get discountAmount(): number {
+  const discountPercent = Number(this.purchaseOrder.ProductDiscount) || 0;
+  const discount = (this.orderTotals.totalWithGST * discountPercent) / 100;
+  return isNaN(discount) ? 0 : discount;
+}
 
-  get totalGSTAmount(): number {
-    const totals = this.orderTotals;
-    return totals.totalCGST + totals.totalSGST + totals.totalIGST;
-  }
+get actualGrandTotal(): number {
+  const total = this.orderTotals.totalWithGST - this.discountAmount;
+  return isNaN(total) ? 0 : total;
+}
+
+get totalGSTAmount(): number {
+  const totals = this.orderTotals;
+  const total = totals.totalCGST + totals.totalSGST + totals.totalIGST;
+  return isNaN(total) ? 0 : total;
+}
 
   // NEW METHOD: Generate Invoice (from GenRetailerOrderPoComponent)
   async generateInvoice() {
@@ -297,31 +323,67 @@ export class ConfirmedMtoPoMfgRetComponent implements OnInit {
       finalAmount: this.getTotalAmount() * (1 - this.purchaseOrder.ProductDiscount / 100)
     };
 
-    try {
-      const invoiceResponse = await this.authService.post('pi-manufacture-to-retailer', invoicePayload).toPromise();
-      this.communicationService.customSuccess('Invoice generated successfully!');
-      console.log('Invoice created successfully:', invoiceResponse);
-    } catch (error) {
-      console.error('Invoice creation failed:', error);
-      this.communicationService.customError1('Invoice generation failed');
-    }
+   try {
+    // Generate Invoice
+    const invoiceResponse = await this.authService.post('pi-manufacture-to-retailer', invoicePayload).toPromise();
+    
+    // Capture invoice ID from response
+    const invoiceId = invoiceResponse.id; //|| invoiceResponse._id || invoiceResponse.invoiceId;
+    
+    // Update PO with both invoiceGenerated flag AND invoiceId
+    await this.authService.patchpimage(`po-retailer-to-manufacture/${this.poId}`, { 
+      invoiceGenerated: true,
+      invoiceId: invoiceId  // Store the invoice ID in PO record
+    }).toPromise();
+    
+    this.invoiceGenerated = true;
+    
+    // Store invoice ID in component for immediate use
+    this.generatedInvoiceId = invoiceId;
+    
+    this.communicationService.customSuccess('Invoice generated successfully!');
+    
+  } catch (error) {
+    console.error('Invoice generation or PO update failed:', error);
+    this.communicationService.customError1('Invoice generation failed');
   }
+
+
+  }
+
+  viewInvoice() {
+  // Navigate to invoice view page
+  this.router.navigate(['/mnf/new/mfg-proforma-invoice-view', this.generatedInvoiceId]);
+  // OR open in new tab
+  // window.open(`/invoice-view/${this.poId}`, '_blank');
+}
+
 
   // Helper calculation methods
   getTotalAmount(): number {
-    return this.purchaseOrder.products.reduce((total: number, item: any) => {
-      const itemTotal = item.quantity * parseFloat(item.price);
-      return total + itemTotal;
-    }, 0);
-  }
+  const total = this.purchaseOrder.products.reduce((total: number, item: any) => {
+    const quantity = Number(item.quantity) || 0;
+    const price = Number(item.price) || 0;
+    const itemTotal = quantity * price;
+    return total + (isNaN(itemTotal) ? 0 : itemTotal);
+  }, 0);
+  return isNaN(total) ? 0 : total;
+}
 
-  getTotalWithGST(): number {
-    return this.purchaseOrder.products.reduce((total: number, item: any) => {
-      const itemTotal = item.quantity * parseFloat(item.price);
-      const gstAmount = (itemTotal * item.hsnGst) / 100;
-      return total + itemTotal + gstAmount;
-    }, 0);
-  }
+getTotalWithGST(): number {
+  const total = this.purchaseOrder.products.reduce((total: number, item: any) => {
+    const quantity = Number(item.quantity) || 0;
+    const price = Number(item.price) || 0;
+    const hsnGst = Number(item.hsnGst) || 0;
+    
+    const itemTotal = quantity * price;
+    const gstAmount = (itemTotal * hsnGst) / 100;
+    const totalWithGst = itemTotal + gstAmount;
+    
+    return total + (isNaN(totalWithGst) ? 0 : totalWithGst);
+  }, 0);
+  return isNaN(total) ? 0 : total;
+}
 
   downloadPO() {
     const doc = new jsPDF('p', 'mm', 'a4');

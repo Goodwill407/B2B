@@ -1,32 +1,38 @@
-// <!-- Manufacture Retailer Invoice List -->
-
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 
 @Component({
-  selector: 'app-mfg-proforma-invoice-list',
+  selector: 'app-mfg-invoice-list',
   standalone: true,
   imports: [
     CommonModule,
     TableModule,
     PaginatorModule,
     RouterModule,
+    BottomSideAdvertiseComponent
   ],
-  templateUrl: './mfg-proforma-invoice-list.component.html',
-  styleUrl: './mfg-proforma-invoice-list.component.scss'
+  templateUrl: './mfg-invoice-list.component.html',
+  styleUrl: './mfg-invoice-list.component.scss'
 })
-export class MfgProformaInvoiceListComponent implements OnInit {
+export class MfgInvoiceListComponent implements OnInit {
 
-  proformaList: any[] = []; // Array to hold the list of invoices
+  invoiceList: any[] = []; // Array to hold the list of manufacturer invoices
   first: number = 0;  // For pagination
   rows: number = 10;  // For pagination
   totalResults: number = 0;  // Total number of results for pagination
   loading: boolean = false; // Loading state
   currentPage: number = 1; // Current page number
+
+  bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+    'assets/images/adv/ads.jpg'
+  ];
+
 
   constructor(
     private route: ActivatedRoute,
@@ -41,24 +47,24 @@ export class MfgProformaInvoiceListComponent implements OnInit {
   getMfgInvoices() {
     this.loading = true;
 
-    // Updated API endpoint with proper parameters and sorting
-    const manufacturerEmail = this.authService.currentUserValue.email;
+    // Updated API endpoint with retailer email parameter
+    const retailerEmail = this.authService.currentUserValue.email;
     this.currentPage = Math.floor(this.first / this.rows) + 1;
 
-    const url = `pi-manufacture-to-retailer?manufacturerEmail=${manufacturerEmail}&page=${this.currentPage}&limit=${this.rows}&sortBy=createdAt:desc`;
+    const url = `pi-manufacture-to-retailer?retailerEmail=${retailerEmail}&page=${this.currentPage}&limit=${this.rows}&sortBy=createdAt:desc`;
 
     this.authService.get(url).subscribe(
       (res: any) => {
-        this.proformaList = res.results || [];  // Based on actual response structure
+        this.invoiceList = res.results || [];  // Based on actual response structure
         this.totalResults = res.totalResults || 0; // Based on actual response structure
         this.loading = false;
-        console.log('Invoice List:', this.proformaList);
+        console.log('Manufacturer Invoice List:', this.invoiceList);
         console.log('Total Results:', this.totalResults);
       },
       (error) => {
-        console.error('Error fetching invoices:', error);
+        console.error('Error fetching manufacturer invoices:', error);
         this.loading = false;
-        this.communicationService.customError1('Failed to load invoices');
+        this.communicationService.customError1('Failed to load manufacturer invoices');
       }
     );
   }

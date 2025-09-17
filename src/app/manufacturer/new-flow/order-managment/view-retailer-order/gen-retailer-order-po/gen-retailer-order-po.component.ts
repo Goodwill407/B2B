@@ -364,7 +364,8 @@ private prepareBulkInventoryUpdate(): any {
   }
 }
 
-
+// COMMENTED OUT - Invoice generation logic removed
+/*
   // Invoice generation method
   private async generateInvoice(): Promise<{success: boolean, message: string}> {
     const invoicePayload = {
@@ -435,6 +436,7 @@ private prepareBulkInventoryUpdate(): any {
       return { success: false, message: 'Invoice generation failed' };
     }
   }
+  */
 
   // BUSINESS CONTINUITY APPROACH - Main update method
   updatePoData() {
@@ -485,8 +487,8 @@ private prepareBulkInventoryUpdate(): any {
           
           let inventorySuccess = false;
           let inventoryMessage = '';
-          let invoiceSuccess = false;
-          let invoiceMessage = '';
+          // let invoiceSuccess = false;
+          // let invoiceMessage = '';
 
           // STEP 2: Update Inventory (CONTINUE EVEN IF FAILS)
           try {
@@ -499,6 +501,7 @@ private prepareBulkInventoryUpdate(): any {
             inventoryMessage = 'Inventory sync failed';
           }
 
+          /*
           // STEP 3: Generate Invoice (Only if confirmed, regardless of inventory status)
           if (calculatedStatusAll === 'm_order_confirmed') {
             try {
@@ -511,14 +514,15 @@ private prepareBulkInventoryUpdate(): any {
               invoiceMessage = 'Invoice generation failed';
             }
           }
+            */
 
           // BUSINESS CONTINUITY SUCCESS MESSAGES
           this.showBusinessContinuityMessage(
             calculatedStatusAll,
             inventorySuccess,
-            invoiceSuccess,
-            inventoryMessage,
-            invoiceMessage
+            // invoiceSuccess,
+            // inventoryMessage,
+            // invoiceMessage
           );
           
           this.navigateBack();
@@ -534,32 +538,52 @@ private prepareBulkInventoryUpdate(): any {
   private showBusinessContinuityMessage(
   statusAll: string, 
   inventorySuccess: boolean, 
-  invoiceSuccess: boolean,
-  inventoryMessage: string,
-  invoiceMessage: string
+  // invoiceSuccess: boolean,
+  // inventoryMessage: string,
+  // invoiceMessage: string
 ) {
   const isFullyConfirmed = statusAll === 'm_order_confirmed';
   const isPartialDelivery = statusAll === 'm_partial_delivery';
 
+//   if (isFullyConfirmed) {
+//     if (inventorySuccess && invoiceSuccess) {
+//       this.communicationService.customSuccess('Purchase Order confirmed, inventory updated, and invoice generated successfully!');
+//     } else if (inventorySuccess && !invoiceSuccess) {
+//       alert('✅ Purchase Order confirmed and inventory updated.\n⚠️ Invoice generation failed - please generate manually.');
+//     } else if (!inventorySuccess && invoiceSuccess) {
+//       alert('✅ Purchase Order confirmed and invoice generated.\n⚠️ Inventory sync failed - please update inventory manually.');
+//     } else {
+//       alert('✅ Purchase Order confirmed.\n⚠️ Please update inventory and generate invoice manually.');
+//     }
+//   } else if (isPartialDelivery) {
+//     if (inventorySuccess) {
+//       alert('✅ Purchase Order updated with partial delivery and inventory Updated!');
+//     } else {
+//       alert('✅ Purchase Order updated with partial delivery.\n⚠️ Inventory allocation failed - please update manually.');
+//     }
+//   } else {
+//     if (inventorySuccess) {
+//       alert('✅ Purchase Order updated and inventory Updated!');
+//     } else {
+//       alert('✅ Purchase Order updated.\n⚠️ Inventory allocation failed - please update manually.');
+//     }
+//   }
+// }
   if (isFullyConfirmed) {
-    if (inventorySuccess && invoiceSuccess) {
-      this.communicationService.customSuccess('Purchase Order confirmed, inventory updated, and invoice generated successfully!');
-    } else if (inventorySuccess && !invoiceSuccess) {
-      alert('✅ Purchase Order confirmed and inventory updated.\n⚠️ Invoice generation failed - please generate manually.');
-    } else if (!inventorySuccess && invoiceSuccess) {
-      alert('✅ Purchase Order confirmed and invoice generated.\n⚠️ Inventory sync failed - please update inventory manually.');
+    if (inventorySuccess) {
+      this.communicationService.customSuccess('Purchase Order confirmed and inventory updated successfully!');
     } else {
-      alert('✅ Purchase Order confirmed.\n⚠️ Please update inventory and generate invoice manually.');
+      alert('✅ Purchase Order confirmed.\n⚠️ Inventory sync failed - please update inventory manually.');
     }
   } else if (isPartialDelivery) {
     if (inventorySuccess) {
-      alert('✅ Purchase Order updated with partial delivery and inventory allocated!');
+      alert('✅ Purchase Order updated with partial delivery and inventory updated!');
     } else {
       alert('✅ Purchase Order updated with partial delivery.\n⚠️ Inventory allocation failed - please update manually.');
     }
   } else {
     if (inventorySuccess) {
-      alert('✅ Purchase Order updated and inventory allocated!');
+      alert('✅ Purchase Order updated and inventory updated!');
     } else {
       alert('✅ Purchase Order updated.\n⚠️ Inventory allocation failed - please update manually.');
     }

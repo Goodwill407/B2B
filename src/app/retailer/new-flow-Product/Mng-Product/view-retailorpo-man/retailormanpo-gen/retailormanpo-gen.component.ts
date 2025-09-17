@@ -92,6 +92,9 @@ export class RetailormanpoGenComponent {
   expDeliveryDate: Date | string = '';
   manufacturerNote: string = '';
 
+  invoiceGenerated: boolean = false;
+  generatedInvoiceId: any;
+
   constructor(
     public authService: AuthService,
     private router: Router,
@@ -146,6 +149,9 @@ export class RetailormanpoGenComponent {
           transportDetails: res.transportDetails,
         };
 
+        this.invoiceGenerated = res.invoiceGenerated || false;
+        this.generatedInvoiceId = res.invoiceId || '';
+        
         this.expDeliveryDate = res.expDeliveryDate || res.expectedDeliveryDate || res.deliveryDate || '';
         this.manufacturerNote = res.manufacturerNote || res.note || res.manufacturer?.notes || '';
 
@@ -205,41 +211,71 @@ export class RetailormanpoGenComponent {
       totalWithGST += gst.totalWithGst || 0;
     }
 
-    return { totalQty, totalTaxable, totalCGST, totalSGST, totalIGST, totalWithGST };
+    return {
+      totalQty: isNaN(totalQty) ? 0 : totalQty,
+      totalTaxable: isNaN(totalTaxable) ? 0 : totalTaxable,
+      totalCGST: isNaN(totalCGST) ? 0 : totalCGST,
+      totalSGST: isNaN(totalSGST) ? 0 : totalSGST,
+      totalIGST: isNaN(totalIGST) ? 0 : totalIGST,
+      totalWithGST: isNaN(totalWithGST) ? 0 : totalWithGST
+    };
   }
 
-  getGstAmounts(item: any) {
-    const quantity = +item.quantity;
-    const rate = +item.price;
-    const taxable = quantity * rate;
-    const gstRate = +item.hsnGst;
+ getGstAmounts(item: any) {
+  // Add null/undefined checks and default values
+  const quantity = Number(item.quantity) || 0;
+  const rate = Number(item.price) || 0;
+  const gstRate = Number(item.hsnGst) || 0; // Default GST rate to 0 if not provided
+  
+  const taxable = quantity * rate;
 
-    let cgst = 0, sgst = 0, igst = 0;
+  let cgst = 0, sgst = 0, igst = 0;
 
-    if (this.isIntraState) {
-      cgst = (taxable * gstRate / 2) / 100;
-      sgst = (taxable * gstRate / 2) / 100;
-    } else {
-      igst = (taxable * gstRate) / 100;
-    }
-
-    const totalWithGst = taxable + cgst + sgst + igst;
-    return { taxable, gstRate, cgst, sgst, igst, totalWithGst };
+  if (this.isIntraState) {
+    cgst = (taxable * gstRate / 2) / 100;
+    sgst = (taxable * gstRate / 2) / 100;
+  } else {
+    igst = (taxable * gstRate) / 100;
   }
+
+  const totalWithGst = taxable + cgst + sgst + igst;
+  
+  return { 
+    taxable: isNaN(taxable) ? 0 : taxable, 
+    gstRate: isNaN(gstRate) ? 0 : gstRate, 
+    cgst: isNaN(cgst) ? 0 : cgst, 
+    sgst: isNaN(sgst) ? 0 : sgst, 
+    igst: isNaN(igst) ? 0 : igst, 
+    totalWithGst: isNaN(totalWithGst) ? 0 : totalWithGst 
+  };
+}
+
 
   get discountAmount(): number {
-    const discountPercent = Number(this.purchaseOrder.ProductDiscount) || 0;
-    return (this.orderTotals.totalWithGST * discountPercent) / 100;
-  }
+  const discountPercent = Number(this.purchaseOrder.ProductDiscount) || 0;
+  const discount = (this.orderTotals.totalWithGST * discountPercent) / 100;
+  return isNaN(discount) ? 0 : discount;
+}
+
 
   get actualGrandTotal(): number {
-    return this.orderTotals.totalWithGST - this.discountAmount;
-  }
+  const total = this.orderTotals.totalWithGST - this.discountAmount;
+  return isNaN(total) ? 0 : total;
+}
+
 
   get totalGSTAmount(): number {
-    const totals = this.orderTotals;
-    return totals.totalCGST + totals.totalSGST + totals.totalIGST;
-  }
+  const totals = this.orderTotals;
+  const total = totals.totalCGST + totals.totalSGST + totals.totalIGST;
+  return isNaN(total) ? 0 : total;
+}
+
+ viewInvoice() {
+  // Navigate to invoice view page
+  this.router.navigate(['/retailer/new/mfg-invoice-view', this.generatedInvoiceId]);
+  // OR open in new tab
+  // window.open(`/invoice-view/${this.poId}`, '_blank');
+}
 
   downloadPO() {
     const doc = new jsPDF('p', 'mm', 'a4');

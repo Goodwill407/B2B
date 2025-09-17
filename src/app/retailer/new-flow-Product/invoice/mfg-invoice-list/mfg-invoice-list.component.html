@@ -1,7 +1,7 @@
 <section class="content">
   <div class="content-block">
     <h4 class="mt-4">
-      <i class="bi bi-receipt h3 me-2"></i>Retailer Invoice List
+      <i class="bi bi-receipt h3 me-2"></i>Manufacturer Invoice List
     </h4>
     
     <div class="card mt-3 p-4">
@@ -16,10 +16,10 @@
           </div>
 
           <!-- Invoice Table -->
-          <p-table *ngIf="!loading" [value]="proformaList" [loading]="loading" styleClass="p-datatable-striped">
+          <p-table *ngIf="!loading" [value]="invoiceList" [loading]="loading" styleClass="p-datatable-striped">
             <ng-template pTemplate="header">
               <tr>
-                <th>Retailer Name</th>
+                <th>Manufacturer Name</th>
                 <th>Company Name</th>
                 <th>Email</th>
                 <th>PO Number</th>
@@ -33,9 +33,9 @@
             
             <ng-template pTemplate="body" let-data>
               <tr>
-                <td class="text-center">{{ data.retailer?.fullName || 'N/A' }}</td>
-                <td class="text-center">{{ data.retailer?.companyName || 'N/A' }}</td>
-                <td class="text-center">{{ data.retailerEmail || 'N/A' }}</td>
+                <td class="text-center">{{ data.manufacturer?.fullName || 'N/A' }}</td>
+                <td class="text-center">{{ data.manufacturer?.companyName || 'N/A' }}</td>
+                <td class="text-center">{{ data.manufacturerEmail || 'N/A' }}</td>
                 <td class="text-center">{{ data.poNumber || 'N/A' }}</td>
                 <td class="text-center">{{ data.invoiceNumber || 'N/A' }}</td>
                 <td class="text-center">{{ (data.invoiceDate | date:'dd/MM/yyyy') || 'N/A' }}</td>
@@ -43,7 +43,7 @@
                 <td class="text-center">₹{{ data.finalAmount | number:'1.2-2' || '0.00' }}</td>
                 <td class="text-center">
                   <button class="btn" 
-                          [routerLink]="['/mnf/new/mfg-proforma-invoice-view', data.id]"
+                          [routerLink]="['/retailer/new/mfg-invoice-view', data.id]"
                           title="View Invoice">
                     <i class="bi bi-eye me-1"></i>
                   </button>
@@ -54,10 +54,10 @@
             <!-- Empty State -->
             <ng-template pTemplate="emptymessage">
               <tr>
-                <td colspan="10" class="text-center p-4">
+                <td colspan="9" class="text-center p-4">
                   <div class="empty-state">
                     <i class="bi bi-receipt h1 text-muted"></i>
-                    <p class="mt-2 text-muted">No invoices found at the moment.</p>
+                    <p class="mt-2 text-muted">No manufacturer invoices found at the moment.</p>
                   </div>
                 </td>
               </tr>
@@ -65,7 +65,7 @@
           </p-table>
 
           <!-- Pagination -->
-          <p-paginator *ngIf="!loading && proformaList && proformaList.length > 0" 
+          <p-paginator *ngIf="!loading && invoiceList && invoiceList.length > 0" 
                        (onPageChange)="onPageChange($event)"
                        [first]="first" 
                        [rows]="rows" 
@@ -76,6 +76,11 @@
           </p-paginator>
         </div>
       </div>
+    </div>
+
+    <!-- Advertisement -->
+    <div class="mb-3">
+      <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
     </div>
   </div>
 </section>

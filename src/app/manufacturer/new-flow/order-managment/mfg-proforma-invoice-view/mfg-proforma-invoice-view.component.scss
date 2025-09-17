@@ -1,0 +1,536 @@
+/* Professional Invoice Styling - Enhanced with Labeled Format */
+.invoice-container {
+  max-width: 250mm;
+  margin: 0 auto;
+  background: white;
+  border: 2px solid #000;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1.4;
+
+  zoom: 1.2; 
+}
+
+/* Header Section */
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 15px;
+  border-bottom: 2px solid #000;
+  
+  .company-branding {
+    display: flex;
+    align-items: flex-start;
+    flex: 1;
+    
+    .company-logo {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+      margin-right: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    
+    .company-info {
+      h2 {
+        margin: 0 0 5px 0;
+        font-size: 16px;
+        font-weight: bold;
+        color: #000;
+      }
+      
+      .company-address, .contact-info {
+        margin: 2px 0;
+        color: #000;
+        font-size: 11px;
+        font-weight: 500;
+      }
+    }
+  }
+  
+  .invoice-title {
+    text-align: right;
+    
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: bold;
+      color: #4a90e2;
+      letter-spacing: 1px;
+    }
+    
+    .gstin-info {
+      margin: 5px 0;
+      font-size: 11px;
+      font-weight: bold;
+      color: #000;
+    }
+    
+    .original-copy {
+      font-size: 9px;
+      color: #666;
+      font-weight: bold;
+    }
+  }
+}
+
+/* Details Section - Enhanced with Labeled Format */
+.details-section {
+  display: flex;
+  border-bottom: 1px solid #000;
+  
+  .customer-details {
+    flex: 1;
+    padding: 15px;
+    border-right: 1px solid #000;
+    background-color: #f8f9fa;
+    
+    h5 {
+      margin: 0 0 15px 0;
+      font-size: 13px;
+      font-weight: bold;
+      text-decoration: underline;
+      color: #000;
+    }
+    
+    .customer-info-labeled {
+      .customer-row {
+        display: flex;
+        margin-bottom: 8px;
+        align-items: flex-start;
+        
+        .label {
+          font-weight: bold;
+          color: #000;
+          font-size: 11px;
+          min-width: 90px;
+          flex-shrink: 0;
+        }
+        
+        .value {
+          color: #000;
+          font-size: 11px;
+          font-weight: 600;
+          flex: 1;
+          word-wrap: break-word;
+        }
+      }
+    }
+  }
+  
+  .invoice-details-right {
+    flex: 0 0 250px;
+    padding: 15px;
+    
+    .invoice-info-table {
+      width: 100%;
+      
+      tr {
+        .info-label {
+          font-weight: bold;
+          padding: 5px 8px;
+          color: #000;
+          font-size: 11px;
+        }
+        
+        .info-value {
+          padding: 5px 8px;
+          color: #000;
+          font-weight: 600;
+          text-align: right;
+          
+          .status-badge {
+            background-color: #28a745;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 9px;
+            font-weight: bold;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Items Table */
+.items-section {
+  .items-table {
+    width: 100%;
+    border-collapse: collapse;
+    
+    th, td {
+      border: 1px solid #000;
+      padding: 6px 4px;
+      text-align: center;
+      font-size: 10px;
+    }
+    
+    thead {
+      th {
+        background-color: #e9ecef;
+        font-weight: bold;
+        font-size: 9px;
+        color: #000;
+      }
+      
+      .sub-header th {
+        background-color: #f1f3f4;
+        font-size: 8px;
+        padding: 3px;
+      }
+    }
+    
+    .item-row {
+      .product-name {
+        text-align: left;
+        max-width: 200px;
+        
+        .product-details {
+          strong {
+            font-size: 11px;
+            color: #000;
+          }
+          
+          .product-desc {
+            color: #333;
+            font-size: 9px;
+          }
+        }
+      }
+      
+      .text-end {
+        text-align: right;
+      }
+      
+      .text-center {
+        text-align: center;
+      }
+    }
+    
+    .totals-row {
+      background-color: #e9ecef;
+      font-weight: bold;
+      
+      .grand-total {
+        background-color: #d4edda;
+        font-size: 12px;
+        color: #000;
+      }
+    }
+  }
+}
+
+/* Financial Summary */
+.financial-summary {
+  display: flex;
+  border-bottom: 1px solid #000;
+  
+  .amount-words {
+    flex: 1.5;
+    padding: 15px;
+    border-right: 1px solid #000;
+    
+    h6 {
+      margin: 0 0 10px 0;
+      font-weight: bold;
+      color: #000;
+    }
+    
+    .amount-text {
+      font-size: 12px;
+      font-weight: bold;
+      color: #000;
+      text-transform: uppercase;
+    }
+  }
+  
+  .amount-breakdown {
+    flex: 1;
+    padding: 10px;
+    
+    .summary-table {
+      width: 100%;
+      
+      tr {
+        td {
+          padding: 4px 8px;
+          border-bottom: 1px dotted #ccc;
+          font-size: 11px;
+          color: #000;
+          
+          &:first-child {
+            font-weight: 500;
+          }
+          
+          &.text-end {
+            text-align: right;
+            font-weight: 600;
+          }
+        }
+        
+        &.final-amount {
+          border-top: 2px solid #000;
+          background-color: #d4edda;
+          
+          td {
+            font-size: 12px;
+            font-weight: bold;
+            padding: 8px;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Bottom Section - Enhanced with Labeled Format */
+.bottom-section {
+  display: flex;
+  padding: 15px;
+  border-bottom: 1px solid #000;
+  
+  .bank-details {
+    flex: 1;
+    margin-right: 20px;
+    
+    h6 {
+      margin: 0 0 15px 0;
+      font-weight: bold;
+      text-decoration: underline;
+      color: #000;
+    }
+    
+    .bank-info-labeled {
+      .bank-row {
+        display: flex;
+        margin-bottom: 6px;
+        align-items: flex-start;
+        
+        .label {
+          font-weight: bold;
+          color: #000;
+          font-size: 10px;
+          min-width: 85px;
+          flex-shrink: 0;
+        }
+        
+        .value {
+          color: #000;
+          font-size: 10px;
+          font-weight: 600;
+          flex: 1;
+        }
+      }
+    }
+  }
+  
+  .qr-section {
+    flex: 0 0 100px;
+    text-align: center;
+    margin: 0 20px;
+    
+    .qr-placeholder {
+      border: 2px solid #000;
+      padding: 10px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f8f9fa;
+    }
+    
+    .qr-text {
+      margin: 8px 0 0 0;
+      font-size: 9px;
+      font-weight: bold;
+      color: #000;
+    }
+  }
+  
+  .certificate-section {
+    flex: 1;
+    text-align: center;
+    
+    .certificate-text {
+      font-size: 9px;
+      margin-bottom: 10px;
+      color: #000;
+    }
+    
+    .company-name {
+      font-weight: bold;
+      margin-bottom: 30px;
+      font-size: 11px;
+      color: #000;
+    }
+    
+    .signature-line {
+      border-top: 1px solid #000;
+      padding-top: 5px;
+      font-size: 9px;
+      color: #000;
+      margin: 0 auto;
+      width: 150px;
+    }
+  }
+}
+
+/* Transport Section */
+.transport-section {
+  padding: 15px;
+  border-bottom: 1px solid #000;
+  background-color: #f8f9fa;
+  
+  h6 {
+    margin: 0 0 10px 0;
+    font-weight: bold;
+    text-decoration: underline;
+    color: #000;
+  }
+  
+  .transport-info {
+    p {
+      margin: 5px 0;
+      font-size: 11px;
+      color: #000;
+      
+      strong {
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+/* Terms Section */
+.terms-section {
+  padding: 10px 15px;
+  
+  h6 {
+    margin: 0 0 8px 0;
+    font-weight: bold;
+    text-decoration: underline;
+    color: #000;
+  }
+  
+  .terms-content {
+    p {
+      margin: 2px 0;
+      font-size: 9px;
+      line-height: 1.3;
+      color: #000;
+    }
+  }
+}
+
+/* Navigation Button */
+.btn.navigate {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-right: 10px;
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: #0056b3;
+  }
+  
+  i {
+    font-size: 1.5rem;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .invoice-container {
+    margin: 10px;
+    font-size: 11px;
+  }
+  
+  .invoice-header {
+    flex-direction: column;
+    
+    .company-branding {
+      margin-bottom: 15px;
+    }
+    
+    .invoice-title {
+      text-align: center;
+    }
+  }
+  
+  .details-section {
+    flex-direction: column;
+    
+    .customer-details {
+      border-right: none;
+      border-bottom: 1px solid #000;
+    }
+    
+    .customer-info-labeled .customer-row {
+      flex-direction: column;
+      
+      .label {
+        min-width: auto;
+        margin-bottom: 2px;
+      }
+    }
+  }
+  
+  .financial-summary {
+    flex-direction: column;
+    
+    .amount-words {
+      border-right: none;
+      border-bottom: 1px solid #000;
+    }
+  }
+  
+  .bottom-section {
+    flex-direction: column;
+    
+    .bank-details {
+      margin-right: 0;
+      margin-bottom: 15px;
+      
+      .bank-info-labeled .bank-row {
+        flex-direction: column;
+        
+        .label {
+          min-width: auto;
+          margin-bottom: 2px;
+        }
+      }
+    }
+    
+    .qr-section {
+      margin: 10px 0;
+      flex: none;
+    }
+    
+    .certificate-section {
+      text-align: center;
+      margin-top: 15px;
+    }
+  }
+}
+
+/* Print Styles */
+@media print {
+  .invoice-container {
+    box-shadow: none;
+    border: 2px solid #000;
+    margin: 0;
+    max-width: none;
+  }
+  
+  .btn, .navigate {
+    display: none !important;
+  }
+  
+  .content-block h4 {
+    display: none;
+  }
+}

@@ -20,5 +20,5 @@ export const NewFlow:Route[]=[
     {path:'Return-products',component:RetrunProductsComponent},
     {path:'Return-products-po',component:ViewReturnProductPoComponent},
     {path:'mfg-proforma-invoice-list', component:MfgProformaInvoiceListComponent},
-    {path:'mfg-proforma-invoice-view', component:MfgProformaInvoiceViewComponent},
+    {path:'mfg-proforma-invoice-view/:id', component:MfgProformaInvoiceViewComponent},
 ]

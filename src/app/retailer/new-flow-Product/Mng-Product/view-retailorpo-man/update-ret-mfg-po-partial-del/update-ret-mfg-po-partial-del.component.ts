@@ -36,6 +36,8 @@ export class UpdateRetMfgPoPartialDelComponent implements OnInit {
 
   manufacturerNote: string = '';
 
+  userProfile: any;
+
   constructor(
     public authService: AuthService,
     private router: Router,
@@ -106,29 +108,44 @@ export class UpdateRetMfgPoPartialDelComponent implements OnInit {
 
   // UPDATED: Correct logic for splitting items
   separateItems(items: any[]) {
-    this.confirmedItems = [];
-    this.makeToOrderItems = [];
+  this.confirmedItems = [];
+  this.makeToOrderItems = [];
 
-    items.forEach(item => {
-      // Add to confirmed table if available quantity > 0
-      if (item.availableQuantity > 0) {
-        this.confirmedItems.push({
-          ...item,
-          quantity: item.availableQuantity, // Show available quantity in confirmed table
-          expectedQty: item.quantity,
-        });
-      }
+  items.forEach(item => {
+    // Ensure numeric values with defaults
+    const availableQuantity = Number(item.availableQuantity) || 0;
+    const totalQuantity = Number(item.quantity) || 0;
+    const price = Number(item.price) || 0;
+    
+    // Skip items with invalid price
+    if (price <= 0) {
+      console.warn('Skipping item with invalid price:', item);
+      return;
+    }
 
-      // Calculate remaining quantity for make-to-order
-      const remainingQty = item.quantity - item.availableQuantity;
-      if (remainingQty > 0) {
-        this.makeToOrderItems.push({
-          ...item,
-          remainingQuantity: remainingQty // Show remaining quantity in make-to-order table
-        });
-      }
-    });
-  }
+    // Add to confirmed table if available quantity > 0
+    if (availableQuantity > 0) {
+      this.confirmedItems.push({
+        ...item,
+        quantity: availableQuantity,
+        expectedQty: totalQuantity,
+        availableQuantity: availableQuantity,
+        price: price
+      });
+    }
+
+    // Calculate remaining quantity for make-to-order
+    const remainingQty = totalQuantity - availableQuantity;
+    if (remainingQty > 0) {
+      this.makeToOrderItems.push({
+        ...item,
+        remainingQuantity: remainingQty,
+        price: price
+      });
+    }
+  });
+}
+
 
   updateStateType() {
     const buyerState = this.responseData?.retailer?.state?.trim().toLowerCase();
@@ -138,90 +155,119 @@ export class UpdateRetMfgPoPartialDelComponent implements OnInit {
 
   // GST Calculation Methods
   getGstAmounts(item: any, useRemainingQty: boolean = false) {
-    const quantity = useRemainingQty ? item.remainingQuantity : item.quantity;
-    const rate = +item.price;
-    const taxable = quantity * rate;
-    const gstRate = +item.hsnGst;
+  // Add null/undefined checks and default values
+  const quantity = useRemainingQty ? 
+    (Number(item.remainingQuantity) || 0) : 
+    (Number(item.quantity) || 0);
+  const rate = Number(item.price) || 0;
+  const gstRate = Number(item.hsnGst) || 0; // Default GST rate to 0 if not provided
+  
+  const taxable = quantity * rate;
 
-    let cgst = 0, sgst = 0, igst = 0;
+  let cgst = 0, sgst = 0, igst = 0;
 
-    if (this.isIntraState) {
-      cgst = (taxable * gstRate / 2) / 100;
-      sgst = (taxable * gstRate / 2) / 100;
-    } else {
-      igst = (taxable * gstRate) / 100;
-    }
-
-    const totalWithGst = taxable + cgst + sgst + igst;
-    return { taxable, gstRate, cgst, sgst, igst, totalWithGst };
+  if (this.isIntraState) {
+    cgst = (taxable * gstRate / 2) / 100;
+    sgst = (taxable * gstRate / 2) / 100;
+  } else {
+    igst = (taxable * gstRate) / 100;
   }
+
+  const totalWithGst = taxable + cgst + sgst + igst;
+  
+  return { 
+    taxable: isNaN(taxable) ? 0 : taxable, 
+    gstRate: isNaN(gstRate) ? 0 : gstRate, 
+    cgst: isNaN(cgst) ? 0 : cgst, 
+    sgst: isNaN(sgst) ? 0 : sgst, 
+    igst: isNaN(igst) ? 0 : igst, 
+    totalWithGst: isNaN(totalWithGst) ? 0 : totalWithGst 
+  };
+}
+
 
   // Table Totals
   get confirmedTotals() {
-    let totalQty = 0;
-    let totalTaxable = 0;
-    let totalCGST = 0;
-    let totalSGST = 0;
-    let totalIGST = 0;
-    let totalWithGST = 0;
+  let totalQty = 0;
+  let totalTaxable = 0;
+  let totalCGST = 0;
+  let totalSGST = 0;
+  let totalIGST = 0;
+  let totalWithGST = 0;
 
-    for (const item of this.confirmedItems) {
-      const gst = this.getGstAmounts(item);
-      totalQty += Number(item.quantity) || 0;
-      totalTaxable += gst.taxable || 0;
-      totalCGST += gst.cgst || 0;
-      totalSGST += gst.sgst || 0;
-      totalIGST += gst.igst || 0;
-      totalWithGST += gst.totalWithGst || 0;
-    }
-
-    const discountPercent = Number(this.purchaseOrder.ProductDiscount) || 0;
-    const discountAmount = (totalWithGST * discountPercent) / 100;
-    const actualGrandTotal = totalWithGST - discountAmount;
-
-    return { 
-      totalQty, totalTaxable, totalCGST, totalSGST, totalIGST, 
-      totalWithGST, discountAmount, actualGrandTotal 
-    };
+  for (const item of this.confirmedItems) {
+    const gst = this.getGstAmounts(item);
+    totalQty += Number(item.quantity) || 0;
+    totalTaxable += gst.taxable || 0;
+    totalCGST += gst.cgst || 0;
+    totalSGST += gst.sgst || 0;
+    totalIGST += gst.igst || 0;
+    totalWithGST += gst.totalWithGst || 0;
   }
+
+  const discountPercent = Number(this.purchaseOrder.ProductDiscount) || 0;
+  const discountAmount = (totalWithGST * discountPercent) / 100;
+  const actualGrandTotal = totalWithGST - discountAmount;
+
+  return { 
+    totalQty: isNaN(totalQty) ? 0 : totalQty,
+    totalTaxable: isNaN(totalTaxable) ? 0 : totalTaxable,
+    totalCGST: isNaN(totalCGST) ? 0 : totalCGST,
+    totalSGST: isNaN(totalSGST) ? 0 : totalSGST,
+    totalIGST: isNaN(totalIGST) ? 0 : totalIGST,
+    totalWithGST: isNaN(totalWithGST) ? 0 : totalWithGST,
+    discountAmount: isNaN(discountAmount) ? 0 : discountAmount,
+    actualGrandTotal: isNaN(actualGrandTotal) ? 0 : actualGrandTotal
+  };
+}
 
   get makeToOrderTotals() {
-    let totalQty = 0;
-    let totalTaxable = 0;
-    let totalCGST = 0;
-    let totalSGST = 0;
-    let totalIGST = 0;
-    let totalWithGST = 0;
+  let totalQty = 0;
+  let totalTaxable = 0;
+  let totalCGST = 0;
+  let totalSGST = 0;
+  let totalIGST = 0;
+  let totalWithGST = 0;
 
-    for (const item of this.makeToOrderItems) {
-      const gst = this.getGstAmounts(item, true); // Use remaining quantity
-      totalQty += Number(item.remainingQuantity) || 0;
-      totalTaxable += gst.taxable || 0;
-      totalCGST += gst.cgst || 0;
-      totalSGST += gst.sgst || 0;
-      totalIGST += gst.igst || 0;
-      totalWithGST += gst.totalWithGst || 0;
-    }
-
-    const discountPercent = Number(this.purchaseOrder.ProductDiscount) || 0;
-    const discountAmount = (totalWithGST * discountPercent) / 100;
-    const actualGrandTotal = totalWithGST - discountAmount;
-
-    return { 
-      totalQty, totalTaxable, totalCGST, totalSGST, totalIGST, 
-      totalWithGST, discountAmount, actualGrandTotal 
-    };
+  for (const item of this.makeToOrderItems) {
+    const gst = this.getGstAmounts(item, true); // Use remaining quantity
+    totalQty += Number(item.remainingQuantity) || 0;
+    totalTaxable += gst.taxable || 0;
+    totalCGST += gst.cgst || 0;
+    totalSGST += gst.sgst || 0;
+    totalIGST += gst.igst || 0;
+    totalWithGST += gst.totalWithGst || 0;
   }
+
+  const discountPercent = Number(this.purchaseOrder.ProductDiscount) || 0;
+  const discountAmount = (totalWithGST * discountPercent) / 100;
+  const actualGrandTotal = totalWithGST - discountAmount;
+
+  return { 
+    totalQty: isNaN(totalQty) ? 0 : totalQty,
+    totalTaxable: isNaN(totalTaxable) ? 0 : totalTaxable,
+    totalCGST: isNaN(totalCGST) ? 0 : totalCGST,
+    totalSGST: isNaN(totalSGST) ? 0 : totalSGST,
+    totalIGST: isNaN(totalIGST) ? 0 : totalIGST,
+    totalWithGST: isNaN(totalWithGST) ? 0 : totalWithGST,
+    discountAmount: isNaN(discountAmount) ? 0 : discountAmount,
+    actualGrandTotal: isNaN(actualGrandTotal) ? 0 : actualGrandTotal
+  };
+}
+
 
   get totalGSTAmountConfirmed(): number {
-    const totals = this.confirmedTotals;
-    return totals.totalCGST + totals.totalSGST + totals.totalIGST;
-  }
+  const totals = this.confirmedTotals;
+  const total = totals.totalCGST + totals.totalSGST + totals.totalIGST;
+  return isNaN(total) ? 0 : total;
+}
 
-  get totalGSTAmountMakeToOrder(): number {
-    const totals = this.makeToOrderTotals;
-    return totals.totalCGST + totals.totalSGST + totals.totalIGST;
-  }
+get totalGSTAmountMakeToOrder(): number {
+  const totals = this.makeToOrderTotals;
+  const total = totals.totalCGST + totals.totalSGST + totals.totalIGST;
+  return isNaN(total) ? 0 : total;
+}
+
 
   get colspan(): number {
     return this.isIntraState ? 16 : 15;
@@ -309,65 +355,122 @@ export class UpdateRetMfgPoPartialDelComponent implements OnInit {
   }
 
   // Error Messages
-  showErrorMessage(message: string) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: message || 'Something went wrong. Please try again.',
-      confirmButtonColor: '#007bff'
-    });
+// Enhanced Error Messages for better user feedback
+showErrorMessage(message: string) {
+  Swal.fire({
+    icon: 'error',
+    title: 'Error',
+    text: message || 'Something went wrong. Please try again.',
+    confirmButtonColor: '#007bff'
+  });
+}
+
+// Main Submit Method - UPDATED with proper flow
+async submitDecision() {
+  const confirmed = await this.showConfirmation(this.selectedAction!);
+  if (!confirmed) return;
+  
+  this.isLoading = true;
+  
+  try {
+    if (this.selectedAction === 'rejectAll') {
+      // Step 1: Update inventory first (ONLY CALL HERE)
+      console.log('Step 1: Updating inventory...');
+      await this.updateInventoryBulk();
+      console.log('Inventory updated successfully');
+      
+      // Step 2: Only if inventory update succeeds, then cancel PO
+      console.log('Step 2: Cancelling order...');
+      await this.updatePOStatus('r_order_cancelled');
+      console.log('Order cancelled successfully');
+      
+      this.showSuccessMessage('rejectAll');
+      
+    } else if (this.selectedAction === 'acceptConfirmed') {
+      await this.updatePOWithConfirmedItems();
+      this.showSuccessMessage('acceptConfirmed');
+      
+    } else if (this.selectedAction === 'acceptBoth') {
+      await this.updatePOWithConfirmedItems();
+      await this.createMakeToOrderPO();
+      this.showSuccessMessage('acceptBoth');
+    }
+    
+    setTimeout(() => {
+      this.navigateFun();
+    }, 2000);
+    
+  } catch (error) {
+    console.error('Submission error:', error);
+    
+    // Provide specific error messages
+    if (this.selectedAction === 'rejectAll') {
+      this.showErrorMessage('Failed to cancel order. Inventory update or order cancellation failed.');
+    } else {
+      this.showErrorMessage('Failed to process your request. Please try again.');
+    }
+  } finally {
+    this.isLoading = false;
+  }
+}
+
+
+// Add this new method to handle inventory updates when canceling order
+private async updateInventoryBulk(): Promise<any> {
+  // Filter items with availableQuantity > 0
+  const itemsToUpdate = this.responseData.set.filter((item: any) => 
+    item.availableQuantity && Number(item.availableQuantity) > 0
+  );
+
+  if (itemsToUpdate.length === 0) {
+    console.log('No items with available quantity to update inventory');
+    return Promise.resolve();
   }
 
-  // Main Submit Method
-  async submitDecision() {
-    // Show confirmation dialog first
-    const confirmed = await this.showConfirmation(this.selectedAction!);
-    if (!confirmed) return;
-    
-    this.isLoading = true;
-    
-    try {
-      if (this.selectedAction === 'rejectAll') {
-        await this.updatePOStatus('r_order_cancelled');
-        this.showSuccessMessage('rejectAll');
-        
-      } else if (this.selectedAction === 'acceptConfirmed') {
-        await this.updatePOWithConfirmedItems();
-        this.showSuccessMessage('acceptConfirmed');
-        
-      } else if (this.selectedAction === 'acceptBoth') {
-        await this.updatePOWithConfirmedItems();
-        await this.createMakeToOrderPO();
-        this.showSuccessMessage('acceptBoth');
-      }
-      
-      // Navigate back after success
-      setTimeout(() => {
-        this.navigateFun();
-      }, 2000);
-      
-    } catch (error) {
-      console.error('Submission error:', error);
-      this.showErrorMessage('Failed to process your request. Please try again.');
-    } finally {
-      this.isLoading = false;
-    }
-  }
+  // Get MFG user email 
+   const manufacturerEmail = this.responseData?.manufacturer?.email;
+
+  // Prepare payload for bulk inventory update
+  const updates = itemsToUpdate.map((item: any) => ({
+    designNumber: item.designNumber,
+    colourName: item.colourName,
+    standardSize: item.size,
+    quantity: Number(item.availableQuantity),
+    status: "add",
+    lastUpdatedBy: "Admin", // You can make this dynamic based on current user
+    userEmail: manufacturerEmail
+  }));
+
+  const payload = { updates };
+
+  console.log('Inventory bulk update payload:', payload);
+
+  return this.authService.post('manufacture-inventory/update-bulk', payload)
+    .pipe(
+      retry(2),
+      catchError(error => {
+        console.error('Error updating inventory bulk:', error);
+        return throwError(() => error);
+      })
+    ).toPromise();
+}
 
   // Update PO Status (for Cancel Order)
-  private updatePOStatus(status: string): Promise<any> {
-    const url = `po-retailer-to-manufacture/${this.responseData.id}`;
-    const payload = { statusAll: status };
-    
-    return this.authService.patch(url, payload)
-      .pipe(
-        retry(2),
-        catchError(error => {
-          console.error('Error updating PO status:', error);
-          return throwError(() => error);
-        })
-      ).toPromise();
-  }
+// Update PO Status - SIMPLIFIED (no inventory logic here)
+private updatePOStatus(status: string): Promise<any> {
+  const url = `po-retailer-to-manufacture/${this.responseData.id}`;
+  const payload = { statusAll: status };
+  
+  return this.authService.patchpimage(url, payload)
+    .pipe(
+      retry(2),
+      catchError(error => {
+        console.error('Error updating PO status:', error);
+        return throwError(() => error);
+      })
+    ).toPromise();
+}
+
 
   // Update PO with Confirmed Items (for Accept Available Only & Accept Both)
   private updatePOWithConfirmedItems(): Promise<any> {
@@ -471,12 +574,15 @@ get partialDeliveryDate(): Date | string {
 
 // Optional: If you want to calculate amounts as well
 get totalConfirmedAmount(): number {
-  return this.confirmedTotals.actualGrandTotal;
+  const amount = this.confirmedTotals.actualGrandTotal;
+  return isNaN(amount) ? 0 : amount;
 }
 
 get totalPendingAmount(): number {
-  return this.makeToOrderTotals.actualGrandTotal;
+  const amount = this.makeToOrderTotals.actualGrandTotal;
+  return isNaN(amount) ? 0 : amount;
 }
+
 
 
 }

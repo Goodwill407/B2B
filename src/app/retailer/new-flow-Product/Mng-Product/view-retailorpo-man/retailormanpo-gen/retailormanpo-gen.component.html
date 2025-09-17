@@ -9,8 +9,18 @@
     </h4>
 
     <!-- Button to Download PDF -->
-    <div class="d-flex justify-content-end mb-2">
+    <div class="d-flex justify-content-end mb-2 gap-2 p-2">
       <button class="btn btn-success" (click)="downloadPO()">Download PDF</button>
+
+      <button *ngIf="invoiceGenerated" class="btn btn-secondary" (click)="viewInvoice()">
+        <i class="bi bi-eye me-1"></i>View Invoice
+      </button>
+
+      <!-- NEW: View Source Order Button (conditional) -->
+      <!-- <button *ngIf="statusAll === 'make_to_order' && previousPoId" class="btn btn-info"
+        [routerLink]="['/mnf/confirmed-mto-po-mfg-ret-view', { id: previousPoId }]">
+        <i class="bi bi-arrow-up-circle me-1"></i>View Source Order
+      </button> -->
     </div>
 
     <!-- Purchase Order Container -->
@@ -83,7 +93,7 @@
                 <td>{{ item.gender }}</td>
                 <td>{{ item.brandName || 'N/A' }}</td>
                 <td>{{ item.designNumber }}</td>
-                <td>{{ item.hsnCode }}</td>
+                <td>{{ item.hsnCode || 'N/A' }}</td>
                 <td>
                   <div class="color-display">
                     <span class="color-swatch" [style.background-color]="item.colour"></span>
@@ -94,7 +104,7 @@
                 <td>{{ item.price | indianCurrency }}</td>
                 <td>{{ item.quantity }}</td>
                 <td class="text-end">{{ getGstAmounts(item).taxable | indianCurrency }}</td>
-                <td>{{ item.hsnGst }}%</td>
+                <td>{{ item.hsnGst || 0}}%</td>
                 <td class="text-end" *ngIf="isIntraState">{{ getGstAmounts(item).cgst | indianCurrency }}</td>
                 <td class="text-end" *ngIf="isIntraState">{{ getGstAmounts(item).sgst | indianCurrency }}</td>
                 <td class="text-end" *ngIf="!isIntraState">{{ getGstAmounts(item).igst | indianCurrency }}</td>

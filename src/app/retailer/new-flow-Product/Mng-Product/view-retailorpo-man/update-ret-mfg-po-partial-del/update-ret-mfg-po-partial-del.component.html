@@ -107,7 +107,7 @@
               <td>{{ item.gender }}</td>
               <td>{{ item.brandName || 'N/A' }}</td>
               <td>{{ item.designNumber }}</td>
-              <td>{{ item.hsnCode }}</td>
+              <td>{{ item.hsnCode || 'N/A' }}</td>
               <td>
                 <div class="color-display">
                   <span class="color-swatch" [style.background-color]="item.colour"></span>
@@ -119,7 +119,7 @@
               <td>{{ item.expectedQty }}</td>
               <td>{{ item.quantity }}</td>
               <td class="text-end">{{ getGstAmounts(item).taxable | indianCurrency }}</td>
-              <td>{{ item.hsnGst }}%</td>
+              <td>{{ item.hsnGst || 0 }}%</td>
               <td class="text-end" *ngIf="isIntraState">{{ getGstAmounts(item).cgst | indianCurrency }}</td>
               <td class="text-end" *ngIf="isIntraState">{{ getGstAmounts(item).sgst | indianCurrency }}</td>
               <td class="text-end" *ngIf="!isIntraState">{{ getGstAmounts(item).igst | indianCurrency }}</td>
@@ -202,7 +202,7 @@
               <td>{{ item.gender }}</td>
               <td>{{ item.brandName || 'N/A' }}</td>
               <td>{{ item.designNumber }}</td>
-              <td>{{ item.hsnCode }}</td>
+              <td>{{ item.hsnCode || 'N/A'  }}</td>
               <td>
                 <div class="color-display">
                   <span class="color-swatch" [style.background-color]="item.colour"></span>
@@ -213,7 +213,7 @@
               <td>{{ item.price | indianCurrency }}</td>
               <td>{{ item.remainingQuantity }}</td>
               <td class="text-end">{{ getGstAmounts(item, true).taxable | indianCurrency }}</td>
-              <td>{{ item.hsnGst }}%</td>
+              <td>{{ item.hsnGst || 0 }}%</td>
               <td class="text-end" *ngIf="isIntraState">{{ getGstAmounts(item, true).cgst | indianCurrency }}</td>
               <td class="text-end" *ngIf="isIntraState">{{ getGstAmounts(item, true).sgst | indianCurrency }}</td>
               <td class="text-end" *ngIf="!isIntraState">{{ getGstAmounts(item, true).igst | indianCurrency }}</td>

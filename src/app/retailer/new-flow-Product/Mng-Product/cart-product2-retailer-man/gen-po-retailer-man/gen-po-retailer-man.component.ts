@@ -317,22 +317,35 @@ export class GenPoRetailerManComponent {
     return this.isIntraState ? 15 : 14;
   }
 
-  getGstAmounts(item: any) {
-    const quantity = +item.quantity;
-    const rate = +item.price;
-    const taxable = quantity * rate;
-    const gstRate = +item.hsnGst;
+ getGstAmounts(item: any) {
+  // Add null/undefined checks and default values
+  const quantity = Number(item.quantity) || 0;
+  const rate = Number(item.price) || 0;
+  const gstRate = Number(item.hsnGst) || 0; // Default GST rate to 0 if not provided
+  
+  const taxable = quantity * rate;
 
-    let cgst = 0, sgst = 0, igst = 0;
-    if (this.isIntraState) {
-      cgst = (taxable * gstRate / 2) / 100;
-      sgst = (taxable * gstRate / 2) / 100;
-    } else {
-      igst = (taxable * gstRate) / 100;
-    }
-    const totalWithGst = taxable + cgst + sgst + igst;
-    return { taxable, gstRate, cgst, sgst, igst, totalWithGst };
+  let cgst = 0, sgst = 0, igst = 0;
+  
+  if (this.isIntraState) {
+    cgst = (taxable * gstRate / 2) / 100;
+    sgst = (taxable * gstRate / 2) / 100;
+  } else {
+    igst = (taxable * gstRate) / 100;
   }
+  
+  const totalWithGst = taxable + cgst + sgst + igst;
+  
+  return { 
+    taxable: isNaN(taxable) ? 0 : taxable, 
+    gstRate: isNaN(gstRate) ? 0 : gstRate, 
+    cgst: isNaN(cgst) ? 0 : cgst, 
+    sgst: isNaN(sgst) ? 0 : sgst, 
+    igst: isNaN(igst) ? 0 : igst, 
+    totalWithGst: isNaN(totalWithGst) ? 0 : totalWithGst 
+  };
+}
+
 
 
 
@@ -433,39 +446,44 @@ export class GenPoRetailerManComponent {
 
 
   get orderTotals() {
-    let totalQty = 0;
-    let totalTaxable = 0;
-    let totalCGST = 0;
-    let totalSGST = 0;
-    let totalIGST = 0;
-    let totalWithGST = 0;
-    for (const item of this.products) {
-      const gst = this.getGstAmounts(item);
-      totalQty += Number(item.quantity) || 0;
-      totalTaxable += gst.taxable || 0;
-      totalCGST += gst.cgst || 0;
-      totalSGST += gst.sgst || 0;
-      totalIGST += gst.igst || 0;
-      totalWithGST += gst.totalWithGst || 0;
-    }
-    return {
-      totalQty,
-      totalTaxable,
-      totalCGST,
-      totalSGST,
-      totalIGST,
-      totalWithGST
-    };
+  let totalQty = 0;
+  let totalTaxable = 0;
+  let totalCGST = 0;
+  let totalSGST = 0;
+  let totalIGST = 0;
+  let totalWithGST = 0;
+  
+  for (const item of this.products) {
+    const gst = this.getGstAmounts(item);
+    totalQty += Number(item.quantity) || 0;
+    totalTaxable += gst.taxable || 0;
+    totalCGST += gst.cgst || 0;
+    totalSGST += gst.sgst || 0;
+    totalIGST += gst.igst || 0;
+    totalWithGST += gst.totalWithGst || 0;
   }
+  
+  return {
+    totalQty: isNaN(totalQty) ? 0 : totalQty,
+    totalTaxable: isNaN(totalTaxable) ? 0 : totalTaxable,
+    totalCGST: isNaN(totalCGST) ? 0 : totalCGST,
+    totalSGST: isNaN(totalSGST) ? 0 : totalSGST,
+    totalIGST: isNaN(totalIGST) ? 0 : totalIGST,
+    totalWithGST: isNaN(totalWithGST) ? 0 : totalWithGST
+  };
+}
+
 
   get totalWithGSTBeforeDiscount(): number {
     return this.orderTotals.totalWithGST || 0;
   }
 
-  get totalGSTAmount(): number {
-    const totals = this.orderTotals;
-    return totals.totalCGST + totals.totalSGST + totals.totalIGST;
-  }
+ get totalGSTAmount(): number {
+  const totals = this.orderTotals;
+  const total = totals.totalCGST + totals.totalSGST + totals.totalIGST;
+  return isNaN(total) ? 0 : total;
+}
+
 
 
   get discountAmount(): number {
