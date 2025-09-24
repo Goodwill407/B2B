@@ -1,0 +1,110 @@
+<section class="content">
+  <div class="content-block">
+    <h4 class="mt-4">
+      <i class="bi bi-arrow-return-left h3 me-2"></i>Return Order List - Retailer
+    </h4>
+    
+    <div class="card mt-3 p-4">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 text-center">
+          
+          <!-- Loading State -->
+          <div *ngIf="loading" class="d-flex justify-content-center align-items-center p-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+
+          <!-- Return Orders Table -->
+          <p-table *ngIf="!loading" [value]="returnOrderList" [loading]="loading" 
+                   styleClass="p-datatable" >  <!--  [tableStyle]="{'min-width': '120rem'}" -->
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Ret. Req. No.</th>
+                <!-- <th>Manufacturer Name</th> -->
+                <th>Retailer Company Name</th>
+                <!-- <th>PO Number</th> -->
+                <th>Invoice Number</th>
+                <!-- <th>Invoice Date</th> -->
+                <th>Return Date</th>
+                <!-- <th>Total Quantity</th> -->
+                <!-- <th>Final Amount</th> -->
+                <!-- <th>Return Reasons</th> -->
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </ng-template>
+            
+            <ng-template pTemplate="body" let-data>
+              <tr>
+                <td class="text-center">{{ data.returnRequestNumber || 'N/A' }}</td>
+                <!-- <td class="text-center">{{ data.manufacturer?.fullName || 'N/A' }}</td> -->
+                <td class="text-center">{{ data.retailer?.companyName || 'N/A' }}</td>
+                <!-- <td class="text-center">{{ data.poNumber || 'N/A' }}</td> -->
+                <td class="text-center">{{ data.invoiceNumber || 'N/A' }}</td>
+                <!-- <td class="text-center">{{ (data.invoiceDate | date:'dd/MM/yyyy') || 'N/A' }}</td> -->
+                <td class="text-center">{{ (data.returnRequestGenerateDate | date:'dd/MM/yyyy') || 'N/A' }}</td>
+                <!-- <td class="text-center">{{ data.totalQuantity || 0 }}</td> -->
+                <!-- <td class="text-center">₹{{ data.finalAmount | number:'1.2-2' || '0.00' }}</td> -->
+                <!-- <td class="text-center">
+                  <span class="text-truncate" style="max-width: 150px; display: inline-block;" 
+                        [title]="getReturnReasons(data.deliveryItems)">
+                    {{ getReturnReasons(data.deliveryItems) }}
+                  </span>
+                </td> -->
+                <td class="text-center">
+                  <span [class]="getStatusClass(data.statusAll)">
+                    {{ getStatusDisplay(data.statusAll) }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <div class="btn-group" role="group">
+                    <button class=" btn" 
+                            [routerLink]="['/mnf/new/Return-order-ret-view', data.id]"
+                            title="View Return Details">
+                      <i class="bi bi-eye me-1 h5"></i>
+                    </button>
+                    <!-- <button class="btn btn-info btn-sm" 
+                            [routerLink]="['/retailer/track-return', data.id]"
+                            title="Track Return Status">
+                      <i class="bi bi-truck me-1"></i>Track
+                    </button> -->
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+            
+            <!-- Empty State -->
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="6" class="text-center p-4">
+                  <div class="empty-state">
+                    <i class="bi bi-arrow-return-left h1 text-muted"></i>
+                    <p class="mt-2 text-muted">No return orders found at the moment.</p>
+                    <small class="text-muted">Return requests will appear here once they are created.</small>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+
+          <!-- Pagination -->
+          <p-paginator *ngIf="!loading && returnOrderList && returnOrderList.length > 0" 
+                       (onPageChange)="onPageChange($event)"
+                       [first]="first" 
+                       [rows]="rows" 
+                       [totalRecords]="totalResults" 
+                       [rowsPerPageOptions]="[10, 20, 30, 50]"
+                       [showCurrentPageReport]="true"
+                       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} return orders">
+          </p-paginator>
+        </div>
+      </div>
+    </div>
+
+    <!-- Advertisement -->
+    <div class="mb-3">
+      <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
+    </div>
+  </div>
+</section>

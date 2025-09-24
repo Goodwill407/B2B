@@ -21,6 +21,10 @@ import { RetailormanpoGenComponent } from "./Mng-Product/view-retailorpo-man/ret
 import { UpdateRetMfgPoPartialDelComponent } from "./Mng-Product/view-retailorpo-man/update-ret-mfg-po-partial-del/update-ret-mfg-po-partial-del.component";
 import { MfgInvoiceListComponent } from "./invoice/mfg-invoice-list/mfg-invoice-list.component";
 import { MfgProformaInvoiceViewComponent } from "app/manufacturer/new-flow/order-managment/mfg-proforma-invoice-view/mfg-proforma-invoice-view.component";
+import { MfgInvoiceListReturnComponent } from "./return-management/mfg-invoice-list-return/mfg-invoice-list-return.component";
+import { AddReturnProductMfgComponent } from "./return-management/add-return-product-mfg/add-return-product-mfg.component";
+import { ReturnProductMfgListComponent } from "./return-management/return-product-mfg-list/return-product-mfg-list.component";
+import { ReturnOrderMfgViewComponent } from "./return-management/return-order-mfg-view/return-order-mfg-view.component";
 
 
 export const NewFlow:Route[]=[
@@ -45,8 +49,11 @@ export const NewFlow:Route[]=[
      {path:'view-retailerpotoman',component:RetailormanpoGenComponent},
      {path:'update-retailerpotoman-partial',component:UpdateRetMfgPoPartialDelComponent},
     {path:'mfg-invoice-list', component:MfgInvoiceListComponent },
-     {path:'mfg-invoice-view/:id', component:MfgProformaInvoiceViewComponent},
-    
+    {path:'mfg-invoice-view/:id', component:MfgProformaInvoiceViewComponent},
+    { path:'mfg-invoice-list-return', component:MfgInvoiceListReturnComponent},
 
-    
+    { path:'add-return-product-mfg/:id', component: AddReturnProductMfgComponent},
+    { path:'return-products-mfg-list', component: ReturnProductMfgListComponent},
+    { path:'return-order-mfg-view/:id', component: ReturnOrderMfgViewComponent},
+
 ]

@@ -25,7 +25,8 @@
         &nbsp;
          <button *ngIf="isRetailer" 
           class="btn btn-warning pl-2" 
-          title="Create Return Request">
+          title="Create Return Request"
+          [routerLink]="['/retailer/new/add-return-product-mfg', invoiceId]">
           <i class="bi bi-arrow-return-left me-1"></i>Return Product
         </button>
       </div>

@@ -320,7 +320,8 @@ get totalGSTAmount(): number {
       transportDetails: this.purchaseOrder.transportDetails,
       totalAmount: this.getTotalAmount(),
       discountApplied: this.getTotalAmount() * (this.purchaseOrder.ProductDiscount / 100),
-      finalAmount: this.getTotalAmount() * (1 - this.purchaseOrder.ProductDiscount / 100)
+      finalAmount: this.getTotalAmount() * (1 - this.purchaseOrder.ProductDiscount / 100),
+      returnRequestGenerated:"false",
     };
 
    try {

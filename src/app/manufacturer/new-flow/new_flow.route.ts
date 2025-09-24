@@ -9,6 +9,8 @@ import { RetrunProductsComponent } from "./return-managment/retrun-products/retr
 import { ViewReturnProductPoComponent } from "./return-managment/retrun-products/view-return-product-po/view-return-product-po.component";
 import { MfgProformaInvoiceListComponent } from "./order-managment/mfg-proforma-invoice-list/mfg-proforma-invoice-list.component";
 import { MfgProformaInvoiceViewComponent } from "./order-managment/mfg-proforma-invoice-view/mfg-proforma-invoice-view.component";
+import { ReturnOrderRetListComponent } from "./return-managment/return-order-ret-list/return-order-ret-list.component";
+import { ReturnOrderRetViewComponent } from "./return-managment/return-order-ret-view/return-order-ret-view.component";
 
 export const NewFlow:Route[]=[
     {path:'add-product2',component:AddProduct2Component},
@@ -21,4 +23,7 @@ export const NewFlow:Route[]=[
     {path:'Return-products-po',component:ViewReturnProductPoComponent},
     {path:'mfg-proforma-invoice-list', component:MfgProformaInvoiceListComponent},
     {path:'mfg-proforma-invoice-view/:id', component:MfgProformaInvoiceViewComponent},
+
+    {path:'Return-order-ret-view/:id',component:ReturnOrderRetViewComponent},
+    {path:'Return-order-ret-list',component:ReturnOrderRetListComponent},
 ]

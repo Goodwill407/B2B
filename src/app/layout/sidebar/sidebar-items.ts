@@ -1483,6 +1483,18 @@ export const ROUTES2: RouteInfo[] = [
         role: [''],
         submenu: [],
       },
+      {
+        path: '/mnf/new/Return-order-ret-list',
+        title: 'Retailer Return Order',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
       // {
       //   path: '/mnf/return-mng/order-return',  ppp
       //   title: 'Order Return',
@@ -1956,7 +1968,7 @@ path: '',
     role: ['retailer'],
     submenu: [
       {
-        path: '/retailer/',
+        path: '/retailer/new/mfg-invoice-list-return',
         title: 'Add Return Manufacturer',
         iconType: '',
         icon: '',
@@ -1968,7 +1980,7 @@ path: '',
         submenu: [],
       },
       {
-        path: '/retailer/',
+        path: '/retailer/new/return-products-mfg-list',
         title: 'View Return Manufacturer',
         iconType: '',
         icon: '',

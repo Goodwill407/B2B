@@ -120,6 +120,7 @@
                       <th>Company Name</th>
                       <th>Email</th>
                       <th>PO Number</th>
+                       <th>Invoice</th>
                       <th>View</th>
                     </tr>
                   </ng-template>
@@ -129,6 +130,14 @@
                       <td class="text-center">{{ data.retailer.companyName }}</td>
                       <td class="text-center">{{ data.retailer.email }}</td>
                       <td class="text-center">{{ data.poNumber }}</td>
+                      <td class="text-center">
+                      <span *ngIf="data.invoiceGenerated" class="badge bg-success">
+                        <i class="bi bi-check-circle-fill"></i> Generated
+                      </span>
+                      <span *ngIf="!data.invoiceGenerated" class="badge bg-secondary">
+                        Not Generated
+                      </span>
+                    </td>
                       <td class="text-center">
                         <button class="btn" [routerLink]="['/mnf/confirmed-mto-po-mfg-ret-view', { id: data.id }]">
                           <i class="bi bi-eye h5"></i>
@@ -170,6 +179,7 @@
                       <th>Company Name</th>
                       <th>Email</th>
                       <th>PO Number</th>
+                      <th>Invoice</th>
                       <!-- <th>Status</th> -->
                       <th>View</th>
                     </tr>
@@ -180,6 +190,14 @@
                       <td class="text-center">{{ data.retailer.companyName }}</td>
                       <td class="text-center">{{ data.retailer.email }}</td>
                       <td class="text-center">{{ data.poNumber }}</td>
+                      <td class="text-center">
+                        <span *ngIf="data.invoiceGenerated" class="badge bg-success">
+                          <i class="bi bi-check-circle-fill"></i> Generated
+                        </span>
+                        <span *ngIf="!data.invoiceGenerated" class="badge bg-secondary">
+                          Not Generated
+                        </span>
+                      </td>
                       <!-- <td class="text-center">{{ data.statusAll | statusAllPoDisplay }}</td> -->
                       <td class="text-center">
                         <button class="btn" [routerLink]="['/mnf/confirmed-mto-po-mfg-ret-view', { id: data.id }]">
