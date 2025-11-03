@@ -534,3 +534,38 @@
     display: none;
   }
 }
+
+/* Disclaimer Section Styles */
+.disclaimer-section {
+  margin-top: 20px;
+  text-align: center;
+  padding: 10px 0;
+}
+
+.disclaimer-separator {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 10px auto;
+  width: 80%;
+}
+
+.disclaimer-text {
+  font-size: 10px;
+  color: #666;
+  font-style: italic;
+  margin: 0;
+  padding: 5px 0;
+  text-transform: none;
+}
+
+/* Print-specific styles */
+@media print {
+  .disclaimer-section {
+    margin-top: 15px;
+  }
+  
+  .disclaimer-text {
+    font-size: 9px;
+    color: #333 !important;
+  }
+}

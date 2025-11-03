@@ -177,64 +177,97 @@
 
     <!-- Return Order Remarks from Manufacturer -->
     <div class="border rounded mt-3 p-3">
-    <h5 class="mb-2"><u>Return Order Remarks from Manufacturer:</u></h5>
-    <p class="mb-3 text-muted">
-        Please review the return request carefully and select the appropriate action.
-    </p>
-    
-    <div class="action-options mb-3">
-        <label class="action-option-compact" [class.selected]="selectedAction === 'approve'">
-        <input type="radio" 
-                name="returnAction" 
-                [(ngModel)]="selectedAction" 
-                value="approve"
-                class="d-none">
-        <i class="bi bi-check-circle text-success me-2"></i>
-        <strong>Approve the Return Order and Create Credit Note</strong>
-        </label>
+      <h5 class="mb-2"><u>Return Order Remarks from Manufacturer:</u></h5>
+      
+      <!-- Show action options only if status is 'return_requested' -->
+      <div *ngIf="returnOrderData?.statusAll === 'return_requested'">
+        <p class="mb-3 text-muted">
+          Please review the return request carefully and select the appropriate action.
+        </p>
         
-        <label class="action-option-compact" [class.selected]="selectedAction === 'reject'">
-        <input type="radio" 
-                name="returnAction" 
-                [(ngModel)]="selectedAction" 
-                value="reject"
-                class="d-none">
-        <i class="bi bi-x-circle text-danger me-2"></i>
-        <strong>Reject the Return Order</strong>
-        </label>
-    </div>
+        <div class="action-options mb-3">
+          <label class="action-option-compact" [class.selected]="selectedAction === 'approve'">
+            <input type="radio" 
+                  name="returnAction" 
+                  [(ngModel)]="selectedAction" 
+                  value="approve"
+                  class="d-none"
+                  [disabled]="submitting">
+            <i class="bi bi-check-circle text-success me-2"></i>
+            <strong>Approve the Return Order and Create Credit Note</strong>
+          </label>
+          
+          <label class="action-option-compact" [class.selected]="selectedAction === 'reject'">
+            <input type="radio" 
+                  name="returnAction" 
+                  [(ngModel)]="selectedAction" 
+                  value="reject"
+                  class="d-none"
+                  [disabled]="submitting">
+            <i class="bi bi-x-circle text-danger me-2"></i>
+            <strong>Reject the Return Order</strong>
+          </label>
+        </div>
 
-    <!-- Credit Amount Input - Show only when approve is selected -->
-    <div *ngIf="selectedAction === 'approve'" class="credit-amount-compact mb-3">
-        <div class="row">
-        <div class="col-md-6">
-            <label class="form-label fw-bold mb-1">
-            <i class="bi bi-currency-rupee me-1"></i>Create Credit Note with Amount of:
-            </label>
-            <input type="number" 
-                class="form-control" 
-                [(ngModel)]="creditAmount"
-                [value]="creditAmount"
-                min="0"
-                step="0.01"
-                placeholder="Enter amount">
+        <!-- Credit Amount Input -->
+        <div *ngIf="selectedAction === 'approve'" class="credit-amount-compact mb-3">
+          <div class="row">
+            <div class="col-md-6">
+              <label class="form-label fw-bold mb-1">
+                <i class="bi bi-currency-rupee me-1"></i>Create Credit Note with Amount of:
+              </label>
+              <input type="number" 
+                    class="form-control" 
+                    [(ngModel)]="creditAmount"
+                    (blur)="formatCreditAmount()"
+                    min="0"
+                    [max]="getTotalReturnWithGST()"
+                    step="0.01"
+                    placeholder="Enter amount"
+                    [disabled]="submitting">
+              <small class="text-danger" *ngIf="creditAmount > getTotalReturnWithGST()">
+                <i class="bi bi-exclamation-circle me-1"></i>
+                Amount cannot exceed ₹{{ getTotalReturnWithGST() | number:'1.2-2' }}
+              </small>
+            </div>
+            <div class="col-md-6 d-flex align-items-end">
+              <small class="form-text text-muted">
+                Maximum Allowed: ₹{{ getTotalReturnWithGST() | number:'1.2-2' }}
+              </small>
+            </div>
+          </div>
         </div>
-        <div class="col-md-6 d-flex align-items-end">
-            <small class="form-text text-muted">
-            Suggested: ₹{{ getTotalReturnWithGST() | number:'1.2-2' }}
-            </small>
+        
+        <div class="text-center">
+          <button type="button" 
+                  class="btn btn-primary px-4 py-2" 
+                  (click)="submitDecision()" 
+                  [disabled]="!selectedAction || submitting || (selectedAction === 'approve' && creditAmount > getTotalReturnWithGST())">
+            <span *ngIf="!submitting">
+              <i class="bi bi-send me-1"></i>Submit Decision
+            </span>
+            <span *ngIf="submitting">
+              <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+              Processing...
+            </span>
+          </button>
         </div>
-        </div>
-    </div>
-    
-    <div class="text-center">
-        <button type="button" 
-                class="btn btn-primary px-4 py-2" 
-                (click)="submitDecision()" 
-                [disabled]="!selectedAction">
-        <i class="bi bi-send me-1"></i>Submit Decision
-        </button>
-    </div>
+      </div>
+
+      <!-- Show status when already processed -->
+      <div *ngIf="returnOrderData?.statusAll !== 'return_requested'" class="alert alert-info">
+        <i class="bi bi-info-circle me-2"></i>
+        <strong>Status:</strong> 
+        <span [class]="getStatusClass(returnOrderData?.statusAll)">
+          {{ getStatusDisplay(returnOrderData?.statusAll) }}
+        </span>
+        <p class="mt-2 mb-0" *ngIf="returnOrderData?.statusAll === 'return_approved' || returnOrderData?.statusAll === 'credit_note_created'">
+          This return order has been approved and a credit note has been created.
+        </p>
+        <p class="mt-2 mb-0" *ngIf="returnOrderData?.statusAll === 'return_rejected'">
+          This return order has been rejected.
+        </p>
+      </div>
     </div>
 
 

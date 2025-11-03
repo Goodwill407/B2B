@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';
 import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 import { statusAllPoDisplayPipe } from "../../../../statusAll-po";
+import { MatBadgeModule } from '@angular/material/badge';
 
 @Component({
   selector: 'app-view-retailorpo-man',
@@ -19,7 +20,8 @@ import { statusAllPoDisplayPipe } from "../../../../statusAll-po";
     RouterModule,
     MatTabsModule,
     BottomSideAdvertiseComponent,
-    statusAllPoDisplayPipe
+    statusAllPoDisplayPipe,
+    MatBadgeModule,
   ],
   templateUrl: './view-retailorpo-man.component.html',
   styleUrl: './view-retailorpo-man.component.scss'

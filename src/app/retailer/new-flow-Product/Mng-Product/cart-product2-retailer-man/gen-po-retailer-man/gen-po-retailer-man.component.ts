@@ -626,7 +626,7 @@ export class GenPoRetailerManComponent {
         </div>
         
         <div class="mb-3">
-          <label class="form-label">Tracking ID</label>
+          <label class="form-label">Tracking ID<br/>(Enter Tracking Number / Consignment No. / AWB / LR / Shipment ID)</label>
           <input id="trackingId" class="swal2-input" placeholder="Enter tracking ID" style="width: 80%;">
         </div>
         

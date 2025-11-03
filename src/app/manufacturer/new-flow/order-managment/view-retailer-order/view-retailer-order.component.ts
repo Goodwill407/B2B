@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
 import { TooltipModule } from 'primeng/tooltip';
 import { MatTabsModule } from '@angular/material/tabs';
 import { statusAllPoDisplayPipe } from 'app/statusAll-po';
+import { MatBadgeModule } from '@angular/material/badge';
 
 @Component({
   selector: 'app-view-retailer-order',
@@ -21,7 +22,8 @@ import { statusAllPoDisplayPipe } from 'app/statusAll-po';
     RouterModule,
     TooltipModule,
     MatTabsModule,
-    statusAllPoDisplayPipe
+    statusAllPoDisplayPipe,
+    MatBadgeModule,
   ],
   templateUrl: './view-retailer-order.component.html',
   styleUrl: './view-retailer-order.component.scss'

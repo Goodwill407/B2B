@@ -23,12 +23,21 @@
           <i class="bi bi-download me-1"></i>Download Invoice
         </button>
         &nbsp;
-         <button *ngIf="isRetailer" 
-          class="btn btn-warning pl-2" 
-          title="Create Return Request"
-          [routerLink]="['/retailer/new/add-return-product-mfg', invoiceId]">
-          <i class="bi bi-arrow-return-left me-1"></i>Return Product
-        </button>
+         <button
+         *ngIf="isRetailer && invoiceData?.statusAll === 'created'"
+         class="btn btn-primary"
+         title="Mark products as received"
+         (click)="confirmReceived()">
+         <i class="bi bi-check2-circle me-1"></i>Received Product
+       </button>
+       <!-- Retailer: show Return Product only after delivered/received -->
+       <button
+         *ngIf="isRetailer && invoiceData?.statusAll === 'delivered'"
+         class="btn btn-warning pl-2"
+         title="Create Return Request"
+         [routerLink]="['/retailer/new/add-return-product-mfg', invoiceId]">
+         <i class="bi bi-arrow-return-left me-1"></i>Return Product
+       </button>
       </div>
 
       <!-- Professional Invoice Container -->
@@ -228,6 +237,10 @@
             <h6>Bank Details</h6>
             <div class="bank-info-labeled">
               <div class="bank-row">
+                <span class="label">Bank Account Holder Name:</span>
+                <span class="value">{{ invoiceData.bankDetails.accountHolderName }}</span>
+              </div>
+              <div class="bank-row">
                 <span class="label">Bank Name:</span>
                 <span class="value">{{ invoiceData.bankDetails.bankName }}</span>
               </div>
@@ -259,14 +272,14 @@
           </div> -->
           
           <!-- Certificate Section -->
-          <div class="certificate-section">
+          <!-- <div class="certificate-section">
             <p class="certificate-text">Certified that the particulars given above are true and correct.</p>
             <div class="company-name">For {{ invoiceData.sellerName }}</div>
             <div class="signature-space">
               <br><br><br>
               <div class="signature-line">Authorised Signatory</div>
             </div>
-          </div>
+          </div> -->
         </div>
 
         <!-- Transport Details Section -->
@@ -289,6 +302,12 @@
             <p>Delivery Ex-Premises.</p>
           </div>
         </div>
+
+        <!-- Computer Generated Disclaimer -->
+          <div class="disclaimer-section">
+            <hr class="disclaimer-separator">
+            <p class="disclaimer-text">This is a computer-generated invoice and does not require signature.</p>
+          </div>
 
       </div>
     </div>

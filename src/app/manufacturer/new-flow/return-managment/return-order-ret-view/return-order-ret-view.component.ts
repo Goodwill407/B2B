@@ -22,13 +22,12 @@ import { Location } from '@angular/common';
 })
 export class ReturnOrderRetViewComponent implements OnInit {
 
-  returnOrderData: any = null; // Return order data
-  loading: boolean = false; // Loading state
-  returnOrderId: string = ''; // Return order ID from route
-
-  // Action selection properties
-  selectedAction: string = ''; // 'approve' or 'reject'
-  creditAmount: number = 0; // Credit amount for approval
+  returnOrderData: any = null;
+  loading: boolean = false;
+  returnOrderId: string = '';
+  selectedAction: string = '';
+  creditAmount: number = 0;
+  submitting: boolean = false;
 
   bottomAdImage: string[] = [
     'assets/images/adv/ads2.jpg',
@@ -51,15 +50,14 @@ export class ReturnOrderRetViewComponent implements OnInit {
 
   getReturnOrderDetails() {
     this.loading = true;
-
     const url = `return-r2m/${this.returnOrderId}`;
 
     this.authService.get(url).subscribe(
       (res: any) => {
         this.returnOrderData = res;
         this.loading = false;
-        // Set default credit amount to total return amount with GST
-        this.creditAmount = this.getTotalReturnWithGST();
+        // Format to 2 decimal places
+        this.creditAmount = parseFloat(this.getTotalReturnWithGST().toFixed(2));
         console.log('Return Order Details:', this.returnOrderData);
       },
       (error) => {
@@ -74,46 +72,171 @@ export class ReturnOrderRetViewComponent implements OnInit {
     this.location.back();
   }
 
-  // Submit manufacturer decision
+  // Format credit amount to 2 decimal places
+  formatCreditAmount() {
+    if (this.creditAmount) {
+      this.creditAmount = parseFloat(this.creditAmount.toFixed(2));
+    }
+  }
+
+  // Submit decision
   submitDecision() {
+    if (this.submitting) return;
+
     if (!this.selectedAction) {
       this.communicationService.customError1('Please select an action');
       return;
     }
 
-    if (this.selectedAction === 'approve' && (!this.creditAmount || this.creditAmount <= 0)) {
-      this.communicationService.customError1('Please enter a valid credit amount');
-      return;
+    if (this.selectedAction === 'approve') {
+      // Validate credit amount
+      if (!this.creditAmount || this.creditAmount <= 0) {
+        this.communicationService.customError1('Please enter a valid credit amount');
+        return;
+      }
+
+      const suggestedAmount = parseFloat(this.getTotalReturnWithGST().toFixed(2));
+      
+      // Validate credit amount must be less than or equal to suggested amount
+      if (this.creditAmount > suggestedAmount) {
+        this.communicationService.customError1(
+          `Credit amount (₹${this.creditAmount}) cannot exceed the suggested amount (₹${suggestedAmount})`
+        );
+        return;
+      }
+
+      // Call approve function
+      this.approveReturnOrder();
+    } else if (this.selectedAction === 'reject') {
+      // Call reject function
+      this.rejectReturnOrder();
     }
-
-    const requestData = {
-      action: this.selectedAction,
-      creditAmount: this.selectedAction === 'approve' ? this.creditAmount : 0,
-      manufacturerRemarks: this.selectedAction === 'approve' ? 'Return approved and credit note created' : 'Return rejected by manufacturer'
-    };
-
-    // Here you would typically call an API to update the return order status
-    console.log('Submitting decision:', requestData);
-    
-    // Show success message and navigate back
-    this.communicationService.customSuccess1(
-      this.selectedAction === 'approve' 
-        ? 'Return order approved and credit note will be created' 
-        : 'Return order rejected successfully'
-    );
-    
-    // Optionally navigate back after successful submission
-    // this.navigateFun();
   }
 
-  // Add this method to your component class
+  // Approve return order and create credit note
+  approveReturnOrder() {
+    this.submitting = true;
+
+    // Step 1: Update statusAll to 'return_approved'
+    const updateData = {
+      id: this.returnOrderId,
+      statusAll: 'return_approved'
+    };
+
+    this.authService.patch('return-r2m', updateData).subscribe(
+      (updateRes: any) => {
+        console.log('Return order approved:', updateRes);
+
+        // Step 2: Create credit note
+        const creditNoteData = {
+          invoiceNumber: this.returnOrderData.invoiceNumber,
+          invoiceId: this.returnOrderData.invoiceId,
+          manufacturerEmail: this.returnOrderData.manufacturerEmail,
+          retailerEmail: this.returnOrderData.retailerEmail,
+          set: this.returnOrderData.deliveryItems.map((item: any) => ({
+            productBy: this.returnOrderData.manufacturerEmail,
+            designNumber: item.designNumber,
+            colour: item.colour,
+            colourImage: item.colourImage,
+            colourName: item.colourName,
+            size: item.size,
+            returnQuantity: item.returnQuantity,
+            acceptedQuantity: item.returnQuantity,
+            price: item.rate.toString(),
+            productType: item.productType,
+            gender: item.gender,
+            clothing: item.clothing,
+            subCategory: item.subCategory,
+            quantity: item.returnQuantity,
+            returnReason: item.returnReason,
+            otherReturnReason: item.otherReturnReason,
+            hsnCode: item.hsnCode,
+            hsnGst: item.hsnGst,
+            hsnDescription: item.hsnDescription,
+            brandName: item.brandName
+          })),
+          totalCreditAmount: this.creditAmount,
+          totalReturnItem: this.getTotalReturnQuantity(),
+          totalAcceptedReturnItem: this.getTotalReturnQuantity()
+        };
+
+        // Post credit note
+        this.authService.post('m-r-credit-note', creditNoteData).subscribe(
+          (creditNoteRes: any) => {
+            this.submitting = false;
+            console.log('Credit note created:', creditNoteRes);
+            
+            this.communicationService.customSuccess1(
+              `Return order approved successfully! Credit Note #${creditNoteRes.creditNoteNumber || 'generated'} created.`
+            );
+            
+            // Refresh the data
+            this.getReturnOrderDetails();
+            
+            // Navigate back after 2 seconds
+            setTimeout(() => {
+              this.navigateFun();
+            }, 2000);
+          },
+          (error) => {
+            this.submitting = false;
+            console.error('Error creating credit note:', error);
+            this.communicationService.customError1(
+              error?.error?.message || 'Failed to create credit note. Please try again.'
+            );
+          }
+        );
+      },
+      (error) => {
+        this.submitting = false;
+        console.error('Error approving return order:', error);
+        this.communicationService.customError1(
+          error?.error?.message || 'Failed to approve return order. Please try again.'
+        );
+      }
+    );
+  }
+
+  // Reject return order
+  rejectReturnOrder() {
+    this.submitting = true;
+
+    const updateData = {
+      id: this.returnOrderId,
+      statusAll: 'return_rejected'
+    };
+
+    this.authService.patch('return-r2m', updateData).subscribe(
+      (res: any) => {
+        this.submitting = false;
+        console.log('Return order rejected:', res);
+        
+        this.communicationService.customSuccess1('Return order rejected successfully');
+        
+        // Refresh the data
+        this.getReturnOrderDetails();
+        
+        // Navigate back after 2 seconds
+        setTimeout(() => {
+          this.navigateFun();
+        }, 2000);
+      },
+      (error) => {
+        this.submitting = false;
+        console.error('Error rejecting return order:', error);
+        this.communicationService.customError1(
+          error?.error?.message || 'Failed to reject return order. Please try again.'
+        );
+      }
+    );
+  }
+
+  // Existing methods...
   getItemRate(item: any): number {
-    // Direct rate from API response
     if (item.rate && typeof item.rate === 'number') {
       return item.rate;
     }
     
-    // Fallback calculation if rate is not available
     if (this.returnOrderData?.totalAmount && this.returnOrderData?.totalQuantity) {
       return this.returnOrderData.totalAmount / this.returnOrderData.totalQuantity;
     }
@@ -121,7 +244,6 @@ export class ReturnOrderRetViewComponent implements OnInit {
     return 0;
   }
 
-  // Update these methods to handle the API response structure better
   getReturnTaxableValue(item: any): number {
     const rate = this.getItemRate(item);
     return rate * (item.returnQuantity || 0);
@@ -154,7 +276,6 @@ export class ReturnOrderRetViewComponent implements OnInit {
     }, 0);
   }
 
-  // Helper method to format status
   getStatusDisplay(status: string): string {
     switch(status) {
       case 'return_requested':
@@ -165,12 +286,13 @@ export class ReturnOrderRetViewComponent implements OnInit {
         return 'Return Rejected';
       case 'return_completed':
         return 'Return Completed';
+      case 'credit_note_created':
+        return 'Credit Note Created';
       default:
         return status || 'N/A';
     }
   }
 
-  // Helper method to get status class
   getStatusClass(status: string): string {
     switch(status) {
       case 'return_requested':
@@ -181,6 +303,8 @@ export class ReturnOrderRetViewComponent implements OnInit {
         return 'badge bg-danger';
       case 'return_completed':
         return 'badge bg-primary';
+      case 'credit_note_created':
+        return 'badge bg-info';
       default:
         return 'badge bg-secondary';
     }

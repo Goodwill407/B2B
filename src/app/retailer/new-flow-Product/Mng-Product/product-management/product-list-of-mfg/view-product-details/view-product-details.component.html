@@ -122,14 +122,18 @@
               <option *ngFor="let color of colours" [value]="color.name">{{ color.name }}</option>
             </select>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2">
             <label>Size:</label>
             <select [(ngModel)]="selectedSize" class="form-control select" (change)="onSizeChange()">
               <option value="" disabled> Select Size</option>
               <option *ngFor="let size of availableSizes" [value]="size">{{ size }}</option>
             </select>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2">
+            <label>MRP:</label>
+            <input class="form-control" type="text" [value]="calculatedMrp" disabled readonly>
+          </div>
+          <div class="col-md-2">
             <label>Price:</label>
             <input class="form-control" type="text" [value]="calculatedPrice" disabled readonly>
           </div>
@@ -148,6 +152,7 @@
               <tr>
                 <th>Color</th>
                 <th>Size</th>
+                <th>MRP</th>
                 <th>Price</th>
                 <th>Qty</th>
                 <th>Total</th>
@@ -158,6 +163,7 @@
               <tr *ngFor="let item of tempCart; let i = index">
                 <td>{{ item.colourName }}</td>
                 <td>{{ item.size }}</td>
+                <td>{{ item.mrp}}</td>
                 <td>{{ item.price }}</td>
                 <td>{{ item.quantity }}</td>
                 <td>{{ item.price * item.quantity }}</td>

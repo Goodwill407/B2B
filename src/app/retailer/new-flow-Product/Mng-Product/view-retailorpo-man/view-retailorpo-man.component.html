@@ -8,7 +8,16 @@
       <mat-tab-group>
       
         <!-- PENDING TAB -->
-        <mat-tab label="Sent to Manufacturer">
+        <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="custom-badge" 
+                matBadge="{{totalPendingResults || 0}}" 
+                matBadgeOverlap="false" 
+                matBadgeColor="primary" 
+                matBadgeSize="small">
+            Sent to Manufacturer
+          </span>
+        </ng-template>
           <div class="card mt-3 p-4">
             <div class="p-grid p-fluid">
               <div class="p-col-12 text-center">
@@ -58,7 +67,16 @@
         </mat-tab>
 
         <!-- PARTIAL DELIVERY TAB -->
-        <mat-tab label="Partial Delivery">
+        <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="custom-badge" 
+                matBadge="{{totalPartialResults || 0}}" 
+                matBadgeOverlap="false" 
+                matBadgeColor="warn" 
+                matBadgeSize="small">
+            Partial Delivery
+          </span>
+        </ng-template>
           <div class="card mt-3 p-4">
             <div class="p-grid p-fluid">
               <div class="p-col-12 text-center">
@@ -108,7 +126,16 @@
         </mat-tab>
 
         <!-- MAKE TO ORDER TAB -->
-        <mat-tab label="Make To Order">
+        <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="custom-badge" 
+                matBadge="{{totalMakeToOrderResults || 0}}" 
+                matBadgeOverlap="false" 
+                matBadgeColor="accent" 
+                matBadgeSize="small">
+            Make To Order
+          </span>
+        </ng-template>
           <div class="card mt-3 p-4">
             <div class="p-grid p-fluid">
               <div class="p-col-12 text-center">
@@ -158,7 +185,16 @@
         </mat-tab>
 
         <!-- CONFIRMED TAB -->
-        <mat-tab label="Confirmed Orders">
+        <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="custom-badge" 
+                matBadge="{{totalConfirmedResults || 0}}" 
+                matBadgeOverlap="false" 
+                matBadgeColor="primary" 
+                matBadgeSize="small">
+            Confirmed Orders
+          </span>
+        </ng-template>
           <div class="card mt-3 p-4">
             <div class="p-grid p-fluid">
               <div class="p-col-12 text-center">

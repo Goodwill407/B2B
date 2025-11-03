@@ -541,6 +541,7 @@ export class MfgProformaInvoiceViewComponent implements OnInit {
   doc.setFontSize(7);
   let bankY = yPosition + 9;
   const bankDetails = [
+    `Account Holder Name: ${this.invoiceData.bankDetails.accountHolderName}`,
     `Bank: ${this.invoiceData.bankDetails.bankName}`,
     `Branch: ${this.invoiceData.bankDetails.branchName}`,
     `A/c: ${this.invoiceData.bankDetails.accountNumber}`,
@@ -553,23 +554,23 @@ export class MfgProformaInvoiceViewComponent implements OnInit {
   });
 
   // Certificate Area - Now starts after bank details
-  const certX = margin + contentWidth * 0.6 + 5;
-  const certWidth = pageWidth - margin - certX;
-  doc.rect(certX, yPosition, certWidth, bottomBoxHeight);
+  // const certX = margin + contentWidth * 0.6 + 5;
+  // const certWidth = pageWidth - margin - certX;
+  // doc.rect(certX, yPosition, certWidth, bottomBoxHeight);
   
-  doc.setFontSize(7);
-  doc.text('Certified that the particulars given above', certX + 2, yPosition + 6);
-  doc.text('are true and correct.', certX + 2, yPosition + 9);
+  // doc.setFontSize(7);
+  // doc.text('Certified that the particulars given above', certX + 2, yPosition + 6);
+  // doc.text('are true and correct.', certX + 2, yPosition + 9);
   
-  doc.setFont('helvetica', 'bold');
-  doc.text(`For ${this.invoiceData.sellerName}`, certX + 2, yPosition + 14);
+  // doc.setFont('helvetica', 'bold');
+  // doc.text(`For ${this.invoiceData.sellerName}`, certX + 2, yPosition + 14);
   
-  doc.setDrawColor(0, 0, 0);
-  doc.setLineWidth(0.2);
-  doc.line(certX + 2, yPosition + 20, certX + certWidth - 2, yPosition + 20);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(6);
-  doc.text('Authorised Signatory', certX + certWidth/2, yPosition + 23, { align: 'center' });
+  // doc.setDrawColor(0, 0, 0);
+  // doc.setLineWidth(0.2);
+  // doc.line(certX + 2, yPosition + 20, certX + certWidth - 2, yPosition + 20);
+  // doc.setFont('helvetica', 'normal');
+  // doc.setFontSize(6);
+  // doc.text('Authorised Signatory', certX + certWidth/2, yPosition + 23, { align: 'center' });
 
   yPosition += bottomBoxHeight + 8;
 
@@ -635,6 +636,29 @@ export class MfgProformaInvoiceViewComponent implements OnInit {
     yPosition += 3;
   });
 
+  // 🔥 ADD THIS CODE - Computer Generated Disclaimer
+  // Check space for disclaimer
+  const disclaimerSpace = pageHeight - yPosition - margin;
+  if (disclaimerSpace < 10) {
+    doc.addPage();
+    yPosition = 20;
+  }
+
+  // Add separator line
+  yPosition += 3;
+  doc.setDrawColor(200, 200, 200);
+  doc.setLineWidth(0.1);
+  doc.line(margin, yPosition, pageWidth - margin, yPosition);
+  yPosition += 8;
+
+  // Add disclaimer text
+  doc.setFont('helvetica', 'italic');
+  doc.setFontSize(7);
+  doc.setTextColor(100, 100, 100);
+  const disclaimerText = 'This is a computer-generated invoice and does not require signature.';
+  doc.text(disclaimerText, pageWidth/2, yPosition, { align: 'center' });
+  yPosition += 5;
+
   // Save PDF
   const timestamp = new Date().toISOString().slice(0, 10);
   doc.save(`Invoice_${this.invoiceData.invoiceNumber}_${timestamp}.pdf`);
@@ -651,5 +675,51 @@ export class MfgProformaInvoiceViewComponent implements OnInit {
     } catch (error) {
       return '';
     }
+  }
+
+   confirmReceived() {
+    const invNo = this.invoiceData?.invoiceNumber || '';
+    const message = `Have you received the products of this invoice no. ${invNo}?`;
+    const ok = window.confirm(message);
+    if (!ok) return;
+    this.markInvoiceReceived();
+  }
+
+  /**
+   * Persist status change: statusAll = 'delivered' and set invoiceRecievedDate = now.
+   * Then update local UI state to show Return Product button for retailers.
+   */
+  markInvoiceReceived() {
+    const url = `pi-manufacture-to-retailer/${this.invoiceId}`; // PATCH invoice resource
+    const payload: any = {
+      statusAll: 'delivered',
+      invoiceRecievedDate: new Date().toISOString()
+    };
+
+    this.loading = true;
+    // Prefer PATCH; if not available in AuthService, switch to PUT/POST as per backend.
+    (this.authService as any).patchpimage(url, payload).subscribe(
+      (res: any) => {
+        // Notify success
+        this.communicationService.customSuccess1('Invoice marked as received'); 
+        // Update local cache/state
+        this.responseData = {
+          ...this.responseData,
+          statusAll: 'delivered',
+          invoiceRecievedDate: payload.invoiceRecievedDate
+        };
+        this.invoiceData = {
+          ...this.invoiceData,
+          statusAll: 'delivered',
+          invoiceRecievedDate: payload.invoiceRecievedDate
+        };
+        this.loading = false;
+      },
+      (error: any) => {
+       console.error('Error updating invoice status:', error);
+        this.communicationService.customError1('Failed to update invoice status');
+        this.loading = false;
+      }
+    );
   }
 }

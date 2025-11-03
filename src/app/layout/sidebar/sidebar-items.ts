@@ -1495,6 +1495,18 @@ export const ROUTES2: RouteInfo[] = [
         role: [''],
         submenu: [],
       },
+      {
+        path: '/mnf/new/ret-credit-note-group-list',
+        title: 'Retailer Credit Note',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
       // {
       //   path: '/mnf/return-mng/order-return',  ppp
       //   title: 'Order Return',

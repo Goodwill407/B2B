@@ -54,6 +54,7 @@ export class ViewProductDetailsComponent {
   selectedSize: string = '';
   selectedQuantity: number = 1;
   calculatedPrice: number = 0;
+  calculatedMrp: number = 0;
   availableSizes: string[] = [];
 
   tempCart: Array<{
@@ -61,6 +62,7 @@ export class ViewProductDetailsComponent {
     size: string;
     quantity: number;
     price: any;
+    mrp: any;
     designNumber: any;
     colour: any,
     colourImage: any,
@@ -426,14 +428,26 @@ export class ViewProductDetailsComponent {
     // console.log(this.availableSizes)
     this.selectedSize = '';
     this.calculatedPrice = 0;
+    this.calculatedMrp = 0;
   }
 
   getPriceBySize(size: string): number {
     const pricing = this.product.sizes.find((s: { standardSize: string }) => s.standardSize === size);
-    console.log(pricing)
-    console.log(size)
+    // console.log(pricing)
+    // console.log(size)
     if (pricing) {
       return +pricing.RtlPrice
+;  // Always return Retailer price
+    }
+    return 0;
+  }
+
+  getMrpBySize(size: string): number {
+    const pricing = this.product.sizes.find((s: { standardSize: string }) => s.standardSize === size);
+    // console.log(pricing)
+    // console.log(size)
+    if (pricing) {
+      return +pricing.singleMRP
 ;  // Always return Retailer price
     }
     return 0;
@@ -442,6 +456,7 @@ export class ViewProductDetailsComponent {
   onSizeChange() {
     if (this.selectedSize) {
       this.calculatedPrice = this.getPriceBySize(this.selectedSize);
+      this.calculatedMrp = this.getMrpBySize(this.selectedSize);
     }
   }
 
@@ -475,6 +490,7 @@ export class ViewProductDetailsComponent {
         size: this.selectedSize,
         quantity: this.selectedQuantity,
         price: this.calculatedPrice.toString(),
+        mrp:this.calculatedMrp.toString(),
         designNumber: this.designno,
         colour: colourHex,
         colourImage: colourImage,
@@ -488,6 +504,7 @@ export class ViewProductDetailsComponent {
     this.selectedSize = '';
     this.selectedQuantity = 1;
     this.calculatedPrice = 0;
+    this.calculatedMrp = 0;
   }
 
 

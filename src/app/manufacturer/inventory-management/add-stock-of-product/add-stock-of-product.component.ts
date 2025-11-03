@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import { TableModule } from 'primeng/table';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-add-stock-of-product',
@@ -171,6 +172,24 @@ get totalQuantity(): number {
     const qty = Number(item.quantity);
     return sum + (isNaN(qty) ? 0 : qty);
   }, 0);
+}
+
+
+async confirmAddStock(): Promise<void> {
+  const result = await Swal.fire({
+    title: 'Add stock into Inventory?',
+    text: 'Are you Sure You want to add this Stock into Inventory',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, Add',
+    cancelButtonText: 'No',
+    focusCancel: true,
+    reverseButtons: true
+  });
+
+  if (result.isConfirmed) {
+    this.submitStock();
+  }
 }
 
 

@@ -11,6 +11,8 @@ import { MfgProformaInvoiceListComponent } from "./order-managment/mfg-proforma-
 import { MfgProformaInvoiceViewComponent } from "./order-managment/mfg-proforma-invoice-view/mfg-proforma-invoice-view.component";
 import { ReturnOrderRetListComponent } from "./return-managment/return-order-ret-list/return-order-ret-list.component";
 import { ReturnOrderRetViewComponent } from "./return-managment/return-order-ret-view/return-order-ret-view.component";
+import { RetCreditNoteListComponent } from "./return-managment/ret-credit-note-list/ret-credit-note-list.component";
+import { RetailerGroupCreditNoteListComponent } from "./return-managment/retailer-group-credit-note-list/retailer-group-credit-note-list.component";
 
 export const NewFlow:Route[]=[
     {path:'add-product2',component:AddProduct2Component},
@@ -26,4 +28,9 @@ export const NewFlow:Route[]=[
 
     {path:'Return-order-ret-view/:id',component:ReturnOrderRetViewComponent},
     {path:'Return-order-ret-list',component:ReturnOrderRetListComponent},
+
+    {path:'ret-credit-note-list/:id', component:RetCreditNoteListComponent},
+    {path:'ret-credit-note-group-list', component:RetailerGroupCreditNoteListComponent},
+
 ]
+
