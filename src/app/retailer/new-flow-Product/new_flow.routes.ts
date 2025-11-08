@@ -26,6 +26,9 @@ import { AddReturnProductMfgComponent } from "./return-management/add-return-pro
 import { ReturnProductMfgListComponent } from "./return-management/return-product-mfg-list/return-product-mfg-list.component";
 import { ReturnOrderMfgViewComponent } from "./return-management/return-order-mfg-view/return-order-mfg-view.component";
 import { UpdateRetMfgPoPartialNewComponent } from "./Mng-Product/view-retailorpo-man/update-ret-mfg-po-partial-new/update-ret-mfg-po-partial-new.component";
+import { MfgGroupCreditNoteListComponent } from "./return-management/mfg-group-credit-note-list/mfg-group-credit-note-list.component";
+import { MfgCreditNoteListComponent } from "./return-management/mfg-credit-note-list/mfg-credit-note-list.component";
+import { MfgCreditNoteViewComponent } from "./return-management/mfg-credit-note-view/mfg-credit-note-view.component";
 
 
 export const NewFlow:Route[]=[
@@ -57,5 +60,9 @@ export const NewFlow:Route[]=[
     { path:'add-return-product-mfg/:id', component: AddReturnProductMfgComponent},
     { path:'return-products-mfg-list', component: ReturnProductMfgListComponent},
     { path:'return-order-mfg-view/:id', component: ReturnOrderMfgViewComponent},
+
+    { path: 'mfg-group-credit-note-list', component: MfgGroupCreditNoteListComponent },
+    { path: 'mfg-credit-note-list/:id', component: MfgCreditNoteListComponent },
+    { path: 'mfg-credit-note-view/:id', component: MfgCreditNoteViewComponent }
 
 ]

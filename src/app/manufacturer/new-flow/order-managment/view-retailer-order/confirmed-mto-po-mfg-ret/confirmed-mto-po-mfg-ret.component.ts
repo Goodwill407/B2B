@@ -295,6 +295,8 @@ get totalGSTAmount(): number {
           productType: item.productType,
           gender: item.gender,
           clothing: item.clothing,
+          brandName: item.brandName,
+          price: item.price, 
           subCategory: item.clothing,
           hsnCode: item.hsnCode,
           hsnGst: item.hsnGst,
@@ -318,9 +320,13 @@ get totalGSTAmount(): number {
       },
       totalQuantity: this.purchaseOrder.products.reduce((sum: number, item: any) => sum + item.quantity, 0),
       transportDetails: this.purchaseOrder.transportDetails,
-      totalAmount: this.getTotalAmount(),
-      discountApplied: this.getTotalAmount() * (this.purchaseOrder.ProductDiscount / 100),
-      finalAmount: this.getTotalAmount() * (1 - this.purchaseOrder.ProductDiscount / 100),
+      totalAmount: this.orderTotals.totalWithGST,
+      discountApplied: this.discountAmount,  
+      finalAmount: this.actualGrandTotal,
+    
+      // totalAmount: this.orderTotals.totalWithGST,  // ✅ Amount INCLUDING all GST
+      // discountApplied: (this.orderTotals.totalWithGST * this.purchaseOrder.ProductDiscount) / 100,  // ✅ Discount on total with tax
+      // finalAmount: this.orderTotals.totalWithGST - ((this.orderTotals.totalWithGST * this.purchaseOrder.ProductDiscount) / 100),  // ✅ OR use this.actualGrandTotal
       returnRequestGenerated:"false",
     };
 

@@ -4,21 +4,23 @@
       <h4 class="mb-0">
         <i class="bi bi-person-vcard-fill h3"></i> Add Stock for Product
       </h4>
-      <!-- <button
-        type="button"
-        class="btn btn-primary px-4 py-2"
-        (click)="submitStock()"
-      >
-        <i class="bi bi-box-arrow-in-down"></i> Add Stock
-      </button> -->
     </div>
+
+    <!-- Info banner for new variants -->
+    <div *ngIf="hasNewVariants" class="alert alert-info mt-3" role="alert">
+      <i class="bi bi-info-circle-fill me-2"></i>
+      <b>New Prdouct Variants Detected!</b> You have {{ newVariantsCount }} new color/size combination(s). 
+      Existing variants are <b>disabled</b> (grayed out) and cannot be modified. 
+      Only add stock for the new variants.
+    </div>
+
     <div class="card shadow-sm p-4 mt-3 mb-4">
         
       <div class="d-flex flex-wrap align-items-center gap-4 mb-3">
 
         <!-- Add Quantity -->
         <div class="d-flex align-items-center gap-2 mb-3">
-          <label class="fw-semibold mb-0">Add Quantity in All Items:</label>
+          <label class="fw-semibold mb-0">Add Quantity to New Items:</label>
           <input
             type="number"
             class="form-control"
@@ -34,7 +36,7 @@
 
         <!-- Add Min Quantity Alert -->
         <div class="d-flex align-items-center gap-2 mb-3">
-          <label class="fw-semibold mb-0" style="white-space: nowrap;">Set Min Quantity Alert for All Items:</label>
+          <label class="fw-semibold mb-0" style="white-space: nowrap;">Set Min Alert for New Items:</label>
           <input
             type="number"
             class="form-control"
@@ -50,7 +52,7 @@
 
         <!-- Total Quantity -->
         <div class="d-flex align-items-center my-2 mb-4">
-          <label class="fw-bold text-primary">Current Total Quantity: {{ totalQuantity }}</label>
+          <label class="fw-bold text-primary">Total Quantity: {{ totalQuantity }}</label>
         </div>
 
         <div class="d-flex justify-content-between align-items-center mt-2 mb-4">
@@ -73,6 +75,7 @@
         <ng-template pTemplate="header">
           <tr>
             <th>Sr. No.</th>
+            <th>Status</th>
             <th>Design No.</th>
             <th>Colour</th>
             <th>Color Name</th>
@@ -84,9 +87,23 @@
         </ng-template>
 
         <ng-template pTemplate="body" let-product let-i="rowIndex">
-          <tr>
+          <tr [ngClass]="{'disabled-row': product.isDisabled}">
             <td>{{ i + 1 }}</td>
-            <td>{{product.designNumber}}</td>
+            <td>
+              <span 
+                *ngIf="product.isExisting" 
+                class="badge bg-secondary"
+                title="This variant already exists in inventory">
+                Existing
+              </span>
+              <span 
+                *ngIf="!product.isExisting" 
+                class="badge bg-success"
+                title="This is a new variant">
+                New
+              </span>
+            </td>
+            <td>{{ product.designNumber }}</td>
             <td>
               <div
                 class="color-box"
@@ -98,34 +115,38 @@
             <td>{{ product.standardSize }}</td>
             <td>{{ product.brandSize }}</td>
             <td style="text-align: center; vertical-align: middle;">
-                <div class="input-wrapper">
-                    <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="product.quantity"
-                min="1"
-                (ngModelChange)="validateQuantity(product)"
-                (keydown)="blockInvalidKeys($event)"
-              />
-                </div>
+              <div class="input-wrapper">
+                <input
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="product.quantity"
+                  [disabled]="product.isDisabled"
+                  [readonly]="product.isDisabled"
+                  min="0"
+                  (ngModelChange)="validateQuantity(product)"
+                  (keydown)="blockInvalidKeys($event)"
+                  [title]="product.isDisabled ? 'Existing variant - cannot be modified' : 'Enter quantity'"
+                />
+              </div>
             </td>
             <td style="text-align: center; vertical-align: middle;">
-            <div class="input-wrapper">
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="product.minimumQuantityAlert"
-                min="1"
-                (ngModelChange)="validateAlert(product)"
-                (keydown)="blockInvalidKeys($event)"
-              />
+              <div class="input-wrapper">
+                <input
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="product.minimumQuantityAlert"
+                  [disabled]="product.isDisabled"
+                  [readonly]="product.isDisabled"
+                  min="0"
+                  (ngModelChange)="validateAlert(product)"
+                  (keydown)="blockInvalidKeys($event)"
+                  [title]="product.isDisabled ? 'Existing variant - cannot be modified' : 'Enter minimum alert quantity'"
+                />
               </div>
             </td>
           </tr>
         </ng-template>
       </p-table>
     </div>
-
-    
   </div>
 </section>

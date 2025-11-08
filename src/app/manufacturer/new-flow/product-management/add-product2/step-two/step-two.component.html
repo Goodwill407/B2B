@@ -10,11 +10,11 @@
     <div class="row">
         <!-- Color Code -->
         <div class="col-2">
-            <label for="colorCode">Color Code<span *ngIf="colourCollections.length > 0" class="required">*</span></label>
+            <label for="colorCode">Color Code<span class="required">*</span></label>
             <input type="color" id="colorCode" formControlName="colour" style="margin-bottom: 5px !important;" class="form-control color-input">
-            <p><small  style="color: brown;">Note: Click On Color</small></p>
+            <p><small style="color: brown;">Note: Click On Color</small></p>
             <div *ngIf="submittedStep2 && stepTwo.get('colour')?.invalid" class="text-danger">
-                Color Code is required
+            Color Code is required
             </div>
         </div>
 
@@ -23,7 +23,7 @@
             <label for="colorName">Color Name<span class="required">*</span></label>
             <input type="text" id="colorName" formControlName="colourName" class="form-control" placeholder="Color Name">
             <div *ngIf="submittedStep2 && stepTwo.get('colourName')?.invalid" class="text-danger">
-                Color Name is required
+            Color Name is required
             </div>
         </div>
 
@@ -31,8 +31,8 @@
         <div class="col-2">
             <label for="colourImage">Product Icon<span *ngIf="colourCollections.length === 0" class="required">*</span></label>
             <input type="file" id="colourImage" (change)="onFileChange($event, 'colourImage')" class="form-control file-input">
-            <div *ngIf="submittedStep2 && stepTwo.get('colourImage')?.invalid" class="text-danger">
-                Product Icon is required
+            <div *ngIf="submittedStep2 && colourCollections.length === 0 && stepTwo.get('colourImage')?.invalid" class="text-danger">
+            Product Icon is required
             </div>
         </div>
 
@@ -52,24 +52,24 @@
 
     <!-- For Product Images -->
     <div class="row mt-3">
-        <div class="col-12">
-            <label for="">Add Product Images<span *ngIf="colourCollections.length === 0" class="required">*</span> 
-                &nbsp;<small style="color: brown;">(Max 5 Images)</small>
-            </label>
-            <div class="d-flex flex-wrap align-items-center product-box">
-                <div *ngFor="let image of productImages.controls; let i = index" class="position-relative m-1 image-container">
-                    <img [src]="image.value ? createObjectURL(image.value) : ''" alt="Product Image" class="image-preview">
-                    <button type="button" class="cancel-button" (click)="removeProductImage(i)">X</button>
-                </div>
-                <button *ngIf="productImages.length < 5" type="button" class="add-image-button" (click)="triggerFileInput()">
-                    <i class="bi bi-plus-square-dotted"></i>
-                </button>
-                <input type="file" id="productImageInput" (change)="onProductImageChange($event)" hidden>
-            </div>
-            <div *ngIf="colourCollections.length === 0 && productImages.length === 0 && submittedStep2" class="text-danger mt-2">
-                At least one product image is required
-            </div>
+    <div class="col-12">
+        <label for="">Add Product Images<span *ngIf="colourCollections.length === 0" class="required">*</span> 
+        &nbsp;<small style="color: brown;">(Max 5 Images)</small>
+        </label>
+        <div class="d-flex flex-wrap align-items-center product-box">
+        <div *ngFor="let image of productImages.controls; let i = index" class="position-relative m-1 image-container">
+            <img [src]="image.value ? createObjectURL(image.value) : ''" alt="Product Image" class="image-preview">
+            <button type="button" class="cancel-button" (click)="removeProductImage(i)">X</button>
         </div>
+        <button *ngIf="productImages.length < 5" type="button" class="add-image-button" (click)="triggerFileInput()">
+            <i class="bi bi-plus-square-dotted"></i>
+        </button>
+        <input type="file" id="productImageInput" (change)="onProductImageChange($event)" hidden>
+        </div>
+        <div *ngIf="colourCollections.length === 0 && productImages.length === 0 && submittedStep2" class="text-danger mt-2">
+        At least one product image is required
+        </div>
+    </div>
     </div>
 
     <div class="d-flex justify-content-center mt-3">
@@ -95,84 +95,78 @@
 
     <!-- Show added color collection -->
     <div class="border p-4 rounded mt-4" *ngIf="colourCollections?.length > 0">
-        <h5>Added Colour Collection</h5>
-        <div class="table-container rounded">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Sr. NO.</th>
-                        <th>Colour Name</th>
-                        <th>Icon Image</th>
-                        <th>Product Video</th>
-                        <th>Product Images</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let collection of colourCollections; let i = index">
-                        <td>{{ i + 1 }}</td>
-                        <td>{{ collection.colourName | titlecase }}</td>
-                        <td>
-                            <ng-container *ngIf="collection.colourImage; else colorImageFallback">
-                                <img [src]="getColorIconPath(collection.colourImage)" alt="Color Icon">
-                            </ng-container>
-                            <ng-template #colorImageFallback>
-                                <span [style.background]="collection.colour" class="colour-hex"></span>
-                            </ng-template>
-                        </td>
-                        <td>
-                            <ng-container *ngIf="collection.productVideo; else noVideo">
-                              <!-- <video controls [src]="getVideoPath(collection.productVideo)"></video> -->
-                              <!-- Play Icon -->
-                              <button (click)="playVideo(collection.productVideo)" class="icon-button">
-                                <i class="fas fa-play"></i>
-                              </button>
-                              <!-- Delete Icon -->
-                              <button (click)="deleteVideo(collection._id)"  class="icon-button">
-                                <i class="fas fa-trash"></i>
-                              </button>
-                            </ng-container>
-                            <ng-template #noVideo>
-                              <label for="video-upload" class="custom-file-input">Upload Video</label>
-                              <input
-                                id="video-upload"
-                                type="file"
-                                (change)="uploadDefaultVideo($event, collection._id)"
-                                accept="video/*"
-                              />
-                              <!-- Progress Bar -->
-                              <div *ngIf="isUploading">
-                                <div class="progress-container">
-                                  <div class="progress-bar" [style.width.%]="uploadProgress"></div>
-                                </div>
-                                <span class="upload-speed">{{ uploadSpeed }} KB/s</span>
-                              </div>
-                            </ng-template>
-                          </td>
-                          
-                          
-                          
-                          
-                        <td>
-                            <div class="product-images">
-                                <ng-container *ngIf="collection.productImages.length; else noImages">
-                                    <img *ngFor="let image of collection.productImages" [src]="getProductImagePath(image)" alt="Product Image">
-                                </ng-container>
-                                <ng-template #noImages>
-                                    No Images Available
-                                </ng-template>
-                            </div>
-                        </td>
-                        <td>
-                            <button class="btn btn-icon p-2" pTooltip="Edit" (click)="deleteColorCollection(collection)" tooltipPosition="top">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <h5>Added Colour Collection</h5>
+    <div class="table-container rounded">
+        <table>
+        <thead>
+            <tr>
+            <th>Sr. NO.</th>
+            <th>Colour Name</th>
+            <th>Icon Image</th>
+            <th>Product Video</th>
+            <th>Product Images</th>
+            <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let collection of colourCollections; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ collection.colourName | titlecase }}</td>
+            <td>
+                <!-- Show image if available, otherwise show color square -->
+                <ng-container *ngIf="collection.colourImage; else colorSquare">
+                <img [src]="getColorIconPath(collection.colourImage)" alt="Color Icon" style="width: 40px; height: 40px; border-radius: 4px;">
+                </ng-container>
+                <ng-template #colorSquare>
+                <div [ngStyle]="getColorStyle(collection.colour)"></div>
+                </ng-template>
+            </td>
+            <td>
+                <ng-container *ngIf="collection.productVideo; else noVideo">
+                <button (click)="playVideo(collection.productVideo)" class="icon-button">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button (click)="deleteVideo(collection._id)" class="icon-button">
+                    <i class="fas fa-trash"></i>
+                </button>
+                </ng-container>
+                <ng-template #noVideo>
+                <label for="video-upload" class="custom-file-input">Upload Video</label>
+                <input
+                    id="video-upload"
+                    type="file"
+                    (change)="uploadDefaultVideo($event, collection._id)"
+                    accept="video/*"
+                />
+                <div *ngIf="isUploading">
+                    <div class="progress-container">
+                    <div class="progress-bar" [style.width.%]="uploadProgress"></div>
+                    </div>
+                    <span class="upload-speed">{{ uploadSpeed }} KB/s</span>
+                </div>
+                </ng-template>
+            </td>
+            <td>
+                <div class="product-images">
+                <ng-container *ngIf="collection.productImages.length; else noImages">
+                    <img *ngFor="let image of collection.productImages" [src]="getProductImagePath(image)" alt="Product Image">
+                </ng-container>
+                <ng-template #noImages>
+                    No Images Available
+                </ng-template>
+                </div>
+            </td>
+            <td>
+                <button class="btn btn-icon p-2" pTooltip="Edit" (click)="deleteColorCollection(collection)" tooltipPosition="top">
+                <i class="bi bi-trash"></i>
+                </button>
+            </td>
+            </tr>
+        </tbody>
+        </table>
     </div>
+    </div>
+
     <div class="d-flex justify-content-center mt-3">
         <button type="button" class="btn submit-btn d-flex me-2" (click)="goToNextStep()">
             Add Inventory

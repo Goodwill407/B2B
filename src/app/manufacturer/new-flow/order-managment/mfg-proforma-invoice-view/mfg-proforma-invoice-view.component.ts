@@ -37,6 +37,8 @@ interface DeliveryItem {
   hsnGst: number;
   hsnDescription: string;
   status: string;
+  brandName: string;      
+  price: number;   
 }
 
 @Component({
@@ -143,49 +145,49 @@ export class MfgProformaInvoiceViewComponent implements OnInit {
   }
 
   // Calculate individual item price properly
-  getItemPrice(item: any): number {
-    if (item.rate) {
-      return parseFloat(item.rate);
-    }
-    
-    const totalItems = this.invoiceData.deliveryItems.reduce((sum: number, i: any) => sum + i.quantity, 0);
-    if (totalItems > 0) {
-      return this.invoiceData.totalAmount / totalItems;
-    }
-    
-    return 0;
+getItemPrice(item: any): number {
+  // ✅ NEW: Use item.price directly from API response
+  if (item.price) {
+    return parseFloat(item.price.toString());
   }
-
-  // GST calculations for individual items
-  getGstAmounts(item: any) {
-  const quantity = item.quantity || 0;
-  const rate = this.getItemPrice(item);
-  const taxable = quantity * rate;
-  const gstRate = Number(item.hsnGst) || 0; // 🔥 Handle undefined/null GST rate
-  
-  let cgst = 0, sgst = 0, igst = 0;
-  
-  if (gstRate > 0) { // 🔥 Only calculate GST if rate exists
-    if (this.isIntraState) {
-      cgst = (taxable * gstRate) / 200;
-      sgst = (taxable * gstRate) / 200;
-    } else {
-      igst = (taxable * gstRate) / 100;
-    }
-  }
-  
-  const totalWithGst = taxable + cgst + sgst + igst;
-  
-  return { 
-    taxable: Number(taxable.toFixed(2)), 
-    gstRate, 
-    cgst: Number(cgst.toFixed(2)), 
-    sgst: Number(sgst.toFixed(2)), 
-    igst: Number(igst.toFixed(2)), 
-    totalWithGst: Number(totalWithGst.toFixed(2)) 
-  };
+  // Fallback: Calculate from total if price not available
+  // const totalItems = this.invoiceData.deliveryItems.reduce((sum: number, i: any) => sum + i.quantity, 0);
+  // if (totalItems > 0) {
+  //   return this.invoiceData.totalAmount / totalItems;
+  // }
+  return 0;
 }
 
+
+  // GST calculations for individual items
+    getGstAmounts(item: any) {
+      const quantity = item.quantity || 0;
+      const rate = this.getItemPrice(item); // ✅ Now uses item.price
+      const taxable = quantity * rate;
+      const gstRate = Number(item.hsnGst) || 0;
+      
+      let cgst = 0, sgst = 0, igst = 0;
+      
+      if (gstRate > 0) {
+        if (this.isIntraState) {
+          cgst = (taxable * gstRate) / 200;
+          sgst = (taxable * gstRate) / 200;
+        } else {
+          igst = (taxable * gstRate) / 100;
+        }
+      }
+      
+      const totalWithGst = taxable + cgst + sgst + igst;
+      
+      return { 
+        taxable: Number(taxable.toFixed(2)), 
+        gstRate, 
+        cgst: Number(cgst.toFixed(2)), 
+        sgst: Number(sgst.toFixed(2)), 
+        igst: Number(igst.toFixed(2)), 
+        totalWithGst: Number(totalWithGst.toFixed(2)) 
+      };
+    }
 
   // Overall totals calculation
   get itemTotals() {
@@ -231,6 +233,19 @@ export class MfgProformaInvoiceViewComponent implements OnInit {
     
     return Number((totals.totalWithGST - discount - creditNote).toFixed(2));
   }
+
+  // Add this new getter after the finalAmountAfterDeductions getter
+get totalAmountInclTax(): number {
+  const totals = this.itemTotals;
+  return Number((totals.totalTaxable + totals.totalCGST + totals.totalSGST + totals.totalIGST).toFixed(2));
+}
+
+get totalPayAmount(): number {
+  const discount = Number(this.invoiceData.discountApplied) || 0;
+  const creditNote = Number(this.responseData?.creditNoteAmount) || 0;
+  
+  return Number((this.totalAmountInclTax - discount - creditNote).toFixed(2));
+}
 
   get colspan(): number {
     return this.isIntraState ? 15 : 14;
@@ -341,59 +356,61 @@ export class MfgProformaInvoiceViewComponent implements OnInit {
   let tableData: any[][];
 
   if (this.isIntraState) {
-    tableHeaders = ['Sr.', 'Product Details', 'HSN', 'Qty', 'Rate', 'Taxable Value', 'CGST %', 'CGST Amt', 'SGST %', 'SGST Amt', 'Total'];
+  tableHeaders = ['Sr.', 'Product Details', 'HSN', 'Qty', 'Rate', 'Taxable Value', 'CGST %', 'CGST Amt', 'SGST %', 'SGST Amt', 'Total'];
+  
+  tableData = this.invoiceData.deliveryItems.map((item: any, index: number) => {
+    const gstAmounts = this.getGstAmounts(item);
+    const rate = this.getItemPrice(item); // ✅ Uses item.price
     
-    tableData = this.invoiceData.deliveryItems.map((item: any, index: number) => {
-      const gstAmounts = this.getGstAmounts(item);
-      const rate = this.getItemPrice(item);
-      
-      return [
-        (index + 1).toString(),
-        `${item.designNumber}\n${item.gender} ${item.clothing} - ${item.colourName} - ${item.size}`,
-        item.hsnCode || '',
-        item.quantity.toString(),
-        rate.toFixed(2),
-        gstAmounts.taxable.toFixed(2),
-        `${(item.hsnGst/2 || 0).toFixed(1)}%`,
-        gstAmounts.cgst.toFixed(2),
-        `${(item.hsnGst/2 || 0).toFixed(1)}%`,
-        gstAmounts.sgst.toFixed(2),
-        gstAmounts.totalWithGst.toFixed(2)
-      ];
-    });
+    return [
+      (index + 1).toString(),
+      // ✅ UPDATED: Include brand name in product details
+      `${item.designNumber}\nBrand: ${item.brandName}\n${item.gender} ${item.clothing} - ${item.colourName} - ${item.size}`,
+      item.hsnCode || '',
+      item.quantity.toString(),
+      rate.toFixed(2),
+      gstAmounts.taxable.toFixed(2),
+      `${(item.hsnGst/2 || 0).toFixed(1)}%`,
+      gstAmounts.cgst.toFixed(2),
+      `${(item.hsnGst/2 || 0).toFixed(1)}%`,
+      gstAmounts.sgst.toFixed(2),
+      gstAmounts.totalWithGst.toFixed(2)
+    ];
+  });
+  
+  tableData.push([
+    '', 'Total', '', totals.totalQty.toString(), '', 
+    totals.totalTaxable.toFixed(2), '', totals.totalCGST.toFixed(2), 
+    '', totals.totalSGST.toFixed(2), totals.totalWithGST.toFixed(2)
+  ]);
+  
+} else {
+  tableHeaders = ['Sr.', 'Product Details', 'HSN', 'Qty', 'Rate', 'Taxable Value', 'IGST %', 'IGST Amt', 'Total'];
+  
+  tableData = this.invoiceData.deliveryItems.map((item: any, index: number) => {
+    const gstAmounts = this.getGstAmounts(item);
+    const rate = this.getItemPrice(item); // ✅ Uses item.price
     
-    tableData.push([
-      '', 'Total', '', totals.totalQty.toString(), '', 
-      totals.totalTaxable.toFixed(2), '', totals.totalCGST.toFixed(2), 
-      '', totals.totalSGST.toFixed(2), totals.totalWithGST.toFixed(2)
-    ]);
-    
-  } else {
-    tableHeaders = ['Sr.', 'Product Details', 'HSN', 'Qty', 'Rate', 'Taxable Value', 'IGST %', 'IGST Amt', 'Total'];
-    
-    tableData = this.invoiceData.deliveryItems.map((item: any, index: number) => {
-      const gstAmounts = this.getGstAmounts(item);
-      const rate = this.getItemPrice(item);
-      
-      return [
-        (index + 1).toString(),
-        `${item.designNumber}\n${item.gender} ${item.clothing} - ${item.colourName} - ${item.size}`,
-        item.hsnCode || '',
-        item.quantity.toString(),
-        rate.toFixed(2),
-        gstAmounts.taxable.toFixed(2),
-        `${(item.hsnGst || 0).toFixed(1)}%`,
-        gstAmounts.igst.toFixed(2),
-        gstAmounts.totalWithGst.toFixed(2)
-      ];
-    });
-    
-    tableData.push([
-      '', 'Total', '', totals.totalQty.toString(), '', 
-      totals.totalTaxable.toFixed(2), '', totals.totalIGST.toFixed(2), 
-      totals.totalWithGST.toFixed(2)
-    ]);
-  }
+    return [
+      (index + 1).toString(),
+      // ✅ UPDATED: Include brand name in product details
+      `${item.designNumber}\n${item.brandName}\n${item.gender} ${item.clothing} - ${item.colourName} - ${item.size}`,
+      item.hsnCode || '',
+      item.quantity.toString(),
+      rate.toFixed(2),
+      gstAmounts.taxable.toFixed(2),
+      `${(item.hsnGst || 0).toFixed(1)}%`,
+      gstAmounts.igst.toFixed(2),
+      gstAmounts.totalWithGst.toFixed(2)
+    ];
+  });
+  
+  tableData.push([
+    '', 'Total', '', totals.totalQty.toString(), '', 
+    totals.totalTaxable.toFixed(2), '', totals.totalIGST.toFixed(2), 
+    totals.totalWithGST.toFixed(2)
+  ]);
+}
 
   // Generate responsive table
   autoTable(doc, {
@@ -462,20 +479,20 @@ export class MfgProformaInvoiceViewComponent implements OnInit {
     yPosition = 20; // Reset position on new page
   }
 
-  // Financial Summary Section
+ // Financial Summary Section
   const summaryBoxHeight = 25;
-  
+
   doc.setDrawColor(150, 150, 150);
   doc.setLineWidth(0.3);
   doc.rect(margin, yPosition, contentWidth * 0.6, summaryBoxHeight);
-  
+
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
   doc.text('Total in words', margin + 3, yPosition + 6);
-  
+
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
-  const amountInWords = this.amountInWordsPipe.transform(this.finalAmountAfterDeductions);
+  const amountInWords = this.amountInWordsPipe.transform(this.totalPayAmount);
   const wrappedText = doc.splitTextToSize(amountInWords, contentWidth * 0.55);
   doc.text(wrappedText, margin + 3, yPosition + 12);
 
@@ -487,18 +504,18 @@ export class MfgProformaInvoiceViewComponent implements OnInit {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
   let summaryY = yPosition + 6;
-  
+
   const summaryItems = [
     ['Taxable Amount', totals.totalTaxable.toFixed(2)],
     [`Add: ${this.isIntraState ? 'CGST + SGST' : 'IGST'}`, this.totalGSTAmount.toFixed(2)],
-    ['Total Tax', this.totalGSTAmount.toFixed(2)]
+    ['Total Amount (Incl. Tax)', this.totalAmountInclTax.toFixed(2)]
   ];
-  
+
   if (this.invoiceData.discountApplied > 0) {
     summaryItems.push(['Less: Discount', this.invoiceData.discountApplied.toFixed(2)]);
   }
-  
-  summaryItems.push(['Less: Credit Note', '0.00']);
+
+  summaryItems.push(['Less: Credit Note Amt', (this.responseData?.creditNoteAmount || 0).toFixed(2)]);
 
   summaryItems.forEach(([label, amount]) => {
     doc.text(label, rightBoxX + 2, summaryY);
@@ -510,9 +527,10 @@ export class MfgProformaInvoiceViewComponent implements OnInit {
   summaryY += 2;
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
-  doc.text('Total Amount After Tax', rightBoxX + 2, summaryY);
-  const finalAmountText = `Rs.${this.finalAmountAfterDeductions.toFixed(2)}`;
+  doc.text('Total Pay Amount', rightBoxX + 2, summaryY);
+  const finalAmountText = `Rs.${this.totalPayAmount.toFixed(2)}`;
   doc.text(finalAmountText, pageWidth - margin - 3, summaryY, { align: 'right' });
+
 
   yPosition += summaryBoxHeight + 15;
 

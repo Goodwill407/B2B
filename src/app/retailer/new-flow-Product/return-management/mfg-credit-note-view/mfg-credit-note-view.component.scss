@@ -1,0 +1,352 @@
+.content {
+  .content-block {
+    h4 {
+      display: flex;
+      align-items: center;
+      color: #333;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .navigate {
+      background: none;
+      border: none;
+      padding: 0;
+      margin-right: 10px;
+      cursor: pointer;
+
+      &:hover i {
+        color: #007bff;
+      }
+    }
+
+    #credit-note {
+      background: #fff;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      .credit-note-header {
+        h2 {
+          color: #333;
+          font-size: 2rem;
+          font-weight: 700;
+          margin-bottom: 5px;
+        }
+
+        .credit-note-number {
+          color: #666;
+          font-size: 1.1rem;
+          margin: 0;
+        }
+
+        .status-used,
+        .status-available {
+          display: inline-block;
+          padding: 8px 16px;
+          border-radius: 4px;
+          font-weight: 600;
+          font-size: 0.9rem;
+        }
+
+        .status-used {
+          background: #6c757d;
+          color: white;
+        }
+
+        .status-available {
+          background: #28a745;
+          color: white;
+        }
+      }
+
+      .divider {
+        margin: 20px 0;
+        border-top: 1px solid #dee2e6;
+      }
+
+      // Compact info section
+      .compact-info-section {
+        .compact-info-card {
+          background: #f8f9fa;
+          border: 1px solid #dee2e6;
+          border-radius: 6px;
+          padding: 15px;
+
+          .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+
+            &:last-child {
+              border-bottom: none;
+            }
+
+            .info-label {
+              font-weight: 600;
+              color: #666;
+              font-size: 0.9rem;
+            }
+
+            .info-value {
+              color: #333;
+              font-size: 0.9rem;
+              text-align: right;
+            }
+          }
+        }
+      }
+
+      // Table styling
+      .order-details {
+        h4 {
+          color: #333;
+          font-weight: 600;
+          font-size: 1.3rem;
+        }
+
+        .bordered-table, .returned-table {
+          ::ng-deep {
+            .p-datatable {
+              font-family: inherit;
+              
+              .p-datatable-thead > tr > th {
+                background: linear-gradient(135deg, #f8f9fc 0%, #f1f3f6 100%);
+                color: #3a3b45;
+                font-weight: 600;
+                border: 1px solid #e3e6f0;
+                padding: 15px 10px;
+                text-align: center;
+                font-size: 0.9rem;
+                position: sticky;
+                top: 0;
+                z-index: 10;
+              }
+
+              .p-datatable-tbody > tr > td {
+                border: 1px solid #e3e6f0;
+                padding: 12px 10px;
+                vertical-align: middle;
+                text-align: center;
+                font-size: 0.85rem;
+                color: #5a5c69;
+                transition: background-color 0.2s ease;
+              }
+
+              .p-datatable-tbody > tr {
+                transition: all 0.2s ease;
+                
+                &:hover {
+                  background: #f8f9fc;
+                  transform: translateY(-1px);
+                  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                }
+
+                &:nth-child(even) {
+                  background: rgba(248, 249, 252, 0.5);
+                }
+
+                &.return-row {
+                  background: rgba(40, 167, 69, 0.05) !important;
+                  border-left: 4px solid #28a745;
+                }
+              }
+
+              .p-datatable-tfoot > tr > td {
+                border: 1px solid #e3e6f0;
+                padding: 15px 10px;
+                font-weight: 600;
+                background: linear-gradient(135deg, #f0f6f9 0%, #e8f1f5 100%);
+                color: #002080;
+              }
+            }
+          }
+
+          .item-image {
+            border: 2px solid #e3e6f0;
+            border-radius: 6px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            
+            &:hover {
+              transform: scale(1.1);
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            }
+          }
+
+          .color-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+
+            .color-swatch {
+              width: 24px;
+              height: 24px;
+              border-radius: 50%;
+              border: 2px solid #dee2e6;
+              display: inline-block;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+          }
+
+          // Expansion button
+          .expansion-btn {
+            background: none;
+            border: none;
+            color: #007bff;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 6px 8px;
+            border-radius: 4px;
+            
+            &:hover {
+              background: rgba(0, 123, 255, 0.1);
+              transform: scale(1.1);
+            }
+            
+            &:focus {
+              outline: none;
+              box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+            }
+            
+            .bi {
+              transition: transform 0.2s ease;
+            }
+          }
+
+          // Expansion row styling
+          .expansion-cell {
+            background: #f8f9fc !important;
+            border-left: 4px solid #007bff !important;
+            padding: 0 !important;
+          }
+
+          .return-reason-section {
+            padding: 15px 20px;
+            
+            .reason-badge-container {
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              flex-wrap: wrap;
+              
+              .reason-label {
+                font-weight: 600;
+                color: #3a3b45;
+                font-size: 0.9rem;
+              }
+              
+              .badge {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+                background: #17a2b8;
+                color: white;
+              }
+              
+              .other-reason {
+                color: #6c757d;
+                font-style: italic;
+                font-size: 0.85rem;
+                margin-left: 10px;
+                
+                strong {
+                  color: #495057;
+                  font-style: normal;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Summary section
+      .border.rounded {
+        border-color: #e3e6f0 !important;
+        background: #f8f9fc;
+
+        h5 {
+          color: #333;
+          font-weight: 600;
+          margin-bottom: 15px;
+          
+          u {
+            text-underline-offset: 3px;
+          }
+        }
+
+        p {
+          margin-bottom: 8px;
+          color: #5a5c69;
+          line-height: 1.4;
+
+          strong {
+            color: #3a3b45;
+            font-weight: 600;
+          }
+        }
+      }
+
+      .action-buttons {
+        .btn {
+          padding: 10px 24px;
+          font-weight: 500;
+          border-radius: 6px;
+
+          i {
+            font-size: 1rem;
+          }
+        }
+      }
+    }
+
+    .error-state {
+      h4 {
+        color: #333;
+      }
+    }
+
+    // Responsive
+    @media (max-width: 768px) {
+      #credit-note {
+        .credit-note-header {
+          h2 {
+            font-size: 1.5rem;
+          }
+
+          .text-end {
+            text-align: left !important;
+            margin-top: 15px;
+          }
+        }
+
+        .compact-info-section {
+          .info-row {
+            flex-direction: column;
+            gap: 5px;
+
+            .info-value {
+              text-align: left;
+            }
+          }
+        }
+
+        .order-details ::ng-deep .p-datatable-wrapper {
+          overflow-x: auto;
+        }
+
+        .action-buttons {
+          .btn {
+            width: 100%;
+            margin-bottom: 10px;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}

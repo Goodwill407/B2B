@@ -80,21 +80,30 @@ export class StepTwoComponent {
     return this.stepTwo.get('stepOne') as FormGroup;
   }
 
-  async getProductDataById() {
-    this.spinner.show();
-    try {
-      const res = await this.authService.getById('type2-products', this.productId).toPromise();
-      this.productDetails = res;
-      console.log(this.productDetails);
-      this.productTitle = res.productTitle ;
-      this.designNumber = res.designNumber;
-      if (this.productDetails) this.colourCollections = this.productDetails.colourCollections;
-    } catch (error) {
-      console.error('Error fetching product data:', error);
-    } finally {
-      this.spinner.hide();
+ async getProductDataById() {
+  this.spinner.show();
+  try {
+    const res = await this.authService.getById('type2-products', this.productId).toPromise();
+    this.productDetails = res;
+    console.log(this.productDetails);
+    this.productTitle = res.productTitle;
+    this.designNumber = res.designNumber;
+    if (this.productDetails) {
+      this.colourCollections = this.productDetails.colourCollections;
+      
+      // Reset validation state when fetching data
+      this.submittedStep2 = false;
+      
+      // Update validators based on whether collection exists
+      this.updateValidators();
     }
+  } catch (error) {
+    console.error('Error fetching product data:', error);
+  } finally {
+    this.spinner.hide();
   }
+}
+
 
   get productImages(): FormArray {
     return this.stepTwo.get('productImages') as FormArray;
@@ -150,37 +159,39 @@ export class StepTwoComponent {
     fileInput.click();
   }
 
-  async saveStepTwoData(type: any = '') {
-    this.submittedStep2 = true;
-    this.stepTwo.markAllAsTouched();
-    if (type === 'add_go_next' && this.productDetails.colourCollections.length === 0) {
-      this.communicationService.showNotification('snackbar-error', 'First add any collection then go to the next page', 'bottom', 'center');
-      return;
-    }
-    if (this.stepTwo.valid && !this.videoSizeError) {
-      try {
-        const formData = await this.createFormData();
-        this.spinner.show();
-        const response = await this.authService.post(`type2-products/upload/colour-collection/${this.productId}`, formData).toPromise();
-        if (response) {
-          this.spinner.hide();
-          this.resetForm();
-          this.productDetails = response;
-          this.colourCollections = response.colourCollections;
-          this.updateValidators();
-          this.getProductDataById();
-        }
-      } catch (error) {
-        console.log('Error', error);
-        this.spinner.hide();
-        this.getProductDataById();
-      }
-    } else {
-      console.log('Form is invalid');
-      this.spinner.hide();
-      this.getProductDataById();
-    }
+ async saveStepTwoData(type: any = '') {
+  this.submittedStep2 = true;
+  
+  if (type === 'add_go_next' && this.productDetails.colourCollections.length === 0) {
+    this.communicationService.showNotification('snackbar-error', 'First add any collection then go to the next page', 'bottom', 'center');
+    return;
   }
+  
+  // Mark all as touched to show validation errors
+  this.stepTwo.markAllAsTouched();
+  
+  if (this.stepTwo.valid && !this.videoSizeError) {
+    try {
+      const formData = await this.createFormData();
+      this.spinner.show();
+      const response = await this.authService.post(`type2-products/upload/colour-collection/${this.productId}`, formData).toPromise();
+      if (response) {
+        this.spinner.hide();
+        this.resetForm();
+        this.productDetails = response;
+        this.colourCollections = response.colourCollections;
+        this.updateValidators();
+        this.getProductDataById();
+        this.communicationService.showNotification('snackbar-success', 'Color collection added successfully!', 'bottom', 'center');
+      }
+    } catch (error) {
+      console.log('Error', error);
+      this.spinner.hide();
+    }
+  } else {
+    console.log('Form is invalid');
+  }
+}
 
   // goToNextStep() {
   //   if (this.colourCollections.length > 0) this.next.emit(this.productId);
@@ -254,13 +265,38 @@ export class StepTwoComponent {
     });
   }
 
-  resetForm() {
-    this.stepTwo.reset();
-    this.productImages.clear();
-    (document.getElementById('colourImage') as HTMLInputElement).value = '';
-    (document.getElementById('videoUpload') as HTMLInputElement).value = '';
-    this.submittedStep2 = false;
-  }
+ resetForm() {
+  // Reset form values
+  this.stepTwo.reset();
+  this.productImages.clear();
+  
+  // Reset file inputs
+  const colourImageInput = document.getElementById('colourImage') as HTMLInputElement;
+  if (colourImageInput) colourImageInput.value = '';
+  
+  const videoInput = document.getElementById('videoUpload') as HTMLInputElement;
+  if (videoInput) videoInput.value = '';
+  
+  const productImageInput = document.getElementById('productImageInput') as HTMLInputElement;
+  if (productImageInput) productImageInput.value = '';
+  
+  // Reset ALL validation states
+  this.submittedStep2 = false;
+  this.videoSizeError = '';
+  
+  // Clear validation errors and states
+  Object.keys(this.stepTwo.controls).forEach((key) => {
+    const control = this.stepTwo.get(key);
+    control?.markAsPristine();
+    control?.markAsUntouched();
+    control?.setErrors(null);
+  });
+  
+  // Update validators for next entry
+  this.updateValidators();
+  
+  this.cd.detectChanges();
+}
 
   createObjectURL(file: File): string {
     return window.URL.createObjectURL(file);
@@ -288,16 +324,46 @@ export class StepTwoComponent {
 
 
   updateValidators() {
-    if (this.colourCollections.length === 0) this.setValidators(['colourName', 'colourImage', 'productImages']);
-    else {
-      this.clearValidators(['colourImage', 'productImages']);
-      this.setValidators(['colourName', 'colour']);
-    }
+  const colourControl = this.stepTwo.get('colour');
+  const colourNameControl = this.stepTwo.get('colourName');
+  const colourImageControl = this.stepTwo.get('colourImage');
+  const productImagesControl = this.stepTwo.get('productImages');
+  
+  // Color Code and Color Name are always required
+  colourControl?.setValidators([Validators.required]);
+  colourNameControl?.setValidators([Validators.required]);
+  
+  // Product Icon and Product Images are only required when collection is empty
+  if (this.colourCollections.length === 0) {
+    colourImageControl?.setValidators([Validators.required]);
+    productImagesControl?.setValidators([Validators.required]);
+  } else {
+    colourImageControl?.clearValidators();
+    productImagesControl?.clearValidators();
+  }
+  
+  // Update validity for all controls
+  colourControl?.updateValueAndValidity();
+  colourNameControl?.updateValueAndValidity();
+  colourImageControl?.updateValueAndValidity();
+  productImagesControl?.updateValueAndValidity();
   }
 
   getProductImagePath(Image: any) {
     return Image;
   }
+
+  // Helper method to get color style for table
+getColorStyle(color: string): any {
+  return {
+    'background-color': color,
+    'width': '40px',
+    'height': '40px',
+    'border-radius': '4px',
+    'border': '1px solid #ddd',
+    'display': 'inline-block'
+  };
+}
 
   getColorIconPath(Image: any) {
     return Image;
@@ -307,7 +373,7 @@ export class StepTwoComponent {
     return video ? video : '';
   }
 
-  deleteColorCollection(CollectionData: any) {
+deleteColorCollection(CollectionData: any) {
     Swal.fire({
       title: 'Are you sure?',
       text: 'Do you want to delete this color collection? This action cannot be undone!',

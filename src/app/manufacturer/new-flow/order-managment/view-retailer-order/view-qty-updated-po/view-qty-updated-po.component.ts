@@ -228,22 +228,24 @@ export class ViewQtyUpdatedPoComponent implements OnInit {
       brandName: item.brandName || ''
     }));
 
-    // Calculate summaries
-    this.calculateSummaries();
+    // // Calculate summaries
+    // this.getConfirmedItemsCount();
+
+    // this.getPartialItemsCount();
+
   }
 
-  private calculateSummaries() {
-    this.totalConfirmedItems = this.orderedSet.filter(item => item.confirmed).length;
-    this.totalPendingItems = this.orderedSet.filter(item => !item.confirmed).length;
-    
-    this.totalConfirmedAmount = this.orderedSet
-      .filter(item => item.confirmed)
-      .reduce((sum, item) => sum + this.getItemTotal(item), 0);
-    
-    this.totalPendingAmount = this.orderedSet
-      .filter(item => !item.confirmed)
-      .reduce((sum, item) => sum + this.getPendingAmount(item), 0);
-  }
+getConfirmedItemsCount(): number {
+  return this.orderedSet.filter(item => item.status === 'm_confirmed').length;
+}
+
+getPartialItemsCount(): number {
+  return this.orderedSet.filter(item => item.status === 'm_partial_delivery').length;
+}
+
+getTotalItemsCount(): number {
+  return this.orderedSet.length;
+}
 
   // UI helper methods
   isPartialDelivery(): boolean {

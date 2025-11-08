@@ -64,7 +64,7 @@
         <div class="row">
           <div class="col-md-6">
             <p class="mb-1"><strong>Confirmed Items:</strong> &nbsp; {{ totalConfirmedItems }}</p>
-            <p class="mb-1"><strong>Make to Order Items:</strong> &nbsp;{{ totalPendingItems }}</p>
+            <p class="mb-1"><strong>Partial Items:</strong> &nbsp;{{ totalPartialItems }}</p>
           </div>
           <div class="col-md-6">
             <!-- <p class="mb-1"><strong>Confirmed Amount:</strong> ₹{{ totalConfirmedAmount | number:'1.2-2' }}</p>
@@ -613,6 +613,15 @@
 
       </p-table>
     </section>
+
+    <div class="text-center mt-4">
+      <button class="btn btn-primary" 
+              (click)="finalizeConfirmAndUpdatePOs()" 
+              [disabled]="isLoading">
+        {{ isLoading ? 'Loading...' : 'Confirm & Update POs' }}
+      </button>
+    </div>
+
    </div>
     </div>
   

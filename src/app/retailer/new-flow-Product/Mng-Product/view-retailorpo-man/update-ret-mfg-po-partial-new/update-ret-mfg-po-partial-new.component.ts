@@ -673,11 +673,15 @@ async confirmRemoveFromMakeToOrder(index: number) {
 
   // Order Summary Getters
   get totalConfirmedItems(): number {
-    return this.confirmedItems.length;
+  return (this.responseData?.set || []).filter(
+      (item:any) => item.status === 'm_confirmed'
+    ).length;
   }
 
-  get totalPendingItems(): number {
-    return this.makeToOrderItems.length;
+  get totalPartialItems(): number {
+    return (this.responseData?.set || []).filter(
+      (item:any) => item.status === 'm_partial_delivery'
+    ).length;
   }
 
   get expDeliveryDate(): Date | string {

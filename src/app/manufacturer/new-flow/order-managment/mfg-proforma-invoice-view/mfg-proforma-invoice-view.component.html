@@ -133,7 +133,7 @@
                 <th *ngIf="isIntraState" colspan="2">SGST</th>
                 <th *ngIf="!isIntraState" colspan="2">IGST</th>
                 <th>Total</th>
-              </tr>
+              </tr> 
               <tr class="sub-header">
                 <th></th>
                 <th></th>
@@ -154,11 +154,16 @@
               <tr *ngFor="let item of invoiceData.deliveryItems; let i = index" class="item-row">
                 <td>{{ i + 1 }}</td>
                 <td class="product-name">
-                  <div class="product-details">
-                    <strong>{{ item.designNumber }}</strong>
-                    <br><span class="product-desc">{{ item.gender }} {{ item.clothing }} - {{ item.colourName }} - Size: {{ item.size }}</span>
-                  </div>
-                </td>
+                <div class="product-details">
+                  <strong>{{ item.designNumber }} | Brand: {{ item.brandName }} </strong>
+                  <!-- ✅ NEW: Show brand name -->
+                  <!-- <span class="product-brand"></span> -->
+                  <br><span class="product-desc">{{ item.gender }} {{ item.clothing }} - {{ item.colourName }} - Size: {{ item.size }}</span>
+                  <!--  NEW: Show price per item -->
+                  <!-- <br><span class="product-price">Price: ₹{{ item.price | number:'1.2-2' }} per unit</span> -->
+                </div>
+              </td>
+
                 <td>{{ item.hsnCode || 'N/A' }}</td>
                 <td class="text-center">{{ item.quantity }} NOS</td>
                 <td class="text-end">{{ getItemPrice(item) | number:'1.2-2' }}</td>
@@ -195,7 +200,7 @@
           <div class="amount-words">
             <div class="words-section">
               <h6>Total in words</h6>
-              <div class="amount-text">{{ finalAmountAfterDeductions | amountInWords }}</div>
+              <div class="amount-text">{{ totalPayAmount | amountInWords }}</div>
             </div>
           </div>
           
@@ -210,8 +215,8 @@
                 <td class="text-end">{{ totalGSTAmount | number:'1.2-2' }}</td>
               </tr>
               <tr>
-                <td>Total Tax</td>
-                <td class="text-end">{{ totalGSTAmount | number:'1.2-2' }}</td>
+                <td>Total Amount (Incl. Tax)</td>
+                <td class="text-end">{{ totalAmountInclTax | number:'1.2-2' }}</td>
               </tr>
               <tr *ngIf="invoiceData.discountApplied > 0">
                 <td>Less: Discount</td>
@@ -223,12 +228,13 @@
                 <td class="text-end">{{ (responseData?.creditNoteAmount || 0) | number:'1.2-2' }}</td>
               </tr>
               <tr class="final-amount">
-                <td><strong>Total Amount After Tax</strong></td>
-                <td class="text-end"><strong>₹{{ finalAmountAfterDeductions | number:'1.2-2' }}</strong></td>
+                <td><strong>Total Pay Amount</strong></td>
+                <td class="text-end"><strong>₹{{ totalPayAmount | number:'1.2-2' }}</strong></td>
               </tr>
             </table>
           </div>
         </div>
+
 
         <!-- Bank Details, QR & Transport Section -->
         <div class="bottom-section">

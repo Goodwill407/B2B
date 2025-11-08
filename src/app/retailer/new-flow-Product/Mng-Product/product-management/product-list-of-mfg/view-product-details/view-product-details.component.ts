@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
 import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.component';
-
+import { ViewportScroller } from '@angular/common';
 
 
 @Component({
@@ -30,7 +30,8 @@ export class ViewProductDetailsComponent {
   productType: any;
   hsnCode: any;
   hsnGst: any;
-  constructor(private location: Location, private renderer: Renderer2, private route: ActivatedRoute, public authService: AuthService, private fb: FormBuilder, private communicationService: CommunicationService, private dialog: MatDialog) { }
+  constructor(private location: Location, private renderer: Renderer2, private route: ActivatedRoute, 
+    private viewportScroller: ViewportScroller, public authService: AuthService, private fb: FormBuilder, private communicationService: CommunicationService, private dialog: MatDialog) { }
   @ViewChild('mainImage') mainImage!: ElementRef; // Reference to the main image element
   zoomed: boolean = false;
   WholeselerEmail: any;
@@ -505,6 +506,12 @@ export class ViewProductDetailsComponent {
     this.selectedQuantity = 1;
     this.calculatedPrice = 0;
     this.calculatedMrp = 0;
+
+   // Scroll down smoothly
+  setTimeout(() => {
+    const currentPosition = this.viewportScroller.getScrollPosition();
+    this.viewportScroller.scrollToPosition([currentPosition[0], currentPosition[1] + 500]);
+  }, 100);
   }
 
 
