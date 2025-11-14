@@ -47,7 +47,20 @@
                     <td>{{ item.designNumber }}</td>
                     <td>{{ item.colourName }}</td>
                     <td>
-                      <img [src]="item.colourImage" alt="Colour Image" style="width: 50px; height: 50px; object-fit: cover;" />
+                      <!-- Show color square when no image but color code exists -->
+                      <div class="color-preview" 
+                          [style.background-color]="item.colour"
+                          [attr.title]="item.colourName"
+                          *ngIf="!item.colourImage && item.colour">
+                        <span class="color-label">{{ item.colourName.charAt(0).toUpperCase() }}</span>
+                      </div>
+                      
+                      <!-- Show image when available -->
+                      <img [src]="item.colourImage" 
+                          [alt]="item.colourName"
+                          class="colour-image"
+                          (error)="handleImageError($event, item)"
+                          *ngIf="item.colourImage" />
                     </td>
                     <td>{{ item.size }}</td>
                     <td>{{ item.price | indianCurrency}}</td>

@@ -292,6 +292,7 @@ get totalGSTAmount(): number {
           colourImage: item.colourImage,
           size: item.size,
           quantity: item.quantity,
+          returnQuantity: 0,
           productType: item.productType,
           gender: item.gender,
           clothing: item.clothing,

@@ -146,6 +146,7 @@
                       <th>Company Name</th>
                       <th>Email</th>
                       <th>PO Number</th>
+                      <th>Invoice</th>
                       <th>View</th>
                     </tr>
                   </ng-template>
@@ -155,6 +156,14 @@
                       <td class="text-center">{{ data.manufacturer?.companyName || 'N/A' }}</td>
                       <td class="text-center">{{ data.manufacturer?.email || 'N/A' }}</td>
                       <td class="text-center">{{ data.poNumber || 'N/A' }}</td>
+                      <td class="text-center">
+                      <span *ngIf="data.invoiceGenerated" class="badge bg-success">
+                        <i class="bi bi-check-circle-fill"></i> Generated
+                      </span>
+                      <span *ngIf="!data.invoiceGenerated" class="badge bg-secondary">
+                        Not Generated
+                      </span>
+                    </td>
                       <td class="text-center">
                         <a [routerLink]="['/retailer/new/view-retailerpotoman', { id: data.id }]">
                           <button class="btn"><i class="bi bi-eye h5"></i></button>
@@ -205,6 +214,7 @@
                       <th>Company Name</th>
                       <th>Email</th>
                       <th>PO Number</th>
+                      <th>Invoice</th> 
                       <th>View</th>
                     </tr>
                   </ng-template>
@@ -214,6 +224,14 @@
                       <td class="text-center">{{ data.manufacturer?.companyName || 'N/A' }}</td>
                       <td class="text-center">{{ data.manufacturer?.email || 'N/A' }}</td>
                       <td class="text-center">{{ data.poNumber || 'N/A' }}</td>
+                      <td class="text-center">
+                      <span *ngIf="data.invoiceGenerated" class="badge bg-success">
+                        <i class="bi bi-check-circle-fill"></i> Generated
+                      </span>
+                      <span *ngIf="!data.invoiceGenerated" class="badge bg-secondary">
+                        Not Generated
+                      </span>
+                    </td>
                       <td class="text-center">
                         <a [routerLink]="['/retailer/new/view-retailerpotoman', { id: data.id }]">
                           <button class="btn"><i class="bi bi-eye h5"></i></button>

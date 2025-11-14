@@ -113,6 +113,45 @@ export class MfgCreditNoteViewComponent implements OnInit {
     return this.creditNoteData?.used ? 'status-used' : 'status-available';
   }
 
+  // Calculate item final amount after discount
+getItemFinalAmount(item: any): number {
+  const totalWithGST = this.getItemAmountWithGST(item);
+  const discountPercent = Number(this.creditNoteData?.retailer?.productDiscount) || 0;
+  const discountAmount = (totalWithGST * discountPercent) / 100;
+  return totalWithGST - discountAmount;
+}
+
+// Calculate item discount amount
+getItemDiscount(item: any): number {
+  const totalWithGST = this.getItemAmountWithGST(item);
+  const discountPercent = Number(this.creditNoteData?.retailer?.productDiscount) || 0;
+  return (totalWithGST * discountPercent) / 100;
+}
+
+// Calculate total amount with GST
+getTotalWithGST(): number {
+  if (!this.creditNoteData?.set) return 0;
+  return this.creditNoteData.set.reduce((total: number, item: any) => {
+    return total + this.getItemAmountWithGST(item);
+  }, 0);
+}
+
+// Calculate total final amount after discount
+getTotalFinalAmount(): number {
+  if (!this.creditNoteData?.set) return 0;
+  return this.creditNoteData.set.reduce((total: number, item: any) => {
+    return total + this.getItemFinalAmount(item);
+  }, 0);
+}
+
+// Calculate total discount
+getTotalDiscount(): number {
+  if (!this.creditNoteData?.set) return 0;
+  return this.creditNoteData.set.reduce((total: number, item: any) => {
+    return total + this.getItemDiscount(item);
+  }, 0);
+}
+
   // Print credit note (commented out in HTML)
   // printCreditNote() {
   //   window.print();

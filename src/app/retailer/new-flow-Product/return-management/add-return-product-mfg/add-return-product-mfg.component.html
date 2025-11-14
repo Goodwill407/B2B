@@ -8,6 +8,16 @@
       <span>Add Products for Return</span>
     </h4>
 
+    <!-- Return Period Warning -->
+    <div *ngIf="!loading && orderData && isReturnPeriodValid && returnRequestGenerated !== 'true'" 
+         class="alert alert-info d-flex align-items-center mt-3" role="alert">
+      <i class="bi bi-info-circle-fill me-2"></i>
+      <div>
+        <strong>Return Period:</strong> You have <strong>{{remainingReturnDays}}</strong> day(s) remaining to submit return requests.
+        (Valid until: {{ (orderData?.invoiceRecievedDate | date:'dd/MM/yyyy') }})
+      </div>
+    </div>
+
     <!-- Loading State -->
     <div *ngIf="loading" class="text-center py-4">
       <div class="spinner-border text-primary" role="status">
@@ -25,6 +35,9 @@
           <p><strong>PO Number:</strong> {{ orderData?.poNumber }}</p>
           <p><strong>Invoice Number:</strong> {{ orderData?.invoiceNumber }}</p>
           <p><strong>Invoice Date:</strong> {{ orderData?.invoiceDate | date:'dd/MM/yyyy' }}</p>
+          <p *ngIf="orderData?.invoiceRecievedDate">
+            <strong>Invoice Received:</strong> {{ orderData?.invoiceRecievedDate | date:'dd/MM/yyyy' }}
+          </p>
         </div>
       </div>
 
@@ -69,10 +82,11 @@
               <th>Colour</th>
               <th>Size</th>
               <th>Rate (₹)</th>
-              <th>Qty</th>
+              <th>Ordered Qty</th>
+              <th>Return Qty</th>
               <th>Taxable Value (₹)</th>
               <th>GST (%)</th>
-              <th>Total with GST (₹)</th>
+              <th>Final Amount (₹)</th>
               <th>Action</th>
             </tr>
           </ng-template>
@@ -81,8 +95,20 @@
             <tr>
               <td>{{ rowIndex + 1 }}</td>
               <td>
-                <img [src]="item.colourImage" [alt]="item.colourName" class="item-image" 
-                     style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;" />
+                <!-- Show color square if no image -->
+                <div 
+                  *ngIf="!item.colourImage || item.colourImage === ''"
+                  class="color-preview" 
+                  [style.background-color]="item.colour || '#e0e0e0'"
+                  [title]="item.colourName">
+                </div>
+                
+                <!-- Show image if available -->
+                <img 
+                  *ngIf="item.colourImage && item.colourImage !== ''"
+                  [src]="item.colourImage" 
+                  [alt]="item.colourName"
+                  class="item-image" />
               </td>
               <td>{{ item.clothing || item.subCategory }}</td>
               <td>{{ item.gender }}</td>
@@ -98,13 +124,25 @@
               <td>{{ item.size }}</td>
               <td>{{ getItemRate(item) | number:'1.2-2' }}</td>
               <td>{{ item.quantity }}</td>
+              <td>
+                <span class="badge bg-success">{{ item.returnQuantity || 0 }}</span>
+              </td>
               <td>{{ getTaxableValue(item) | number:'1.2-2' }}</td>
               <td>{{ item.hsnGst || 0 }}%</td>
-              <td>{{ getTotalWithGST(item) | number:'1.2-2' }}</td>
+              <td>
+                <div>
+                  <span class="text-muted small text-decoration-line-through">{{ getTotalWithGST(item) | number:'1.2-2' }}</span>
+                  <br>
+                  <span class="text-success fw-bold">{{ getItemFinalAmount(item) | number:'1.2-2' }}</span>
+                  <br>
+                  <small class="text-danger">(- {{ getItemDiscount(item) | number:'1.2-2' }})</small>
+                </div>
+              </td>
               <td>
                 <button class="btn btn-sm btn-outline-danger" 
                         (click)="onAddToReturn(item)"
-                        [disabled]="returnRequestGenerated === 'true'">
+                        [disabled]="!isReturnAllowed()"
+                        [title]="!isReturnAllowed() ? (returnRequestGenerated === 'true' ? 'Return request already generated' : 'Return period expired') : 'Add to return'">
                   <i class="bi bi-arrow-return-left me-1"></i>
                   Add to Return
                 </button>
@@ -115,14 +153,33 @@
           <ng-template pTemplate="footer">
             <tr style="background: #f0f6f9; font-weight: bold;">
               <td colspan="10" style="text-align:right; padding-right: 20px;">Total:</td>
-              <td>{{ orderData?.totalQuantity }}</td>
-              <td>{{ getTotalTaxableValue() | number:'1.2-2' }}</td>
+              <td style="text-align: center;">{{ orderData?.totalQuantity }}</td>
               <td></td>
-              <td>{{ getTotalWithAllGST() | number:'1.2-2' }}</td>
+              <td style="text-align: center;">{{ getTotalTaxableValue() | number:'1.2-2' }}</td>
+              <td></td>
+              <td style="text-align: center;">
+                <div>
+                  <span class="text-muted small text-decoration-line-through">{{ getTotalWithAllGST() | number:'1.2-2' }}</span>
+                  <br>
+                  <span class="text-success fw-bold">{{ getTotalFinalAmount() | number:'1.2-2' }}</span>
+                  <br>
+                  <small class="text-danger">(- {{ orderData?.discountApplied | number:'1.2-2' }})</small>
+                </div>
+              </td>
               <td></td>
             </tr>
           </ng-template>
+
         </p-table>
+
+        <!-- Discount Note -->
+        <p class="text-center mt-2 mb-0" *ngIf="orderData?.retailer?.productDiscount">
+          <small class="text-muted">
+            (<strong>Note:</strong> Discount of 
+            <span class="text-danger fw-bold">{{ orderData?.retailer?.productDiscount }}%</span> 
+            applied)
+          </small>
+        </p>
       </section>
 
       <!-- Returned Products Table -->
@@ -155,8 +212,20 @@
             <tr class="return-row">
               <td>{{ rowIndex + 1 }}</td>
               <td>
-                <img [src]="item.colourImage" [alt]="item.colourName" class="item-image" 
-                     style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;" />
+                <!-- Show color square if no image -->
+                <div 
+                  *ngIf="!item.colourImage || item.colourImage === ''"
+                  class="color-preview" 
+                  [style.background-color]="item.colour || '#e0e0e0'"
+                  [title]="item.colourName">
+                </div>
+                
+                <!-- Show image if available -->
+                <img 
+                  *ngIf="item.colourImage && item.colourImage !== ''"
+                  [src]="item.colourImage" 
+                  [alt]="item.colourName"
+                  class="item-image" />
               </td>
               <td>{{ item.clothing || item.subCategory }}</td>
               <td>{{ item.gender }}</td>
@@ -171,11 +240,11 @@
               </td>
               <td>{{ item.size }}</td>
               <td>{{ getItemRate(item) | number:'1.2-2' }}</td>
-              <td>{{ item.returnQuantity }}</td>
+              <td>{{ item.selectedReturnQuantity }}</td>
               <td>{{ getReturnTaxableValue(item) | number:'1.2-2' }}</td>
               <td>{{ item.hsnGst || 0 }}%</td>
               <td>{{ getReturnTotalWithGST(item) | number:'1.2-2' }}</td>
-                <td>
+              <td>
                 <span class="badge bg-info">{{ item.returnReason }}</span>
                 <div *ngIf="item.customReason" 
                     class="text-muted small mt-1" 
@@ -183,7 +252,7 @@
                     style="cursor: pointer; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                     {{ item.customReason }}
                 </div>
-                </td>
+              </td>
               <td>
                 <button class="btn btn-sm btn-outline-secondary" 
                         (click)="removeFromReturn(item)">
@@ -195,52 +264,48 @@
 
           <ng-template pTemplate="footer">
             <tr style="background: #f0f6f9; font-weight: bold;">
-              <td colspan="10" style="text-align:right; padding-right: 20px;">Return Total:</td>
-              <td>{{ getTotalReturnQuantity() }}</td>
-              <td>{{ getTotalReturnTaxableValue() | number:'1.2-2' }}</td>
+              <td colspan="11" style="text-align:right; padding-right: 20px;">Return Subtotal:</td>
+              <td style="text-align: center;">{{ getTotalReturnTaxableValue() | number:'1.2-2' }}</td>
               <td></td>
-              <td>{{ getTotalReturnWithGST() | number:'1.2-2' }}</td>
+              <td style="text-align: center;">{{ getTotalReturnWithGST() | number:'1.2-2' }}</td>
+              <td colspan="2"></td>
+            </tr>
+            <tr *ngIf="getReturnDiscount() > 0" style="background: #fff3cd; font-weight: bold;">
+              <td colspan="13" style="text-align:right; padding-right: 20px;">Discount Applied:</td>
+              <td style="color: #856404; text-align: center;">- {{ getReturnDiscount() | number:'1.2-2' }}</td>
+              <td colspan="2"></td>
+            </tr>
+            <tr style="background: #d4edda; font-weight: bold; font-size: 1.1em;">
+              <td colspan="13" style="text-align:right; padding-right: 20px;">Final Return Amount:</td>
+              <td style="color: #155724; text-align: center;">{{ getFinalReturnAmount() | number:'1.2-2' }}</td>
               <td colspan="2"></td>
             </tr>
           </ng-template>
         </p-table>
 
         <!-- Process Return Button -->
-        <div class="text-center mt-3" *ngIf="returnRequestGenerated !== 'true'">
-            <button class="btn btn-success btn-lg" 
-                    (click)="processReturns()"
-                    [disabled]="returnedItems.length === 0">
-                <i class="bi bi-check-circle me-2"></i>
-                Process Return Request ({{ returnedItems.length }} items)
-            </button>
+        <div class="text-center mt-3" *ngIf="isReturnAllowed()">
+          <button class="btn btn-success btn-lg" 
+                  (click)="processReturns()"
+                  [disabled]="returnedItems.length === 0">
+            <i class="bi bi-check-circle me-2"></i>
+            Process Return Request ({{ returnedItems.length }} items)
+          </button>
         </div>
-
       </section>
-
-      <!-- Order Summary -->
-      <!-- <div class="border rounded mt-3 p-3">
-        <h5 class="mb-2"><u>Order Summary:</u></h5>
-        <div class="row">
-          <div class="col-md-4">
-            <p class="mb-1"><strong>Total Amount:</strong> ₹{{ orderData?.totalAmount }}</p>
-          </div>
-          <div class="col-md-4">
-            <p class="mb-1"><strong>Discount Applied:</strong> ₹{{ orderData?.discountApplied }}</p>
-          </div>
-          <div class="col-md-4">
-            <p class="mb-1"><strong>Final Amount:</strong> ₹{{ orderData?.finalAmount }}</p>
-          </div>
-        </div>
-      </div> -->
 
       <!-- Instructions -->
       <div class="border rounded mt-3 p-3 bg-light">
         <h5 class="mb-2"><u>Return Instructions:</u></h5>
         <ul class="mb-0">
-          <!-- <li>Only products with "Pending" status can be returned</li> -->
+          <li>Return requests must be submitted within <strong>{{RETURN_PERIOD_DAYS}} days</strong> of invoice receipt</li>
           <li>Select quantity and reason for each item you want to return</li>
+          <li>Return quantity cannot exceed the available return quantity for each item</li>
           <li>Review your return items in the table below before processing</li>
           <li>Return processing may take 2-3 business days</li>
+          <li *ngIf="orderData?.discountApplied && orderData.discountApplied > 0">
+            Applicable discount will be proportionally applied to your return
+          </li>
         </ul>
       </div>
     </div>

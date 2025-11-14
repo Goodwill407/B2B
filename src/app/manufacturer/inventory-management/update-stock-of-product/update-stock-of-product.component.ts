@@ -105,6 +105,121 @@ export class UpdateStockOfProductComponent {
     this.getProductDetails();
   }
 
+  dumpAllStockForDesign(design: any) {
+  Swal.fire({
+    title: 'Confirm Dump All Stock',
+    html: `
+      <p>Are you sure you want to <b>dump all stock</b> for Design <b>${design._id}</b>?</p>
+      <p class="text-danger">This will set all quantities to <b>0</b>.</p>
+      <label class="fw-semibold mt-3">Enter Reason for Dumping Stock:</label>
+      <input type="text" id="dump-reason" class="swal2-input" placeholder="e.g. Damaged, Expired, etc." />
+    `,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, Dump Stock',
+    confirmButtonColor: '#d33',
+    cancelButtonText: 'Cancel',
+    focusConfirm: false,
+    preConfirm: () => {
+      const reasonInput = (document.getElementById('dump-reason') as HTMLInputElement)?.value;
+      const reason = reasonInput?.trim();
+
+      if (!reason) {
+        Swal.showValidationMessage('Please enter a reason for dumping stock');
+        return;
+      }
+
+      return reason;
+    }
+  }).then(result => {
+    if (result.isConfirmed) {
+      const dumpReason = result.value;
+      this.proceedWithDumpStock(design, dumpReason);
+    }
+  });
+}
+
+proceedWithDumpStock(design: any, dumpReason: string) {
+  const currentUser = this.authService?.currentUserValue?.email || 'admin@example.com';
+  const now = new Date().toISOString();
+
+  // Create updated entries with quantity = 0
+  const dumpedEntries = design.entries.map((entry: any) => ({
+    ...entry,
+    quantity: 0,
+    minimumQuantityAlert: entry.minimumQuantityAlert || 0
+  }));
+
+  // Update stock via API
+  this.authService.post('manufacture-inventory/bulk', dumpedEntries).subscribe({
+    next: () => {
+      // Update local UI
+      const idx = this.inventoryStock.findIndex(d => d._id === design._id);
+      if (idx !== -1) {
+        this.inventoryStock[idx] = {
+          ...design,
+          entries: dumpedEntries.map((e: any) => ({
+            ...e,
+            originalQuantity: 0
+          })),
+          totalQuantity: 0
+        };
+      }
+
+      // Create log entries for dumped stock
+      const logPayload = design.entries
+        .filter((entry: any) => entry.quantity > 0)
+        .map((entry: any) => ({
+          userEmail: currentUser,
+          productId: entry.productId,
+          designNumber: entry.designNumber,
+          colour: entry.colour,
+          brandName: entry.brandName,
+          colourName: entry.colourName,
+          brandSize: entry.brandSize,
+          standardSize: entry.standardSize,
+          recordsArray: [{
+            updatedQuantity: entry.quantity,
+            previousRemainingQuantity: entry.quantity,
+            lastUpdatedBy: currentUser,
+            lastUpdatedAt: now,
+            status: 'stock_removed',
+            reason: dumpReason
+          }]
+        }));
+
+      // Save logs
+      if (logPayload.length > 0) {
+        this.authService.post('manufacture-inventory-logs', logPayload).subscribe({
+          next: () => {
+            this.communicationService.showNotification(
+              'snackbar-success',
+              `All stock dumped successfully for ${design._id}. Reason: ${dumpReason}`,
+              'bottom',
+              'center'
+            );
+          },
+          error: err => {
+            console.error('Log failed', err);
+            this.communicationService.customError('Stock dumped, but logging failed.');
+          }
+        });
+      } else {
+        this.communicationService.showNotification(
+          'snackbar-success',
+          `Stock dumped for ${design._id} (no items had stock)`,
+          'bottom',
+          'center'
+        );
+      }
+    },
+    error: () => {
+      this.communicationService.customError('Failed to dump stock for ' + design._id);
+    }
+  });
+}
+
+
   applyUniversalQuantity(design: any): void {
     const qtyToAdd = Number(this.universalQuantity);
     if (isNaN(qtyToAdd) || qtyToAdd <= 0) {

@@ -40,6 +40,7 @@
               <thead>
                 <tr>
                   <th>Status</th>
+                  <th>Removed Reason</th>
                   <th>Qty Changed</th>
                   <th>Prev Qty</th>
                   <th>Updated Date</th>
@@ -53,6 +54,7 @@
                       {{ entry.records.status === 'stock_added' ? 'Added' : 'Removed' }}
                     </span>
                   </td>
+                  <td>{{ entry.records.reason}}</td>
                   <td>{{ entry.records.updatedQuantity }}</td>
                   <td>{{ entry.records.previousRemainingQuantity }}</td>
                   <td>{{ formatDate(entry.records.lastUpdatedAt) }}</td>

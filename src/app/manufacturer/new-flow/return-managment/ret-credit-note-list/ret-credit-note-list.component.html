@@ -44,7 +44,9 @@
                 <td class="text-center">
                   <strong class="">{{ data.creditNoteNumber || 'N/A' }}</strong>
                 </td>
-                <td></td>
+                <td class="text-center">
+                  <strong class="">{{ data.returnOrderNumber || 'N/A' }}</strong>
+                </td>
                 <td class="text-center">{{ data.invoiceNumber || 'N/A' }}</td>
                 <td class="text-center">
                   <span class="badge bg-info">{{ getTotalItems(data.set) }} items</span>
@@ -69,7 +71,7 @@
                 <td class="text-center">
                   <div class="btn-group" role="group">
                     <button class="btn btn-sm" 
-                            [routerLink]="['/mnf/new/credit-note-view', data.id]"
+                            [routerLink]="['/mnf/new/ret-credit-note-view/', data.id]"
                             title="View Credit Note Details">
                       <i class="bi bi-eye me-1 h5"></i>
                     </button>

@@ -114,6 +114,45 @@ getTotalReturnWithGST(): number {
   }, 0);
 }
 
+// Calculate final amount after discount for returned items
+getReturnItemFinalAmount(item: any): number {
+  const totalWithGST = this.getReturnTotalWithGST(item);
+  const discountPercent = Number(this.returnOrderData?.retailer?.productDiscount) || 0;
+  const discountAmount = (totalWithGST * discountPercent) / 100;
+  return totalWithGST - discountAmount;
+}
+
+// Calculate discount amount for returned items
+getReturnItemDiscount(item: any): number {
+  const totalWithGST = this.getReturnTotalWithGST(item);
+  const discountPercent = Number(this.returnOrderData?.retailer?.productDiscount) || 0;
+  return (totalWithGST * discountPercent) / 100;
+}
+
+// Calculate total final amount for all returned items
+getTotalReturnFinalAmount(): number {
+  if (!this.returnOrderData?.deliveryItems) return 0;
+  return this.returnOrderData.deliveryItems.reduce((total: number, item: any) => {
+    return total + this.getReturnItemFinalAmount(item);
+  }, 0);
+}
+
+// Calculate total discount for all returned items
+getTotalReturnDiscount(): number {
+  if (!this.returnOrderData?.deliveryItems) return 0;
+  return this.returnOrderData.deliveryItems.reduce((total: number, item: any) => {
+    return total + this.getReturnItemDiscount(item);
+  }, 0);
+}
+
+// Get original total quantity (before returns)
+getOriginalTotalQuantity(): number {
+  if (!this.returnOrderData?.deliveryItems) return 0;
+  return this.returnOrderData.deliveryItems.reduce((total: number, item: any) => {
+    return total + (item.orderQuantity || 0);
+  }, 0);
+}
+
 
   // Helper method to get taxable value for return quantity
 

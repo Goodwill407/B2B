@@ -78,101 +78,139 @@
 
       <hr class="divider">
 
-      <!-- Returned Products Table -->
-      <section class="order-details mt-3">
-        <h4 class="text-center mb-3">Returned Products</h4>
+    <!-- Returned Products Table -->
+    <section class="order-details mt-3">
+      <h4 class="text-center mb-3">Returned Products</h4>
 
-        <p-table [value]="creditNoteData?.set || []" 
-                 [responsive]="true" 
-                 [paginator]="false" 
-                 class="bordered-table returned-table"
-                 dataKey="_id">
-          
-          <ng-template pTemplate="header">
-            <tr>
-              <th style="width: 50px;">Reason</th>
-              <th>Sr. No.</th>
-              <th>Image</th>
-              <th>Clothing</th>
-              <th>Gender</th>
-              <th>Brand</th>
-              <th>Design No.</th>
-              <th>HSN Code</th>
-              <th>Colour</th>
-              <th>Size</th>
-              <th>Rate (₹)</th>
-              <th>Return Qty</th>
-              <th>Accepted Qty</th>
-              <th>Taxable Value (₹)</th>
-              <th>GST (%)</th>
-              <th>Total with GST (₹)</th>
-            </tr>
-          </ng-template>
+      <p-table [value]="creditNoteData?.set || []" 
+              [responsive]="true" 
+              [paginator]="false" 
+              class="bordered-table returned-table"
+              dataKey="_id">
+        
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 50px;">Reason</th>
+            <th>Sr. No.</th>
+            <th>Image</th>
+            <th>Clothing</th>
+            <th>Gender</th>
+            <th>Brand</th>
+            <th>Design No.</th>
+            <th>HSN Code</th>
+            <th>Colour</th>
+            <th>Size</th>
+            <th>Rate (₹)</th>
+            <th>Return Qty</th>
+            <th>Accepted Qty</th>
+            <th>Taxable Value (₹)</th>
+            <th>GST (%)</th>
+            <th>Final Amount (₹)</th>
+          </tr>
+        </ng-template>
 
-          <ng-template pTemplate="body" let-item let-rowIndex="rowIndex" let-expanded="expanded">
-            <tr class="return-row">
-              <td style="width: 50px;">
-                <button type="button" 
-                        [pRowToggler]="item" 
-                        class="expansion-btn">
-                  <i [class]="expanded ? 'bi bi-chevron-down' : 'bi bi-chevron-right'"></i>
-                </button>
-              </td>
-              <td>{{ rowIndex + 1 }}</td>
-              <td>
-                <img [src]="item.colourImage" [alt]="item.colourName" class="item-image" 
-                     style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;" />
-              </td>
-              <td>{{ item.clothing || item.subCategory }}</td>
-              <td>{{ item.gender }}</td>
-              <td>{{ item.brandName || 'N/A' }}</td>
-              <td>{{ item.designNumber }}</td>
-              <td>{{ item.hsnCode || 'N/A' }}</td>
-              <td>
-                <div class="color-display">
-                  <span class="color-swatch me-2" [style.background-color]="item.colour || '#000'"></span>
-                  {{ item.colourName }}
+        <ng-template pTemplate="body" let-item let-rowIndex="rowIndex" let-expanded="expanded">
+          <tr class="return-row">
+            <td style="width: 50px;">
+              <button type="button" 
+                      [pRowToggler]="item" 
+                      class="expansion-btn">
+                <i [class]="expanded ? 'bi bi-chevron-down' : 'bi bi-chevron-right'"></i>
+              </button>
+            </td>
+            <td>{{ rowIndex + 1 }}</td>
+            <td>
+                <!-- Show color square if no image -->
+                <div 
+                  *ngIf="!item.colourImage || item.colourImage === ''"
+                  class="color-preview" 
+                  [style.background-color]="item.colour || '#e0e0e0'"
+                  [title]="item.colourName">
                 </div>
-              </td>
-              <td>{{ item.size }}</td>
-              <td>{{ item.price | number:'1.2-2' }}</td>
-              <td>{{ item.returnQuantity }}</td>
-              <td class="fw-bold">{{ item.acceptedQuantity }}</td>
-              <td>{{ getItemAmount(item) | number:'1.2-2' }}</td>
-              <td>{{ item.hsnGst || 0 }}%</td>
-              <td>{{ getItemAmountWithGST(item) | number:'1.2-2' }}</td>
-            </tr>
-          </ng-template>
+                
+                <!-- Show image if available -->
+                <img 
+                  *ngIf="item.colourImage && item.colourImage !== ''"
+                  [src]="item.colourImage" 
+                  [alt]="item.colourName"
+                  class="item-image" />
+            </td>
+            <td>{{ item.clothing || item.subCategory }}</td>
+            <td>{{ item.gender }}</td>
+            <td>{{ item.brandName || 'N/A' }}</td>
+            <td>{{ item.designNumber }}</td>
+            <td>{{ item.hsnCode || 'N/A' }}</td>
+            <td>
+              <div class="color-display">
+                <span class="color-swatch me-2" [style.background-color]="item.colour || '#000'"></span>
+                {{ item.colourName }}
+              </div>
+            </td>
+            <td>{{ item.size }}</td>
+            <td>{{ item.price | number:'1.2-2' }}</td>
+            <td>{{ item.returnQuantity }}</td>
+            <td class="fw-bold">{{ item.acceptedQuantity }}</td>
+            <td>{{ getItemAmount(item) | number:'1.2-2' }}</td>
+            <td>{{ item.hsnGst || 0 }}%</td>
+            <td>
+              <div>
+                <span class="text-muted small text-decoration-line-through">{{ getItemAmountWithGST(item) | number:'1.2-2' }}</span>
+                <br>
+                <span class="text-success fw-bold">{{ getItemFinalAmount(item) | number:'1.2-2' }}</span>
+                <br>
+                <small class="text-danger">(- {{ getItemDiscount(item) | number:'1.2-2' }})</small>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
 
-          <ng-template pTemplate="rowexpansion" let-item>
-            <tr>
-              <td colspan="16" class="expansion-cell">
-                <div class="return-reason-section">
-                  <div class="reason-badge-container">
-                    <span class="reason-label">Return Reason:</span>
-                    <span class="badge bg-info">{{ item.returnReason }}</span>
-                    <span *ngIf="item.returnReason === 'Other' && item.otherReturnReason" 
-                          class="other-reason">
-                      <strong>Other:</strong> {{ item.otherReturnReason }}
-                    </span>
-                  </div>
+        <ng-template pTemplate="rowexpansion" let-item>
+          <tr>
+            <td colspan="16" class="expansion-cell">
+              <div class="return-reason-section">
+                <div class="reason-badge-container">
+                  <span class="reason-label">Return Reason:</span>
+                  <span class="badge bg-info">{{ item.returnReason }}</span>
+                  <span *ngIf="item.returnReason === 'Other' && item.otherReturnReason" 
+                        class="other-reason">
+                    <strong>Other:</strong> {{ item.otherReturnReason }}
+                  </span>
                 </div>
-              </td>
-            </tr>
-          </ng-template>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
 
-          <ng-template pTemplate="footer">
-            <tr class="text-center" style="background: #f0f6f9; font-weight: bold; text-align: right;">
-              <td colspan="11" style="text-align:right; padding-right: 20px;">Return Total:</td>
-              <td class="fw-bold text-center" style="text-align:right;">{{ getTotalReturnQuantity() }}</td>
-              <td class="fw-bold text-center" style="text-align:right;">{{ getTotalAcceptedQuantity() }}</td>
-              <td class="text-center" style="text-align:right;">{{ getTotalTaxableAmount() | number:'1.2-2' }}</td>
-              <td class="text-center" style="text-align:right;"></td>
-              <td class="text-center" style="text-align:right;">{{ creditNoteData.totalCreditAmount | number:'1.2-2' }}</td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </section>
+        <ng-template pTemplate="footer">
+          <tr class="text-center" style="background: #f0f6f9; font-weight: bold;">
+            <td colspan="11" style="text-align:right; padding-right: 20px;">Return Total:</td>
+            <td class="fw-bold text-center">{{ getTotalReturnQuantity() }}</td>
+            <td class="fw-bold text-center">{{ getTotalAcceptedQuantity() }}</td>
+            <td class="text-center">{{ getTotalTaxableAmount() | number:'1.2-2' }}</td>
+            <td class="text-center"></td>
+            <td class="text-center">
+              <div>
+                <span class="text-muted small text-decoration-line-through">{{ getTotalWithGST() | number:'1.2-2' }}</span>
+                <br>
+                <span class="text-success fw-bold">{{ getTotalFinalAmount() | number:'1.2-2' }}</span>
+                <br>
+                <small class="text-danger">(- {{ getTotalDiscount() | number:'1.2-2' }})</small>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <!-- Discount Note -->
+      <p class="text-center mt-2 mb-0" *ngIf="creditNoteData?.retailer?.productDiscount">
+        <small class="text-muted">
+          (<strong>Note:</strong> Discount of 
+          <span class="text-danger fw-bold">{{ creditNoteData?.retailer?.productDiscount }}%</span> 
+          applied)
+        </small>
+      </p>
+    </section>
+
 
       <!-- Credit Note Summary -->
       <div class="border rounded mt-3 p-3">

@@ -52,7 +52,7 @@ export class MfgInvoiceListReturnComponent {
     const retailerEmail = this.authService.currentUserValue.email;
     this.currentPage = Math.floor(this.first / this.rows) + 1;
 
-    const url = `pi-manufacture-to-retailer?retailerEmail=${retailerEmail}&page=${this.currentPage}&limit=${this.rows}&sortBy=createdAt:desc`;
+    const url = `pi-manufacture-to-retailer?retailerEmail=${retailerEmail}&page=${this.currentPage}&limit=${this.rows}&sortBy=createdAt:desc&statusAll=delivered`;
 
     this.authService.get(url).subscribe(
       (res: any) => {

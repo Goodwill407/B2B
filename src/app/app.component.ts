@@ -27,4 +27,14 @@ export class AppComponent {
       window.scrollTo(0, 0);
     });
   }
+
+  ngOninit(){
+    // Add to main.ts or app.component.ts ngOnInit() disable scroll
+    document.addEventListener('wheel', (event) => {
+      const target = event.target as HTMLElement;
+      if (target.tagName === 'INPUT' && (target as HTMLInputElement).type === 'number') {
+        event.preventDefault();
+      }
+    }, { passive: false });
+  }
 }

@@ -58,10 +58,10 @@
         <h4 class="text-center mb-3">Returned Products</h4>
 
         <p-table [value]="returnOrderData?.deliveryItems || []" 
-                 [responsive]="true" 
-                 [paginator]="false" 
-                 class="bordered-table returned-table"
-                 dataKey="_id">
+                [responsive]="true" 
+                [paginator]="false" 
+                class="bordered-table returned-table"
+                dataKey="_id">
           
           <ng-template pTemplate="header">
             <tr>
@@ -76,11 +76,11 @@
               <th>Colour</th>
               <th>Size</th>
               <th>Rate (₹)</th>
-              <th>Original Qty</th>
               <th>Return Qty</th>
               <th>Taxable Value (₹)</th>
               <th>GST (%)</th>
-              <th>Total with GST (₹)</th>
+              <th>Final Amount (₹)</th>
+              <th *ngIf="returnOrderData?.statusAll === 'return_requested'">Action</th>
             </tr>
           </ng-template>
 
@@ -95,8 +95,20 @@
               </td>
               <td>{{ rowIndex + 1 }}</td>
               <td>
-                <img [src]="item.colourImage" [alt]="item.colourName" class="item-image" 
-                     style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;" />
+                <!-- Show color square if no image -->
+                <div 
+                  *ngIf="!item.colourImage || item.colourImage === ''"
+                  class="color-preview" 
+                  [style.background-color]="item.colour || '#e0e0e0'"
+                  [title]="item.colourName">
+                </div>
+                
+                <!-- Show image if available -->
+                <img 
+                  *ngIf="item.colourImage && item.colourImage !== ''"
+                  [src]="item.colourImage" 
+                  [alt]="item.colourName"
+                  class="item-image" />
               </td>
               <td>{{ item.clothing || item.subCategory }}</td>
               <td>{{ item.gender }}</td>
@@ -111,11 +123,32 @@
               </td>
               <td>{{ item.size }}</td>
               <td>{{ getItemRate(item) | number:'1.2-2' }}</td>
-              <td>{{ item.orderQuantity }}</td>
-              <td class="fw-bold">{{ item.returnQuantity }}</td>
+              <td class="fw-bold">
+                <span class="badge bg-success">{{ item.returnQuantity || 0 }}</span>
+              </td>
               <td>{{ getReturnTaxableValue(item) | number:'1.2-2' }}</td>
               <td>{{ item.hsnGst || 0 }}%</td>
-              <td>{{ getReturnTotalWithGST(item) | number:'1.2-2' }}</td>
+              <td>
+                <div>
+                  <span class="text-muted small text-decoration-line-through">{{ getReturnTotalWithGST(item) | number:'1.2-2' }}</span>
+                  <br>
+                  <span class="text-success fw-bold">{{ getItemFinalAmount(item) | number:'1.2-2' }}</span>
+                  <br>
+                  <small class="text-danger">(- {{ getItemDiscount(item) | number:'1.2-2' }})</small>
+                </div>
+              </td>
+              <td *ngIf="returnOrderData?.statusAll === 'return_requested'">
+                <button class="btn btn-sm" 
+                        [class.btn-outline-primary]="!item.manufacturerComments"
+                        [class.btn-primary]="item.manufacturerComments"
+                        (click)="onCancelReturnItem(item, rowIndex)"
+                        [title]="item.manufacturerComments ? 'Edit comments' : 'Add comments'">
+                  <i class="bi" [class.bi-chat-left-text]="!item.manufacturerComments" [class.bi-chat-left-text-fill]="item.manufacturerComments"></i>
+                  <span *ngIf="item.manufacturerComments" class="badge bg-light text-dark ms-1">
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                  </span>
+                </button>
+              </td>
             </tr>
           </ng-template>
 
@@ -131,21 +164,52 @@
                       <strong>Other:</strong> {{ item.otherReturnReason }}
                     </span>
                   </div>
+                  
+                  <!-- Display manufacturer comments if they exist -->
+                  <div *ngIf="item.manufacturerComments" class="mt-3 p-3 bg-light border-start border-danger border-4">
+                    <h6 class="text-danger mb-2">
+                      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                      Manufacturer Comments:
+                    </h6>
+                    <p class="mb-0 text-muted">{{ item.manufacturerComments }}</p>
+                    <!-- <small class="text-muted">Status: 
+                      <span class="badge bg-danger">{{ item.returnStatus }}</span>
+                    </small> -->
+                  </div>
                 </div>
               </td>
             </tr>
           </ng-template>
 
+
           <ng-template pTemplate="footer">
             <tr class="text-center" style="background: #f0f6f9; font-weight: bold; text-align: right;">
-              <td colspan="12" style="text-align:right; padding-right: 20px;">Return Total:</td>
+              <td colspan="11" style="text-align:right; padding-right: 20px;">Return Total:</td>
               <td class="fw-bold text-center" style="text-align:right;">{{ getTotalReturnQuantity() }}</td>
               <td class="text-center" style="text-align:right;">{{ getTotalReturnTaxableValue() | number:'1.2-2' }}</td>
               <td class="text-center" style="text-align:right;"></td>
-              <td class="text-center" style="text-align:right;">{{ getTotalReturnWithGST() | number:'1.2-2' }}</td>
+              <td class="text-center" style="text-align:right;">
+                <div>
+                  <span class="text-muted small text-decoration-line-through">{{ getTotalReturnWithGST() | number:'1.2-2' }}</span>
+                  <br>
+                  <span class="text-success fw-bold">{{ getTotalFinalAmount() | number:'1.2-2' }}</span>
+                  <br>
+                  <small class="text-danger">(- {{ getTotalDiscount() | number:'1.2-2' }})</small>
+                </div>
+              </td>
+              <td *ngIf="returnOrderData?.statusAll === 'return_requested'"></td>
             </tr>
           </ng-template>
         </p-table>
+
+        <!-- Discount Note -->
+        <p class="text-center mt-2 mb-0" *ngIf="returnOrderData?.retailer?.productDiscount">
+          <small class="text-muted">
+            (<strong>Note:</strong> Discount of 
+            <span class="text-danger fw-bold">{{ returnOrderData?.retailer?.productDiscount }}%</span> 
+            applied)
+          </small>
+        </p>
       </section>
 
       <!-- Return Summary -->

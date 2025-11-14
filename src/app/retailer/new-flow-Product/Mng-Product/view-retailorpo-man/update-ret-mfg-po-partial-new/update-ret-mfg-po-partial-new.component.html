@@ -110,8 +110,22 @@
             <tr  [ngClass]="item.status === 'm_partial_delivery' ? 'highlight-yellow' : ''">
               <td>{{ rowIndex + 1 }}</td>
               <td>
-                <img [src]="item.colourImage" alt="{{ item.colourName }}" class="item-image" />
+                <!-- Show color square if no image -->
+                <div 
+                  *ngIf="!item.colourImage || item.colourImage === ''"
+                  class="color-preview" 
+                  [style.background-color]="item.colour || '#e0e0e0'"
+                  [title]="item.colourName">
+                </div>
+                
+                <!-- Show image if available -->
+                <img 
+                  *ngIf="item.colourImage && item.colourImage !== ''"
+                  [src]="item.colourImage" 
+                  [alt]="item.colourName"
+                  class="item-image" />
               </td>
+
               <td>{{ item.clothing }}</td>
               <td>{{ item.gender }}</td>
               <td>{{ item.brandName || 'N/A' }}</td>
@@ -206,8 +220,22 @@
             <tr [ngClass]="item.status === 'm_partial_delivery' ? 'highlight-yellow' : ''">
               <td>{{ rowIndex + 1 }}</td>
               <td>
-                <img [src]="item.colourImage" alt="{{ item.colourName }}" class="item-image" />
+                <!-- Show color square if no image -->
+                <div 
+                  *ngIf="!item.colourImage || item.colourImage === ''"
+                  class="color-preview" 
+                  [style.background-color]="item.colour || '#e0e0e0'"
+                  [title]="item.colourName">
+                </div>
+                
+                <!-- Show image if available -->
+                <img 
+                  *ngIf="item.colourImage && item.colourImage !== ''"
+                  [src]="item.colourImage" 
+                  [alt]="item.colourName"
+                  class="item-image" />
               </td>
+
               <td>{{ item.clothing }}</td>
               <td>{{ item.gender }}</td>
               <td>{{ item.brandName || 'N/A' }}</td>
@@ -456,7 +484,23 @@
         <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
           <tr>
             <td>{{ rowIndex + 1 }}</td>
-            <td><img [src]="item.colourImage" alt="{{ item.colourName }}" class="item-image" /></td>
+            <td>
+              <!-- Show color square if no image -->
+              <div 
+                *ngIf="!item.colourImage || item.colourImage === ''"
+                class="color-preview" 
+                [style.background-color]="item.colour || '#e0e0e0'"
+                [title]="item.colourName">
+              </div>
+              
+              <!-- Show image if available -->
+              <img 
+                *ngIf="item.colourImage && item.colourImage !== ''"
+                [src]="item.colourImage" 
+                [alt]="item.colourName"
+                class="item-image" />
+            </td>
+
             <td>{{ item.clothing }}</td>
             <td>{{ item.gender }}</td>
             <td>{{ item.brandName || 'N/A' }}</td>
@@ -551,7 +595,23 @@
         <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
           <tr>
             <td>{{ rowIndex + 1 }}</td>
-            <td><img [src]="item.colourImage" alt="{{ item.colourName }}" class="item-image" /></td>
+            <td>
+              <!-- Show color square if no image -->
+              <div 
+                *ngIf="!item.colourImage || item.colourImage === ''"
+                class="color-preview" 
+                [style.background-color]="item.colour || '#e0e0e0'"
+                [title]="item.colourName">
+              </div>
+              
+              <!-- Show image if available -->
+              <img 
+                *ngIf="item.colourImage && item.colourImage !== ''"
+                [src]="item.colourImage" 
+                [alt]="item.colourName"
+                class="item-image" />
+            </td>
+
             <td>{{ item.clothing }}</td>
             <td>{{ item.gender }}</td>
             <td>{{ item.brandName || 'N/A' }}</td>

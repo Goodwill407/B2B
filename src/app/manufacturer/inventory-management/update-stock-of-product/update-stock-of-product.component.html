@@ -157,12 +157,15 @@
 
       <!-- Actions -->
       <div class="text-end mt-3">
-        <button class="btn btn-danger px-4 py-2">Dump All Stock</button>
+        <button class="btn btn-danger px-4 py-2" (click)="dumpAllStockForDesign(design)">
+          <i class="bi bi-trash"></i> Dump All Stock
+        </button>
         &nbsp;
         <button class="btn btn-primary px-4 py-2" (click)="submitStockForDesign(design)">
           <i class="bi bi-box-arrow-in-down"></i> Update Stock
         </button>
       </div>
+
     </p-panel>
 
     <!-- Paginator at bottom -->

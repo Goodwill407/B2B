@@ -13,6 +13,7 @@ import { ReturnOrderRetListComponent } from "./return-managment/return-order-ret
 import { ReturnOrderRetViewComponent } from "./return-managment/return-order-ret-view/return-order-ret-view.component";
 import { RetCreditNoteListComponent } from "./return-managment/ret-credit-note-list/ret-credit-note-list.component";
 import { RetailerGroupCreditNoteListComponent } from "./return-managment/retailer-group-credit-note-list/retailer-group-credit-note-list.component";
+import { MfgCreditNoteViewComponent } from "app/retailer/new-flow-Product/return-management/mfg-credit-note-view/mfg-credit-note-view.component";
 
 export const NewFlow:Route[]=[
     {path:'add-product2',component:AddProduct2Component},
@@ -31,6 +32,8 @@ export const NewFlow:Route[]=[
 
     {path:'ret-credit-note-list/:id', component:RetCreditNoteListComponent},
     {path:'ret-credit-note-group-list', component:RetailerGroupCreditNoteListComponent},
+
+    {path: 'ret-credit-note-view/:id', component:MfgCreditNoteViewComponent}
 
 ]
 

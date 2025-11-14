@@ -127,6 +127,17 @@ export class CartProduct2RetailerManComponent {
     });
   }
   
+  handleImageError(event: any, item: ProductSet): void {
+  // If image fails to load, clear the image URL so color square shows instead
+  if (item.colour) {
+    item.colourImage = '';
+    event.target.style.display = 'none';
+  } else {
+    // If no color available, show a default broken image icon
+    event.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIGZpbGw9IiNmNWY1ZjUiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk4vQTwvdGV4dD48L3N2Zz4=';
+  }
+}
+
 
   getTotalQuantity(prod: Product): number {
     return prod.set.reduce((sum, item) => sum + item.quantity, 0);

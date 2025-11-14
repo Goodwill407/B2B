@@ -284,3 +284,14 @@ input[type="number"] {
   max-width: 350px;
   min-width: 250px;
 }
+
+/* Disable scroll wheel on all number inputs globally */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
