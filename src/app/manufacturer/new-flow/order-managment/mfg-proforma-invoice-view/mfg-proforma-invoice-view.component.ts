@@ -229,7 +229,7 @@ getItemPrice(item: any): number {
   get finalAmountAfterDeductions(): number {
     const totals = this.itemTotals;
     const discount = Number(this.invoiceData.discountApplied) || 0;
-    const creditNote = Number(this.responseData?.creditNoteAmount) || 0;
+    const creditNote = Number(this.responseData?.totalCreditNoteAmountUsed) || 0;
     
     return Number((totals.totalWithGST - discount - creditNote).toFixed(2));
   }
@@ -242,7 +242,7 @@ get totalAmountInclTax(): number {
 
 get totalPayAmount(): number {
   const discount = Number(this.invoiceData.discountApplied) || 0;
-  const creditNote = Number(this.responseData?.creditNoteAmount) || 0;
+  const creditNote = Number(this.responseData?.totalCreditNoteAmountUsed) || 0;
   
   return Number((this.totalAmountInclTax - discount - creditNote).toFixed(2));
 }
@@ -515,7 +515,7 @@ get totalPayAmount(): number {
     summaryItems.push(['Less: Discount', this.invoiceData.discountApplied.toFixed(2)]);
   }
 
-  summaryItems.push(['Less: Credit Note Amt', (this.responseData?.creditNoteAmount || 0).toFixed(2)]);
+  summaryItems.push(['Less: Credit Note Amt', (this.responseData?.totalCreditNoteAmountUsed || 0).toFixed(2)]);
 
   summaryItems.forEach(([label, amount]) => {
     doc.text(label, rightBoxX + 2, summaryY);

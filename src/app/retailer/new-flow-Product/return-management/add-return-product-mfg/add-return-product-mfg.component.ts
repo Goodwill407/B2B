@@ -95,14 +95,14 @@ export class AddReturnProductMfgComponent implements OnInit {
   orderId: string;
   loading: boolean = true;
   returnedItems: DeliveryItem[] = [];
-  
+
   isRetailer: boolean = false;
   currentUserRole: string = '';
 
   returnRequestGenerated: string = "false";
   isReturnPeriodValid: boolean = false;
   remainingReturnDays: number = 0;
-  
+
   returnReasons = [
     'Defective Product',
     'Wrong Size',
@@ -127,7 +127,7 @@ export class AddReturnProductMfgComponent implements OnInit {
   ngOnInit(): void {
     this.currentUserRole = this.authService.currentUserValue?.role || '';
     this.isRetailer = this.currentUserRole === 'retailer';
-    
+
     if (this.orderId) {
       this.getOrderDetails();
     } else {
@@ -142,9 +142,9 @@ export class AddReturnProductMfgComponent implements OnInit {
 
   getOrderDetails() {
     this.loading = true;
-    
+
     const url = `pi-manufacture-to-retailer/${this.orderId}`;
-    
+
     this.authService.get(url).subscribe(
       (res: any) => {
         this.responseData = res;
@@ -206,7 +206,7 @@ export class AddReturnProductMfgComponent implements OnInit {
     };
 
     this.returnRequestGenerated = data.returnRequestGenerated || "false";
-  
+
     if (this.returnRequestGenerated === "true") {
       setTimeout(() => {
         Swal.fire({
@@ -229,13 +229,13 @@ export class AddReturnProductMfgComponent implements OnInit {
 
     const invoiceReceivedDate = new Date(this.orderData.invoiceRecievedDate);
     const currentDate = new Date();
-    
+
     invoiceReceivedDate.setHours(0, 0, 0, 0);
     currentDate.setHours(0, 0, 0, 0);
-    
+
     const timeDifference = currentDate.getTime() - invoiceReceivedDate.getTime();
     const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-    
+
     this.remainingReturnDays = AddReturnProductMfgComponent.RETURN_PERIOD_DAYS - daysDifference;
     this.isReturnPeriodValid = daysDifference < AddReturnProductMfgComponent.RETURN_PERIOD_DAYS;
 
@@ -273,9 +273,9 @@ export class AddReturnProductMfgComponent implements OnInit {
   }
 
   getItemRate(item: DeliveryItem): number {
-  // ✅ Use 'price' field which exists in backend response
-  return item.rate || item.price || 0;
-}
+    // ✅ Use 'price' field which exists in backend response
+    return item.rate || item.price || 0;
+  }
 
   getTaxableValue(item: DeliveryItem): number {
     return this.getItemRate(item) * item.quantity;
@@ -290,9 +290,9 @@ export class AddReturnProductMfgComponent implements OnInit {
   getItemDiscount(item: DeliveryItem): number {
     const totalAmount = this.orderData?.totalAmount || 0;
     const discountApplied = this.orderData?.discountApplied || 0;
-    
+
     if (totalAmount === 0) return 0;
-    
+
     const discountRate = discountApplied / totalAmount;
     return this.getTaxableValue(item) * discountRate;
   }
@@ -334,9 +334,9 @@ export class AddReturnProductMfgComponent implements OnInit {
   getReturnDiscount(): number {
     const totalAmount = this.orderData?.totalAmount || 0;
     const discountApplied = this.orderData?.discountApplied || 0;
-    
+
     if (totalAmount === 0) return 0;
-    
+
     const discountRate = discountApplied / totalAmount;
     return this.getTotalReturnTaxableValue() * discountRate;
   }
@@ -352,138 +352,146 @@ export class AddReturnProductMfgComponent implements OnInit {
   }
 
   async onAddToReturn(item: DeliveryItem) {
-    if (this.returnRequestGenerated === "true") {
-      Swal.fire({
-        title: 'Return Request Already Generated',
-        text: 'A return request has already been submitted for this order. No further returns can be added.',
-        icon: 'warning',
-        confirmButtonColor: '#ffc107',
-        confirmButtonText: 'OK'
-      });
-      return;
-    }
 
-    if (!this.isReturnPeriodValid) {
-      Swal.fire({
-        title: 'Return Period Expired',
-        html: `The return period of ${AddReturnProductMfgComponent.RETURN_PERIOD_DAYS} days has expired for this order.<br><small>You cannot add items for return.</small>`,
-        icon: 'error',
-        confirmButtonColor: '#dc3545',
-        confirmButtonText: 'OK'
-      });
-      return;
-    }
+      if (this.returnRequestGenerated === "true") {
+        Swal.fire({
+          title: 'Return Request Already Generated',
+          text: 'A return request has already been submitted for this order. No further returns can be added.',
+          icon: 'warning',
+          confirmButtonColor: '#ffc107',
+          confirmButtonText: 'OK'
+        });
+        return;
+      }
 
-    const existingReturnItem = this.returnedItems.find(returnItem => returnItem._id === item._id);
-    if (existingReturnItem) {
-      this.communicationService.customError1('This item is already added for return');
-      return;
-    }
+      if (!this.isReturnPeriodValid) {
+        Swal.fire({
+          title: 'Return Period Expired',
+          html: `The return period of ${AddReturnProductMfgComponent.RETURN_PERIOD_DAYS} days has expired for this order.<br><small>You cannot add items for return.</small>`,
+          icon: 'error',
+          confirmButtonColor: '#dc3545',
+          confirmButtonText: 'OK'
+        });
+        return;
+      }
 
-    const availableReturnQty = this.getAvailableReturnQuantity(item);
+      const existingReturnItem = this.returnedItems.find(returnItem => returnItem._id === item._id);
+      if (existingReturnItem) {
+        this.communicationService.customError1('This item is already added for return');
+        return;
+      }
 
-    if (availableReturnQty === 0) {
-      Swal.fire({
-        title: 'Cannot Return Item',
-        text: 'All items have already been returned for this product.',
-        icon: 'error',
-        confirmButtonColor: '#dc3545',
-        confirmButtonText: 'OK'
-      });
-      return;
-    }
+      const availableReturnQty = this.getAvailableReturnQuantity(item);
 
-    const { value: formValues } = await Swal.fire({
-      title: 'Add Item for Return',
-      html: `
-        <div class="swal-product-details">
-          <div class="product-info mb-3">
-            <img src="${item.colourImage}" alt="${item.colourName}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #ddd;">
-            <div class="product-text mt-2">
-              <strong>${item.designNumber}</strong><br>
-              <small>${item.gender} ${item.clothing || item.subCategory} - ${item.colourName} - ${item.size}</small><br>
-              <small>Ordered Quantity: ${item.quantity}</small><br>
-              <small>Already Returned: ${item.returnQuantity || 0}</small><br>
-              <small class="text-primary"><strong>Available for Return: ${availableReturnQty}</strong></small>
+      if (availableReturnQty === 0) {
+        Swal.fire({
+          title: 'Cannot Return Item',
+          text: 'All items have already been returned for this product.',
+          icon: 'error',
+          confirmButtonColor: '#dc3545',
+          confirmButtonText: 'OK'
+        });
+        return;
+      }
+
+      // Determine what to display: image or color square
+      const imageDisplay = item.colourImage && item.colourImage !== '' 
+        ? `<img src="${item.colourImage}" alt="${item.colourName}" 
+                style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #ddd;">`
+        : `<div style="width: 80px; height: 80px; background-color: ${item.colour || '#e0e0e0'}; 
+                border-radius: 8px; border: 2px solid #ddd; display: inline-block;"></div>`;
+
+      const { value: formValues } = await Swal.fire({
+        title: 'Add Item for Return',
+        html: `
+          <div class="swal-product-details">
+            <div class="product-info mb-3">
+              ${imageDisplay}
+              <div class="product-text mt-2">
+                <strong>${item.designNumber}</strong><br>
+                <small>${item.gender} ${item.clothing || item.subCategory} - ${item.colourName} - ${item.size}</small><br>
+                <small>Ordered Quantity: ${item.quantity}</small><br>
+                <small>Already Returned: ${item.returnQuantity || 0}</small><br>
+                <small class="text-primary"><strong>Available for Return: ${availableReturnQty}</strong></small>
+              </div>
+            </div>
+            
+            <div class="form-group mb-3">
+              <label for="swal-quantity" class="form-label">Return Quantity:</label>
+              <input type="number" id="swal-quantity" class="swal2-input" placeholder="Enter quantity" 
+                    min="1" max="${availableReturnQty}" value="1" style="margin: 0;">
+            </div>
+            
+            <div class="form-group mb-3">
+              <label for="swal-reason" class="form-label">Return Reason:</label>
+              <select id="swal-reason" class="swal2-select" style="margin: 0;">
+                ${this.returnReasons.map(reason => `<option value="${reason}">${reason}</option>`).join('')}
+              </select>
+            </div>
+            
+            <div class="form-group" id="custom-reason-group" style="display: none;">
+              <label for="swal-custom-reason" class="form-label">Please specify:</label>
+              <textarea id="swal-custom-reason" class="swal2-textarea" placeholder="Enter custom reason..." style="margin: 0;"></textarea>
             </div>
           </div>
-          
-          <div class="form-group mb-3">
-            <label for="swal-quantity" class="form-label">Return Quantity:</label>
-            <input type="number" id="swal-quantity" class="swal2-input" placeholder="Enter quantity" 
-                   min="1" max="${availableReturnQty}" value="1" style="margin: 0;">
-          </div>
-          
-          <div class="form-group mb-3">
-            <label for="swal-reason" class="form-label">Return Reason:</label>
-            <select id="swal-reason" class="swal2-select" style="margin: 0;">
-              ${this.returnReasons.map(reason => `<option value="${reason}">${reason}</option>`).join('')}
-            </select>
-          </div>
-          
-          <div class="form-group" id="custom-reason-group" style="display: none;">
-            <label for="swal-custom-reason" class="form-label">Please specify:</label>
-            <textarea id="swal-custom-reason" class="swal2-textarea" placeholder="Enter custom reason..." style="margin: 0;"></textarea>
-          </div>
-        </div>
-      `,
-      focusConfirm: false,
-      showCancelButton: true,
-      confirmButtonText: 'Add to Return',
-      cancelButtonText: 'Cancel',
-      confirmButtonColor: '#dc3545',
-      didOpen: () => {
-        const reasonSelect = document.getElementById('swal-reason') as HTMLSelectElement;
-        const customReasonGroup = document.getElementById('custom-reason-group') as HTMLDivElement;
-        
-        reasonSelect.addEventListener('change', () => {
-          if (reasonSelect.value === 'Other') {
-            customReasonGroup.style.display = 'block';
-          } else {
-            customReasonGroup.style.display = 'none';
+        `,
+        focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonText: 'Add to Return',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#dc3545',
+        didOpen: () => {
+          const reasonSelect = document.getElementById('swal-reason') as HTMLSelectElement;
+          const customReasonGroup = document.getElementById('custom-reason-group') as HTMLDivElement;
+
+          reasonSelect.addEventListener('change', () => {
+            if (reasonSelect.value === 'Other') {
+              customReasonGroup.style.display = 'block';
+            } else {
+              customReasonGroup.style.display = 'none';
+            }
+          });
+        },
+        preConfirm: () => {
+          const quantity = (document.getElementById('swal-quantity') as HTMLInputElement).value;
+          const reason = (document.getElementById('swal-reason') as HTMLSelectElement).value;
+          const customReason = (document.getElementById('swal-custom-reason') as HTMLTextAreaElement).value;
+
+          if (!quantity || parseInt(quantity) <= 0) {
+            Swal.showValidationMessage('Please enter a valid quantity');
+            return false;
           }
-        });
-      },
-      preConfirm: () => {
-        const quantity = (document.getElementById('swal-quantity') as HTMLInputElement).value;
-        const reason = (document.getElementById('swal-reason') as HTMLSelectElement).value;
-        const customReason = (document.getElementById('swal-custom-reason') as HTMLTextAreaElement).value;
 
-        if (!quantity || parseInt(quantity) <= 0) {
-          Swal.showValidationMessage('Please enter a valid quantity');
-          return false;
+          if (parseInt(quantity) > availableReturnQty) {
+            Swal.showValidationMessage(`Quantity cannot exceed available quantity (${availableReturnQty})`);
+            return false;
+          }
+
+          if (reason === 'Other' && (!customReason || customReason.trim() === '')) {
+            Swal.showValidationMessage('Please specify the custom reason');
+            return false;
+          }
+
+          return {
+            quantity: parseInt(quantity),
+            reason: reason,
+            customReason: reason === 'Other' ? customReason.trim() : ''
+          };
         }
+      });
 
-        if (parseInt(quantity) > availableReturnQty) {
-          Swal.showValidationMessage(`Quantity cannot exceed available quantity (${availableReturnQty})`);
-          return false;
-        }
-
-        if (reason === 'Other' && (!customReason || customReason.trim() === '')) {
-          Swal.showValidationMessage('Please specify the custom reason');
-          return false;
-        }
-
-        return {
-          quantity: parseInt(quantity),
-          reason: reason,
-          customReason: reason === 'Other' ? customReason.trim() : ''
+      if (formValues) {
+        const returnItem: DeliveryItem = {
+          ...item,
+          selectedReturnQuantity: formValues.quantity,
+          returnReason: formValues.reason,
+          customReason: formValues.customReason
         };
+
+        this.returnedItems.push(returnItem);
+        this.communicationService.customSuccess(`${formValues.quantity} units of ${item.designNumber} added for return`);
       }
-    });
-
-    if (formValues) {
-      const returnItem: DeliveryItem = {
-        ...item,
-        selectedReturnQuantity: formValues.quantity,
-        returnReason: formValues.reason,
-        customReason: formValues.customReason
-      };
-
-      this.returnedItems.push(returnItem);
-      this.communicationService.customSuccess(`${formValues.quantity} units of ${item.designNumber} added for return`);
     }
-  }
 
   removeFromReturn(item: DeliveryItem) {
     const index = this.returnedItems.findIndex(returnItem => returnItem._id === item._id);
@@ -528,7 +536,7 @@ export class AddReturnProductMfgComponent implements OnInit {
 
   private submitReturnRequest() {
     this.loading = true;
-    
+
     const returnData = {
       poId: this.orderData?.poId,
       poNumber: this.orderData?.poNumber,
@@ -537,7 +545,7 @@ export class AddReturnProductMfgComponent implements OnInit {
       invoiceDate: this.orderData?.invoiceDate,
       manufacturerEmail: this.orderData?.manufacturer.email,
       retailerEmail: this.orderData?.retailer.email,
-      
+
       deliveryItems: this.returnedItems.map(item => ({
         designNumber: item.designNumber,
         colour: item.colour,
@@ -560,7 +568,7 @@ export class AddReturnProductMfgComponent implements OnInit {
         manufacturerComments: '',
         returnStatus: 'requested'
       })),
-      
+
       manufacturer: this.orderData?.manufacturer,
       retailer: this.orderData?.retailer,
       totalQuantity: this.getTotalReturnQuantity(),
@@ -574,11 +582,11 @@ export class AddReturnProductMfgComponent implements OnInit {
     console.log('Return Request Data:', returnData);
 
     const url = 'return-r2m';
-    
+
     this.authService.post(url, returnData).subscribe(
       (res: any) => {
         this.loading = false;
-        
+
         // ✅ ONLY update return quantities, NO flag update
         this.updateReturnQuantities().then(() => {
           Swal.fire({
@@ -611,27 +619,27 @@ export class AddReturnProductMfgComponent implements OnInit {
     );
   }
 
- // ✅ FIXED: Send entire order data with updated returnQuantity in ONE call
+  // ✅ FIXED: Send entire order data with updated returnQuantity in ONE call
   private updateReturnQuantities(): Promise<any> {
     return new Promise((resolve, reject) => {
       // Update the deliveryItems array with new returnQuantity values
       const updatedDeliveryItems = this.orderData?.deliveryItems.map(item => {
         // Find if this item was returned in current request
         const returnedItem = this.returnedItems.find(ri => ri._id === item._id);
-        
+
         if (returnedItem) {
           // Update returnQuantity for returned items
           const currentReturnQuantity = item.returnQuantity || 0;
           const newReturnQuantity = currentReturnQuantity + (returnedItem.selectedReturnQuantity || 0);
-          
+
           console.log(`Updating ${item.designNumber}: ${currentReturnQuantity} + ${returnedItem.selectedReturnQuantity} = ${newReturnQuantity}`);
-          
+
           return {
             ...item,
             returnQuantity: newReturnQuantity
           };
         }
-        
+
         // Return unchanged for items not being returned
         return item;
       });
@@ -658,59 +666,59 @@ export class AddReturnProductMfgComponent implements OnInit {
     });
   }
 
-  
-//   private updateReturnQuantities(): Promise<any> {
-//   return new Promise((resolve, reject) => {
-//     // Update the deliveryItems array with new returnQuantity values
-//     const updatedDeliveryItems = this.orderData?.deliveryItems.map(item => {
-//       // Find if this item was returned in current request
-//       const returnedItem = this.returnedItems.find(ri => ri._id === item._id);
-      
-//       if (returnedItem) {
-//         // Get current returnQuantity from the item
-//         const currentReturnQuantity = item.returnQuantity || 0;
-//         const selectedReturnQuantity = returnedItem.selectedReturnQuantity || 0;
-//         const newReturnQuantity = currentReturnQuantity + selectedReturnQuantity;
-        
-//         // ✅ DETAILED LOGGING
-//         console.log('=== Return Quantity Calculation ===');
-//         console.log(`Item: ${item.designNumber} (${item._id})`);
-//         console.log(`Current returnQuantity from backend: ${currentReturnQuantity}`);
-//         console.log(`User selected return quantity: ${selectedReturnQuantity}`);
-//         console.log(`NEW returnQuantity (should be): ${currentReturnQuantity} + ${selectedReturnQuantity} = ${newReturnQuantity}`);
-//         console.log('===================================');
-        
-//         return {
-//           ...item,
-//           returnQuantity: newReturnQuantity
-//         };
-//       }
-      
-//       // Return unchanged for items not being returned
-//       return item;
-//     });
 
-//     // Send the complete order data with updated deliveryItems
-//     const updateUrl = `pi-manufacture-to-retailer/${this.orderId}`;
-//     const updateData = {
-//       ...this.responseData,
-//       deliveryItems: updatedDeliveryItems
-//     };
+  //   private updateReturnQuantities(): Promise<any> {
+  //   return new Promise((resolve, reject) => {
+  //     // Update the deliveryItems array with new returnQuantity values
+  //     const updatedDeliveryItems = this.orderData?.deliveryItems.map(item => {
+  //       // Find if this item was returned in current request
+  //       const returnedItem = this.returnedItems.find(ri => ri._id === item._id);
 
-//     console.log('📤 Sending update with deliveryItems:', JSON.stringify(updatedDeliveryItems, null, 2));
+  //       if (returnedItem) {
+  //         // Get current returnQuantity from the item
+  //         const currentReturnQuantity = item.returnQuantity || 0;
+  //         const selectedReturnQuantity = returnedItem.selectedReturnQuantity || 0;
+  //         const newReturnQuantity = currentReturnQuantity + selectedReturnQuantity;
 
-//     this.authService.patchpimage(updateUrl, updateData).subscribe(
-//       (res: any) => {
-//         console.log('✅ Backend response:', res);
-//         console.log('Return quantities updated successfully');
-//         resolve(res);
-//       },
-//       (error) => {
-//         console.error('❌ Error updating return quantities:', error);
-//         reject(error);
-//       }
-//     );
-//   });
-// }
+  //         // ✅ DETAILED LOGGING
+  //         console.log('=== Return Quantity Calculation ===');
+  //         console.log(`Item: ${item.designNumber} (${item._id})`);
+  //         console.log(`Current returnQuantity from backend: ${currentReturnQuantity}`);
+  //         console.log(`User selected return quantity: ${selectedReturnQuantity}`);
+  //         console.log(`NEW returnQuantity (should be): ${currentReturnQuantity} + ${selectedReturnQuantity} = ${newReturnQuantity}`);
+  //         console.log('===================================');
+
+  //         return {
+  //           ...item,
+  //           returnQuantity: newReturnQuantity
+  //         };
+  //       }
+
+  //       // Return unchanged for items not being returned
+  //       return item;
+  //     });
+
+  //     // Send the complete order data with updated deliveryItems
+  //     const updateUrl = `pi-manufacture-to-retailer/${this.orderId}`;
+  //     const updateData = {
+  //       ...this.responseData,
+  //       deliveryItems: updatedDeliveryItems
+  //     };
+
+  //     console.log('📤 Sending update with deliveryItems:', JSON.stringify(updatedDeliveryItems, null, 2));
+
+  //     this.authService.patchpimage(updateUrl, updateData).subscribe(
+  //       (res: any) => {
+  //         console.log('✅ Backend response:', res);
+  //         console.log('Return quantities updated successfully');
+  //         resolve(res);
+  //       },
+  //       (error) => {
+  //         console.error('❌ Error updating return quantities:', error);
+  //         reject(error);
+  //       }
+  //     );
+  //   });
+  // }
 
 }

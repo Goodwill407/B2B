@@ -116,6 +116,6 @@ export class RetCreditNoteListComponent implements OnInit {
 
   // UPDATED: Modified page title
   getPageTitle(): string {
-    return this.used ? 'Used Credit Notes for Retailer' : 'Available Credit Notes for Retailer';
+    return this.used ? 'Used Credit Notes for Retailer' : 'Credit Notes for Retailer';
   }
 }

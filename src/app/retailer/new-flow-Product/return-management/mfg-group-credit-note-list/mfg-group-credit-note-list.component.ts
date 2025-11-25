@@ -28,7 +28,7 @@ export class MfgGroupCreditNoteListComponent implements OnInit {
   firstAvailable: number = 0;
   totalAvailableResults: number = 0;
   
-  // Used Credit Notes
+  // Used Credit Notes (Wallet Data)
   usedData: any[] = [];
   firstUsed: number = 0;
   totalUsedResults: number = 0;
@@ -71,24 +71,25 @@ export class MfgGroupCreditNoteListComponent implements OnInit {
     );
   }
 
-  // Get Used Credit Notes (used=true)
+  // Get Wallet Usage Data (Credit Note Usage from Retailer's perspective)
   getUsedCreditNotes() {
     const retailerEmail = this.authService.currentUserValue.email;
     const page = Math.floor(this.firstUsed / this.limit) + 1;
     
-    const url = `m-r-credit-note/group?retailerEmail=${retailerEmail}&page=${page}&limit=${this.limit}&used=true`;
+    // Use r-to-m-wallet endpoint for retailer's wallet view with manufacturers
+    const url = `r-to-m-wallet?retailerEmail=${retailerEmail}&page=${page}&limit=${this.limit}`;
 
     this.authService.get(url).subscribe(
       (res: any) => {
-        if (res.success && res.result) {
-          this.usedData = res.result.data || [];
-          this.totalUsedResults = res.result.totalCount || 0;
-          console.log('Used Credit Notes:', this.usedData);
+        if (res && res.results) {
+          this.usedData = res.results || [];
+          this.totalUsedResults = res.totalResults || 0;
+          console.log('Wallet Data:', this.usedData);
         }
       },
       (error) => {
-        console.error('Error fetching used credit notes:', error);
-        this.communicationService.customError1('Failed to load used credit notes');
+        console.error('Error fetching wallet data:', error);
+        this.communicationService.customError1('Failed to load credit note usage data');
       }
     );
   }

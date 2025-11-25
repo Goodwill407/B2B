@@ -71,24 +71,24 @@ export class RetailerGroupCreditNoteListComponent implements OnInit {
     );
   }
 
-  // Get Used Credit Notes (used=true)
+  // Update the getUsedCreditNotes method to use the wallet endpoint
   getUsedCreditNotes() {
     const mfgEmail = this.authService.currentUserValue.email;
     const page = Math.floor(this.firstUsed / this.limit) + 1;
     
-    const url = `m-r-credit-note/group?manufacturerEmail=${mfgEmail}&page=${page}&limit=${this.limit}&used=true`;
+    const url = `m-to-r-wallet?manufacturerEmail=${mfgEmail}&page=${page}&limit=${this.limit}`;
 
     this.authService.get(url).subscribe(
       (res: any) => {
-        if (res.success && res.result) {
-          this.usedData = res.result.data || [];
-          this.totalUsedResults = res.result.totalCount || 0;
-          console.log('Used Credit Notes:', this.usedData);
+        if (res && res.results) {
+          this.usedData = res.results || [];
+          this.totalUsedResults = res.totalResults || 0;
+          console.log('Wallet Data:', this.usedData);
         }
       },
       (error) => {
-        console.error('Error fetching used credit notes:', error);
-        this.communicationService.customError1('Failed to load used credit notes');
+        console.error('Error fetching wallet data:', error);
+        this.communicationService.customError1('Failed to load credit note usage data');
       }
     );
   }

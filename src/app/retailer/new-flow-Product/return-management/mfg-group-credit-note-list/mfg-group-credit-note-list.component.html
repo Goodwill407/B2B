@@ -1,7 +1,7 @@
 <section class="content">
   <div class="content-block">
     <h4 class="mt-4">
-      <i class="bi bi-receipt-cutoff h3"></i> Grouped Credit Notes - By Manufacturer
+      <i class="bi bi-receipt-cutoff h3"></i> Credit Notes & Usage - By Manufacturer
     </h4>
     
     <div class="card mt-3 p-4">
@@ -59,8 +59,8 @@
           </div>
         </mat-tab>
 
-        <!-- USED TAB -->
-        <mat-tab label="Used">
+        <!-- USED TAB (WALLET VIEW) -->
+        <mat-tab label="Credit Note Usage">
           <div class="card mt-3 p-4">
             <div class="p-grid p-fluid">
               <div class="p-col-12 text-center">
@@ -68,22 +68,29 @@
                   <ng-template pTemplate="header">
                     <tr>
                       <th>Sr. No.</th>
-                      <th>Manufacturer Company Name</th>
-                      <th>Email</th>
-                      <th>Total Credit Note Used</th>
-                      <th>Total Amount</th>
-                      <th>View All</th>
+                      <th>Manufacturer Email</th>
+                      <th>Manufacturer Company</th>
+                      <th>Total Credited</th>
+                      <th>Total Debited</th>
+                      <th>Current Balance</th>
+                      <th>Currency</th>
+                      <th>View Details</th>
                     </tr>
                   </ng-template>
                   <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
                     <tr>
                       <td class="text-center">{{ firstUsed + rowIndex + 1 }}</td>
+                      <td class="text-center">{{ data.manufacturerEmail || 'N/A' }}</td>
                       <td class="text-center">{{ data.manufacturer?.companyName || 'N/A' }}</td>
-                      <td class="text-center">{{ data.manufacturer?.email || 'N/A' }}</td>
-                      <td class="text-center">{{ data.totalCreditNotes }}</td>
-                      <td class="text-center">₹{{ data.totalCreditAmount | number:'1.2-2' }}</td>
+                      <td class="text-center">₹{{ data.totalCredited | number:'1.2-2' }}</td>
+                      <td class="text-center">₹{{ data.totalDebited | number:'1.2-2' }}</td>
                       <td class="text-center">
-                        <button class="btn" [routerLink]="['/retailer/new/mfg-credit-note-list', data.groupKey]" [queryParams]="{used: true}">
+                        <strong class="text-success">₹{{ data.balance | number:'1.2-2' }}</strong>
+                      </td>
+                      <td class="text-center">{{ data.currency }}</td>
+                      <td class="text-center">
+                        <button class="btn" 
+                                [routerLink]="['/retailer/new/mfg-credit-note-usage-view', data.id]">
                           <i class="bi bi-eye h5"></i>
                         </button>
                       </td>
@@ -92,14 +99,14 @@
                 </p-table>
 
                 <div *ngIf="!usedData" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
-                  <p>Credit Note Data Not Found. [Server Error]</p>
+                  <p>Wallet Data Not Found. [Server Error]</p>
                 </div>
-                <div *ngIf="usedData.length == 0" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
-                  <p>No Used Credit Notes Found.</p>
+                <div *ngIf="usedData && usedData.length == 0" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
+                  <p>No Wallet Records Found.</p>
                 </div>
 
                 <p-paginator
-                  *ngIf="usedData.length > 0"
+                  *ngIf="usedData && usedData.length > 0"
                   (onPageChange)="onUsedPageChange($event)"
                   [first]="firstUsed"
                   [rows]="limit"

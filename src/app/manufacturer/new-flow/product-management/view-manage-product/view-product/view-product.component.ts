@@ -47,6 +47,7 @@ export class ViewProductComponent {
           brand: res.brand,
           designNumber: res.designNumber,
           clothingType: res.clothing,
+          productType: res.productType,
           subCategory: res.subCategory,
           gender: res.gender,
           FSIN: res.FSIN,

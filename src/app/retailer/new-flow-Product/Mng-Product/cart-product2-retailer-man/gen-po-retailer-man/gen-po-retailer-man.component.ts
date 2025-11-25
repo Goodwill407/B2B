@@ -317,13 +317,16 @@ export class GenPoRetailerManComponent {
     return this.isIntraState ? 15 : 14;
   }
 
- getGstAmounts(item: any) {
-  // Add null/undefined checks and default values
+getGstAmounts(item: any) {
   const quantity = Number(item.quantity) || 0;
   const rate = Number(item.price) || 0;
-  const gstRate = Number(item.hsnGst) || 0; // Default GST rate to 0 if not provided
+  const gstRate = Number(item.hsnGst) || 0;
   
-  const taxable = quantity * rate;
+  // ✅ Apply discount to rate BEFORE calculating taxable value
+  const discountPercent = Number(this.purchaseOrder.ProductDiscount) || 0;
+  const discountedRate = rate - (rate * discountPercent / 100);
+  
+  const taxable = quantity * discountedRate; // Use discounted rate
 
   let cgst = 0, sgst = 0, igst = 0;
   
@@ -337,6 +340,8 @@ export class GenPoRetailerManComponent {
   const totalWithGst = taxable + cgst + sgst + igst;
   
   return { 
+    originalRate: rate,
+    discountedRate: discountedRate,
     taxable: isNaN(taxable) ? 0 : taxable, 
     gstRate: isNaN(gstRate) ? 0 : gstRate, 
     cgst: isNaN(cgst) ? 0 : cgst, 
@@ -345,9 +350,6 @@ export class GenPoRetailerManComponent {
     totalWithGst: isNaN(totalWithGst) ? 0 : totalWithGst 
   };
 }
-
-
-
 
   calculateDiscountedTotal(subTotal: number): number {
     // Apply discount (for example, 2% in this case)
@@ -487,14 +489,25 @@ export class GenPoRetailerManComponent {
 
 
   get discountAmount(): number {
-    // Parse discount to number if it comes as string
-    const discountPercent = Number(this.purchaseOrder.ProductDiscount) || 0;
-    return (this.totalWithGSTBeforeDiscount * discountPercent) / 100;
+  // Now discount is already applied at line item level, so total discount is:
+  const totals = this.orderTotals;
+  const discountPercent = Number(this.purchaseOrder.ProductDiscount) || 0;
+  
+  // Calculate what the taxable would have been WITHOUT discount
+  let totalWithoutDiscount = 0;
+  for (const item of this.products) {
+    const quantity = Number(item.quantity) || 0;
+    const rate = Number(item.price) || 0;
+    totalWithoutDiscount += quantity * rate;
   }
+  
+  return (totalWithoutDiscount * discountPercent) / 100;
+}
 
-  get actualGrandTotal(): number {
-    return this.totalWithGSTBeforeDiscount - this.discountAmount;
-  }
+get actualGrandTotal(): number {
+  // Grand total is now just the total with GST (discount already applied)
+  return this.orderTotals.totalWithGST;
+}
 
   downloadPO() {
     const element = document.getElementById('purchase-order');

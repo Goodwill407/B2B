@@ -11,6 +11,7 @@ import autoTable from 'jspdf-autotable';
 import { Location } from '@angular/common';
 import { IndianCurrencyPipe } from 'app/custom.pipe';
 import { AmountInWordsPipe } from 'app/amount-in-words.pipe';
+import Swal from 'sweetalert2';
 
 // Add BankDetails interface
 interface BankDetails {
@@ -84,6 +85,9 @@ export class ConfirmedMtoPoMfgRetComponent implements OnInit {
 
   invoiceGenerated: boolean = false;
   generatedInvoiceId: any;
+
+  walletBalance: number = 0;
+  walletData: any = null;
 
   constructor(
     public authService: AuthService,
@@ -262,102 +266,347 @@ get totalGSTAmount(): number {
   return isNaN(total) ? 0 : total;
 }
 
-  // NEW METHOD: Generate Invoice (from GenRetailerOrderPoComponent)
   async generateInvoice() {
-    const invoicePayload = {
-      poId: this.poId,
-      poNumber: this.purchaseOrder.orderNumber,
-      invoiceNumber: `INV-${this.purchaseOrder.orderNumber}-${Date.now()}`,
-      invoiceDate: new Date().toISOString(),
-      statusAll: "created",
-      bankDetails: {
-        accountHolderName: this.manufacturerProfile.companyName,
-        accountNumber: this.bankDetails.accountNumber,
-        bankName: this.bankDetails.bankName,
-        branchName: this.bankDetails.branchName,
-        accountType: this.bankDetails.accountType,
-        ifscCode: this.bankDetails.ifscCode,
-        swiftCode: this.bankDetails.swiftCode,
-        upiId: this.bankDetails.upiId || "",
-        bankAddress: this.bankDetails.bankAddress
-      },
-      manufacturerEmail: this.manufacturerProfile.email,
-      retailerEmail: this.purchaseOrder.buyerEmail,
-      deliveryItems: this.purchaseOrder.products
-        .filter((item: any) => item.quantity > 0)
-        .map((item: any) => ({
-          designNumber: item.designNumber,
-          colour: item.colour,
-          colourName: item.colourName,
-          colourImage: item.colourImage,
-          size: item.size,
-          quantity: item.quantity,
-          returnQuantity: 0,
-          productType: item.productType,
-          gender: item.gender,
-          clothing: item.clothing,
-          brandName: item.brandName,
-          price: item.price, 
-          subCategory: item.clothing,
-          hsnCode: item.hsnCode,
-          hsnGst: item.hsnGst,
-          hsnDescription: `${item.gender}'s ${item.clothing}`,
-          status: "pending"
-        })),
-      manufacturer: this.manufacturerProfile,
-      retailer: {
-        email: this.purchaseOrder.buyerEmail,
-        fullName: this.purchaseOrder.buyerName,
-        companyName: this.purchaseOrder.buyerName,
-        address: this.purchaseOrder.buyerAddress,
-        state: this.responseData?.retailer?.state || "",
-        country: "India",
-        pinCode: this.responseData?.retailer?.pinCode || "",
-        mobNumber: this.purchaseOrder.buyerPhone,
-        GSTIN: this.purchaseOrder.buyerGSTIN,
-        logo: this.purchaseOrder.logoUrl,
-        productDiscount: this.purchaseOrder.ProductDiscount.toString(),
-        category: "Retail"
-      },
-      totalQuantity: this.purchaseOrder.products.reduce((sum: number, item: any) => sum + item.quantity, 0),
-      transportDetails: this.purchaseOrder.transportDetails,
-      totalAmount: this.orderTotals.totalWithGST,
-      discountApplied: this.discountAmount,  
-      finalAmount: this.actualGrandTotal,
-    
-      // totalAmount: this.orderTotals.totalWithGST,  // ✅ Amount INCLUDING all GST
-      // discountApplied: (this.orderTotals.totalWithGST * this.purchaseOrder.ProductDiscount) / 100,  // ✅ Discount on total with tax
-      // finalAmount: this.orderTotals.totalWithGST - ((this.orderTotals.totalWithGST * this.purchaseOrder.ProductDiscount) / 100),  // ✅ OR use this.actualGrandTotal
-      returnRequestGenerated:"false",
-    };
+    try {
+      // Step 1: Fetch wallet balance
+      const walletResponse = await this.fetchWalletBalance();
+      console.log('🔍 Wallet API Response:', walletResponse);
 
-   try {
-    // Generate Invoice
+      // Step 2: Check if wallet has balance
+      if (walletResponse && walletResponse.balance > 0) {
+        // Show SweetAlert2 popup for credit application
+        const appliedCredit = await this.showCreditApplicationPopup(walletResponse);
+        
+        if (appliedCredit !== null) {
+          // User applied credit, proceed with invoice generation
+          await this.createInvoiceWithCredit(appliedCredit);
+        }
+        // If null, user cancelled - do nothing
+      } else {
+        // No wallet balance, generate invoice normally
+        console.log('ℹ️ No wallet balance available, generating invoice without credit');
+        await this.createInvoiceWithCredit(0);
+      }
+    } catch (error) {
+      console.error('❌ Invoice generation failed:', error);
+      this.communicationService.customError1('Invoice generation failed');
+    }
+  }
+
+ /**
+ * 🆕 Fetch Wallet Balance - CORRECTED for paginated response
+ */
+async fetchWalletBalance(): Promise<any> {
+  const mfgEmail = this.manufacturerProfile.email;
+  const retEmail = this.purchaseOrder.buyerEmail;
+  
+  const url = `m-to-r-wallet?manufacturerEmail=${mfgEmail}&retailerEmail=${retEmail}`;
+  
+  try {
+    const response = await this.authService.get(url).toPromise();
+    console.log('🔍 Full Wallet API Response:', response);
+    
+    // ✅ FIX: Access first result from paginated response
+    if (response && response.results && response.results.length > 0) {
+      const walletData = response.results[0];
+      this.walletData = walletData;
+      this.walletBalance = walletData.balance || 0;
+      
+      console.log('💰 Wallet Balance:', this.walletBalance);
+      console.log('📊 Wallet Data:', walletData);
+      
+      return walletData;
+    } else {
+      console.log('⚠️ No wallet found in response');
+      return null;
+    }
+  } catch (error) {
+    console.error('❌ Wallet API error:', error);
+    return null;
+  }
+}
+
+/**
+ * 🆕 Debit Wallet After Invoice Creation
+ */
+async debitWalletBalance(walletId: string, amount: number, invoiceNumber: number): Promise<void> {
+  if (amount <= 0) {
+    console.log('ℹ️ No credit applied, skipping wallet debit');
+    return;
+  }
+
+  const debitPayload = {
+    amount: amount,
+    debitInvoiceNumber: invoiceNumber,
+    description: `₹${amount} adjusted against Invoice #${invoiceNumber}`
+  };
+
+  console.log('💳 Debiting wallet:', debitPayload);
+
+  try {
+    const url = `m-to-r-wallet/debit/${walletId}`;
+    const response = await this.authService.patchpimage(url, debitPayload).toPromise();
+    console.log('✅ Wallet debited successfully:', response);
+  } catch (error) {
+    console.error('❌ Wallet debit failed:', error);
+    // Don't throw error - invoice is already created
+    this.communicationService.customError('Invoice created but wallet update failed');
+  }
+}
+
+/**
+ * 🆕 Show SweetAlert2 Popup for Credit Application
+ */
+async showCreditApplicationPopup(walletData: any): Promise<number | null> {
+  const maxCredit = Math.min(walletData.balance, this.actualGrandTotal);
+  
+  const result = await Swal.fire({
+    title: 'Apply Wallet Credit',
+    html: `
+      <div style="text-align: left; padding: 10px;">
+        <div style="background: #e8f5e9; padding: 12px; border-radius: 6px; margin-bottom: 15px;">
+          <strong style="color: #2e7d32;">💰 Available Wallet Balance:</strong>
+          <span style="font-size: 20px; color: #1b5e20; font-weight: bold; float: right;">
+            ₹ ${walletData.balance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+        </div>
+        
+        <div style="background: #fff3e0; padding: 12px; border-radius: 6px; margin-bottom: 15px;">
+          <strong style="color: #e65100;">📄 Invoice Total Amount:</strong>
+          <span style="font-size: 20px; color: #bf360c; font-weight: bold; float: right;">
+            ₹ ${this.actualGrandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+        </div>
+        
+        <div style="margin: 20px 0;">
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">
+            Enter Credit Amount to Apply:
+          </label>
+          <input 
+            id="creditAmountInput" 
+            type="number" 
+            class="swal2-input" 
+            placeholder="Enter amount (max: ${maxCredit})" 
+            min="0" 
+            max="${maxCredit}"
+            step="0.01"
+            style="width: 90%; padding: 10px; font-size: 16px; margin: 0;"
+          />
+          <small style="color: #666; display: block; margin-top: 5px;">
+            Maximum applicable: ₹ ${maxCredit.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </small>
+        </div>
+        
+        <hr style="margin: 20px 0; border: none; border-top: 2px solid #ddd;">
+        
+        <div id="finalPayableSection" style="background: #e3f2fd; padding: 12px; border-radius: 6px; display: none;">
+          <strong style="color: #0277bd;">💳 Final Payable Amount:</strong>
+          <span id="finalPayableAmount" style="font-size: 22px; color: #01579b; font-weight: bold; float: right;">
+            ₹ ${this.actualGrandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+        </div>
+      </div>
+    `,
+    icon: 'info',
+    showCancelButton: true,
+    showCloseButton: true,  // ✅ ADDED: Shows X button in top-right
+    confirmButtonText: 'Apply & Generate Invoice',
+    cancelButtonText: 'Skip & Generate',
+    confirmButtonColor: '#28a745',
+    cancelButtonColor: '#6c757d',
+    allowOutsideClick: true,  // ✅ Prevents closing by clicking outside
+    allowEscapeKey: true,      // ✅ Allows ESC key to close
+    didOpen: () => {
+      const input = document.getElementById('creditAmountInput') as HTMLInputElement;
+      const finalSection = document.getElementById('finalPayableSection') as HTMLElement;
+      const finalAmount = document.getElementById('finalPayableAmount') as HTMLElement;
+      
+      // Real-time calculation on input
+      input?.addEventListener('input', () => {
+        const value = parseFloat(input.value) || 0;
+        const remaining = this.actualGrandTotal - value;
+        
+        if (value > 0) {
+          finalSection.style.display = 'block';
+          finalAmount.textContent = `₹ ${remaining.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        } else {
+          finalSection.style.display = 'none';
+        }
+      });
+    },
+    preConfirm: () => {
+      const input = document.getElementById('creditAmountInput') as HTMLInputElement;
+      const value = parseFloat(input.value);
+      
+      // Validation
+      if (isNaN(value) || value < 0) {
+        Swal.showValidationMessage('Please enter a valid amount');
+        return false;
+      }
+      
+      if (value > walletData.balance) {
+        Swal.showValidationMessage(`Amount cannot exceed wallet balance (₹${walletData.balance})`);
+        return false;
+      }
+      
+      if (value > this.actualGrandTotal) {
+        Swal.showValidationMessage(`Amount cannot exceed invoice total (₹${this.actualGrandTotal})`);
+        return false;
+      }
+      
+      return value;
+    }
+  });
+
+  // ✅ HANDLE ALL POSSIBLE CLOSE ACTIONS
+  if (result.isConfirmed) {
+    // User clicked "Apply & Generate Invoice"
+    const appliedAmount = result.value || 0;
+    console.log('✅ User applied credit amount:', appliedAmount);
+    return appliedAmount;
+  } else if (result.dismiss === Swal.DismissReason.cancel) {
+    // User clicked "Skip & Generate"
+    console.log('ℹ️ User skipped credit application, generating without credit');
+    return 0;
+  } else if (result.dismiss === Swal.DismissReason.close) {
+    // ✅ User clicked X button (close icon)
+    console.log('❌ User closed popup via X button - No action taken');
+    return null;
+  } else if (result.dismiss === Swal.DismissReason.esc) {
+    // ✅ User pressed ESC key
+    console.log('❌ User pressed ESC - No action taken');
+    return null;
+  } else {
+    // Any other dismiss reason (backdrop click, etc.)
+    console.log('❌ Popup dismissed - No action taken');
+    return null;
+  }
+}
+
+/**
+ * 🆕 Create Invoice with Credit Applied - UPDATED with Wallet Debit
+ */
+async createInvoiceWithCredit(creditAmount: number) {
+  const finalPayable = this.actualGrandTotal - creditAmount;
+  
+  console.log('📊 Invoice Calculation:');
+  console.log('  • Total Amount (with GST):', this.orderTotals.totalWithGST);
+  console.log('  • Discount Applied:', this.discountAmount);
+  console.log('  • Final Amount (after discount):', this.actualGrandTotal);
+  console.log('  • Credit Applied:', creditAmount);
+  console.log('  • Final Payable:', finalPayable);
+
+  const invoicePayload = {
+    poId: this.poId,
+    poNumber: this.purchaseOrder.orderNumber,
+    invoiceNumber: `INV-${this.purchaseOrder.orderNumber}-${Date.now()}`,
+    invoiceDate: new Date().toISOString(),
+    invoiceRecievedDate: null,
+    statusAll: "created",
+    bankDetails: {
+      accountHolderName: this.manufacturerProfile.companyName,
+      accountNumber: this.bankDetails.accountNumber,
+      bankName: this.bankDetails.bankName,
+      branchName: this.bankDetails.branchName,
+      accountType: this.bankDetails.accountType,
+      ifscCode: this.bankDetails.ifscCode,
+      swiftCode: this.bankDetails.swiftCode,
+      upiId: this.bankDetails.upiId || "",
+      bankAddress: this.bankDetails.bankAddress
+    },
+    manufacturerEmail: this.manufacturerProfile.email,
+    retailerEmail: this.purchaseOrder.buyerEmail,
+    deliveryItems: this.purchaseOrder.products
+      .filter((item: any) => item.quantity > 0)
+      .map((item: any) => ({
+        designNumber: item.designNumber,
+        colour: item.colour,
+        colourName: item.colourName,
+        colourImage: item.colourImage,
+        size: item.size,
+        quantity: item.quantity,
+        price: item.price,
+        productType: item.productType,
+        gender: item.gender,
+        clothing: item.clothing,
+        brandName: item.brandName,
+        subCategory: item.clothing,
+        hsnCode: item.hsnCode,
+        hsnGst: item.hsnGst,
+        hsnDescription: `${item.gender}'s ${item.clothing}`,
+        status: "pending"
+      })),
+    manufacturer: this.manufacturerProfile,
+    retailer: {
+      email: this.purchaseOrder.buyerEmail,
+      fullName: this.purchaseOrder.buyerName,
+      companyName: this.purchaseOrder.buyerName,
+      address: this.purchaseOrder.buyerAddress,
+      state: this.responseData?.retailer?.state || "",
+      country: "India",
+      pinCode: this.responseData?.retailer?.pinCode || "",
+      mobNumber: this.purchaseOrder.buyerPhone,
+      GSTIN: this.purchaseOrder.buyerGSTIN,
+      logo: this.purchaseOrder.logoUrl,
+      productDiscount: this.purchaseOrder.ProductDiscount.toString(),
+      category: "Retail"
+    },
+    totalQuantity: this.purchaseOrder.products.reduce((sum: number, item: any) => sum + item.quantity, 0),
+    transportDetails: this.purchaseOrder.transportDetails,
+    
+    // ✅ CORRECTED CALCULATIONS
+    totalAmount: this.orderTotals.totalWithGST,
+    discountApplied: this.discountAmount,
+    finalAmount: this.actualGrandTotal,
+    
+    // ✅ CREDIT/WALLET FIELDS
+    totalCreditNoteAmountUsed: creditAmount,
+    finalAmountPayable: finalPayable,
+    
+    returnRequestGenerated: "false",
+  };
+
+  console.log('📤 Invoice Payload:', invoicePayload);
+
+  try {
+    // Step 1: Generate Invoice
     const invoiceResponse = await this.authService.post('pi-manufacture-to-retailer', invoicePayload).toPromise();
+    const invoiceId = invoiceResponse.id;
+    const invoiceNumber = invoiceResponse.invoiceNumber || this.purchaseOrder.orderNumber;
     
-    // Capture invoice ID from response
-    const invoiceId = invoiceResponse.id; //|| invoiceResponse._id || invoiceResponse.invoiceId;
+    console.log('✅ Invoice created successfully:', invoiceResponse);
+    console.log('📄 Invoice ID:', invoiceId);
+    console.log('🔢 Invoice Number:', invoiceNumber);
     
-    // Update PO with both invoiceGenerated flag AND invoiceId
+    // Step 2: Debit Wallet (if credit was applied)
+    if (creditAmount > 0 && this.walletData && this.walletData.id) {
+      console.log('💳 Processing wallet debit...');
+      await this.debitWalletBalance(this.walletData.id, creditAmount, invoiceNumber);
+    }
+    
+    // Step 3: Update PO
     await this.authService.patchpimage(`po-retailer-to-manufacture/${this.poId}`, { 
       invoiceGenerated: true,
-      invoiceId: invoiceId  // Store the invoice ID in PO record
+      invoiceId: invoiceId
     }).toPromise();
     
-    this.invoiceGenerated = true;
+    console.log('✅ PO updated successfully');
     
-    // Store invoice ID in component for immediate use
+    this.invoiceGenerated = true;
     this.generatedInvoiceId = invoiceId;
     
     this.communicationService.customSuccess('Invoice generated successfully!');
     
+    // Optional: Navigate to invoice view
+    // this.router.navigate(['/mnf/new/mfg-proforma-invoice-view', invoiceId]);
+    
   } catch (error) {
-    console.error('Invoice generation or PO update failed:', error);
+    console.error('❌ Invoice generation failed:', error);
     this.communicationService.customError1('Invoice generation failed');
+    throw error;
   }
+}
 
-
-  }
 
   viewInvoice() {
   // Navigate to invoice view page

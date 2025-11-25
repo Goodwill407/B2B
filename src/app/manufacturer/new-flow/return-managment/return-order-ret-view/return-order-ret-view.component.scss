@@ -39,7 +39,6 @@
         margin-bottom: 25px;
 
         h1 {
-          // color: #dc3545;
           font-size: 2.2rem;
           font-weight: 700;
           margin: 0;
@@ -69,12 +68,10 @@
         }
 
         h5 {
-          // color: #002080;
           font-weight: 600;
           margin-bottom: 15px;
           
           u {
-            // text-decoration-color: #002080;
             text-underline-offset: 3px;
           }
         }
@@ -154,7 +151,6 @@
 
                 &.return-row {
                   background: rgba(220, 53, 69, 0.05) !important;
-                  // border-left: 4px solid #dc3545;
                 }
               }
 
@@ -225,7 +221,7 @@
             }
           }
 
-          // Expansion button - styled to match your design
+          // Expansion button
           .expansion-btn {
             background: none;
             border: none;
@@ -251,51 +247,72 @@
             }
           }
 
-          // Expansion row styling
+          // NEW: Expansion row styling - Fixed alignment
           .expansion-cell {
             background: #f8f9fc !important;
             border-left: 4px solid #007bff !important;
             padding: 0 !important;
           }
 
-          .return-reason-section {
-            padding: 15px 20px;
+          .expansion-content {
+            padding: 12px 20px;
+          }
+
+          .expansion-row {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 8px;
             
-            .reason-badge-container {
-              display: flex;
-              align-items: center;
-              gap: 10px;
-              flex-wrap: wrap;
-              
-              .reason-label {
-                font-weight: 600;
-                color: #3a3b45;
-                font-size: 0.9rem;
-              }
-              
-              .badge {
-                font-size: 0.8rem;
-                padding: 6px 12px;
-              }
-              
-              .other-reason {
-                color: #6c757d;
-                font-style: italic;
-                font-size: 0.85rem;
-                margin-left: 10px;
-                
-                strong {
-                  color: #495057;
-                  font-style: normal;
-                }
-              }
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+
+          .expansion-label {
+            font-weight: 600;
+            color: #3a3b45;
+            font-size: 0.85rem;
+            min-width: 140px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            padding-top: 2px;
+            
+            .bi {
+              font-size: 0.9rem;
+            }
+          }
+
+          .expansion-value {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            color: #495057;
+            font-size: 0.85rem;
+            text-align: left;
+            line-height: 1.5;
+            
+            .text-dark {
+              color: #212529 !important;
+              font-weight: 400;
+            }
+            
+            .text-muted {
+              color: #6c757d !important;
+            }
+            
+            .badge {
+              font-size: 0.75rem;
+              padding: 4px 10px;
+              line-height: 1.2;
             }
           }
         }
       }
     }
 
-    // Compact Return Order Remarks Styling - NEW
+    // Action options styling
     .action-options {
       .action-option-compact {
         display: block;
@@ -471,6 +488,16 @@
           font-size: 0.9rem;
         }
       }
+
+      // Mobile adjustments for expansion
+      .expansion-label {
+        min-width: 120px !important;
+        font-size: 0.8rem !important;
+      }
+
+      .expansion-value {
+        font-size: 0.8rem !important;
+      }
     }
 
     @media (max-width: 576px) {
@@ -499,6 +526,17 @@
           font-size: 0.9rem;
         }
       }
+
+      .expansion-row {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 4px;
+      }
+
+      .expansion-label {
+        min-width: auto !important;
+        margin-bottom: 4px;
+      }
     }
   }
 }
@@ -510,7 +548,7 @@
   100% { transform: scale(1); }
 }
 
-// Fade in animation for credit amount section
+// Fade in animation
 @keyframes fadeInDown {
   0% {
     opacity: 0;
@@ -534,6 +572,7 @@
   }
 }
 
+// Color preview
 .color-preview {
   width: 50px;
   height: 50px;
@@ -543,10 +582,24 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+// Item image
 .item-image {
   width: 50px;
   height: 50px;
   object-fit: cover;
   border-radius: 6px;
   border: 1px solid #dee2e6;
+}
+
+// SweetAlert2 customization
+::ng-deep .swal-wide {
+  width: 600px !important;
+  max-width: 90% !important;
+}
+
+::ng-deep .swal2-input,
+::ng-deep .swal2-textarea {
+  margin: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
 }

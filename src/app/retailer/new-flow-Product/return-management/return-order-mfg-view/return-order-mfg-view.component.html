@@ -86,6 +86,7 @@
         <th>Rate (₹)</th>
         <th>Original Qty</th>
         <th>Return Qty</th>
+        <th>Accepted Qty</th>
         <th>Taxable Value (₹)</th>
         <th>GST (%)</th>
         <th>Final Amount (₹)</th>
@@ -133,6 +134,7 @@
         <td>{{ getItemRate(item) | number:'1.2-2' }}</td>
         <td>{{ item.orderQuantity }}</td>
         <td class="fw-bold">{{ item.returnQuantity }}</td>
+        <td class="fw-bold">{{ item.acceptedQuantity }}</td>
         <td>{{ getReturnTaxableValue(item) | number:'1.2-2' }}</td>
         <td>{{ item.hsnGst || 0 }}%</td>
         <td>
@@ -148,32 +150,48 @@
     </ng-template>
 
     <ng-template pTemplate="rowexpansion" let-item>
-            <tr>
-              <td colspan="16" class="expansion-cell">
-                <div class="return-reason-section">
-                  <div class="reason-badge-container">
-                    <span class="reason-label">Return Reason:</span>
-                    <span class="badge bg-info">{{ item.returnReason }}</span>
-                    <span *ngIf="item.returnReason === 'Other' && item.otherReturnReason" 
-                          class="other-reason">
-                      <strong>Other:</strong> {{ item.otherReturnReason }}
-                    </span>
-                  </div>
-                  
-                  <!-- Display manufacturer comments if they exist -->
-                  <div *ngIf="item.manufacturerComments" class="mt-3 p-3 bg-light border-start border-danger border-4">
-                    <h6 class="text-danger mb-2">
-                      <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                      Manufacturer Comments:
-                    </h6>
-                    <p class="mb-0 text-muted">{{ item.manufacturerComments }}</p>
-                    <!-- <small class="text-muted">Status: 
-                      <span class="badge bg-danger">{{ item.returnStatus }}</span>
-                    </small> -->
-                  </div>
-                </div>
-              </td>
-            </tr>
+      <tr>
+        <td colspan="16" class="expansion-cell p-2">
+          <div class="expansion-content">
+            <!-- Return Reason -->
+            <div class="expansion-row">
+              <span class="expansion-label">Return Reason:</span>
+              <div class="expansion-value">
+                <span class="badge bg-info">{{ item.returnReason }}</span>
+                <span *ngIf="item.returnReason === 'Other' && item.otherReturnReason" 
+                      class="text-muted ms-2 small">
+                  ({{ item.otherReturnReason }})
+                </span>
+              </div>
+            </div>
+            
+            <!-- Accepted Quantity -->
+            <div *ngIf="item.acceptedQuantity !== undefined" class="expansion-row">
+              <span class="expansion-label">
+                <i class="bi bi-box-seam-fill text-success me-1"></i>Accepted Qty:
+              </span>
+              <div class="expansion-value">
+                <span class="badge bg-success me-1">{{ item.acceptedQuantity }}</span>
+                <span class="text-muted">/ {{ item.returnQuantity }} requested</span>
+                <span *ngIf="item.acceptedQuantity < item.returnQuantity" 
+                      class="badge bg-warning text-dark ms-2" style="font-size: 0.7rem;">
+                  PARTIALLY ACCEPTED
+                </span>
+              </div>
+            </div>
+
+            <!-- Manufacturer Comments -->
+            <div *ngIf="item.manufacturerComments" class="expansion-row">
+              <span class="expansion-label">
+                <i class="bi bi-chat-left-text-fill text-primary me-1"></i>Mfg. Comments:
+              </span>
+              <div class="expansion-value">
+                <span class="text-dark">{{ item.manufacturerComments }}</span>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
     </ng-template>
 
     <ng-template pTemplate="footer">
@@ -207,31 +225,31 @@
 </section>
 
      <!-- Return Summary -->
-<div class="border rounded mt-3 p-3">
-  <h5 class="mb-2"><u>Return Summary:</u></h5>
-  <div class="row">
-    <div class="col-md-4">
-      <p class="mb-1"><strong>PO Number:</strong> {{ returnOrderData?.poNumber }}</p>
+    <div class="border rounded mt-3 p-3">
+      <h5 class="mb-2"><u>Return Summary:</u></h5>
+      <div class="row">
+        <div class="col-md-4">
+          <p class="mb-1"><strong>PO Number:</strong> {{ returnOrderData?.poNumber }}</p>
+        </div>
+        <div class="col-md-4">
+          <p class="mb-1"><strong>Invoice Number:</strong> {{ returnOrderData?.invoiceNumber }}</p>
+        </div>
+        <div class="col-md-4">
+          <p class="mb-1"><strong>Invoice Date:</strong> {{ returnOrderData?.invoiceDate | date:'dd/MM/yyyy' }}</p>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-md-4">
+          <p class="mb-1"><strong>Total Amount:</strong> ₹{{ returnOrderData?.totalAmount | number:'1.2-2' }}</p>
+        </div>
+        <div class="col-md-4">
+          <p class="mb-1"><strong>Credit-note Amount:</strong> ₹{{ returnOrderData?.finalAmount | number:'1.2-2' }}</p>
+        </div>
+        <div class="col-md-4">
+          <p class="mb-1"><strong>Items Returned:</strong> {{ getTotalReturnQuantity() }} items</p>
+        </div>
+      </div>
     </div>
-    <div class="col-md-4">
-      <p class="mb-1"><strong>Invoice Number:</strong> {{ returnOrderData?.invoiceNumber }}</p>
-    </div>
-    <div class="col-md-4">
-      <p class="mb-1"><strong>Invoice Date:</strong> {{ returnOrderData?.invoiceDate | date:'dd/MM/yyyy' }}</p>
-    </div>
-  </div>
-  <div class="row mt-2">
-    <div class="col-md-4">
-      <p class="mb-1"><strong>Total Amount:</strong> ₹{{ returnOrderData?.totalAmount | number:'1.2-2' }}</p>
-    </div>
-    <div class="col-md-4">
-      <p class="mb-1"><strong>Final Amount:</strong> ₹{{ returnOrderData?.finalAmount | number:'1.2-2' }}</p>
-    </div>
-    <div class="col-md-4">
-      <p class="mb-1"><strong>Items Returned:</strong> {{ getTotalReturnQuantity() }} items</p>
-    </div>
-  </div>
-</div>
 
 
       <!-- Transport Details -->

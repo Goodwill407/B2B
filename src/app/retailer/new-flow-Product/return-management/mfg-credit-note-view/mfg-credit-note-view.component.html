@@ -165,21 +165,49 @@
         </ng-template>
 
         <ng-template pTemplate="rowexpansion" let-item>
-          <tr>
-            <td colspan="16" class="expansion-cell">
-              <div class="return-reason-section">
-                <div class="reason-badge-container">
-                  <span class="reason-label">Return Reason:</span>
-                  <span class="badge bg-info">{{ item.returnReason }}</span>
-                  <span *ngIf="item.returnReason === 'Other' && item.otherReturnReason" 
-                        class="other-reason">
-                    <strong>Other:</strong> {{ item.otherReturnReason }}
-                  </span>
+            <tr>
+              <td colspan="16" class="expansion-cell p-2">
+                <div class="expansion-content">
+                  <!-- Return Reason -->
+                  <div class="expansion-row">
+                    <span class="expansion-label">Return Reason:</span>
+                    <div class="expansion-value">
+                      <span class="badge bg-info">{{ item.returnReason }}</span>
+                      <span *ngIf="item.returnReason === 'Other' && item.otherReturnReason" 
+                            class="text-muted ms-2 small">
+                        ({{ item.otherReturnReason }})
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <!-- Accepted Quantity -->
+                  <div *ngIf="item.acceptedQuantity !== undefined" class="expansion-row">
+                    <span class="expansion-label">
+                      <i class="bi bi-box-seam-fill text-success me-1"></i>Accepted Qty:
+                    </span>
+                    <div class="expansion-value">
+                      <span class="badge bg-success me-1">{{ item.acceptedQuantity }}</span>
+                      <span class="text-muted">/ {{ item.returnQuantity }} requested</span>
+                      <span *ngIf="item.acceptedQuantity < item.returnQuantity" 
+                            class="badge bg-warning text-dark ms-2" style="font-size: 0.7rem;">
+                        PARTIALLY ACCEPTED
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Manufacturer Comments -->
+                  <div *ngIf="item.manufacturerComments" class="expansion-row">
+                    <span class="expansion-label">
+                      <i class="bi bi-chat-left-text-fill text-primary me-1"></i>Mfg. Comments:
+                    </span>
+                    <div class="expansion-value">
+                      <span class="text-dark">{{ item.manufacturerComments }}</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-        </ng-template>
+              </td>
+            </tr>
+          </ng-template>
 
         <ng-template pTemplate="footer">
           <tr class="text-center" style="background: #f0f6f9; font-weight: bold;">
