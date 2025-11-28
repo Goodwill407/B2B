@@ -77,7 +77,7 @@ export class MfgGroupCreditNoteListComponent implements OnInit {
     const page = Math.floor(this.firstUsed / this.limit) + 1;
     
     // Use r-to-m-wallet endpoint for retailer's wallet view with manufacturers
-    const url = `r-to-m-wallet?retailerEmail=${retailerEmail}&page=${page}&limit=${this.limit}`;
+    const url = `/m-to-r-wallet?retailerEmail=${retailerEmail}&page=${page}&limit=${this.limit}`;
 
     this.authService.get(url).subscribe(
       (res: any) => {

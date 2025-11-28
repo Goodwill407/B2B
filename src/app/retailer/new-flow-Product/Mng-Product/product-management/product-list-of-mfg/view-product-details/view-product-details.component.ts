@@ -1,4 +1,4 @@
-import { CommonModule, Location, NgFor, NgIf } from '@angular/common';
+import { CommonModule, Location, NgFor, NgIf, TitleCasePipe } from '@angular/common';
 import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,7 +15,8 @@ import { ViewportScroller } from '@angular/common';
     CommonModule,
     NgIf, NgFor,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TitleCasePipe
   ],
   templateUrl: './view-product-details.component.html',
   styleUrl: './view-product-details.component.scss'
@@ -103,6 +104,8 @@ export class ViewProductDetailsComponent {
           subCategory: res.subCategory,
           gender: res.gender,
           FSIN: res.FSIN,
+          hsnCode: res.hsnCode,
+          hsnGst: res.hsnGst,
           title: res.productTitle,
           description: res.productDescription,
           material: res.material,

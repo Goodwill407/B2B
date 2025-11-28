@@ -1,4 +1,4 @@
-import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { CommonModule, NgFor, NgIf, TitleCasePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Location } from '@angular/common';
@@ -11,7 +11,8 @@ import { AuthService, CommunicationService } from '@core';
   imports: [
     CommonModule,
     NgIf, NgFor,
-    FormsModule
+    FormsModule,
+    TitleCasePipe
   ],
   templateUrl: './view-wholeseler-product.component.html',
   styleUrl: './view-wholeseler-product.component.scss'
@@ -65,6 +66,10 @@ export class ViewWholeselerProductComponent {
           specialFeatures: res.specialFeature.join(', '),
           careInstructions: res.careInstructions,
           sizes: res.sizes,
+          productType: res.productType,
+          FSIN: res.FSIN,
+          hsnGst: res.hsnGst,
+          hsnCode: res.hsnCode,
           colours: res.colourCollections.map((colour: any) => ({
             name: colour.colourName,
             hex: colour.colour,

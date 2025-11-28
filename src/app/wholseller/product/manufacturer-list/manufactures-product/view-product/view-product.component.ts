@@ -1,4 +1,4 @@
-import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { CommonModule, NgFor, NgIf, TitleCasePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,7 +10,8 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    TitleCasePipe
   ],
   templateUrl: './view-product.component.html',
   styleUrls: ['./view-product.component.scss']
@@ -49,6 +50,10 @@ export class ViewProductComponent {
           designNumber: res.designNumber,
           clothingType: res.clothing,
           subCategory: res.subCategory,
+          productType: res.productType,
+          hsnGst: res.hsnGst,
+          hsnCode: res.hsnCode,
+          FSIN: res.FSIN,
           gender: res.gender,
           title: res.productTitle,
           description: res.productDescription,

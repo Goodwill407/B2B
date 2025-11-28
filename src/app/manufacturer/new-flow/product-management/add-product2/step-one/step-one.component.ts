@@ -55,7 +55,7 @@ export class StepOneComponent {
   // form step
   currentStep = 1;
 
-  selectedSizes: any = []
+  selectedSizes: string[] = []; 
   colourCollections: any = []
 
   currencies: any = {}
@@ -307,10 +307,10 @@ export class StepOneComponent {
       this.sizeChartFields = [
         { name: 'standardSize', label: 'Standard Size', required: false, type: 'Item_size'},
         { name: 'brandSize', label: 'Brand Size', required: true, type: 'Item_size'},
-        { name: 'chestSize', label: 'Chest Size (in cm)', required: true, type: 'Item_size',pattern: /^\d+$/ },
-        { name: 'shoulderSize', label: 'Shoulder Size (in cm)', required: true, type: 'Item_size',pattern: /^\d+$/ },
-        { name: 'frontLength', label: 'Front Length (in cm)', required: true, type: 'Item_size',pattern: /^\d+$/ },
-        { name: 'neckSize', label: 'Neck Size (in cm)', required: true, type: 'Item_size' ,pattern: /^\d+$/},
+        { name: 'chestSize', label: 'Chest Size(in cm)', required: true, type: 'Item_size',pattern: /^\d+$/ },
+        { name: 'shoulderSize', label: 'Shoulder Size(in cm)', required: true, type: 'Item_size',pattern: /^\d+$/ },
+        { name: 'frontLength', label: 'Front Length(in cm)', required: true, type: 'Item_size',pattern: /^\d+$/ },
+        { name: 'neckSize', label: 'Neck Size(in cm)', required: true, type: 'Item_size' ,pattern: /^\d+$/},
         // { name: 'length', label: 'Length (in cm)', required: false, type: 'item_dimention' },
         // { name: 'width', label: 'Width (in cm)', required: false, type: 'item_dimention' },
         // { name: 'height', label: 'Height (in cm)', required: true, type: 'item_dimention' },
@@ -318,6 +318,7 @@ export class StepOneComponent {
         { name: 'manufacturerPrice', label: 'Wholesaler Price', required: true, type: 'price', pattern: /\d+(\.\d{1,2})?/ },
         { name: 'RtlPrice', label: 'Retailer Price', required: true, type: 'price', pattern: /\d+(\.\d{1,2})?/ },
         { name: 'singleMRP', label: 'MRP', required: true, type: 'price' , pattern:/\d+(\.\d{1,2})?/ },
+        { name: 'onlinePrice', label: 'Online Price', required: true, type: 'price', pattern: /\d+(\.\d{1,2})?/ }
     ];
     
     }
@@ -337,51 +338,105 @@ export class StepOneComponent {
         // { name: 'weight', label: 'Weight(in Gm)', required: true, type: 'item_dimention' },
         { name: 'manufacturerPrice', label: 'Wholesaler Price', required: true, type: 'price', pattern: /\d+(\.\d{1,2})?/ },
         { name: 'RtlPrice', label: 'Retailer Price', required: true, type: 'price', pattern: /\d+(\.\d{1,2})?/ },
-        { name: 'singleMRP', label: 'MRP', required: true, type: 'price', pattern: /\d+(\.\d{1,2})?/ }
+        { name: 'singleMRP', label: 'MRP', required: true, type: 'price', pattern: /\d+(\.\d{1,2})?/ },
+        { name: 'onlinePrice', label: 'Online Price', required: true, type: 'price', pattern: /\d+(\.\d{1,2})?/ } 
     ];
     
     }
   }
 
-  // Called when a size checkbox is checked/unchecked
-  onSizeChange(event: any, size: number) {
-    const sizesArray = this.stepOne.get('sizes') as FormArray;
-
-    if (event.target.checked) {
-      this.selectedSizes.push(size);
-      sizesArray.push(this.createSizeFormGroup(size));  // Add new form group for the selected size
-    } else {
-      const index = this.selectedSizes.indexOf(size);
+ // Called when a size checkbox is checked/unchecked
+onSizeChange(event: any, size: string) {  // ✅ Changed to string
+  const sizesArray = this.stepOne.get('sizes') as FormArray;
+  
+  if (event.target.checked) {
+    // Add size
+    this.selectedSizes.push(size);
+    sizesArray.push(this.createSizeFormGroup(size));
+  } else {
+    // Remove size
+    const index = this.selectedSizes.indexOf(size);
+    if (index > -1) {
       this.selectedSizes.splice(index, 1);
-      sizesArray.removeAt(index);  // Remove form group for the deselected size
+      const formArrayIndex = sizesArray.controls.findIndex(
+        control => control.get('standardSize')?.value === size
+      );
+      if (formArrayIndex > -1) {
+        sizesArray.removeAt(formArrayIndex);
+      }
     }
   }
+  
+  // Sort after every change
+  this.sortFormArrayBySizeOrder();
+}
 
+// Simplified sort method
+sortFormArrayBySizeOrder() {
+  const sizesArray = this.stepOne.get('sizes') as FormArray;
+  
+  // Extract all values first
+  const values = sizesArray.value;
+  
+  // Sort by the original sizeSet order
+  values.sort((a: any, b: any) => {
+    const indexA = this.sizeSet.findIndex((s: any) => s.size === a.standardSize);
+    const indexB = this.sizeSet.findIndex((s: any) => s.size === b.standardSize);
+    return indexA - indexB;
+  });
+  
+  // Clear and rebuild FormArray with sorted values
+  sizesArray.clear();
+  values.forEach((value: any) => {
+    const fg = this.createSizeFormGroup(value.standardSize);
+    fg.patchValue(value);
+    sizesArray.push(fg);
+  });
+}
 
-  // Create a new FormGroup for each selected size
-  createSizeFormGroup(size: number): FormGroup {
-    const group = this.fb.group({
-      standardSize: [size],  // Always include standardSize
-    });
+// Create a new FormGroup for each selected size
+createSizeFormGroup(size: string): FormGroup {  // ✅ Changed from number to string
+  const group = this.fb.group({
+    standardSize: [size],  // size is now string ("XS", "M/38", "5XS", etc.)
+  });
 
-    // Dynamically add controls for each field from the backend
-    this.sizeChartFields.forEach((field: any) => {
-      group.addControl(field.name, this.fb.control('', field.required ? Validators.required : null));
+  // Dynamically add controls for each field from the backend
+  this.sizeChartFields.forEach((field: any) => {
+    const validators = [];
+    
+    // Add required validator if field is required
+    if (field.required) {
+      validators.push(Validators.required);
+    }
+    
+    // Add pattern validator if field has pattern
+    if (field.pattern) {
+      validators.push(Validators.pattern(field.pattern));
+    }
+    
+    // Add control with validators
+    group.addControl(
+      field.name, 
+      this.fb.control('', validators.length > 0 ? validators : null)
+    );
 
-      // Subscribe to changes for manufacturerPrice, singleMRP, and weight to trigger updateTotals
-      // if (['manufacturerPrice', 'singleMRP', 'weight'].includes(field.name)) {
-      //   group.get(field.name)?.valueChanges.subscribe(() => {
-      //     // this.updateTotals();
-      //   });
-      // }
-    });
+    // Subscribe to changes for manufacturerPrice, singleMRP, and weight to trigger updateTotals
+    // if (['manufacturerPrice', 'singleMRP', 'weight'].includes(field.name)) {
+    //   group.get(field.name)?.valueChanges.subscribe(() => {
+    //     this.updateTotals();
+    //   });
+    // }
+  });
 
-    return group;
-  }
+  return group;
+}
 
+// Helper method to check if size is selected (add this if you don't have it)
+isSizeSelected(size: string): boolean {
+  return this.selectedSizes.includes(size);
+}
 
-
-  // For easier access to formArray controls
+// For easier access to formArray controls
   get sizesArray(): FormArray {
     return this.stepOne.get('sizes') as FormArray;
   }
@@ -676,7 +731,8 @@ export class StepOneComponent {
           neckSize: [size.neckSize], // Removed Validators.required to make it optional
           manufacturerPrice: [size.manufacturerPrice,[Validators.required, Validators.pattern(/^\d+$/)]],
           RtlPrice: [size.RtlPrice, [Validators.required, Validators.pattern(/^\d+$/)]],
-          singleMRP: [size.singleMRP, [Validators.required, Validators.pattern(/^\d+$/)]]
+          singleMRP: [size.singleMRP, [Validators.required, Validators.pattern(/^\d+$/)]],
+          onlinePrice: [size.onlinePrice, [Validators.required, Validators.pattern(/^\d+$/)]]
         }));
         this.selectedSizes.push(size.standardSize); // Keep track of selected sizes
       });
@@ -698,7 +754,8 @@ export class StepOneComponent {
         // weight: [size.weight, Validators.required],
         manufacturerPrice: [size.manufacturerPrice, [Validators.required, Validators.pattern('^[0-9]*$')]],
         RtlPrice:[size.RtlPrice, [Validators.required, Validators.pattern('^[0-9]*$')]],
-        singleMRP: [size.singleMRP, [Validators.required, Validators.pattern('^[0-9]*$')]]
+        singleMRP: [size.singleMRP, [Validators.required, Validators.pattern('^[0-9]*$')]],
+        onlinePrice: [size.onlinePrice, [Validators.required, Validators.pattern('^[0-9]*$')]] 
       }));
       this.selectedSizes.push(size.standardSize); // Keep track of selected sizes
     });

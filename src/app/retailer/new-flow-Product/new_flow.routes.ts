@@ -29,6 +29,7 @@ import { UpdateRetMfgPoPartialNewComponent } from "./Mng-Product/view-retailorpo
 import { MfgGroupCreditNoteListComponent } from "./return-management/mfg-group-credit-note-list/mfg-group-credit-note-list.component";
 import { MfgCreditNoteListComponent } from "./return-management/mfg-credit-note-list/mfg-credit-note-list.component";
 import { MfgCreditNoteViewComponent } from "./return-management/mfg-credit-note-view/mfg-credit-note-view.component";
+import { CreditNoteUsageDetailViewComponent } from "app/manufacturer/new-flow/return-managment/credit-note-usage-detail-view/credit-note-usage-detail-view.component";
 
 
 export const NewFlow:Route[]=[
@@ -63,6 +64,7 @@ export const NewFlow:Route[]=[
 
     { path: 'mfg-group-credit-note-list', component: MfgGroupCreditNoteListComponent },
     { path: 'mfg-credit-note-list/:id', component: MfgCreditNoteListComponent },
-    { path: 'mfg-credit-note-view/:id', component: MfgCreditNoteViewComponent }
+    { path: 'mfg-credit-note-view/:id', component: MfgCreditNoteViewComponent },
+    { path: 'mfg-credit-note-usage-view/:id', component:CreditNoteUsageDetailViewComponent }
 
 ]

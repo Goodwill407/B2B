@@ -39,12 +39,17 @@
         <div class="product-info">
           <div class="">
             <h6 class="mb-0">Brand : {{product?.brand}}</h6>
-            <div class="d-flex justify-content-between">
-              <p><small>Design No </small> <br> {{ product?.designNumber }}</p>
-              <p><small>Clothing</small> <br> {{ product?.clothingType }}</p>
-              <p><small>Sub Category</small> <br>{{ product?.subCategory }}</p>
-              <p><small>Gender</small> <br>{{ product?.gender }}</p>
-              <p><small>FSIN</small> <br>{{ product?.FSIN }}</p>
+            <div class="row">
+              <p class="col-md-3 col-sm-6 p-2 pe-4"><small>Design No.</small><br>{{ product?.designNumber }}</p>
+              <p class="col-md-3 col-sm-6 p-2 pe-4"><small>Product Type.</small><br>{{ product?.productType }}</p>
+              <p class="col-md-3 col-sm-6 p-2 pe-4"><small>Clothing</small><br>{{ product?.clothingType }}</p>
+              <p class="col-md-3 col-sm-6 p-2"><small>Sub Category</small><br>{{ product?.subCategory }}</p>
+            </div>
+            <div class="row">
+              <p class="col-md-3 col-sm-6 p-2"><small>Gender</small><br>{{ product?.gender }}</p>
+              <p class="col-md-3 col-sm-6 p-2"><small>FSIN</small><br>{{ product?.FSIN }}</p>
+              <p class="col-md-3 col-sm-6 p-2"><small>HSN Code</small><br>{{ product?.hsnCode }}</p>
+              <p class="col-md-3 col-sm-6 p-2"><small>GST</small><br>{{ product?.hsnGst }} %</p>
             </div>
             <hr class="m-0">
           </div>
@@ -89,7 +94,7 @@
           <hr>
 
           <div class="">
-            <p class="mb-0"><small>Colours / Designs :</small> {{selectedColourName}} </p>
+            <p class="mb-0"><small>Colours / Designs :</small> {{selectedColourName | titlecase}} </p>
             <div class="d-flex">
               <span *ngFor="let colour of product?.colours" [ngClass]="{'disabled': !(colour?.images?.length > 0)}"
                 (click)="selectColourCollection(colour)" (mouseenter)="onHoverColour(colour)"

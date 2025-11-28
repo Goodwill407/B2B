@@ -176,7 +176,7 @@
                  <tr *ngIf="purchaseOrder.ProductDiscount > 0" style="background: #fff3cd;">
                   <td [attr.colspan]="colspan+1" style="text-align: center; font-weight: 600; color: #856404; padding: 10px;">
                     ℹ️ {{ purchaseOrder.ProductDiscount }}% discount has been applied on product rates
-                    (Total Discount: ₹ {{ discountAmount | indianCurrency }})
+                    (Approx. Total Discount: ₹ {{ discountAmount | indianCurrency }})
                   </td>
                 </tr>
               </ng-template>

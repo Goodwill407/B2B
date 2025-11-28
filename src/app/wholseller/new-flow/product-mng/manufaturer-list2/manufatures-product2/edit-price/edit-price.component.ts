@@ -1,4 +1,4 @@
-import { CommonModule,Location } from '@angular/common';
+import { CommonModule,Location, TitleCasePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,7 +9,7 @@ import { AuthService, CommunicationService } from '@core';
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule, TitleCasePipe
   ],
   templateUrl: './edit-price.component.html',
   styleUrl: './edit-price.component.scss'
@@ -57,7 +57,6 @@ export class EditPriceComponent {
         this.product = {
           brand: res.brand,
           designNumber: this.designno,
-        
           clothingType: res.clothing,
           subCategory: res.subCategory,
           gender: res.gender,
@@ -76,6 +75,9 @@ export class EditPriceComponent {
           specialFeatures: res.specialFeature.join(', '),
           careInstructions: res.careInstructions,
           sizes: res.sizes,
+          hsnCode: res.hsnCode,
+          hsnGst: res.hsnGst,
+          productType: res.productType,
           colours: res.colourCollections.map((colour: any) => ({
             name: colour.colourName,
             hex: colour.colour,

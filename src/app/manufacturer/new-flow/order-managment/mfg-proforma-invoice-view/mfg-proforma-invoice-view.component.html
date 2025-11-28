@@ -166,7 +166,20 @@
 
                 <td>{{ item.hsnCode || 'N/A' }}</td>
                 <td class="text-center">{{ item.quantity }} NOS</td>
-                <td class="text-end">{{ getItemPrice(item) | number:'1.2-2' }}</td>
+                <td class="text-end">
+                  <div *ngIf="discountPercentage > 0">
+                    <span style="text-decoration: line-through; color: #999; font-size: 0.85em;">
+                      {{ getGstAmounts(item).originalRate | number:'1.2-2' }}
+                    </span>
+                    <br/>
+                    <span style="color: black; font-weight: 600;">  <!--  #28a745 -->
+                      {{ getGstAmounts(item).discountedRate | number:'1.2-2' }}
+                    </span>
+                  </div>
+                  <div *ngIf="!discountPercentage || discountPercentage === 0">
+                    {{ getItemPrice(item) | number:'1.2-2' }}
+                  </div>
+                </td>
                 <td class="text-end">{{ getGstAmounts(item).taxable | number:'1.2-2' }}</td>
                 <td *ngIf="isIntraState" class="text-center">{{ item.hsnGst/2 || 0 | number:'1.2-2' }}%</td>
                 <td *ngIf="isIntraState" class="text-end">{{ getGstAmounts(item).cgst | number:'1.2-2' }}</td>
@@ -201,9 +214,19 @@
             <div class="words-section">
               <h6>Total in words</h6>
               <div class="amount-text">{{ totalPayAmount | amountInWords }}</div>
+              <!-- ✅ Add discount note if applicable -->
+              <!-- <div *ngIf="discountPercentage > 0" class="discount-note" 
+                  style="font-size: 0.85em; color: #666; margin-top: 5px;">
+                ({{ discountPercentage }}% discount applied on product rates )
+              </div> -->
+              <div *ngIf="discountPercentage > 0" class="discount-note" 
+                  style="font-size: 0.9em; color: #2e7d32; margin-top: 8px; font-weight: 600;">
+                Note: {{ discountPercentage }}% discount applied on product rates 
+                (Approx. Total Discount: Rs.{{ calculateActualDiscount() | number:'1.2-2' }})
+              </div>
             </div>
           </div>
-          
+                    
           <div class="amount-breakdown">
             <table class="summary-table">
               <tr>
@@ -218,10 +241,10 @@
                 <td>Total Amount (Incl. Tax)</td>
                 <td class="text-end">{{ totalAmountInclTax | number:'1.2-2' }}</td>
               </tr>
-              <tr *ngIf="invoiceData.discountApplied > 0">
+              <!-- <tr *ngIf="invoiceData.discountApplied > 0">
                 <td>Less: Discount</td>
                 <td class="text-end">{{ invoiceData.discountApplied | number:'1.2-2' }}</td>
-              </tr>
+              </tr> -->
               <!-- Credit Note Amount -->
               <tr>
                 <td>Less: Credit Note Amt</td>

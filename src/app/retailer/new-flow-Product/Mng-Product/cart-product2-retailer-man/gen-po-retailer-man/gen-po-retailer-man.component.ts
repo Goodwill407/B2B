@@ -245,7 +245,7 @@ export class GenPoRetailerManComponent {
     this.totalGrandTotal = parseFloat(totalGrandTotal.toFixed(2));  // Round to two decimal places
 
     console.log('Subtotal:', totalSub);
-    console.log('Total Discounted:', totalDiscounted);  // This should be the final discounted total
+    console.log('Approx Total Discounted:', totalDiscounted);  // This should be the final discounted total
     console.log('GST (SGST, CGST, IGST):', this.sgst, this.cgst, this.igst);
     console.log('Grand Total:', this.totalGrandTotal);
 

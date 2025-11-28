@@ -10,7 +10,7 @@
       </div>
     </h4>
     <div class="card p-4 pt-2">
-      <h5 class="text-center mb">Product Details 1</h5>
+      <h5 class="text-center mb">Product Details</h5>
       <hr class="mt-0">
       <div class="product-details-content">
         <div class="product-images">
@@ -42,13 +42,17 @@
         <div class="product-info">
           <div class="">
             <h6 class="mb-0">Brand : {{product?.brand}}</h6>
-            <div class="d-flex justify-content-between">
-              <p><small>Design No. </small> <br> {{ product?.designNumber }}</p>
-              <p><small>Product Type. </small> <br> {{ product?.productType }}</p>
-              <p><small>Clothing</small> <br> {{ product?.clothingType }}</p>
-              <p><small>Sub Category</small> <br>{{ product?.subCategory }}</p>
-              <p><small>Gender</small> <br>{{ product?.gender }}</p>
-              <p><small>FSIN</small> <br>{{ product?.FSIN }}</p>
+            <div class="row">
+              <p class="col-md-3 col-sm-6 p-2 pe-4"><small>Design No.</small><br>{{ product?.designNumber }}</p>
+              <p class="col-md-3 col-sm-6 p-2 pe-4"><small>Product Type.</small><br>{{ product?.productType }}</p>
+              <p class="col-md-3 col-sm-6 p-2 pe-4"><small>Clothing</small><br>{{ product?.clothingType }}</p>
+              <p class="col-md-3 col-sm-6 p-2"><small>Sub Category</small><br>{{ product?.subCategory }}</p>
+            </div>
+            <div class="row">
+              <p class="col-md-3 col-sm-6 p-2"><small>Gender</small><br>{{ product?.gender }}</p>
+              <p class="col-md-3 col-sm-6 p-2"><small>FSIN</small><br>{{ product?.FSIN }}</p>
+              <p class="col-md-3 col-sm-6 p-2"><small>HSN Code</small><br>{{ product?.hsnCode }}</p>
+              <p class="col-md-3 col-sm-6 p-2"><small>GST</small><br>{{ product?.hsnGst }} %</p>
             </div>
             <hr class="m-0">
           </div>
@@ -91,7 +95,7 @@
           <hr>
 
           <div class="">
-            <p class="mb-0"><small>Colours / Designs :</small> {{selectedColourName}} </p>
+            <p class="mb-0"><small>Colours / Designs :</small> {{selectedColourName | titlecase}} </p>
             <div class="d-flex">
               <span *ngFor="let colour of product?.colours" [ngClass]="{'disabled': !(colour?.images?.length > 0)}"
                 (click)="selectColourCollection(colour)" (mouseenter)="onHoverColour(colour)"
@@ -150,9 +154,10 @@
               <th *ngIf="product?.sizes[0]?.frontLength">Front Length</th>
               <th *ngIf="product?.sizes[0]?.neckSize">Neck Size</th>
       
-              <th>Manufacturer Price</th>
+              <th>Wholesaler Price</th>
               <th>Retail Price</th>
               <th>Single MRP</th>
+              <th>Online Price</th>
             </tr>
           </thead>
           <tbody>
@@ -176,6 +181,7 @@
                 <td>{{ size.manufacturerPrice }}</td>
                 <td>{{ size.RtlPrice }}</td>
                 <td>{{ size.singleMRP }}</td>
+                <td>{{ size.onlinePrice }}</td>
               </tr>
             </ng-container>
           </tbody>

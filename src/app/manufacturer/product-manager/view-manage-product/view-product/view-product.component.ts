@@ -1,4 +1,4 @@
-import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { CommonModule, NgFor, NgIf, TitleCasePipe } from '@angular/common';
 import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,7 +10,7 @@ import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.com
   selector: 'app-view-product',
   standalone: true,
   imports: [
-    CommonModule,
+    CommonModule,TitleCasePipe,
     NgIf, NgFor,
   ],
   templateUrl: './view-product.component.html',
@@ -49,6 +49,8 @@ export class ViewProductComponent {
           subCategory: res.subCategory,
           gender: res.gender,
           FSIN: res.FSIN,
+          hsnCode: res.hsnCode,
+          hsnGst: res.hsnGst,
           title: res.productTitle,
           description: res.productDescription,
           material: res.material,

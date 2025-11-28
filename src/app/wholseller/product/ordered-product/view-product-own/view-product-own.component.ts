@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, TitleCasePipe } from '@angular/common';
 import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -12,7 +12,8 @@ import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.com
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    TitleCasePipe
   ],
   templateUrl: './view-product-own.component.html',
   styleUrl: './view-product-own.component.scss'
@@ -53,6 +54,10 @@ export class ViewProductOwnComponent {
           designNumber: res.designNumber,
           clothingType: res.clothing,
           subCategory: res.subCategory,
+          productType: res.productType,
+          hsnCode: res.hsnCode,
+          hsnGst: res.hsnGst,
+          FSIN: res.FSIN,
           gender: res.gender,
           title: res.productTitle,
           description: res.productDescription,

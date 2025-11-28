@@ -1,4 +1,4 @@
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule, Location, TitleCasePipe } from '@angular/common';
 import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,7 +12,8 @@ import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.com
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TitleCasePipe
   ],
   templateUrl: './view-product2.component.html',
   styleUrl: './view-product2.component.scss'
@@ -83,7 +84,6 @@ productType:any;
         this.product = {
           brand: res.brand,
           designNumber: this.designno,
-
           clothingType: res.clothing,
           subCategory: res.subCategory,
           gender: res.gender,
@@ -91,6 +91,9 @@ productType:any;
           description: res.productDescription,
           material: res.material,
           FSIN: res.FSIN,
+          hsnGst: res.hsnGst,
+          hsnCode: res.hsnCode,
+          productType: res.productType,
           materialVariety: res.materialvariety,
           pattern: res.fabricPattern,
           fitType: res.fitStyle,

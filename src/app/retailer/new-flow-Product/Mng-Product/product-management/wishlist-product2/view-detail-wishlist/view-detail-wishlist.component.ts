@@ -1,4 +1,4 @@
-import { CommonModule,Location } from '@angular/common';
+import { CommonModule,Location, TitleCasePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,7 +8,7 @@ import { AuthService, CommunicationService } from '@core';
   standalone: true,
   imports: [ CommonModule,
     FormsModule,
-    ReactiveFormsModule],
+    ReactiveFormsModule, TitleCasePipe],
   templateUrl: './view-detail-wishlist.component.html',
   styleUrl: './view-detail-wishlist.component.scss'
 })
@@ -58,6 +58,9 @@ export class ViewDetailWishlistComponent {
           subCategory: res.subCategory,
           gender: res.gender,
           title: res.productTitle,
+          productType: res.productType,
+          hsnCode:res.hsnCode,
+          hsnGst: res.hsnGst,
           description: res.productDescription,
           material: res.material,
           materialVariety: res.materialvariety,

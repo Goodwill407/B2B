@@ -1,4 +1,4 @@
-import { CommonModule,Location } from '@angular/common';
+import { CommonModule,Location, TitleCasePipe } from '@angular/common';
 import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,7 +11,8 @@ import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.com
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TitleCasePipe
   ],
   templateUrl: './edit-re-product-price.component.html',
   styleUrl: './edit-re-product-price.component.scss'
@@ -68,6 +69,9 @@ export class EditReProductPriceComponent {
           gender: res.gender,
           title: res.productTitle,
           FSIN: res.FSIN,
+          hsnCode: res.hsnCode,
+          hsnGst: res.hsnCode,
+          productType: res.productType,
           description: res.productDescription,
           material: res.material,
           materialVariety: res.materialvariety,

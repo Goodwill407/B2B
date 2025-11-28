@@ -732,7 +732,7 @@
 
 
         </div>
-        <!-- =====================for form array-->
+         <!-- =====================for form array-->
 
         <div *ngIf="sizeSet?.length" class="m-0 p-4 border mt-2 pt-2 rounded"
             style="background-color: aliceblue;">
@@ -755,40 +755,40 @@
                 <!-- Labels Row: -->
                 <div class="col-12">
                     <div class="row text-center">
-                        <!-- First 4 columns under Size -->
+                        <!-- First 4 columns: Size Information -->
                         <div class="col" *ngFor="let field of sizeChartFields.slice(0, 4)">
                             <label class="custom-label">
                                 {{ field.label.split('(')[0] }}<span *ngIf="field.required"
-                                    class="required"></span>
+                                    class="required">*</span>
                                 <br>
                                 <small
-                                    *ngIf="field.label.includes('(in cm)') || field.label.includes('(in gm)' )">
+                                    *ngIf="field.label.includes('(in cm)') || field.label.includes('(in gm)')">
                                     ({{ field.label.split('(')[1]?.replace(')', '').trim() }})
                                 </small>
                             </label>
                         </div>
 
-                        <!-- Next 5 columns under Item Dimension -->
-                        <div class="col" *ngFor="let field of sizeChartFields.slice(4, 9)">
+                        <!-- Next 2 columns: Body Measurements -->
+                        <div class="col" *ngFor="let field of sizeChartFields.slice(4, 6)">
                             <label class="custom-label">
                                 {{ field.label.split('(')[0] }}<span *ngIf="field.required"
-                                    class="required"></span>
+                                    class="required">*</span>
                                 <br>
                                 <small
-                                    *ngIf="field.label.includes('(in cm)') || field.label.includes('(in gm)' )">
+                                    *ngIf="field.label.includes('(in cm)') || field.label.includes('(in gm)')">
                                     ({{ field.label.split('(')[1]?.replace(')', '').trim() }})
                                 </small>
                             </label>
                         </div>
 
-                        <!-- Last 3 columns under Price -->
-                        <div class="col" *ngFor="let field of sizeChartFields.slice(9)">
+                        <!-- Last 4 columns: Pricing -->
+                        <div class="col" *ngFor="let field of sizeChartFields.slice(6)">
                             <label class="custom-label">
                                 {{ field.label.split('(')[0] }}<span *ngIf="field.required"
-                                    class="required"></span>
+                                    class="required">*</span>
                                 <br>
                                 <small
-                                    *ngIf="field.label.includes('(in cm)') || field.label.includes('(in gm)' )">
+                                    *ngIf="field.label.includes('(in cm)') || field.label.includes('(in gm)')">
                                     ({{ field.label.split('(')[1]?.replace(')', '').trim() }})
                                 </small>
                             </label>
@@ -800,12 +800,13 @@
                 <div class="col-12" *ngFor="let sizeGroup of sizesArray.controls; let i = index"
                     [formGroupName]="i">
                     <div class="row">
-                        <!-- First 4 fields under Size -->
+                        <!-- First 4 fields: Size Information -->
                         <div class="col" *ngFor="let field of sizeChartFields.slice(0, 4)">
                             <input type="text" [formControlName]="field.name"
                                 [pattern]="field.pattern"
                                 class="form-control custom-input"
                                 [ngClass]="{'is-invalid': submittedStep1 && sizeGroup.get(field.name)?.invalid}"
+                                [readonly]="field.name === 'standardSize'"
                                 placeholder="">
                             <!-- Validation feedback -->
                             <div *ngIf="submittedStep1 && sizeGroup.get(field.name)?.invalid"
@@ -819,8 +820,8 @@
                             </div>
                         </div>
 
-                        <!-- Next 5 fields under Item Dimension -->
-                        <div class="col" *ngFor="let field of sizeChartFields.slice(4, 9)">
+                        <!-- Next 2 fields: Body Measurements -->
+                        <div class="col" *ngFor="let field of sizeChartFields.slice(4, 6)">
                             <input type="text" [formControlName]="field.name"
                                 [pattern]="field.pattern"
                                 class="form-control custom-input"
@@ -838,8 +839,8 @@
                             </div>
                         </div>
 
-                        <!-- Last 3 fields under Price -->
-                        <div class="col" *ngFor="let field of sizeChartFields.slice(9)">
+                        <!-- Last 4 fields: Pricing (W/S Price, Retailer, MRP, Online Price) -->
+                        <div class="col" *ngFor="let field of sizeChartFields.slice(6)">
                             <input type="text" [formControlName]="field.name"
                                 class="form-control custom-input"
                                 [pattern]="field.pattern"

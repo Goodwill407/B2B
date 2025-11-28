@@ -221,13 +221,16 @@ export class RetailormanpoGenComponent {
     };
   }
 
- getGstAmounts(item: any) {
-  // Add null/undefined checks and default values
+getGstAmounts(item: any) {
   const quantity = Number(item.quantity) || 0;
   const rate = Number(item.price) || 0;
-  const gstRate = Number(item.hsnGst) || 0; // Default GST rate to 0 if not provided
+  const gstRate = Number(item.hsnGst) || 0;
   
-  const taxable = quantity * rate;
+  // ✅ Apply discount to rate BEFORE calculating taxable value
+  const discountPercent = Number(this.purchaseOrder.ProductDiscount) || 0;
+  const discountedRate = rate - (rate * discountPercent / 100);
+  
+  const taxable = quantity * discountedRate; // Use discounted rate
 
   let cgst = 0, sgst = 0, igst = 0;
 
@@ -241,6 +244,8 @@ export class RetailormanpoGenComponent {
   const totalWithGst = taxable + cgst + sgst + igst;
   
   return { 
+    originalRate: rate,
+    discountedRate: discountedRate,
     taxable: isNaN(taxable) ? 0 : taxable, 
     gstRate: isNaN(gstRate) ? 0 : gstRate, 
     cgst: isNaN(cgst) ? 0 : cgst, 
@@ -250,18 +255,25 @@ export class RetailormanpoGenComponent {
   };
 }
 
-
   get discountAmount(): number {
+  // Calculate total discount applied across all line items
   const discountPercent = Number(this.purchaseOrder.ProductDiscount) || 0;
-  const discount = (this.orderTotals.totalWithGST * discountPercent) / 100;
-  return isNaN(discount) ? 0 : discount;
+  
+  let totalWithoutDiscount = 0;
+  for (const item of this.purchaseOrder.products) {
+    const quantity = Number(item.quantity) || 0;
+    const rate = Number(item.price) || 0;
+    totalWithoutDiscount += quantity * rate;
+  }
+  
+  return (totalWithoutDiscount * discountPercent) / 100;
 }
 
-
-  get actualGrandTotal(): number {
-  const total = this.orderTotals.totalWithGST - this.discountAmount;
-  return isNaN(total) ? 0 : total;
+get actualGrandTotal(): number {
+  // Grand total is now just the total with GST (discount already applied at line level)
+  return this.orderTotals.totalWithGST;
 }
+
 
 
   get totalGSTAmount(): number {
@@ -496,34 +508,36 @@ export class RetailormanpoGenComponent {
   }
 
   // Helper method for financial summary
-  addFinancialSummary(doc: jsPDF, startY: number, pageWidth: number) {
-    const totals = this.orderTotals;
-    const rightAlign = pageWidth - 20;
-    
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    
-    // Subtotal
-    doc.text(`Subtotal: Rs. ${totals.totalWithGST.toFixed(2)}`, rightAlign, startY, { align: 'right' });
-    
-    // Discount
-    doc.text(`Discount (${this.purchaseOrder.ProductDiscount}%): - Rs. ${this.discountAmount.toFixed(2)}`, 
-             rightAlign, startY + 6, { align: 'right' });
-    
-    // Grand Total
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(12);
-    doc.text(`Grand Total: Rs. ${this.actualGrandTotal.toFixed(2)}`, rightAlign, startY + 15, { align: 'right' });
-    
-    // Amount in Words - Left aligned
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'normal');
-    const amountInWords = this.amountInWordsPipe.transform(this.actualGrandTotal);
-    doc.text(`Amount in Words: ${amountInWords}`, 20, startY + 25);
-
-    doc.text(`Total GST: Rs. ${this.totalGSTAmount.toFixed(2)} - ${this.amountInWordsPipe.transform(this.totalGSTAmount)}`, 
-            20, startY + 30);
+addFinancialSummary(doc: jsPDF, startY: number, pageWidth: number) {
+  const totals = this.orderTotals;
+  const rightAlign = pageWidth - 20;
+  
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  
+  // ✅ Show discount note FIRST (if applicable)
+  if (this.purchaseOrder.ProductDiscount > 0) {
+    doc.text(`Note: ${this.purchaseOrder.ProductDiscount}% discount applied on product rates`, 
+             20, startY);
+    doc.text(`(Total Discount: Rs. ${this.discountAmount.toFixed(2)})`, 
+             20, startY + 5);
+    startY += 15;
   }
+  
+  // Grand Total
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.text(`Grand Total: Rs. ${this.actualGrandTotal.toFixed(2)}`, rightAlign, startY, { align: 'right' });
+  
+  // Amount in Words - Left aligned
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  const amountInWords = this.amountInWordsPipe.transform(this.actualGrandTotal);
+  doc.text(`Amount in Words: ${amountInWords}`, 20, startY + 10);
+
+  doc.text(`Total GST: Rs. ${this.totalGSTAmount.toFixed(2)} - ${this.amountInWordsPipe.transform(this.totalGSTAmount)}`, 
+          20, startY + 15);
+}
 
   // Helper method for transport details
   addTransportDetails(doc: jsPDF, startY: number, pageWidth: number): number {

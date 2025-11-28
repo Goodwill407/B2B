@@ -1,4 +1,4 @@
-import { CommonModule,Location } from '@angular/common';
+import { CommonModule,Location, TitleCasePipe } from '@angular/common';
 import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,7 +12,7 @@ import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.com
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule, TitleCasePipe
   ],
   templateUrl: './view-wishlistproduct.component.html',
   styleUrl: './view-wishlistproduct.component.scss'
@@ -56,6 +56,9 @@ export class ViewWishlistproductComponent {
           designNumber: res.designNumber,
           clothingType: res.clothing,
           FSIN: res.FSIN,
+          hsnCode: res.hsnCode,
+          hsnGst: res.hsnGst,
+          productType: res.productType,
           subCategory: res.subCategory,
           gender: res.gender,
           title: res.productTitle,

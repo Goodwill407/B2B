@@ -1,7 +1,7 @@
 import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, TitleCasePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService, CommunicationService } from '@core';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,7 +10,7 @@ import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.com
 @Component({
   selector: 'app-view-wholeseler-product',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TitleCasePipe],
   templateUrl: './view-wholeseler-product.component.html',
   styleUrl: './view-wholeseler-product.component.scss',
 })
@@ -78,6 +78,8 @@ export class ViewWholeselerProductComponent {
         clothingType: productData.clothing,
         productType: productData.productType,
         subCategory: productData.subCategory,
+        hsnCode: productData.hsnCode,
+        hsnGst: productData.hsnGst,
         gender: productData.gender,
         title: productData.productTitle,
         FSIN: productData.FSIN,

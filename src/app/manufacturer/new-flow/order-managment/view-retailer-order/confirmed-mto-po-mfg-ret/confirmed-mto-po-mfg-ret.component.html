@@ -126,7 +126,20 @@
                 </div>
               </td>
               <td>{{ item.size }}</td>
-              <td>{{ item.price | indianCurrency }}</td>
+              <td>
+                <div *ngIf="purchaseOrder.ProductDiscount > 0" style="text-align: right;">
+                  <span style="text-decoration: line-through; color: #999; font-size: 0.9em;">
+                    {{ getGstAmounts(item).originalRate | indianCurrency }}
+                  </span>
+                  <br/>
+                  <span style="color: #28a745; font-weight: 600;">
+                    {{ getGstAmounts(item).discountedRate | indianCurrency }}
+                  </span>
+                </div>
+                <div *ngIf="!purchaseOrder.ProductDiscount || purchaseOrder.ProductDiscount === 0" style="text-align: right;">
+                  {{ item.price | indianCurrency }}
+                </div>
+              </td>
               <td>{{ item.quantity }}</td>
               <td class="text-end">{{ getGstAmounts(item).taxable | indianCurrency }}</td>
               <td>{{ item.hsnGst || 0 }}%</td>
@@ -150,11 +163,11 @@
               <td class="text-end">{{ orderTotals.totalWithGST | indianCurrency }}</td>
             </tr>
             <!-- Discount on Final Total -->
-            <tr>
+            <!-- <tr>
               <td [attr.colspan]="colspan" style="text-align: right; font-weight: bold;">Discount ({{
                 purchaseOrder.ProductDiscount }}%):</td>
               <td class="text-end">-{{ discountAmount | indianCurrency }}</td>
-            </tr>
+            </tr> -->
             <!-- Grand Total (after discount) -->
             <tr>
               <td [attr.colspan]="colspan"
@@ -170,7 +183,13 @@
             </tr>
             <tr>
               <td [attr.colspan]="colspan+1" style="font-weight: bold; font-size: 1.0em; color: #006600;">
-                Total GST Paid: ₹ {{totalGSTAmount}} - {{ totalGSTAmount | amountInWords }}
+                Total GST Paid: ₹ {{totalGSTAmount | indianCurrency}} - {{ totalGSTAmount | amountInWords }}
+              </td>
+            </tr>
+            <tr *ngIf="purchaseOrder.ProductDiscount > 0" style="background: #fff3cd;">
+              <td [attr.colspan]="colspan+1" style="text-align: center; font-weight: 600; color: #856404; padding: 10px;">
+                ℹ️ {{ purchaseOrder.ProductDiscount }}% discount has been applied on product rates
+                (Total Discount: {{ discountAmount | indianCurrency }})
               </td>
             </tr>
           </ng-template>
