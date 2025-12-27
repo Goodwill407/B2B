@@ -1,0 +1,86 @@
+.content {
+  .content-block {
+    padding: 20px;
+
+    h4 {
+      color: #002080;
+      font-weight: 600;
+      margin-bottom: 20px;
+
+      .navigate {
+        background: transparent;
+        border: none;
+        color: #002080;
+        padding: 0;
+        margin-right: 10px;
+        cursor: pointer;
+
+        &:hover {
+          color: #0056b3;
+        }
+      }
+    }
+
+    .card {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    ::ng-deep {
+      .p-card {
+        margin-bottom: 20px;
+        box-shadow: none;
+        border: 1px solid #dee2e6;
+
+        .p-card-header {
+          background-color: #f0f6f9;
+          border-bottom: 1px solid #dee2e6;
+
+          h5 {
+            color: #002080;
+            font-weight: 600;
+            margin: 0;
+          }
+        }
+
+        .p-card-body {
+          padding: 0;
+        }
+      }
+
+      .p-inputtext,
+      .p-inputtextarea,
+      .p-dropdown,
+      .p-inputnumber {
+        width: 100%;
+
+        &.is-invalid {
+          border-color: #dc3545;
+        }
+      }
+    }
+
+    .form-label {
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+
+    .text-danger {
+      font-size: 0.85rem;
+    }
+
+    .rack-card {
+      background-color: #fafbff;
+    }
+  }
+}
+
+.rack-card .form-label {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.rack-card textarea {
+  resize: vertical;
+}
+

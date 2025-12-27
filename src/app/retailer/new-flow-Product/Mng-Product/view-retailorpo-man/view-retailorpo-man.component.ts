@@ -104,7 +104,7 @@ export class ViewRetailorpoManComponent {
     const page = this.pageMakeToOrder;
     const limit = this.limit;
 
-    this.authService.get(`po-retailer-to-manufacture?email=${this.authService.currentUserValue.email}&statusAll=make_to_order&page=${page}&limit=${limit}`)
+    this.authService.get(`po-retailer-to-manufacture?email=${this.authService.currentUserValue.email}&sortBy=createdAt:desc&statusAll=make_to_order&page=${page}&limit=${limit}`)
       .subscribe((res: any) => {
         this.makeToOrderData = res.results || [];
         this.totalMakeToOrderResults = res.totalResults || 0;
@@ -115,7 +115,7 @@ export class ViewRetailorpoManComponent {
     const page = this.pageConfirmed;
     const limit = this.limit;
 
-    this.authService.get(`po-retailer-to-manufacture?email=${this.authService.currentUserValue.email}&statusAll=m_order_confirmed&page=${page}&limit=${limit}`)
+    this.authService.get(`po-retailer-to-manufacture?email=${this.authService.currentUserValue.email}&sortBy=createdAt:desc&statusAll=m_order_confirmed&page=${page}&limit=${limit}`)
       .subscribe((res: any) => {
         this.confirmedData = res.results || [];
         this.totalConfirmedResults = res.totalResults || 0;

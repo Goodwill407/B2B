@@ -601,7 +601,8 @@ async createInvoiceWithCredit(creditAmount: number) {
     // Step 3: Update PO
     await this.authService.patchpimage(`po-retailer-to-manufacture/${this.poId}`, { 
       invoiceGenerated: true,
-      invoiceId: invoiceId
+      invoiceId: invoiceId,
+       statusAll: "invoice_generated"
     }).toPromise();
     
     console.log('✅ PO updated successfully');

@@ -1,0 +1,225 @@
+<section class="content">
+  <div class="content-block">
+    <h4 class="mt-4">
+      <button class="btn navigate" (click)="navigateBack()">
+        <i class="bi bi-arrow-left-circle h4"></i>
+      </button>
+      <span>View Vendor Details</span>
+    </h4>
+
+    <div class="card p-4" *ngIf="!loading">
+      <!-- Header Section -->
+      <div class="header-section mb-4">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h2 class="mb-2">{{ vendor?.vendorName }}</h2>
+            <!-- <p class="text-muted mb-1">{{ vendor?.companyName || 'N/A' }}</p> -->
+            <p-tag 
+              [value]="vendor?.isActive ? 'Active' : 'Inactive'" 
+              [severity]="vendor?.isActive ? 'success' : 'danger'"
+              class="mb-2">
+            </p-tag>
+          </div>
+          <div class="text-end">
+            <span class="badge bg-primary fs-6 mb-2 d-block">Code: {{ vendor?.code }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Basic Information -->
+        <div class="col-lg-6 mb-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <h5 class="p-3 mb-0">Basic Information</h5>
+            </ng-template>
+            <div class="p-3">
+              <div class="row mb-2">
+                <div class="col-4 fw-bold">Contact Person:</div>
+                <div class="col-8">{{ vendor?.contactPersonName || 'N/A' }}</div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-4 fw-bold">Email:</div>
+                <div class="col-8">{{ vendor?.vendorEmail }}</div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-4 fw-bold">Contact:</div>
+                <div class="col-8">
+                  <div>{{ vendor?.contactNumber }}</div>
+                  <small class="text-muted" *ngIf="vendor?.altContactNumber">
+                    Alt: {{ vendor?.altContactNumber }}
+                  </small>
+                </div>
+              </div>
+            </div>
+          </p-card>
+        </div>
+
+        <!-- Tax Information -->
+        <div class="col-lg-6 mb-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <h5 class="p-3 mb-0">Tax Information</h5>
+            </ng-template>
+            <div class="p-3">
+              <div class="row mb-2">
+                <div class="col-4 fw-bold">GST Number:</div>
+                <div class="col-8">{{ vendor?.gstNumber || 'N/A' }}</div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-4 fw-bold">PAN Number:</div>
+                <div class="col-8">{{ vendor?.panNumber || 'N/A' }}</div>
+              </div>
+              <div class="row">
+                <div class="col-4 fw-bold">Payment Terms:</div>
+                <div class="col-8">
+                  <span class="badge bg-info">{{ vendor?.paymentTerms || 'N/A' }}</span>
+                </div>
+              </div>
+            </div>
+          </p-card>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Address Information -->
+        <div class="col-lg-6 mb-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <h5 class="p-3 mb-0">Address Details</h5>
+            </ng-template>
+            <div class="p-3">
+              <div class="mb-3">
+                <strong>{{ getFullAddress() }}</strong>
+              </div>
+            </div>
+          </p-card>
+        </div>
+
+        <!-- Material Categories -->
+        <div class="col-lg-6 mb-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <h5 class="p-3 mb-0">Dealing in (Material Categories)</h5>
+            </ng-template>
+            <div class="p-3">
+              <p-chip 
+                *ngFor="let category of vendor?.materialCategories" 
+                [label]="category" 
+                class="mb-1 mr-1"
+                size="small">
+              </p-chip>
+            </div>
+          </p-card>
+        </div>
+      </div>
+
+      <!-- Bank Details -->
+      <div class="row mb-4" *ngIf="vendor?.bankDetails">
+        <div class="col-12">
+          <p-card>
+            <ng-template pTemplate="header">
+              <h5 class="p-3 mb-0">Bank Details</h5>
+            </ng-template>
+            <div class="p-3">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <div class="row mb-2">
+                    <div class="col-4 fw-bold">Account Holder:</div>
+                    <div class="col-8">{{ vendor.bankDetails.accountHolderName }}</div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-4 fw-bold">Account No:</div>
+                    <div class="col-8">{{ vendor.bankDetails.accountNumber }}</div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-4 fw-bold">Account Type:</div>
+                    <div class="col-8">{{ vendor.bankDetails.accountType }}</div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-4 fw-bold">Bank Name:</div>
+                    <div class="col-8">{{ vendor.bankDetails.bankName }}</div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-4 fw-bold">UPI ID:</div>
+                    <div class="col-8">{{ vendor.bankDetails.upiId }}</div>
+                  </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <div class="row mb-2">
+                    <div class="col-4 fw-bold">Branch:</div>
+                    <div class="col-8">{{ vendor.bankDetails.branchName }}</div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-4 fw-bold">IFSC Code:</div>
+                    <div class="col-8 font-monospace">{{ vendor.bankDetails.ifscCode }}</div>
+                  </div>
+                  <div class="row mb-2">
+                    <div class="col-4 fw-bold">SWIFT Code:</div>
+                    <div class="col-8">{{ vendor.bankDetails.swiftCode || 'N/A' }}</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-4 fw-bold">Bank Address:</div>
+                    <div class="col-8">{{ vendor.bankDetails.bankAddress }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </p-card>
+        </div>
+      </div>
+
+      <!-- Notes Section -->
+      <div class="row" *ngIf="vendor?.notes">
+        <div class="col-12">
+          <p-card>
+            <ng-template pTemplate="header">
+              <h5 class="p-3 mb-0">Notes</h5>
+            </ng-template>
+            <div class="p-3">
+              {{ vendor.notes }}
+            </div>
+          </p-card>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button 
+          type="button" 
+          pButton 
+          label="Back" 
+          icon="pi pi-arrow-left"
+          class="p-button-secondary"
+          (click)="navigateBack()">
+        </button>
+        <button 
+          type="button" 
+          pButton 
+          label="Edit Vendor" 
+          icon="pi pi-pencil"
+          class="p-button-primary"
+          (click)="editVendor()">
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center p-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading vendor details...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!loading && !vendor" class="text-center p-5">
+      <i class="bi bi-exclamation-triangle h1 text-warning d-block mb-3"></i>
+      <h5>Vendor not found</h5>
+      <p class="text-muted">Vendor details could not be loaded.</p>
+      <button class="btn btn-primary" (click)="navigateBack()">
+        Go Back
+      </button>
+    </div>
+  </div>
+</section>

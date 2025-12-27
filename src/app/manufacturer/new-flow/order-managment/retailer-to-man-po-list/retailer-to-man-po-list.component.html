@@ -25,7 +25,7 @@
                 <td class="text-center">{{ data.retailer.companyName }}</td>
                 <td class="text-center">{{ data.retailer.email }}</td>
                 <td class="text-center">{{ data.poNumber }}</td>
-                <td class="text-center">{{ data.statusAll }}</td>
+                <td class="text-center">{{ data.statusAll | statusAllPoDisplay }}</td>
                 <td class="text-center">
                   <button class="btn" [routerLink]="['/mnf/ret-po-list-view', { id: data.id }]">
                     <i class="bi bi-eye h5"></i>

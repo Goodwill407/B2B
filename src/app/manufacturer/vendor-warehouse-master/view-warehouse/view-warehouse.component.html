@@ -1,0 +1,162 @@
+<section class="content" *ngIf="!loading && warehouse">
+  <div class="content-block">
+    <h4 class="mt-4 d-flex justify-content-between align-items-center">
+      <span>Warehouse Details</span>
+      <button routerLink="/mnf/view-warehouse-list" class="btn btn-outline-secondary btn-sm">
+        Back to list
+      </button>
+    </h4>
+
+    <!-- Basic info -->
+    <p-card class="mb-3">
+      <ng-template pTemplate="header">
+        <h5 class="p-3 mb-0">Basic Information</h5>
+      </ng-template>
+      <div class="p-3 row">
+        <div class="col-md-4 mb-2">
+          <div class="label">Warehouse Name</div>
+          <div class="value">{{ warehouse.warehouseName }}</div>
+        </div>
+        <div class="col-md-2 mb-2">
+          <div class="label">Code</div>
+          <div class="value"><span class="badge bg-primary">{{ warehouse.code }}</span></div>
+        </div>
+        <div class="col-md-3 mb-2">
+          <div class="label">Primary</div>
+          <div class="value">
+            <span
+              class="badge"
+              [ngClass]="warehouse.isPrimary ? 'bg-success' : 'bg-secondary'">
+              {{ warehouse.isPrimary ? 'Primary' : 'Secondary' }}
+            </span>
+          </div>
+        </div>
+        <div class="col-md-3 mb-2">
+          <div class="label">Status</div>
+          <div class="value">
+            <span
+              class="badge"
+              [ngClass]="warehouse.isActive ? 'bg-success' : 'bg-danger'">
+              {{ warehouse.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- Contact -->
+    <p-card class="mb-3">
+      <ng-template pTemplate="header">
+        <h5 class="p-3 mb-0">Contact Details</h5>
+      </ng-template>
+      <div class="p-3 row">
+        <div class="col-md-4 mb-2">
+          <div class="label">Contact Person</div>
+          <div class="value">{{ warehouse.contactPersonName || '-' }}</div>
+        </div>
+        <div class="col-md-4 mb-2">
+          <div class="label">Contact Number</div>
+          <div class="value">{{ warehouse.contactNumber || '-' }}</div>
+        </div>
+        <div class="col-md-4 mb-2">
+          <div class="label">Alternate Number</div>
+          <div class="value">{{ warehouse.altContactNumber || '-' }}</div>
+        </div>
+        <div class="col-md-4 mb-2">
+          <div class="label">Email</div>
+          <div class="value">{{ warehouse.email || '-' }}</div>
+        </div>
+        <!-- <div class="col-md-4 mb-2">
+          <div class="label">GST Number</div>
+          <div class="value">{{ warehouse.gstNumber || '-' }}</div>
+        </div> -->
+        <div class="col-md-4 mb-2">
+          <div class="label">Storage Capacity</div>
+          <div class="value">{{ warehouse.storageCapacity || '-' }}</div>
+        </div>
+      </div>
+    </p-card>
+
+    <!-- Address -->
+    <p-card class="mb-3">
+      <ng-template pTemplate="header">
+        <h5 class="p-3 mb-0">Address</h5>
+      </ng-template>
+      <div class="p-3">
+        <div class="value">
+          {{ warehouse.address?.line1 }}<br />
+          <span *ngIf="warehouse.address?.line2">
+            {{ warehouse.address?.line2 }}<br />
+          </span>
+          {{ warehouse.address?.city }}, {{ warehouse.address?.state }},
+          {{ warehouse.address?.country }} - {{ warehouse.address?.pinCode }}
+        </div>
+      </div>
+    </p-card>
+
+    <!-- Racks -->
+    <p-card class="mb-3">
+      <ng-template pTemplate="header">
+        <h5 class="p-3 mb-0">
+          Racks ({{ warehouse.totalRacks }}), Rows: {{ warehouse.totalColumns }}
+        </h5>
+      </ng-template>
+
+      <div class="p-3" *ngIf="warehouse.racks?.length; else noRacks">
+        <div
+          class="rack-card mb-3 p-3 border rounded"
+          *ngFor="let rack of warehouse.racks; let i = index">
+
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="mb-0">Rack {{ i + 1 }} - {{ rack.rackName }}</h6>
+            <span class="badge bg-info">
+              Rows: {{ rack.rowCount }} <!-- | Columns: {{ rack.columnsCount }} -->
+            </span>
+          </div>
+
+          <div class="mb-2">
+            <div class="label">Notes</div>
+            <div class="value">{{ rack.notes || '-' }}</div>
+          </div>
+
+          <div *ngIf="rack.rowNames?.length">
+            <div class="label mb-1">Row Names</div>
+            <ng-container
+              *ngIf="getRowBadgesPreview(rack.rowNames) as rowInfo">
+              <span
+                class="badge bg-primary me-1 mb-1"
+                *ngFor="let rn of rowInfo.firstTen">
+                {{ rn }}
+              </span>
+              <span
+                *ngIf="rowInfo.extra > 0"
+                class="badge bg-secondary mb-1">
+                +{{ rowInfo.extra }} more
+              </span>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noRacks>
+        <div class="p-3 text-muted">No racks configured for this warehouse.</div>
+      </ng-template>
+    </p-card>
+
+    <!-- Notes -->
+    <p-card *ngIf="warehouse.notes">
+      <ng-template pTemplate="header">
+        <h5 class="p-3 mb-0">Additional Notes</h5>
+      </ng-template>
+      <div class="p-3">
+        <div class="value">{{ warehouse.notes }}</div>
+      </div>
+    </p-card>
+  </div>
+</section>
+
+<section class="content" *ngIf="loading">
+  <div class="content-block p-4 text-center text-muted">
+    Loading warehouse details...
+  </div>
+</section>

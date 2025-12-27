@@ -1,0 +1,80 @@
+.content {
+  .content-block {
+    padding: 20px;
+
+    h4 {
+      color: #002080;
+      font-weight: 600;
+      margin-bottom: 20px;
+
+      .navigate {
+        background: transparent;
+        border: none;
+        color: #002080;
+        padding: 0;
+        margin-right: 10px;
+        cursor: pointer;
+
+        &:hover {
+          color: #0056b3;
+        }
+      }
+    }
+
+    .card {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    ::ng-deep {
+      .p-card {
+        box-shadow: none;
+        border: 1px solid #dee2e6;
+        margin-bottom: 20px;
+
+        .p-card-header {
+          background-color: #f0f6f9;
+          border-bottom: 1px solid #dee2e6;
+
+          h5 {
+            color: #002080;
+            font-weight: 600;
+            margin: 0;
+          }
+        }
+
+        .p-card-body {
+          padding: 0;
+        }
+      }
+
+      .p-chip {
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .p-tag {
+        font-size: 0.875rem;
+      }
+    }
+
+    .header-section {
+      h2 {
+        color: #002080;
+        font-weight: 700;
+        font-size: 28px;
+        margin: 0;
+      }
+
+      .badge {
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+      }
+    }
+
+    .font-monospace {
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+    }
+  }
+}

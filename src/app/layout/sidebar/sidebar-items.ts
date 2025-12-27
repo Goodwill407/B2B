@@ -53,6 +53,44 @@ export const ROUTES: RouteInfo[] = [
     ],
   },
   {
+    path: '',
+    title: `Manage Vendor/Warehouse`,
+    iconType: 'material-icons-outlined',
+    icon: 'person',
+    class: 'menu-toggle',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['manufacture'],
+    submenu: [
+      {
+        path: '/mnf/view-vendor-list',
+        title: 'View/Add Vendor',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+      // {
+      //   path: '/mnf/customise_profile',
+      //   title: 'Customize Profile for Customers',
+      //   iconType: '',
+      //   icon: '',
+      //   class: 'ml-menu',
+      //   groupTitle: false,
+      //   badge: '',
+      //   badgeClass: '',
+      //   role: [''],
+      //   submenu: [],
+      // }
+
+    ],
+  },
+  {
     path: '/mnf/brand',
     title: `Brand`,
     iconType: 'material-icons-outlined',
@@ -1310,7 +1348,57 @@ export const ROUTES2: RouteInfo[] = [
       },     
     ],
   },
+{
+    path: '',
+    title: `Manage Vendor/Warehouse`,
+    iconType: 'material-icons-outlined',
+    icon: 'person',
+    class: 'menu-toggle',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['manufacture'],
+    submenu: [
+      {
+        path: '/mnf/view-vendor-list',
+        title: 'View/Add Vendor',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+      {
+        path: '/mnf/view-warehouse-list',
+        title: 'View/Add Warehouse',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+      {
+        "path": "/mnf/view-categories",
+        "title": "Category Management",
+        "iconType": "",
+        "icon": "",
+        "class": "ml-menu",
+        "groupTitle": false,
+        "badge": "",
+        "badgeClass": "",
+        "role": [""],
+        "submenu": []
+      }
 
+
+    ],
+  },
   // for request
   {
     path: '',

@@ -7,12 +7,13 @@ import jsPDF from 'jspdf';
 import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 import {  RouterModule } from '@angular/router';
+import { statusAllPoDisplayPipe } from 'app/statusAll-po';
 @Component({
   selector: 'app-retailer-to-man-po-list',
   standalone: true,
 imports: [CommonModule,
     TableModule,
-    PaginatorModule,RouterModule],
+    PaginatorModule,RouterModule, statusAllPoDisplayPipe],
   templateUrl: './retailer-to-man-po-list.component.html',
   styleUrl: './retailer-to-man-po-list.component.scss'
 })

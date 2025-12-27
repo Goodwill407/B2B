@@ -1,0 +1,46 @@
+.content {
+  .content-block {
+    padding: 20px;
+
+    h4 {
+      color: #002080;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    ::ng-deep {
+      .p-datatable {
+        .p-datatable-thead > tr > th {
+          background-color: #f0f6f9;
+          color: #002080;
+          font-weight: 600;
+          padding: 12px 8px;
+        }
+
+        .p-datatable-tbody > tr > td {
+          padding: 10px 8px;
+        }
+
+        .p-paginator {
+          padding: 15px;
+          background: #f8f9fa;
+        }
+      }
+    }
+
+    .btn-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .disabled {
+      opacity: 0.6;
+      cursor: not-allowed !important;
+    }
+  }
+}

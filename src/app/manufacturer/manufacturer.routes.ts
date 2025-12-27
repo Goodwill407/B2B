@@ -43,6 +43,14 @@ import { ViewUpdatedWholsalerPoOrderComponent } from "./new-flow/order-managment
 
 import { ViewQtyUpdatedPoComponent } from "./new-flow/order-managment/view-retailer-order/view-qty-updated-po/view-qty-updated-po.component";
 import { ConfirmedMtoPoMfgRetComponent } from "./new-flow/order-managment/view-retailer-order/confirmed-mto-po-mfg-ret/confirmed-mto-po-mfg-ret.component";
+import { AddUpdateVendorComponent } from "./vendor-warehouse-master/add-update-vendor/add-update-vendor.component";
+import { VendorListComponent } from "./vendor-warehouse-master/vendor-list/vendor-list.component";
+import { ViewVendorComponent } from "./vendor-warehouse-master/view-vendor/view-vendor.component";
+import { AddUpdateWarehouseComponent } from "./vendor-warehouse-master/add-update-warehouse/add-update-warehouse.component";
+import { WarehouseListComponent } from "./vendor-warehouse-master/warehouse-list/warehouse-list.component";
+import { ViewWarehouseComponent } from "./vendor-warehouse-master/view-warehouse/view-warehouse.component";
+import { ListCategoriesComponent } from "./vendor-warehouse-master/list-categories/list-categories.component";
+import { MainSubCategoryAddUpdateComponent } from "./vendor-warehouse-master/main-sub-category-add-update/main-sub-category-add-update.component";
 
 export const M_Auth: Route[] = [
     { path: 'new', loadChildren:()=> import('./new-flow/new_flow.route').then((m)=>m.NewFlow)},
@@ -84,6 +92,20 @@ export const M_Auth: Route[] = [
     { path: 'update-stocks-for-product', component: UpdateStockOfProductComponent },
     { path: 'inventory-logs', component: InventoryLogsComponent},
     { path: 'view-inventory-log', component:ViewInventoryLogComponent},
+
+    { path: 'add-vendor', component:AddUpdateVendorComponent },
+    { path: 'update-vendor/:id', component:AddUpdateVendorComponent},
+    { path: 'view-vendor-list', component:VendorListComponent },
+    { path: 'view-vendor/:id', component: ViewVendorComponent },
+
+    { path: 'add-warehouse', component: AddUpdateWarehouseComponent },
+    { path: 'update-warehouse/:id', component: AddUpdateWarehouseComponent },
+    { path: 'view-warehouse-list', component: WarehouseListComponent },
+    { path: 'view-warehouse/:id', component: ViewWarehouseComponent },
+
+    { path: 'view-categories', component: ListCategoriesComponent },
+    { path: 'add-category', component: MainSubCategoryAddUpdateComponent },
+    { path: 'update-category/:id', component: MainSubCategoryAddUpdateComponent },
 
 
     //new flow ret to man

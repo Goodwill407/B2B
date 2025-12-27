@@ -1,0 +1,75 @@
+.content .content-block {
+  padding: 20px;
+
+  h4 {
+    color: #002080;
+    font-weight: 600;
+    margin-bottom: 20px;
+
+    .navigate {
+      background: transparent;
+      border: none;
+      color: #002080;
+      padding: 0;
+      margin-right: 10px;
+      cursor: pointer;
+
+      &:hover {
+        color: #0056b3;
+      }
+    }
+  }
+
+  .card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+
+  .subcategory-row {
+    background: #f8f9fa;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #e9ecef;
+    }
+  }
+
+  ::ng-deep {
+    .p-card {
+      box-shadow: none;
+      border: 1px solid #dee2e6;
+      margin-bottom: 20px;
+
+      .p-card-header {
+        background-color: #f0f6f9;
+        border-bottom: 1px solid #dee2e6;
+
+        h5 {
+          color: #002080;
+          font-weight: 600;
+          margin: 0;
+        }
+      }
+    }
+
+    .p-inputtext,
+    .p-inputtextarea {
+      width: 100%;
+
+      &.is-invalid {
+        border-color: #dc3545;
+      }
+
+      &:disabled {
+        background-color: #e9ecef;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+  }
+}

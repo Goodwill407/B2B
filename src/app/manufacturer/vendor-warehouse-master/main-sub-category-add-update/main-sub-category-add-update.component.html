@@ -1,0 +1,234 @@
+<section class="content">
+  <div class="content-block">
+    <h4 class="mt-4">
+      <button class="btn navigate" (click)="cancel()">
+        <i class="bi bi-arrow-left-circle h4"></i>
+      </button>
+      <span>
+        {{ isEditMode ? 'Update' : 'Add' }} Category & Subcategories
+      </span>
+    </h4>
+
+    <div class="card p-4">
+      <!-- STEP 1: Category Form -->
+      <p-card>
+        <ng-template pTemplate="header">
+          <div class="d-flex justify-content-between align-items-center p-3">
+            <h5 class="mb-0">Step 1: Category Information</h5>
+            <span class="badge bg-success" *ngIf="categoryCreated">
+              <i class="bi bi-check-circle me-1"></i>Saved
+            </span>
+          </div>
+        </ng-template>
+
+        <form [formGroup]="categoryForm" class="p-3">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Category Name *</label>
+              <input
+                type="text"
+                pInputText
+                formControlName="name"
+                class="w-100"
+                [disabled]="categoryCreated"
+                [class.is-invalid]="isFieldInvalid(categoryForm, 'name')"
+                placeholder="e.g. Fabric, Accessories" />
+              <small class="text-danger" *ngIf="isFieldInvalid(categoryForm, 'name')">
+                {{ getErrorMessage('name') }}
+              </small>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Code</label>
+              <input
+                type="text"
+                pInputText
+                formControlName="code"
+                class="w-100"
+                [disabled]="categoryCreated"
+                placeholder="e.g. CAT001, CAT002" />
+              <small class="text-muted">Enter unique category code</small>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <label class="form-label">Description</label>
+              <textarea
+                pInputTextarea
+                formControlName="description"
+                rows="2"
+                class="w-100"
+                [disabled]="categoryCreated"
+                placeholder="Brief description of category">
+              </textarea>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12 mb-3">
+              <label class="form-label">Note</label>
+              <textarea
+                pInputTextarea
+                formControlName="note"
+                rows="2"
+                class="w-100"
+                [disabled]="categoryCreated"
+                placeholder="Additional notes">
+              </textarea>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <p-checkbox
+                formControlName="isActive"
+                [binary]="true"
+                [disabled]="categoryCreated"
+                inputId="isActive"
+                label="Active">
+              </p-checkbox>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end">
+            <button
+              type="button"
+              pButton
+              [label]="loading ? 'Saving...' : (isEditMode ? 'Update Category' : 'Save Category')"
+              icon="pi pi-check"
+              [disabled]="loading || categoryCreated"
+              [loading]="loading"
+              (click)="saveCategory()">
+            </button>
+          </div>
+        </form>
+      </p-card>
+
+      <p-divider></p-divider>
+
+      <!-- STEP 2: Subcategories Form (Only after category is saved) -->
+      <p-card *ngIf="categoryCreated">
+        <ng-template pTemplate="header">
+          <div class="d-flex justify-content-between align-items-center p-3">
+            <h5 class="mb-0">
+              Step 2: Subcategories for "{{ createdCategory?.name }}"
+            </h5>
+            <button
+              type="button"
+              pButton
+              label="Add More"
+              icon="pi pi-plus"
+              class="p-button-sm p-button-success"
+              (click)="addSubcategory()">
+            </button>
+          </div>
+        </ng-template>
+
+        <form [formGroup]="subcategoriesForm" class="p-3">
+          <div formArrayName="subcategories">
+            <div
+              *ngFor="let subCtrl of subcategories.controls; let i = index"
+              [formGroupName]="i"
+              class="subcategory-row mb-3 p-3 border rounded">
+              
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="mb-0">Subcategory {{ i + 1 }}</h6>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-danger"
+                  (click)="removeSubcategory(i)"
+                  [disabled]="subcategories.length === 1">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+
+              <div class="row">
+                <div class="col-md-4 mb-2">
+                  <label class="form-label">Subcategory Name *</label>
+                  <input
+                    type="text"
+                    pInputText
+                    formControlName="subcategoryName"
+                    class="w-100"
+                    placeholder="e.g. Cotton Fabric" />
+                </div>
+
+                <div class="col-md-3 mb-2">
+                  <label class="form-label">Code</label>
+                  <input
+                    type="text"
+                    pInputText
+                    formControlName="subcategoryCode"
+                    class="w-100"
+                    placeholder="e.g. SUB001, SUB002" />
+                </div>
+
+                <div class="col-md-5 mb-2">
+                  <label class="form-label">Description</label>
+                  <input
+                    type="text"
+                    pInputText
+                    formControlName="description"
+                    class="w-100"
+                    placeholder="Brief description" />
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-10 mb-2">
+                  <label class="form-label">Note</label>
+                  <input
+                    type="text"
+                    pInputText
+                    formControlName="note"
+                    class="w-100"
+                    placeholder="Additional notes" />
+                </div>
+
+                <div class="col-md-2 mb-2 d-flex align-items-end">
+                  <p-checkbox
+                    formControlName="isActive"
+                    [binary]="true"
+                    [inputId]="'isActive' + i"
+                    label="Active">
+                  </p-checkbox>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="empty-state text-center p-4" *ngIf="subcategories.length === 0">
+            <i class="bi bi-inbox" style="font-size: 3rem; color: #6c757d;"></i>
+            <p class="mt-2 text-muted">No subcategories added. Click "Add More" to create.</p>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-3">
+            <button
+              type="button"
+              pButton
+              label="Cancel"
+              icon="pi pi-times"
+              class="p-button-secondary"
+              (click)="cancel()">
+            </button>
+            <button
+              type="button"
+              pButton
+              [label]="savingSubcategories ? 'Saving...' : (isEditMode ? 'Update Subcategories' : 'Save All Subcategories')"
+              icon="pi pi-check"
+              [disabled]="savingSubcategories || subcategories.length === 0"
+              [loading]="savingSubcategories"
+              (click)="saveSubcategories()">
+            </button>
+          </div>
+        </form>
+      </p-card>
+
+      <div *ngIf="!categoryCreated && !isEditMode" class="alert alert-info mt-3">
+        <i class="bi bi-info-circle me-2"></i>
+        Save the category first to add subcategories.
+      </div>
+    </div>
+  </div>
+</section>
