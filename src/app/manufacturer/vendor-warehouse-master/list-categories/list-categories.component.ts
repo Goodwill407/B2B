@@ -80,7 +80,7 @@ totalRecords = 0;
   loadCategories(): void {
   this.loading = true;
   
-  const url = `manufacture-category?page=${this.currentPage}&limit=${this.pageSize}`;
+  const url = `manufacture-category?page=${this.currentPage}&limit=${this.pageSize}&manufacturerEmail=${this.manufacturerEmail}`;
   
   this.authService.get(url).subscribe(
     (res: any) => {

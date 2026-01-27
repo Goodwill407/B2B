@@ -1,0 +1,193 @@
+/* --- COPIED & ADAPTED FROM REFERENCE STYLE --- */
+.content .content-block {
+  padding: 20px;
+
+  /* Header Style */
+  h4 {
+    color: #002080;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  /* Search Box */
+  .search-box {
+    position: relative;
+    max-width: 400px;
+    flex: 1;
+
+    .search-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6c757d;
+      pointer-events: none;
+    }
+
+    input.form-control {
+      padding-right: 35px;
+      border-radius: 6px;
+    }
+  }
+
+  /* Main Card */
+  .card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 0; 
+    border: none;
+    background: #fff;
+    overflow: hidden;
+  }
+
+  /* --- PRIMENG TABLE OVERRIDES (Matching Reference) --- */
+  :host ::ng-deep {
+    .p-datatable {
+      .p-datatable-header {
+        background: #fff;
+        border: none;
+        padding: 15px;
+      }
+
+      /* Header Styling - Blue-Gray Background */
+      .p-datatable-thead > tr > th {
+        background: #f0f6f9; /* Reference Color */
+        color: #002080;      /* Dark Blue Text */
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        border-bottom: 2px solid #dee2e6;
+        padding: 12px 10px;
+        white-space: nowrap;
+      }
+
+      /* Body Styling */
+      .p-datatable-tbody > tr {
+        background: #ffffff;
+        border-bottom: 1px solid #f1f1f1;
+
+        &:hover {
+          background: #f8f9fa !important;
+        }
+
+        > td {
+          padding: 10px;
+          font-size: 0.9rem;
+          color: #495057;
+          vertical-align: middle;
+        }
+      }
+
+      /* Row Expansion Active State */
+      .p-datatable-tbody > tr.p-highlight {
+        background: #eef2ff !important; /* Light Blue Highlight */
+        > td {
+            color: #002080;
+            font-weight: 500;
+        }
+      }
+
+      /* Paginator */
+      .p-paginator {
+        border-top: 1px solid #dee2e6;
+        padding: 12px;
+        background: #fff;
+      }
+    }
+    
+    /* --- TOGGLE BUTTON FIX (NUCLEAR OPTION) --- */
+    /* We make it look like a small clickable badge */
+    .p-row-toggler {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 2rem !important;
+        height: 2rem !important;
+        background-color: #f0f6f9 !important; /* Match header bg */
+        border: 1px solid #dee2e6 !important;
+        border-radius: 50% !important;
+        color: #002080 !important;
+        transition: all 0.2s;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #002080 !important;
+            color: #fff !important;
+            transform: scale(1.1);
+        }
+
+        /* Force icon visibility */
+        .p-button-icon, .pi {
+            font-size: 0.9rem !important;
+            color: inherit !important; 
+            font-weight: bold !important;
+            display: block !important;
+            visibility: visible !important;
+        }
+    }
+  }
+
+  /* Thumbnail Image */
+  .item-thumbnail {
+    width: 40px; 
+    height: 40px; 
+    object-fit: cover; 
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+  }
+
+  /* Ensure the first column has enough width for the text button */
+:host ::ng-deep .p-datatable-thead > tr > th:first-child {
+    width: 100px !important; /* Force width for "Show Logs" button */
+    text-align: center;
+}
+
+/* --- Table Styling: Borders & Alignment Fix --- */
+:host ::ng-deep .p-datatable {
+  
+  /* 1. FORCE BORDERS ON EVERYTHING */
+  .p-datatable-thead > tr > th,
+  .p-datatable-tbody > tr > td {
+    border: 1px solid #dee2e6 !important; /* Force visible light gray border */
+    border-collapse: collapse;
+  }
+
+  /* 2. HEADER STYLING */
+  .p-datatable-thead > tr > th {
+    background: #f0f6f9;
+    color: #002080;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    padding: 12px 10px;
+    vertical-align: middle;
+    text-align: left !important; /* Default: LEFT align for headers */
+  }
+
+  /* 3. BODY CELL STYLING */
+  .p-datatable-tbody > tr > td {
+    padding: 10px;
+    font-size: 0.9rem;
+    color: #495057;
+    vertical-align: left;
+    text-align: left !important; /* Default: LEFT align for data */
+  }
+
+  /* 4. EXCEPTIONS: CENTER ALIGN SPECIFIC COLUMNS */
+  /* Log Column (Header & Body) */
+  .p-datatable-thead > tr > th:nth-last-child(2), 
+  .p-datatable-tbody > tr > td:nth-last-child(2) {
+    text-align: center !important;
+    width: 120px; /* Fixed width for button */
+  }
+
+  /* Actions Column (Header & Body) */
+  .p-datatable-thead > tr > th:last-child, 
+  .p-datatable-tbody > tr > td:last-child {
+    text-align: center !important;
+    width: 140px;
+  }
+}
+
+
+}

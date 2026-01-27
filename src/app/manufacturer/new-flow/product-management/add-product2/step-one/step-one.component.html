@@ -953,7 +953,7 @@
                         <label class="label-input" for="productTitle">Date Of Manufacture<span
                                 class="required">*</span></label>
                         <input type="date" id="dateOfManufacture" formControlName="dateOfManufacture"
-                            class="form-control"
+                            class="form-control" [max]="today" (change)="onDomChange()"
                             [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('dateOfManufacture')?.invalid}">
 
                         <div *ngIf="submittedStep1 && stepOne.get('dateOfManufacture')?.invalid"
@@ -963,20 +963,20 @@
                             </div>
                         </div>
                     </div>
-                    <div  class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                    <!-- <div  class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                         <label class="label-input" for="dateOfListing">Date Of Listing<span
                                 class="required">*</span></label>
                         <input type="date" id="dateOfListing" formControlName="dateOfListing"
                             class="form-control"
-                            [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('dateOfListing')?.invalid}">
+                            [ngClass]="{'is-invalid': submittedStep1 && stepOne.get('dateOfListing')?.invalid}"> -->
                         <!-- Validation feedback for the Product Title field -->
-                        <div *ngIf="submittedStep1 && stepOne.get('dateOfListing')?.invalid"
+                        <!-- <div *ngIf="submittedStep1 && stepOne.get('dateOfListing')?.invalid"
                             class="invalid-feedback">
                             <div *ngIf="stepOne.get('dateOfListing')?.hasError('required')">
                                 Date Of Listing is required
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>

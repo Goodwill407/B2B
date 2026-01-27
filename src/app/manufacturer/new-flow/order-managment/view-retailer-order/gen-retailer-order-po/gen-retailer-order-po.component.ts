@@ -29,6 +29,8 @@ interface PoItem {
   productType: string;
   colourImage: string;
   brandName: any; // Fixed: Added proper brandName
+  producibleQuantity?: number;
+  bomDetails?: MaterialBOM[];
 }
 
 interface TransportDetails {
@@ -75,6 +77,33 @@ interface ManufacturerProfile {
   BankDetails: BankDetails;
 }
 
+// Add these new interfaces
+interface VendorDetails {
+  vendorName: string;
+  companyName: string;
+  contactPersonName: string;
+  vendorEmail: string;
+  contactNumber: string;
+}
+
+interface WarehouseDetails {
+  warehouseName: string;
+  code: string;
+  contactPersonName: string;
+  contactNumber: string;
+  email: string;
+}
+
+interface MaterialBOM {
+  materialName: string;
+  materialCode: string;
+  requiredQtyPerPiece: number;
+  availableStock: number;
+  possibleQuantity: number;
+  status: string;
+  vendorDetails?: VendorDetails;
+  warehouseDetails?: WarehouseDetails;
+}
 @Component({
   selector: 'app-gen-retailer-order-po',
   standalone: true,
@@ -113,6 +142,9 @@ export class GenRetailerOrderPoComponent implements OnInit {
   currentStatusAll: string = 'pending';
 
   manufacturerNote: string = '';
+
+  showBomModal: boolean = false;
+  selectedBomItem: PoItem | null = null;
 
   constructor(
     private authService: AuthService,
@@ -239,6 +271,12 @@ export class GenRetailerOrderPoComponent implements OnInit {
       brandName: match ? match.brandName : ''
     };
   });
+
+  this.orderedSet.forEach(item => {
+    if (this.hasQuantityMismatch(item)) {
+      this.fetchProductionCapacity(item);
+    }
+  });
 }
 
   // Enhanced validation methods
@@ -277,6 +315,8 @@ export class GenRetailerOrderPoComponent implements OnInit {
     if (item.availableQuantity < 0) item.availableQuantity = 0;
     const max = Math.min(item.quantity, item.inventoryQuantity);
     if (item.availableQuantity > max) item.availableQuantity = max;
+
+    this.checkAndFetchCapacity(item);
   }
 
   preventInvalidInput(evt: KeyboardEvent) {
@@ -604,5 +644,58 @@ private prepareBulkInventoryUpdate(): any {
       const gstAmount = (itemTotal * item.hsnGst) / 100;
       return total + itemTotal + gstAmount;
     }, 0);
+  }
+
+  // Add this method to your class
+fetchProductionCapacity(item: PoItem) {
+  // 1. Prepare the payload
+  // We use manufacturerProfile.email as the manufacturerEmail
+  const payload = {
+    manufacturerEmail: this.manufacturerProfile?.email || '', 
+    designNumber: item.designNumber,
+    color: item.colourName, // "black", "blue", etc.
+    size: item.size
+  };
+
+  // 2. Call the API
+  this.authService.post('manufacture-raw-material-inventory-logs/production-capacity', payload)
+    .subscribe({
+      next: (res: any) => {
+        if (res.success && res.data) {
+          // 3. Update the item with the received quantity
+          item.producibleQuantity = res.data.producibleQuantity;
+          item.bomDetails = res.data.materials;
+          console.log(`Capacity for ${item.designNumber}: ${item.producibleQuantity}`);
+        }
+      },
+      error: (err) => {
+        console.error('Failed to fetch production capacity', err);
+        item.producibleQuantity = undefined; // Reset or handle error
+      }
+    });
+}
+
+// Helper to check condition and trigger fetch
+checkAndFetchCapacity(item: PoItem) {
+  // Logic: If Required != Dispatch, fetch the capacity
+  if (this.hasQuantityMismatch(item)) {
+    this.fetchProductionCapacity(item);
+  } else {
+    // Optional: Clear it if they match now? 
+    // item.producibleQuantity = undefined; 
+  }
+}
+
+openBomModal(item: PoItem) {
+    this.selectedBomItem = item;
+    this.showBomModal = true;
+    // Prevent background scrolling
+    document.body.style.overflow = 'hidden'; 
+  }
+
+  closeBomModal() {
+    this.showBomModal = false;
+    this.selectedBomItem = null;
+    document.body.style.overflow = 'auto'; 
   }
 }

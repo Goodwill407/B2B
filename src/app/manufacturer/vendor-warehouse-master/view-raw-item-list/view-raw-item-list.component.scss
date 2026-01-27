@@ -1,0 +1,69 @@
+.content .content-block {
+  padding: 20px;
+
+  h4 {
+    color: #002080;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .search-box {
+    position: relative;
+
+    .search-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6c757d;
+      pointer-events: none;
+    }
+  }
+
+  .card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 0;
+  }
+
+  ::ng-deep {
+    .p-datatable {
+      .p-datatable-header {
+        background: #f8f9fa;
+        border: none;
+        padding: 15px;
+      }
+
+      .p-datatable-thead > tr > th {
+        background: #f0f6f9;
+        color: #002080;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        border-bottom: 2px solid #dee2e6;
+        padding: 12px 10px;
+      }
+
+      .p-datatable-tbody > tr {
+        &:hover {
+          background: #f8f9fa;
+        }
+
+        > td {
+          padding: 10px;
+          font-size: 0.9rem;
+          vertical-align: middle;
+        }
+      }
+    }
+
+    .p-paginator {
+      border-top: 1px solid #dee2e6;
+      padding: 12px;
+    }
+  }
+
+  .item-thumbnail {
+    border: 1px solid #dee2e6;
+  }
+}

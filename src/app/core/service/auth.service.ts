@@ -68,6 +68,13 @@ export class AuthService {
     // Make the PATCH request using the full URL
     return this.http.patch<any>(fullUrl, data, { headers: this.headerToken });
   }
+
+  // POST request with FormData (for file uploads)
+postpimage(url: string, data: any) {
+  const fullUrl = this.apiURL + url;
+  return this.http.post<any>(fullUrl, data, { headers: this.headerToken });
+}
+
   get(url: string) {
     return this.http.get<any>(this.apiURL + url, { headers: this.headerToken });
   }

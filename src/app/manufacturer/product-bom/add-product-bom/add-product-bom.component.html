@@ -1,0 +1,277 @@
+<section class="content">
+  <div class="content-block">
+    <!-- Header with Back Button - EXACT MATCH -->
+    <h4 class="mt-4">
+      <button class="btn navigate"(click)="goBack()">
+        <i class="bi bi-arrow-left-circle h4"></i>
+      </button>
+      <span>
+        {{ isUpdateMode ? 'Update BOM' : 'Add BOM' }} - 
+        {{product?.designNumber || 'New'}}
+     </span>
+    </h4>
+
+    <div class="card p-4 my-3" [formGroup]="bomForm" *ngIf="!loading && product">
+      <!-- Product Header -->
+      <div class="header d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center gap-3">
+          <div class="col-auto"> <!-- Use col-auto to shrink-wrap the width -->
+            <img 
+              [src]="product.colourCollections?.[0]?.productImages?.[0] || 'assets/placeholder.png'" 
+              class="rounded border" 
+              alt="Product"
+              style="width: 60px; height: 60px; object-fit: cover;">
+          </div>
+          <div>
+            <h5>{{product.designNumber}} - {{product.productTitle}}</h5>
+            <p class="text-muted mb-0">{{product.brand}} | {{product.gender}} | {{product.productType}}</p>
+          </div>
+        </div>
+        <span class="badge" [ngClass]="isUpdateMode ? 'bg-warning text-dark' : 'bg-primary'">
+            {{ isUpdateMode ? 'Edit Mode' : 'Create Mode' }}
+        </span>
+      </div>
+
+      <!-- Toggle -->
+      <!-- <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="applyToggle" (change)="copyToAllSizes(activeColorIndex, 0)">
+            <label class="form-check-label" for="applyToggle">Apply to all sizes</label>
+          </div>
+        </div>
+      </div> -->
+
+      <!-- Color Tabs -->
+      <div class="mb-4">
+        <label class="form-label fw-bold">Colors:</label>
+        <div class="d-flex gap-2 flex-wrap">
+          <button *ngFor="let color of colorsArray.controls; let cIdx = index"
+                  class="btn btn-sm px-3 py-2 rounded-pill color-btn"
+                  [class.active]="activeColorIndex === cIdx"
+                  (click)="setActiveTab(cIdx)">
+            <span class="color-circle me-1" [style.background-color]="color.value.colorCode"></span>
+            {{color.value.colorName}}
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Color Sizes -->
+      <ng-container formArrayName="colors">
+        <div *ngFor="let colorGroup of colorsArray.controls; let cIdx = index" [formGroupName]="cIdx">
+          <div *ngIf="activeColorIndex === cIdx">
+            <div formArrayName="sizes">
+              <div *ngFor="let sizeGroup of getSizesArray(cIdx).controls; let sIdx = index" 
+                   [formGroupName]="sIdx" class="size-section mb-4">
+                
+                <!-- Size Card - EXACT MATCH SCREENSHOT -->
+                <div class="card size-card">
+                  <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold">
+                      <span class="color-circle-sm me-2" [style.background-color]="colorsArray.at(cIdx)?.value.colorCode"></span>
+                      {{colorsArray.at(cIdx)?.value.colorName}} - {{sizeGroup.value.size.toUpperCase()}}
+                    </h6>
+                    <span class="badge bg-light text-dark">{{getMaterialsArray(cIdx, sIdx).length}} materials</span>
+                  </div>
+                  <div class="card-body p-3">
+                    
+                    <!-- Materials Table - EXACT MATCH -->
+                    <div class="table-responsive">
+                      <table class="table table-bordered table-sm mb-3">
+                        <thead class="table-light">
+                          <tr>
+                            <!-- SR: Fixed small width is fine for numbers -->
+                            <th class="text-center" style="width: 5%;">Sr</th>
+                            
+                            <!-- Category/Sub: Flexible width -->
+                            <th style="width: 15%;">Category</th>
+                            <th style="width: 15%;">Subcategory</th>
+                            
+                            <!-- Raw Item: Should take remaining space as names can be long -->
+                            <th style="width: 25%;">Raw Item</th>
+                            
+                            <!-- Photo: Fixed small width for thumbnail -->
+                            <th class="text-center" style="width: 8%;">Img</th>
+                            
+                            <!-- Metrics: Fixed smaller widths -->
+                            <th class="text-center" style="width: 10%;">Qty</th>
+                            <th class="text-center" style="width: 10%;">Unit</th>
+                            <th class="text-center" style="width: 8%;">Wastage %</th>
+                            
+                            <!-- Action: Fixed small width -->
+                            <th class="text-center" style="width: 5%;">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody formArrayName="materials">
+                          <tr *ngFor="let material of getMaterialsArray(cIdx, sIdx).controls; let mIdx = index" [formGroupName]="mIdx">
+                            <td class="text-center">{{mIdx + 1}}</td>
+                            
+                            <!-- Category -->
+                            <td>
+                              <select class="form-select form-select-sm" formControlName="categoryId"
+                                      (change)="onTableCategoryChange(cIdx, sIdx, mIdx, $any($event.target).value)">
+                                <option value="">Select Category</option>
+                                <option *ngFor="let cat of categories" [value]="cat.id">{{cat.name}}</option>
+                              </select>
+                            </td>
+
+                            <!-- Subcategory -->
+                            <td>
+                              <select class="form-select form-select-sm" formControlName="subcategoryId"
+                                      (change)="onTableSubCategoryChange(cIdx, sIdx, mIdx, $any($event.target).value)"
+                                      [disabled]="!getMaterialsArray(cIdx, sIdx).at(mIdx)?.value.categoryId">
+                                <option value="">Select Subcategory</option>
+                                <option *ngFor="let sub of rowSuboptions[cIdx]?.[sIdx]?.[mIdx] || []" [value]="sub.id">
+                                  {{sub.subcategoryName}}
+                                </option>
+                              </select>
+                            </td>
+
+                            <!-- Raw Item - EXACT MATCH SCREENSHOT BUTTON STYLE -->
+                            <td>
+                              <button class="btn btn-outline-secondary btn-sm w-100 text-start raw-item-btn"
+                                      [class.selected]="!!getMaterialsArray(cIdx, sIdx).at(mIdx)?.value.itemName"
+                                      [disabled]="!getMaterialsArray(cIdx, sIdx).at(mIdx)?.value.subcategoryId"
+                                      (click)="openItemModal(cIdx, sIdx, mIdx)">
+                                <i class="bi bi-search me-1"></i>
+                                <span *ngIf="getMaterialsArray(cIdx, sIdx).at(mIdx)?.value.itemName; else noItem">
+                                  {{getMaterialsArray(cIdx, sIdx).at(mIdx)?.value.itemName}}
+                                  <span class="selected-indicator">✓</span>
+                                </span>
+                                <ng-template #noItem>Select Item</ng-template>
+                              </button>
+                            </td>
+
+                            <!-- NEW: Image Cell -->
+                            <td class="text-center">
+                              <div *ngIf="material.value.photo1" 
+                                    class="border rounded d-flex align-items-center justify-content-center" 
+                                    style="width: 40px; height: 40px; cursor: pointer;"
+                                    (click)="openImagePreview(material.value.photo1)">
+                                  <img [src]="material.value.photo1" style="max-width: 100%; max-height: 100%;">
+                              </div>
+                              <span *ngIf="!material.value.photo1" class="text-muted">-</span>
+                            </td>
+
+                            <!-- Qty -->
+                            <td class="text-center">
+                              <input type="number" class="form-control form-control-sm" style="width: 70px;"
+                                     formControlName="qty" min="0" step="0.01" placeholder="0">
+                            </td>
+
+                            <!-- Unit -->
+                            <td class="text-center">
+                              <select class="form-select form-select-sm" formControlName="unit">
+                                <option value="">Select</option>
+                                <option *ngFor="let unit of stockUnits" [value]="unit">{{unit}}</option>
+                              </select>
+                            </td>
+
+                            <!-- Wastage -->
+                            <td class="text-center">
+                              <input type="number" class="form-control form-control-sm" style="width: 70px;"
+                                     formControlName="wastagePercent" min="0" max="100" placeholder="0">
+                            </td>
+
+                            <!-- Delete -->
+                            <td class="text-center">
+                              <button class="btn btn-sm btn-outline-danger" (click)="removeMaterialRow(cIdx, sIdx, mIdx)"
+                                      [disabled]="getMaterialsArray(cIdx, sIdx).length === 1">
+                                <i class="bi bi-trash"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <!-- Add Row Button -->
+                    <div class="text-center">
+                      <button class="btn btn-outline-primary btn-sm" (click)="addMaterialRow(cIdx, sIdx)">
+                        <i class="bi bi-plus-circle me-1"></i>Add Material Row
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+            <!-- Save Buttons -->
+      <div class="d-flex justify-content-end align-items-center gap-3 mt-5 mb-5 pt-3 border-top">
+        <button class="btn btn-secondary px-4 py-2" (click)="goBack()">
+          <i class="bi bi-x-circle me-2"></i>Cancel
+        </button>
+        
+        <button class="btn btn-success px-5 py-2 fw-semibold shadow-sm" (click)="submitBOM()" [disabled]="loading">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+          <i *ngIf="!loading" class="bi bi-check-circle-fill me-2"></i>
+          {{ isUpdateMode ? 'Update BOM' : 'Save Configuration' }}
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Raw Item Modal -->
+    <div class="modal fade show d-block" *ngIf="showModal" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5>Select Raw Material</h5>
+            <button class="btn-close" (click)="closeItemModal()"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3">
+              <div *ngFor="let item of availableRawItems" class="col-md-6 col-lg-4">
+                <div class="card h-100 cursor-pointer" (click)="selectItemFromModal(item)">
+                  <img [src]="item.photo1 || '/assets/no-image.png'" class="card-img-top" style="height: 120px; object-fit: cover;">
+                  <div class="card-body">
+                    <h6>{{item.itemName}}</h6>
+                    <p class="small mb-1"><strong>Code:</strong> {{item.code}}</p>
+                    <span class="badge bg-success">{{item.stockUnit}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- NEW: Pagination Controls -->
+            <div *ngIf="availableRawItems.length > 0" class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+              <button class="btn btn-sm btn-outline-secondary" 
+                      [disabled]="modalPage === 1" 
+                      (click)="onModalPageChange(modalPage - 1)">
+                  Previous
+              </button>
+              <span class="text-muted small">
+                  Page {{ modalPage }} of {{ math.ceil(modalTotal / modalLimit) }} 
+                  (Total {{ modalTotal }})
+              </span>
+              <button class="btn btn-sm btn-outline-secondary" 
+                      [disabled]="modalPage * modalLimit >= modalTotal" 
+                      (click)="onModalPageChange(modalPage + 1)">
+                  Next
+              </button>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <small>{{availableRawItems.length}} items found</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. NEW: Image Preview Lightbox -->
+    <div class="modal-backdrop fade show" *ngIf="showImageModal" style="z-index: 1060;"></div>
+    <div class="modal fade show" *ngIf="showImageModal" tabindex="-1" style="display: block; z-index: 1065;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden bg-white">
+                <div class="text-end mb-2">
+                    <button type="button" class="btn-close" (click)="closeImagePreview()"></button>
+                </div>
+                <img [src]="previewImageSrc" class="img-fluid rounded shadow-lg bg-white">
+            </div>
+        </div>
+    </div>
+
+  </div>
+</section>

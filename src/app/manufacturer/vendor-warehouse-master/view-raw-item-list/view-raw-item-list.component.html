@@ -1,0 +1,137 @@
+<section class="content">
+  <div class="content-block">
+    <h4 class="mt-4">
+      <span><i class="bi bi-box-seam me-2"></i>Raw Items Management</span>
+    </h4>
+
+    <div class="d-flex justify-content-between align-items-center mb-3 gap-2">
+      <!-- Search Box -->
+      <div class="search-box" style="flex: 1; max-width: 400px;">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search by item name, code, category..."
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearch()"
+          style="padding-right: 35px;" />
+        <i class="bi bi-search search-icon"></i>
+      </div>
+
+      <!-- Add Button -->
+      <button class="btn btn-primary" (click)="addItem()">
+        <i class="bi bi-plus-circle me-2"></i>Add Item
+      </button>
+    </div>
+
+    <div class="card">
+      <p-table
+        [value]="filteredItems"
+        [loading]="loading"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} items"
+        styleClass="p-datatable-sm"
+        [globalFilterFields]="['itemName', 'code', 'categoryName', 'subcategoryName']">
+        
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="code">
+              Code <p-sortIcon field="code"></p-sortIcon>
+            </th>
+            <th pSortableColumn="itemName">
+              Item Name <p-sortIcon field="itemName"></p-sortIcon>
+            </th>
+            <th>Category</th>
+            <th>Subcategory</th>
+            <th>Vendor</th>
+            <th>Warehouse</th>
+            <th style="width: 60px;">Photo</th>
+            <th style="width: 100px;">Stock</th>
+            <!-- <th style="width: 100px;">Status</th> -->
+            <th style="width: 140px;">Actions</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item>
+          <tr>
+            <td><span class="badge bg-primary">{{ item.code }}</span></td>
+            <td><strong>{{ item.itemName }}</strong></td>
+            <td>
+              <span class="badge bg-secondary">{{ item.categoryCode }}</span>
+              {{ item.categoryName }}
+            </td>
+            <td>
+              <span class="badge bg-info">{{ item.subcategoryCode }}</span>
+              {{ item.subcategoryName }}
+            </td>
+            <td>
+              <small>{{ item.vendorDetails?.vendorName || '-' }}</small>
+            </td>
+            <td>
+              <small>{{ item.warehouseDetails?.warehouseName || '-' }}</small>
+            </td>
+            <td>
+              <img
+                [src]="item.photo1 || 'assets/images/no-image.png'"
+                [alt]="item.itemName"
+                class="item-thumbnail"
+                style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;" />
+            </td>
+            <td class="text-center">
+              <span class="badge" [ngClass]="item.stockInHand > 0 ? 'bg-success' : 'bg-warning'">
+                {{ item.stockInHand }}
+              </span>
+            </td>
+            <!-- <td>
+              <span class="badge" [ngClass]="item.isActive ? 'bg-success' : 'bg-danger'">
+                {{ item.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td> -->
+            <td>
+              <button
+                class="btn btn-sm btn-outline-primary me-1"
+                (click)="editItem(item)"
+                title="Edit">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <!-- <button
+                class="btn btn-sm"
+                [ngClass]="item.isActive ? 'btn-outline-warning' : 'btn-outline-success'"
+                (click)="toggleItemStatus(item)"
+                title="Toggle Status">
+                <i [ngClass]="item.isActive ? 'bi bi-toggle-on' : 'bi bi-toggle-off'"></i>
+              </button> -->
+              <button 
+                  class="btn btn-sm btn-info" 
+                  (click)="viewItem(item.id)"
+                  title="View Details">
+                  <i class="bi bi-eye"></i>
+                </button>
+              <button
+                class="btn btn-sm btn-outline-danger ms-1"
+                (click)="deleteItem(item)"
+                title="Delete">
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="10" class="text-center p-5">
+              <i class="bi bi-inbox" style="font-size: 3rem; color: #6c757d;"></i>
+              <p class="mt-2 text-muted">
+                {{ searchTerm ? 'No items found matching your search' : 'No items found. Click "Add Item" to create one.' }}
+              </p>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</section>
+
+<p-confirmDialog></p-confirmDialog>

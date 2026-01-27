@@ -1,0 +1,322 @@
+<section class="content">
+  <div class="content-block">
+    <!-- Header -->
+    <div class="page-header">
+      <div class="d-flex align-items-center">
+        <button class="btn btn-link p-0 me-3" (click)="goBack()">
+          <i class="bi bi-arrow-left-circle h4 mb-0"></i>
+        </button>
+        <h4 class="mb-0">Raw Item Details</h4>
+      </div>
+      <div class="header-actions">
+        <!-- <button
+          pButton
+          type="button"
+          label="Edit Item"
+          icon="pi pi-pencil"
+          class="p-button-primary"
+          (click)="editItem()"
+          [disabled]="loading"></button> -->
+      </div>
+    </div>
+
+    <!-- Loading Skeleton -->
+    <div *ngIf="loading" class="skeleton-container">
+      <p-card class="mb-3">
+        <p-skeleton width="100%" height="150px"></p-skeleton>
+      </p-card>
+      <p-card class="mb-3">
+        <p-skeleton width="100%" height="200px"></p-skeleton>
+      </p-card>
+    </div>
+
+    <!-- Item Details -->
+    <div *ngIf="!loading && item" class="item-details-container">
+      <!-- Basic Information Card -->
+      <p-card class="mb-3">
+        <ng-template pTemplate="header">
+          <div class="card-header-custom">
+            <h5 class="mb-0">
+              <i class="bi bi-info-circle me-2"></i>
+              Basic Information
+            </h5>
+            <p-tag
+              [value]="item.isActive ? 'Active' : 'Inactive'"
+              [severity]="item.isActive ? 'success' : 'danger'"></p-tag>
+          </div>
+        </ng-template>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <label class="info-label">Item Name</label>
+            <p class="info-value">{{ item.itemName }}</p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Code</label>
+            <p class="info-value">{{ item.code || 'N/A' }}</p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Stock In Hand</label>
+            <p class="info-value">
+              <span class="badge bg-primary">{{ item.stockInHand }} Units</span>
+            </p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Status</label>
+            <p class="info-value">
+              <span
+                class="badge"
+                [class.bg-success]="item.isActive"
+                [class.bg-danger]="!item.isActive">
+                {{ item.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </p>
+          </div>
+        </div>
+
+        <p-divider></p-divider>
+
+        <div class="info-grid single-column">
+          <div class="info-item" *ngIf="item.details">
+            <label class="info-label">Details</label>
+            <p class="info-value">{{ item.details }}</p>
+          </div>
+          <div class="info-item" *ngIf="item.note">
+            <label class="info-label">Note</label>
+            <p class="info-value">{{ item.note }}</p>
+          </div>
+        </div>
+      </p-card>
+
+      <!-- Category & Subcategory Card -->
+      <p-card class="mb-3">
+        <ng-template pTemplate="header">
+          <div class="card-header-custom">
+            <h5 class="mb-0">
+              <i class="bi bi-tags me-2"></i>
+              Category & Subcategory
+            </h5>
+          </div>
+        </ng-template>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <label class="info-label">Category</label>
+            <p class="info-value">
+              <span class="badge bg-primary me-2">{{ item.categoryCode }}</span>
+              {{ item.categoryName }}
+            </p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Subcategory</label>
+            <p class="info-value">
+              <span class="badge bg-info me-2">{{ item.subcategoryCode }}</span>
+              {{ item.subcategoryName }}
+            </p>
+          </div>
+        </div>
+      </p-card>
+
+      <!-- Photos Card -->
+      <p-card class="mb-3" *ngIf="hasPhotos()">
+        <ng-template pTemplate="header">
+          <div class="card-header-custom">
+            <h5 class="mb-0">
+              <i class="bi bi-images me-2"></i>
+              Item Photos
+            </h5>
+          </div>
+        </ng-template>
+
+        <div class="photo-gallery">
+          <div class="photo-item" *ngIf="item.photo1">
+            <p-image
+              [src]="item.photo1"
+              alt="Photo 1"
+              width="250"
+              [preview]="true"
+              imageClass="gallery-image"></p-image>
+            <p class="photo-label">Photo 1</p>
+          </div>
+          <div class="photo-item" *ngIf="item.photo2">
+            <p-image
+              [src]="item.photo2"
+              alt="Photo 2"
+              width="250"
+              [preview]="true"
+              imageClass="gallery-image"></p-image>
+            <p class="photo-label">Photo 2</p>
+          </div>
+        </div>
+      </p-card>
+
+      <!-- Vendor Details Card -->
+      <p-card class="mb-3">
+        <ng-template pTemplate="header">
+          <div class="card-header-custom">
+            <h5 class="mb-0">
+              <i class="bi bi-person-badge me-2"></i>
+              Vendor Details
+            </h5>
+          </div>
+        </ng-template>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <label class="info-label">Vendor Name</label>
+            <p class="info-value">{{ item.vendorDetails.vendorName }}</p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Company Name</label>
+            <p class="info-value">{{ item.vendorDetails.companyName }}</p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Contact Person</label>
+            <p class="info-value">{{ item.vendorDetails.contactPersonName }}</p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Email</label>
+            <p class="info-value">
+              <a [href]="'mailto:' + item.vendorDetails.vendorEmail">
+                {{ item.vendorDetails.vendorEmail }}
+              </a>
+            </p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Contact Number</label>
+            <p class="info-value">
+              <a [href]="'tel:' + item.vendorDetails.contactNumber">
+                {{ item.vendorDetails.contactNumber }}
+              </a>
+            </p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">GST Number</label>
+            <p class="info-value">{{ item.vendorDetails.gstNumber }}</p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">PAN Number</label>
+            <p class="info-value">{{ item.vendorDetails.panNumber }}</p>
+          </div>
+        </div>
+
+        <p-divider></p-divider>
+
+        <div class="info-grid single-column">
+          <div class="info-item">
+            <label class="info-label">
+              <i class="bi bi-geo-alt me-1"></i>
+              Address
+            </label>
+            <p class="info-value">{{ getFullAddress(item.vendorDetails.address) }}</p>
+          </div>
+        </div>
+      </p-card>
+
+      <!-- Warehouse Details Card -->
+      <p-card class="mb-3">
+        <ng-template pTemplate="header">
+          <div class="card-header-custom">
+            <h5 class="mb-0">
+              <i class="bi bi-building me-2"></i>
+              Warehouse Details
+            </h5>
+            <p-tag
+              *ngIf="item.warehouseDetails.isPrimary"
+              value="Primary"
+              severity="success"></p-tag>
+          </div>
+        </ng-template>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <label class="info-label">Warehouse Name</label>
+            <p class="info-value">{{ item.warehouseDetails.warehouseName }}</p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Code</label>
+            <p class="info-value">
+              <span class="badge bg-primary">{{ item.warehouseDetails.code }}</span>
+            </p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Contact Person</label>
+            <p class="info-value">{{ item.warehouseDetails.contactPersonName }}</p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Email</label>
+            <p class="info-value">
+              <a [href]="'mailto:' + item.warehouseDetails.email">
+                {{ item.warehouseDetails.email }}
+              </a>
+            </p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Contact Number</label>
+            <p class="info-value">
+              <a [href]="'tel:' + item.warehouseDetails.contactNumber">
+                {{ item.warehouseDetails.contactNumber }}
+              </a>
+            </p>
+          </div>
+          <div class="info-item">
+            <label class="info-label">Storage Capacity</label>
+            <p class="info-value">{{ item.warehouseDetails.storageCapacity }}</p>
+          </div>
+        </div>
+
+        <p-divider></p-divider>
+
+        <div class="info-grid single-column">
+          <div class="info-item">
+            <label class="info-label">
+              <i class="bi bi-geo-alt me-1"></i>
+              Address
+            </label>
+            <p class="info-value">{{ getFullAddress(item.warehouseDetails.address) }}</p>
+          </div>
+        </div>
+      </p-card>
+
+      <!-- Rack & Row Mappings Card -->
+      <p-card class="mb-3">
+        <ng-template pTemplate="header">
+          <div class="card-header-custom">
+            <h5 class="mb-0">
+              <i class="bi bi-grid-3x3 me-2"></i>
+              Storage Locations (Rack & Row)
+            </h5>
+            <span class="badge bg-info">{{ item.rackRowMappings.length }} Locations</span>
+          </div>
+        </ng-template>
+
+        <div class="rack-row-list">
+          <div
+            *ngFor="let mapping of item.rackRowMappings; let i = index"
+            class="rack-row-item">
+            <div class="rack-row-number">
+              <i class="bi bi-geo-fill"></i>
+              {{ i + 1 }}
+            </div>
+            <div class="rack-row-details">
+              <div class="rack-info">
+                <label>Rack:</label>
+                <span class="badge bg-primary">{{ mapping.rackName }}</span>
+              </div>
+              <div class="row-info">
+                <label>Row:</label>
+                <span class="badge bg-success">{{ mapping.rowName }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </p-card>
+    </div>
+
+    <!-- No Data -->
+    <div *ngIf="!loading && !item" class="no-data">
+      <i class="bi bi-inbox display-1 text-muted"></i>
+      <p class="text-muted mt-3">No item data available</p>
+    </div>
+  </div>
+</section>

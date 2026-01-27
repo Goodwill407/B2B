@@ -1,0 +1,317 @@
+<section class="content">
+  <div class="content-block">
+    <!-- Header -->
+    <h4 class="mt-4">
+      <span><i class="bi bi-clipboard-data me-2"></i>Raw Material Inventory</span>
+    </h4>
+
+    <!-- Search Box -->
+    <div class="d-flex justify-content-between align-items-center mb-3 gap-2">
+      <div class="search-box">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search by item name, code, category..."
+          pInputText
+          (keyup.enter)="loadInventoryData({first:0, rows:10})" 
+        />
+        <i class="bi bi-search search-icon"></i>
+      </div>
+    </div>
+
+    <!-- Main Table Card -->
+    <div class="card">
+      <p-table
+        [value]="inventoryList"
+        [lazy]="true"
+        (onLazyLoad)="loadInventoryData($event)"
+        [paginator]="true"
+        [rows]="10"
+        [totalRecords]="totalRecords"
+        [loading]="loading"
+        dataKey="id"
+        [expandedRowKeys]="expandedRows"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} items"
+        styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped"
+
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            
+            <th pSortableColumn="code" class="ps-3">
+              CODE 
+            </th>
+            
+            <th pSortableColumn="itemName">
+              ITEM NAME <!--  <p-sortIcon field="itemName"></p-sortIcon> -->
+            </th>
+            
+            <th>CATEGORY</th>
+            <th>SUBCATEGORY</th>
+            <th>VENDOR</th>
+            <th>WAREHOUSE</th>
+            <th>PHOTO</th>
+            <th>STOCK</th>
+            <th style="width: 3rem">Log</th> <!-- Toggle Column -->
+
+            <th class="text-center">ACTIONS</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item let-expanded="expanded">
+          <tr>
+            
+
+            <td><span class="badge bg-primary">{{ item.code }}</span></td>
+            <td><span class="fw-bold">{{ item.itemName }}</span></td>
+            
+            <td>
+              <span class="badge bg-secondary me-1" *ngIf="item.categoryCode">{{ item.categoryCode }}</span>
+              <span>{{ item.categoryName }}</span>
+            </td>
+            
+            <td>
+               <span class="badge bg-info me-1" *ngIf="item.subcategoryCode">{{ item.subcategoryCode }}</span>
+               <span>{{ item.subcategoryName }}</span>
+            </td>
+
+            <td><span class="text-muted small">{{ item.vendorDetails?.vendorName || '-' }}</span></td>
+            <td><span class="text-muted small">{{ item.warehouseDetails?.warehouseName || '-' }}</span></td>
+            
+            <td>
+                <img
+                  [src]="item.photo1 || 'assets/images/no-image.png'"
+                  [alt]="item.itemName"
+                  class="item-thumbnail"
+                />
+            </td>
+            
+            <td>
+              <span class="badge" [ngClass]="item.currentStock < item.minimumStockLevel ? 'bg-danger' : 'bg-success'">
+                {{ item.currentStock }}
+              </span>
+            </td>
+            
+            <!-- Simple Text Button for Logs -->
+            <td style="text-align: center; vertical-align: middle;">
+              <button 
+                type="button" 
+                [pRowToggler]="item" 
+                class="btn btn-sm"
+                [ngClass]="expanded ? 'btn-primary' : 'btn-outline-primary'"
+                style="font-size: 0.75rem; padding: 4px 8px; white-space: nowrap; font-weight: bold;">
+                {{ expanded ? 'Hide Logs' : 'Show Logs' }}
+              </button>
+            </td>
+
+            <td class="text-center">
+               <!-- Edit/Stock Button -->
+              <button
+                class="btn btn-sm btn-outline-primary me-1"
+                (click)="openStockUpdate(item)"
+                title="Update Stock">
+                <i class="bi bi-pencil"></i>
+              </button>
+              
+              <!-- View Button -->
+              <button
+                class="btn btn-sm btn-info me-1"
+                (click)="openDetails(item)"
+                title="View vendor/Warehouse Details">
+                <i class="bi bi-eye"></i>
+              </button>
+
+              <!-- CHANGED: Download Button (Replaced Delete) -->
+              <button
+                class="btn btn-sm btn-outline-success"
+                (click)="downloadItemPdf(item)"
+                title="Download Report">
+                <i class="bi bi-download"></i>
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+
+        <!-- Empty Message -->
+        <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="10" class="text-center p-5">
+                <i class="bi bi-inbox" style="font-size: 3rem; color: #6c757d;"></i>
+                <p class="mt-2 text-muted">No inventory records found.</p>
+              </td>
+            </tr>
+        </ng-template>
+
+        <!-- Expanded Row: Inventory Logs -->
+        <ng-template pTemplate="rowexpansion" let-item>
+          <tr>
+            <td colspan="10" class="p-0">
+              <div class="p-3 bg-light border-bottom">
+                <h6 class="text-primary mb-3"><i class="bi bi-clock-history me-2"></i>Stock History Logs</h6>
+                
+                <p-table [value]="item.inventoryLogs" styleClass="p-datatable-sm bg-white shadow-sm rounded">
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th class="ps-3">Date</th>
+                      <th>Type</th>
+                      <th>Reason</th>
+                      <th class="text-end">Previous</th>
+                      <th class="text-end">Change</th>
+                      <th class="text-end">Updated</th>
+                      <th>By User</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-log>
+                    <tr>
+                      <td class="ps-3">{{ log.updatedAt | date:'medium' }}</td>
+                      <td>
+                        <span class="badge" [ngClass]="{
+                          'bg-success': log.changeType === 'stock_added',
+                          'bg-danger': log.changeType === 'stock_removed',
+                        }">
+                          {{ log.changeType === 'stock_added' ? 'Added' : 
+                             log.changeType === 'stock_removed' ? 'Removed' : 'Adjustment' }}
+                        </span>
+                      </td>
+                      <td>{{ log.reason }}</td>
+                      <td class="text-end">{{ log.previousStock }}</td>
+                      <td class="text-end fw-bold" [ngClass]="log.changeType === 'stock_removed' ? 'text-danger' : 'text-success'">
+                          {{ (log.updatedStock - log.previousStock >= 0 ? '+' : '') }}{{ log.updatedStock - log.previousStock | number }}
+                      </td>
+                      <td class="text-end fw-bold">{{ log.updatedStock }}</td>
+                      <td><small class="text-muted">{{ log.updatedBy }}</small></td>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-3">No history logs available.</td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Dialog: View Details ================= -->
+<p-dialog 
+  [(visible)]="showDetailsDialog" 
+  [style]="{width: '50vw'}" 
+  header="Item Details" 
+  [modal]="true" 
+  [draggable]="false" 
+  [resizable]="false">
+  
+  <div *ngIf="selectedItem" class="p-2">
+    <!-- Vendor Info -->
+    <div class="mb-3 border-bottom pb-2">
+      <h6 class="text-primary"><i class="pi pi-user me-2"></i>Vendor Details</h6>
+      <div class="grid p-fluid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div><strong>Name:</strong> {{ selectedItem.vendorDetails?.vendorName || '-' }}</div>
+        <div><strong>Company:</strong> {{ selectedItem.vendorDetails?.companyName || '-' }}</div>
+        <div><strong>Email:</strong> {{ selectedItem.vendorDetails?.vendorEmail || '-' }}</div>
+        <div><strong>Contact:</strong> {{ selectedItem.vendorDetails?.contactNumber || '-' }}</div>
+      </div>
+    </div>
+
+    <!-- Warehouse Info -->
+    <div class="mb-3 border-bottom pb-2">
+      <h6 class="text-primary"><i class="pi pi-building me-2"></i>Warehouse Details</h6>
+      <div class="grid p-fluid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div><strong>Name:</strong> {{ selectedItem.warehouseDetails?.warehouseName || '-' }}</div>
+        <div><strong>Code:</strong> {{ selectedItem.warehouseDetails?.code || '-' }}</div>
+        <div><strong>Capacity:</strong> {{ selectedItem.warehouseDetails?.storageCapacity || '-' }}</div>
+      </div>
+    </div>
+
+    <!-- Rack/Row Info -->
+    <div>
+      <h6 class="text-primary"><i class="pi pi-box me-2"></i>Storage Locations</h6>
+      <ul class="list-group">
+        <li class="list-group-item" *ngFor="let rack of selectedItem.rackRowMappings">
+          <strong>Rack:</strong> {{ rack.rackName }} | <strong>Row:</strong> {{ rack.rowName }}
+        </li>
+      </ul>
+      <div *ngIf="!selectedItem.rackRowMappings?.length" class="text-muted">No location assigned.</div>
+    </div>
+  </div>
+  
+  <ng-template pTemplate="footer">
+    <button pButton label="Close" icon="pi pi-times" (click)="showDetailsDialog=false" class="p-button-text"></button>
+  </ng-template>
+</p-dialog>
+
+
+<!-- ================= Dialog: Update Stock ================= -->
+<p-dialog 
+  [(visible)]="showStockDialog" 
+  [style]="{width: '30vw'}" 
+  header="Update Stock" 
+  [modal]="true" 
+  [draggable]="false">
+  
+  <form [formGroup]="stockForm" (ngSubmit)="submitStockUpdate()" class="p-fluid" *ngIf="selectedItem">
+    <div class="field mb-3">
+      <label class="d-block mb-1">Item</label>
+      <input pInputText [value]="selectedItem.itemName" disabled class="w-100 bg-light">
+    </div>
+
+    <div class="field mb-3">
+      <label class="d-block mb-1">Action Type *</label>
+      <p-dropdown 
+        formControlName="changeType" 
+        [options]="changeTypes" 
+        appendTo="body"
+        styleClass="w-100">
+      </p-dropdown>
+    </div>
+
+    <div class="field mb-3">
+      <label class="d-block mb-1">Quantity *</label>
+      <p-inputNumber 
+        formControlName="quantity" 
+        [min]="1" 
+        styleClass="w-100">
+      </p-inputNumber>
+      <small class="text-danger" *ngIf="stockForm.get('quantity')?.invalid && stockForm.get('quantity')?.touched">
+        Quantity is required (min 1)
+      </small>
+    </div>
+
+    <div class="field mb-3">
+      <label class="d-block mb-1">Reason *</label>
+      <textarea 
+        pInputTextarea 
+        formControlName="reason" 
+        rows="3" 
+        class="w-100" 
+        placeholder="Why are you changing stock?"></textarea>
+      <small class="text-danger" *ngIf="stockForm.get('reason')?.invalid && stockForm.get('reason')?.touched">
+        Reason is required (min 3 chars)
+      </small>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 mt-4">
+      <button 
+        type="button" 
+        pButton 
+        label="Cancel" 
+        class="p-button-secondary p-button-text" 
+        (click)="showStockDialog=false">
+      </button>
+      <button 
+        type="submit" 
+        pButton 
+        label="Update Stock" 
+        [disabled]="stockForm.invalid || loading" 
+        [loading]="loading">
+      </button>
+    </div>
+  </form>
+</p-dialog>

@@ -423,3 +423,43 @@ input.is-invalid {
   border-radius: 6px;
   border: 1px solid #dee2e6;
 }
+
+/* Modal Overlay - Covers the whole screen */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black backdrop */
+  z-index: 1050; /* High z-index to sit on top of everything */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto; /* Allow scrolling if modal is tall */
+  padding: 20px;
+}
+
+/* Modal Content Styling */
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  max-height: 90vh; /* Don't exceed screen height */
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-body {
+  overflow-y: auto; /* Scroll inside the body */
+  background-color: #f8f9fa; /* Light gray background */
+}
+
+/* Optional: Make the cards look cleaner */
+.card {
+  transition: transform 0.2s;
+  border: 1px solid rgba(0,0,0,0.08) !important;
+}
+.bg-light-gray {
+    background-color: #f4f6f8;
+}

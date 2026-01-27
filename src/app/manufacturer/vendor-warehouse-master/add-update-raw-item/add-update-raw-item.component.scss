@@ -1,0 +1,192 @@
+.content .content-block {
+  padding: 20px;
+
+  h4 {
+    color: #002080;
+    font-weight: 600;
+    margin-bottom: 20px;
+
+    .navigate {
+      background: transparent;
+      border: none;
+      color: #002080;
+      padding: 0;
+      margin-right: 10px;
+      cursor: pointer;
+
+      &:hover {
+        color: #0056b3;
+      }
+    }
+  }
+
+  .card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+
+  ::ng-deep {
+    .p-card {
+      box-shadow: none;
+      border: 1px solid #dee2e6;
+
+      .p-card-header {
+        background-color: #f0f6f9;
+        border-bottom: 1px solid #dee2e6;
+
+        h5 {
+          color: #002080;
+          font-weight: 600;
+          margin: 0;
+        }
+      }
+    }
+
+    .p-inputtext,
+    .p-inputtextarea,
+    .p-autocomplete-input,
+    .p-inputnumber-input {
+      width: 100%;
+
+      &.is-invalid {
+        border-color: #dc3545;
+      }
+    }
+
+    .p-autocomplete {
+      width: 100%;
+
+      .p-autocomplete-input {
+        width: 100%;
+      }
+    }
+
+    .p-autocomplete-panel {
+      .p-autocomplete-items {
+        .p-autocomplete-item {
+          padding: 10px;
+
+          &:hover {
+            background: #f0f6f9;
+          }
+        }
+      }
+    }
+
+    .p-inputnumber {
+      width: 100%;
+    }
+  }
+
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+  }
+
+  .autocomplete-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .text-muted {
+      font-size: 0.85rem;
+    }
+  }
+
+  .vendor-details,
+  .warehouse-details {
+    margin-top: 15px;
+    border-left: 3px solid #0d6efd;
+
+    h6 {
+      color: #002080;
+      font-weight: 600;
+      border-bottom: 1px solid #dee2e6;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+
+    p {
+      font-size: 0.9rem;
+      color: #495057;
+
+      strong {
+        color: #212529;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .photo-upload-container {
+    .photo-preview {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+
+      .preview-image {
+        width: 100%;
+        max-width: 300px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #dee2e6;
+      }
+
+      .remove-photo {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+      }
+    }
+
+    ::ng-deep {
+      .p-fileupload-choose {
+        width: 100%;
+        background: #0d6efd;
+        border-color: #0d6efd;
+
+        &:hover {
+          background: #0b5ed7;
+          border-color: #0a58ca;
+        }
+      }
+    }
+  }
+}
+.rack-row-wrapper {
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 3px solid #0d6efd;
+
+  &:hover {
+    background: #e9ecef;
+  }
+
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+  }
+
+  .btn {
+    height: 38px;
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  small {
+    font-size: 0.8rem;
+  }
+}
+
+::ng-deep {
+  .p-dropdown {
+    width: 100%;
+  }
+}

@@ -1,0 +1,503 @@
+<section class="content">
+  <div class="content-block">
+    <h4 class="mt-4">
+      <button class="btn navigate" (click)="cancel()">
+        <i class="bi bi-arrow-left-circle h4"></i>
+      </button>
+      <span>{{ isEditMode ? 'Update' : 'Add' }} Raw Item</span>
+    </h4>
+
+
+    <div class="card p-4">
+      <form [formGroup]="itemForm" (ngSubmit)="onSubmit()">
+        <!-- Category & Subcategory Selection -->
+        <p-card class="mb-3">
+          <ng-template pTemplate="header">
+            <h5 class="p-3 mb-0">Category & Subcategory</h5>
+          </ng-template>
+
+
+          <div class="p-3">
+            <div class="row">
+              <!-- Category AutoComplete -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Category *</label>
+                <p-autoComplete
+                  [(ngModel)]="selectedCategory"
+                  [ngModelOptions]="{ standalone: true }"
+                  [suggestions]="filteredCategories"
+                  (completeMethod)="filterCategories($event)"
+                  (onSelect)="onCategorySelect($event)"
+                  (onDropdownClick)="onCategoryDropdownClick()"
+                  field="name"
+                  [dropdown]="true"
+                  [forceSelection]="true"
+                  [placeholder]="loadingCategories ? 'Loading categories...' : 'Search category...'"
+                  [disabled]="loadingCategories"
+                  styleClass="w-100">
+                  <ng-template let-category pTemplate="item">
+                    <div class="autocomplete-item">
+                      <span class="badge bg-primary me-2">{{ category.code }}</span>
+                      <strong>{{ category.name }}</strong>
+                    </div>
+                  </ng-template>
+                </p-autoComplete>
+                <small class="text-muted d-block mt-1" *ngIf="selectedCategory">
+                  Selected: {{ selectedCategory.code }} - {{ selectedCategory.name }}
+                </small>
+              </div>
+
+
+              <!-- Subcategory AutoComplete -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Subcategory *</label>
+                <p-autoComplete
+                  [(ngModel)]="selectedSubcategory"
+                  [ngModelOptions]="{ standalone: true }"
+                  [suggestions]="filteredSubcategories"
+                  (completeMethod)="filterSubcategories($event)"
+                  (onSelect)="onSubcategorySelect($event)"
+                  field="subcategoryName"
+                  [dropdown]="true"
+                  [forceSelection]="true"
+                  [disabled]="!selectedCategory || subcategories.length === 0"
+                  [placeholder]="subcategories.length === 0 ? 'Select category first' : 'Search subcategory...'"
+                  styleClass="w-100">
+                  <ng-template let-sub pTemplate="item">
+                    <div class="autocomplete-item">
+                      <span class="badge bg-info me-2">{{ sub.subcategoryCode }}</span>
+                      <strong>{{ sub.subcategoryName }}</strong>
+                    </div>
+                  </ng-template>
+                </p-autoComplete>
+                <small class="text-muted d-block mt-1" *ngIf="selectedSubcategory">
+                  Selected: {{ selectedSubcategory.subcategoryCode }} - {{ selectedSubcategory.subcategoryName }}
+                </small>
+                <small class="text-info d-block mt-1" *ngIf="selectedCategory && subcategories.length > 0">
+                  {{ subcategories.length }} subcategories available
+                </small>
+              </div>
+            </div>
+          </div>
+        </p-card>
+
+
+        <!-- Item Details -->
+        <p-card class="mb-3">
+          <ng-template pTemplate="header">
+            <h5 class="p-3 mb-0">Item Information</h5>
+          </ng-template>
+
+
+          <div class="p-3">
+            <!-- Item Name, Code, Stock In Hand, Unit - All in One Row -->
+            <div class="row">
+              <div class="col-md-3 mb-3">
+                <label class="form-label">Item Name *</label>
+                <input
+                  type="text"
+                  pInputText
+                  formControlName="itemName"
+                  class="w-100"
+                  [class.is-invalid]="isFieldInvalid('itemName')"
+                  placeholder="Enter item name" />
+                <small class="text-danger" *ngIf="isFieldInvalid('itemName')">
+                  {{ getErrorMessage('itemName') }}
+                </small>
+              </div>
+
+              <div class="col-md-3 mb-3">
+                <label class="form-label">Code *</label>
+                <input
+                  type="text"
+                  pInputText
+                  formControlName="code"
+                  class="w-100"
+                  [class.is-invalid]="isFieldInvalid('code')"
+                  placeholder="e.g. ITEM001" />
+                <small class="text-danger" *ngIf="isFieldInvalid('code')">
+                  {{ getErrorMessage('code') || 'Code is required' }}
+                </small>
+              </div>
+
+              <div class="col-md-3 mb-3">
+                <label class="form-label">Stock In Hand *</label>
+                <p-inputNumber
+                  formControlName="stockInHand"
+                  [min]="0"
+                  [showButtons]="true"
+                  styleClass="w-100"
+                  [class.is-invalid]="isFieldInvalid('stockInHand')"
+                  [disabled]="isEditMode"> <!-- Explicitly disable in template if needed -->
+                </p-inputNumber>
+                
+                <small class="text-danger" *ngIf="isFieldInvalid('stockInHand')">
+                  {{ getErrorMessage('stockInHand') }}
+                </small>
+                <!-- CHANGE 4: Helper text for Edit Mode -->
+                <!-- <small class="text-muted" *ngIf="isEditMode">
+                  <i class="bi bi-lock-fill"></i> Stock cannot be updated here. Use "Add Stock" instead.
+                </small> -->
+              </div>
+
+              <div class="col-md-3 mb-3">
+                <label class="form-label">Unit *</label>
+                <p-dropdown
+                  formControlName="stockUnit"
+                  [options]="stockUnits"
+                  placeholder="Select Unit"
+                  styleClass="w-100"
+                  [class.is-invalid]="isFieldInvalid('stockUnit')">
+                </p-dropdown>
+                <small class="text-danger" *ngIf="isFieldInvalid('stockUnit')">
+                  {{ getErrorMessage('stockUnit') }}
+                </small>
+              </div>
+            </div>
+
+
+            <div class="row">
+              <div class="col-md-12 mb-3">
+                <label class="form-label">Details</label>
+                <textarea
+                  pInputTextarea
+                  formControlName="details"
+                  rows="3"
+                  class="w-100"
+                  placeholder="Item details and specifications"></textarea>
+              </div>
+            </div>
+
+
+            <div class="row">
+              <div class="col-md-12 mb-3">
+                <label class="form-label">Note</label>
+                <textarea
+                  pInputTextarea
+                  formControlName="note"
+                  rows="2"
+                  class="w-100"
+                  placeholder="Additional notes"></textarea>
+              </div>
+            </div>
+
+
+            <!-- Photo Uploads -->
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Photo 1</label>
+                <div class="photo-upload-container">
+                  <p-fileUpload
+                    *ngIf="!photo1Preview"
+                    mode="basic"
+                    chooseLabel="Choose Photo 1"
+                    accept="image/*"
+                    [maxFileSize]="5000000"
+                    [auto]="true"
+                    (onSelect)="onPhoto1Select($event)"
+                    styleClass="w-100">
+                  </p-fileUpload>
+
+
+                  <div *ngIf="photo1Preview" class="photo-preview">
+                    <img [src]="photo1Preview" alt="Photo 1" class="preview-image" />
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-danger remove-photo"
+                      (click)="removePhoto1()">
+                      <i class="bi bi-x-circle"></i> Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Photo 2</label>
+                <div class="photo-upload-container">
+                  <p-fileUpload
+                    *ngIf="!photo2Preview"
+                    mode="basic"
+                    chooseLabel="Choose Photo 2"
+                    accept="image/*"
+                    [maxFileSize]="5000000"
+                    [auto]="true"
+                    (onSelect)="onPhoto2Select($event)"
+                    styleClass="w-100">
+                  </p-fileUpload>
+
+
+                  <div *ngIf="photo2Preview" class="photo-preview">
+                    <img [src]="photo2Preview" alt="Photo 2" class="preview-image" />
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-danger remove-photo"
+                      (click)="removePhoto2()">
+                      <i class="bi bi-x-circle"></i> Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <p-checkbox
+                  formControlName="isActive"
+                  [binary]="true"
+                  inputId="isActive"
+                  label="Active">
+                </p-checkbox>
+              </div>
+            </div>
+          </div>
+        </p-card>
+
+
+        <!-- Vendor Selection -->
+        <p-card class="mb-3">
+          <ng-template pTemplate="header">
+            <h5 class="p-3 mb-0">Vendor Details</h5>
+          </ng-template>
+
+
+          <div class="p-3">
+            <div class="row">
+              <div class="col-md-12 mb-3">
+                <label class="form-label">Select Vendor *</label>
+                <p-autoComplete
+                  [(ngModel)]="selectedVendor"
+                  [ngModelOptions]="{ standalone: true }"
+                  [suggestions]="filteredVendors"
+                  (completeMethod)="filterVendors($event)"
+                  (onSelect)="onVendorSelect($event)"
+                  (onDropdownClick)="onVendorDropdownClick()"
+                  field="vendorName"
+                  [dropdown]="true"
+                  [forceSelection]="true"
+                  [placeholder]="loadingVendors ? 'Loading vendors...' : 'Search vendor by name or company...'"
+                  [disabled]="loadingVendors"
+                  styleClass="w-100">
+                  <ng-template let-vendor pTemplate="item">
+                    <div class="autocomplete-item">
+                      <strong>{{ vendor.vendorName }}</strong>
+                      <div class="text-muted small">{{ vendor.companyName }}</div>
+                    </div>
+                  </ng-template>
+                </p-autoComplete>
+              </div>
+            </div>
+
+
+            <!-- Display selected vendor details -->
+            <div *ngIf="selectedVendor" class="vendor-details p-3 bg-light rounded">
+              <h6 class="mb-2">Selected Vendor Information</h6>
+              <div class="row">
+                <div class="col-md-6">
+                  <p class="mb-1">
+                    <strong>Vendor Name:</strong> {{ selectedVendor.vendorName }}
+                  </p>
+                  <p class="mb-1"><strong>Company:</strong> {{ selectedVendor.companyName }}</p>
+                  <p class="mb-1">
+                    <strong>Contact Person:</strong> {{ selectedVendor.contactPersonName }}
+                  </p>
+                </div>
+                <div class="col-md-6">
+                  <p class="mb-1"><strong>Email:</strong> {{ selectedVendor.email || selectedVendor.vendorEmail }}</p>
+                  <p class="mb-1"><strong>Contact:</strong> {{ selectedVendor.contactNumber }}</p>
+                  <p class="mb-1"><strong>GST:</strong> {{ selectedVendor.gstNumber }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-card>
+
+
+        <!-- Warehouse Selection -->
+        <p-card class="mb-3">
+          <ng-template pTemplate="header">
+            <h5 class="p-3 mb-0">Warehouse Details</h5>
+          </ng-template>
+
+
+          <div class="p-3">
+            <div class="row">
+              <div class="col-md-12 mb-3">
+                <label class="form-label">Select Warehouse *</label>
+                <p-autoComplete
+                  [(ngModel)]="selectedWarehouse"
+                  [ngModelOptions]="{ standalone: true }"
+                  [suggestions]="filteredWarehouses"
+                  (completeMethod)="filterWarehouses($event)"
+                  (onSelect)="onWarehouseSelect($event)"
+                  (onDropdownClick)="onWarehouseDropdownClick()"
+                  field="warehouseName"
+                  [dropdown]="true"
+                  [forceSelection]="true"
+                  [placeholder]="loadingWarehouses ? 'Loading warehouses...' : 'Search warehouse by name or code...'"
+                  [disabled]="loadingWarehouses"
+                  styleClass="w-100">
+                  <ng-template let-wh pTemplate="item">
+                    <div class="autocomplete-item">
+                      <span class="badge bg-primary me-2">{{ wh.code }}</span>
+                      <strong>{{ wh.warehouseName }}</strong>
+                      <span class="badge bg-success ms-2" *ngIf="wh.isPrimary">Primary</span>
+                    </div>
+                  </ng-template>
+                </p-autoComplete>
+              </div>
+            </div>
+
+
+            <!-- Display selected warehouse details -->
+            <div *ngIf="selectedWarehouse" class="warehouse-details p-3 bg-light rounded">
+              <h6 class="mb-2">Selected Warehouse Information</h6>
+              <div class="row">
+                <div class="col-md-6">
+                  <p class="mb-1">
+                    <strong>Warehouse:</strong> {{ selectedWarehouse.warehouseName }}
+                  </p>
+                  <p class="mb-1"><strong>Code:</strong> {{ selectedWarehouse.code }}</p>
+                  <p class="mb-1">
+                    <strong>Contact Person:</strong> {{ selectedWarehouse.contactPersonName }}
+                  </p>
+                </div>
+                <div class="col-md-6">
+                  <p class="mb-1"><strong>Email:</strong> {{ selectedWarehouse.email }}</p>
+                  <p class="mb-1"><strong>Contact:</strong> {{ selectedWarehouse.contactNumber }}</p>
+                  <p class="mb-1">
+                    <strong>Capacity:</strong> {{ selectedWarehouse.storageCapacity }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-card>
+
+
+        <!-- Rack & Row Mapping -->
+        <p-card class="mb-3" *ngIf="selectedWarehouse">
+          <ng-template pTemplate="header">
+            <h5 class="p-3 mb-0">Storage Location (Rack & Row)</h5>
+          </ng-template>
+
+
+          <div class="p-3">
+            <!-- Show message if no racks -->
+            <div class="alert alert-info" *ngIf="availableRacks.length === 0">
+              <i class="bi bi-info-circle me-2"></i>
+              This warehouse has no racks configured. Please configure racks in warehouse settings first.
+            </div>
+
+
+            <!-- Rack/Row Selection -->
+            <div *ngIf="availableRacks.length > 0">
+              <div *ngFor="let mapping of rackRowMappings; let i = index" class="rack-row-wrapper mb-3">
+                <div class="row align-items-start">
+                  <!-- Rack Dropdown -->
+                  <div class="col-md-5">
+                    <label class="form-label">Rack {{ i + 1 }} *</label>
+                    <p-dropdown
+                      [(ngModel)]="mapping.rackName"
+                      [ngModelOptions]="{ standalone: true }"
+                      [options]="availableRacks"
+                      optionLabel="rackName"
+                      optionValue="rackName"
+                      placeholder="Select Rack"
+                      [showClear]="true"
+                      (onChange)="onRackChange(i)"
+                      styleClass="w-100">
+                      <ng-template let-rack pTemplate="item">
+                        <div>
+                          <strong>{{ rack.rackName }}</strong> &nbsp; <p class="badge bg-info" >{{ rack.rowNames?.length || 0 }} rows</p>
+                          <small class="text-muted d-block" *ngIf="rack.notes">{{ rack.notes }}</small>
+                          <hr>
+                        </div>
+                      </ng-template>
+                    </p-dropdown>
+                  </div>
+
+
+                  <!-- Row Dropdown -->
+                  <div class="col-md-5">
+                    <label class="form-label">Row {{ i + 1 }} *</label>
+                    <p-dropdown
+                      [(ngModel)]="mapping.rowName"
+                      [ngModelOptions]="{ standalone: true }"
+                      [options]="getRowOptionsForIndex(i)"
+                      placeholder="Select Row"
+                      [disabled]="!mapping.rackName || getRowOptionsForIndex(i).length === 0"
+                      [showClear]="true"
+                      (onChange)="onRowChange(i)"
+                      styleClass="w-100">
+                    </p-dropdown>
+                    <small class="text-muted d-block mt-1" *ngIf="!mapping.rackName">
+                      Select a rack first
+                    </small>
+                    <small class="text-success d-block mt-1" *ngIf="mapping.rackName && getRowOptionsForIndex(i).length > 0">
+                      {{ getRowOptionsForIndex(i).length }} rows available
+                    </small>
+                  </div>
+
+
+                  <!-- Actions -->
+                  <div class="col-md-2">
+                    <label class="form-label d-block">&nbsp;</label>
+                    <div class="d-flex gap-2">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-danger"
+                        (click)="removeRackRow(i)"
+                        [disabled]="rackRowMappings.length === 1"
+                        title="Remove">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-primary"
+                        (click)="addRackRow()"
+                        *ngIf="i === rackRowMappings.length - 1"
+                        title="Add More">
+                        <i class="bi bi-plus-circle"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Validation Error Message -->
+                <div class="row" *ngIf="rackRowDuplicateError && duplicateIndex === i">
+                  <div class="col-md-12">
+                    <small class="text-danger">
+                      <i class="bi bi-exclamation-triangle me-1"></i>
+                      This rack and row combination is already selected. Please choose a different combination.
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-card>
+
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-end gap-2 mt-4">
+          <button
+            type="button"
+            pButton
+            label="Cancel"
+            icon="pi pi-times"
+            class="p-button-secondary"
+            (click)="cancel()"></button>
+          <button
+            type="submit"
+            pButton
+            [label]="loading ? 'Saving...' : isEditMode ? 'Update Item' : 'Save Item'"
+            icon="pi pi-check"
+            [disabled]="loading"
+            [loading]="loading"></button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

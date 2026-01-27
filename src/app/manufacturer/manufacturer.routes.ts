@@ -51,6 +51,13 @@ import { WarehouseListComponent } from "./vendor-warehouse-master/warehouse-list
 import { ViewWarehouseComponent } from "./vendor-warehouse-master/view-warehouse/view-warehouse.component";
 import { ListCategoriesComponent } from "./vendor-warehouse-master/list-categories/list-categories.component";
 import { MainSubCategoryAddUpdateComponent } from "./vendor-warehouse-master/main-sub-category-add-update/main-sub-category-add-update.component";
+import { AddUpdateRawItemComponent } from "./vendor-warehouse-master/add-update-raw-item/add-update-raw-item.component";
+import { ViewRawItemListComponent } from "./vendor-warehouse-master/view-raw-item-list/view-raw-item-list.component";
+import { RawItemViewComponent } from "./vendor-warehouse-master/raw-item-view/raw-item-view.component";
+import { AddProductBomComponent } from "./product-bom/add-product-bom/add-product-bom.component";
+import { ViewProductBomComponent } from "./product-bom/view-product-bom/view-product-bom.component";
+import { ProductBomListComponent } from "./product-bom/product-bom-list/product-bom-list.component";
+import { RawItemInventoryComponent } from "./vendor-warehouse-master/raw-item-inventory/raw-item-inventory.component";
 
 export const M_Auth: Route[] = [
     { path: 'new', loadChildren:()=> import('./new-flow/new_flow.route').then((m)=>m.NewFlow)},
@@ -106,7 +113,16 @@ export const M_Auth: Route[] = [
     { path: 'view-categories', component: ListCategoriesComponent },
     { path: 'add-category', component: MainSubCategoryAddUpdateComponent },
     { path: 'update-category/:id', component: MainSubCategoryAddUpdateComponent },
+    { path: 'view-raw-items',component: ViewRawItemListComponent},
+    { path: 'add-raw-item',component: AddUpdateRawItemComponent},
+    { path: 'update-raw-item/:id',component: AddUpdateRawItemComponent},
+    { path: 'view-item/:id', component: RawItemViewComponent},
+    { path: 'raw-item-inventory', component: RawItemInventoryComponent },
 
+    { path: 'add-product-bom', component: AddProductBomComponent },
+    { path: 'update-product/:id', component: AddProductBomComponent },
+    { path: 'view-product-bom/:id', component: ViewProductBomComponent },
+    { path: 'product-bom-list', component: ProductBomListComponent },
 
     //new flow ret to man
 { path: 'ret-po-list', component: RetailerToManPoListComponent },

@@ -124,6 +124,8 @@ export class StepOneComponent {
   // description: string = '';
   showHsnDropdown: boolean = false;
 
+  today!: string;
+
   constructor(private fb: FormBuilder,    
     private authService: AuthService,
     private cd: ChangeDetectorRef,
@@ -155,7 +157,8 @@ export class StepOneComponent {
       sizes: this.fb.array([]),        
 
       dateOfManufacture: ['', [Validators.required]],
-        dateOfListing: ['', [Validators.required]],
+        dateOfListing: [''],
+        
       }),
       
       // set cdn path
@@ -171,6 +174,9 @@ export class StepOneComponent {
   ngOnInit() {
     // call master    
     this.userProfile = JSON.parse(localStorage.getItem("currentUser")!);
+
+    this.today = new Date().toISOString().split('T')[0];
+
     // this.getAllSubCategory()   
     this.getMaterial()
     this.getFabricPttern()
@@ -266,6 +272,11 @@ export class StepOneComponent {
     this.fetchHsnList(query).subscribe((results: any[]) => {
       this.filteredHsnList = results;
     });
+  }
+
+  onDomChange() {
+    const value = this.stepOne.get('dateOfManufacture')?.value;
+    this.stepOne.get('dateOfListing')?.setValue(value);
   }
 
   // stepOne vlidation
@@ -582,7 +593,8 @@ isSizeSelected(size: string): boolean {
       if (this.productId) {
         // Format and patch dates
         const formattedDate1 = this.datePipe.transform(this.productDetails.dateOfManufacture, 'yyyy-MM-dd');
-        const formattedDate2 = this.datePipe.transform(this.productDetails.dateOfListing, 'yyyy-MM-dd');
+        // const formattedDate2 = this.datePipe.transform(this.productDetails.dateOfListing, 'yyyy-MM-dd');
+        const formattedDate2 = this.datePipe.transform(this.productDetails.dateOfManufacture, 'yyyy-MM-dd');
         this.stepOne.patchValue({
           dateOfManufacture: formattedDate1,
           dateOfListing: formattedDate2,  //          
