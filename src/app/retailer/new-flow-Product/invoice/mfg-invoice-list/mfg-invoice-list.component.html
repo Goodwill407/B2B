@@ -40,7 +40,7 @@
                 <td class="text-center">{{ data.invoiceNumber || 'N/A' }}</td>
                 <td class="text-center">{{ (data.invoiceDate | date:'dd/MM/yyyy') || 'N/A' }}</td>
                 <td class="text-center">{{ data.totalQuantity || 0 }}</td>
-                <td class="text-center">₹{{ data.finalAmount | number:'1.2-2' || '0.00' }}</td>
+                <td class="text-center">₹{{ data.finalAmountPayable | number:'1.2-2' || '0.00' }}</td>
                 <td class="text-center">
                   <button class="btn" 
                           [routerLink]="['/retailer/new/mfg-invoice-view', data.id]"

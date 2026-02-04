@@ -354,6 +354,26 @@ export class StepOneComponent {
     ];
     
     }
+    else if (this.foundSizeSet === "Kids Age Size Set") {
+      // this.sizeChartFields = []
+      this.sizeChartFields = [
+        { name: 'standardSize', label: 'Standard Size', required: false, type: 'Item_size' },
+        { name: 'brandSize', label: 'Brand Size', required: true, type: 'Item_size' },
+        // { name: 'age', label: 'Age', required: true, type: 'Item_size' , pattern: /^\d+$/ },
+        { name: 'height', label: 'Height(in cm)', required: true, type: 'Item_size' , pattern: /^\d+$/ },
+        { name: 'chestSize', label: 'Chest(in cm)', required: true, type: 'Item_size', pattern: /^\d+$/ },
+        { name: 'waist', label: 'Waist(in cm)', required: true, type: 'Item_size', pattern: /^\d+$/ },
+        // { name: 'length', label: 'Length(in cm)', required: false, type: 'item_dimention' },
+        // { name: 'width', label: 'Width(in cm)', required: false, type: 'item_dimention' },
+        // { name: 'height', label: 'Height(in cm)', required: true, type: 'item_dimention' },
+        // { name: 'weight', label: 'Weight(in Gm)', required: true, type: 'item_dimention' },
+        { name: 'manufacturerPrice', label: 'Wholesaler Price', required: true, type: 'price', pattern: /\d+(\.\d{1,2})?/ },
+        { name: 'RtlPrice', label: 'Retailer Price', required: true, type: 'price', pattern: /\d+(\.\d{1,2})?/ },
+        { name: 'singleMRP', label: 'MRP', required: true, type: 'price', pattern: /\d+(\.\d{1,2})?/ },
+        { name: 'onlinePrice', label: 'Online Price', required: true, type: 'price', pattern: /\d+(\.\d{1,2})?/ } 
+    ];
+    
+    }
   }
 
  // Called when a size checkbox is checked/unchecked
@@ -588,7 +608,7 @@ isSizeSelected(size: string): boolean {
       }
 
       // Check if "Size Set" or "Waist Size Set" is available
-      this.foundSizeSet = this.visibleFields.find((field: any) => field === "Size Set" || field === "Waist Size Set");
+      this.foundSizeSet = this.visibleFields.find((field: any) => field === "Size Set" || field === "Waist Size Set" || field === "Kids Age Size Set");
       this.showFlag2 = true;
       if (this.productId) {
         // Format and patch dates
@@ -750,7 +770,7 @@ isSizeSelected(size: string): boolean {
       });
       
   }
-  else{
+  else if(this.foundSizeSet === 'Waist Size Set'){
     sizes.forEach(size => {
       sizesArray.push(this.fb.group({
         standardSize: [size.standardSize],
@@ -768,6 +788,23 @@ isSizeSelected(size: string): boolean {
         RtlPrice:[size.RtlPrice, [Validators.required, Validators.pattern('^[0-9]*$')]],
         singleMRP: [size.singleMRP, [Validators.required, Validators.pattern('^[0-9]*$')]],
         onlinePrice: [size.onlinePrice, [Validators.required, Validators.pattern('^[0-9]*$')]] 
+      }));
+      this.selectedSizes.push(size.standardSize); // Keep track of selected sizes
+    });
+  }
+  else if(this.foundSizeSet === 'Kids Age Size Set'){
+    sizes.forEach(size => {
+      sizesArray.push(this.fb.group({
+          standardSize: [size.standardSize],
+          brandSize: [size.brandSize, Validators.required],
+          // age: [size.age, [Validators.required, Validators.pattern(/^\d+$/)]],
+          height: [size.height, [Validators.required, Validators.pattern(/^\d+$/)]],
+          chestSize: [size.chestSize, [Validators.required, Validators.pattern(/^\d+$/)]],
+          waist: [size.waist, [Validators.required, Validators.pattern('^[0-9]*$')]], 
+          manufacturerPrice: [size.manufacturerPrice,[Validators.required, Validators.pattern(/^\d+$/)]],
+          RtlPrice: [size.RtlPrice, [Validators.required, Validators.pattern(/^\d+$/)]],
+          singleMRP: [size.singleMRP, [Validators.required, Validators.pattern(/^\d+$/)]],
+          onlinePrice: [size.onlinePrice, [Validators.required, Validators.pattern(/^\d+$/)]]
       }));
       this.selectedSizes.push(size.standardSize); // Keep track of selected sizes
     });

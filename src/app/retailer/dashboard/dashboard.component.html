@@ -1,60 +1,188 @@
-<section class="content">
-  <div class="content-block">
-    <div class="ads-flex">
-      <div class="dashboard card p-3 mt-4">
-        <div class="row m-0">
-          <div class="col-8 m-0">
-            <div class="row mb-4">
-              <div class="col box retailers">
-                <h4>Retailers</h4>
-                <p>Active:</p>
-                <p>Inactive:</p>
-                <p>Invitation Pending:</p>
-              </div>
-              <div class="col box orders">
-                <h4>Today's Orders</h4>
-                <p>Order Received:</p>
-                <p>Order Processed:</p>
-                <p>Order Return:</p>
-              </div>
-            </div>
-            <div class="row m-0">
-              <div class="col chart-container">
-                <div class="d-flex align-items-center mb-2">
-                  <h5 class="mb-0 text-dark">Day-wise Total orders:</h5>
-                  <div class="month-navigator ms-auto">
-                    <button (click)="previousMonth()"><i class="bi bi-arrow-left-circle-fill"></i></button>
-                    <span>{{ currentMonth | date: 'MMMM' }}</span>
-                    <button (click)="nextMonth()"><i class="bi bi-arrow-right-circle-fill"></i></button>
-                  </div>
-                </div>
-                <apx-chart [series]="chartOptions.series" [chart]="chartOptions.chart"
-                  [dataLabels]="chartOptions.dataLabels" [stroke]="chartOptions.stroke" [grid]="chartOptions.grid"
-                  [xaxis]="chartOptions.xaxis" [yaxis]="chartOptions.yaxis" [colors]="chartOptions.colors"
-                  [markers]="chartOptions.markers" [legend]="chartOptions.legend">
-                </apx-chart>
-              </div>
-            </div>
+<section class="content ps-md-4">
+  <div class="container-fluid">
+    
+    <div class="row mb-4">
+      <div class="col-12">
+        <h4 class="page-title mt-4 pt-2 mb-2">Retailer Dashboard</h4>
+      </div>
+    </div>
+
+    <!-- Loader -->
+    <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center" style="height: 400px;">
+      <div class="spinner-border text-success" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading" class="row g-4">
+      
+      <!-- 1. Partner Counts -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="dashboard-card card-network">
+          <h5 class="mb-4">My Suppliers</h5>
+          <div class="network-row" (click)="navigateTo('/retailer/retailer-mnf-associated-list')">
+             <div class="d-flex align-items-center gap-3">
+               <div class="mini-icon text-primary"><i class="bi bi-buildings"></i></div>
+               <span>Manufacturers</span>
+             </div>
+             <span class="badge bg-primary rounded-pill">{{ partnerCounts?.manufacturers?.total || 0 }}</span>
           </div>
-          <div class="col box products">
-            <h4>Total Product Listed</h4>
-            <p>Product In-stock</p>
-            <p>Shirts:</p>
-            <p>Tshirts:</p>
-            <p>Jeans:</p>
-            <p>Polos:</p>
-            <p>Trousers:</p>
-            <p>Denim Jackets:</p>
+           <div class="network-row mt-3" (click)="navigateTo('/retailer/retailer-whol-associated-list')">
+             <div class="d-flex align-items-center gap-3">
+               <div class="mini-icon text-info"><i class="bi bi-shop"></i></div>
+               <span>Wholesalers</span>
+             </div>
+             <span class="badge bg-info rounded-pill">{{ partnerCounts?.wholesalers?.total || 0 }}</span>
           </div>
         </div>
       </div>
 
-      <!-- <div class="ads-right">
-        <app-right-side-advertise [imageUrls]="rightAdImages"></app-right-side-advertise>
+      <!-- 2. Manufacturer POs -->
+      <!-- Manufacturer POs -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="dashboard-card card-po" (click)="navigateTo('/retailer/new/view-retailerpotoman-list')">
+          <div class="card-header-section">
+            <div class="icon-box bg-light-blue">
+              <i class="bi bi-cart-check"></i>
+            </div>
+            <div>
+              <h5>Manufacturer Orders</h5>
+              <!-- Ensure this variable matches TS -->
+              <h2 class="main-stat">{{ mfgPoData?.total || 0 }}</h2>
+            </div>
+          </div>
+          <div class="card-body-section">
+            <div class="stat-grid">
+              <div class="stat-item"><span class="dot pending"></span> Pending: <strong>{{ mfgPoData?.pending || 0 }}</strong></div>
+              <div class="stat-item"><span class="dot confirmed"></span> Confirmed: <strong>{{ mfgPoData?.confirmed || 0 }}</strong></div>
+              <div class="stat-item"><span class="dot delivered"></span> Delivered: <strong>{{ mfgPoData?.delivered || 0 }}</strong></div>
+              <div class="stat-item"><span class="dot partial"></span> Partial: <strong>{{ mfgPoData?.partialDelivery || 0 }}</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Wholesaler POs -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="dashboard-card card-po-wholesale" (click)="navigateTo('/retailer/new/view-retailerpo')">
+          <div class="card-header-section">
+            <div class="icon-box bg-light-purple">
+              <i class="bi bi-bag-check"></i>
+            </div>
+            <div>
+              <h5>Wholesaler Orders</h5>
+              <h2 class="main-stat">{{ whPoData?.total || 0 }}</h2>
+            </div>
+          </div>
+          <div class="card-body-section">
+             <div class="stat-grid">
+              <div class="stat-item"><span class="dot pending"></span> Pending: <strong>{{ whPoData?.pending || 0 }}</strong></div>
+              <div class="stat-item"><span class="dot confirmed"></span> Confirmed: <strong>{{ whPoData?.confirmed || 0 }}</strong></div>
+              <div class="stat-item"><span class="dot delivered"></span> Delivered: <strong>{{ whPoData?.delivered || 0 }}</strong></div>
+              <div class="stat-item"><span class="dot partial"></span> Partial: <strong>{{ whPoData?.partialDelivery || 0 }}</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Return Stats -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="dashboard-card card-returns">
+          <div class="card-header-section mb-3">
+              <div class="icon-box bg-light-red">
+              <i class="bi bi-arrow-return-right"></i>
+            </div>
+            <div>
+              <h5>Total Outgoing Returns</h5>
+              <!-- Use the calculated variable -->
+              <h2 class="main-stat text-danger">{{ returnData?.requested +  wholesalerStats.returnCount }}</h2>
+            </div>
+          </div>
+          <div class="split-actions">
+            <div class="action-btn" (click)="navigateTo('/retailer/new/mfg-invoice-list-return')">
+              <span class="label">To Manufacturers</span>
+              <!-- Use .total based on your request -->
+              <span class="count">{{ returnData?.requested || 0 }}</span>
+              <i class="bi bi-chevron-right"></i>
+            </div>
+            <div class="action-btn" (click)="navigateTo('')">
+              <span class="label">To Wholesalers</span>
+              <span class="count">{{ wholesalerStats.returnCount }}</span>
+              <i class="bi bi-chevron-right"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- 5. Invoices & Payments -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="dashboard-card card-invoice">
+          <div class="card-header-section mb-3">
+             <div class="icon-box bg-light-green">
+              <i class="bi bi-receipt"></i>
+            </div>
+            <div>
+              <h5>Payable Invoices</h5>
+              <h2 class="main-stat text-success">{{ manufacturerStats.payableAmount  + wholesalerStats.invoiceAmount || 0 | currency:'INR' }}</h2>
+            </div>
+          </div>
+          <div class="split-actions">
+            <div class="action-btn" (click)="navigateTo('/retailer/new/mfg-invoice-list')">
+              <span class="label">Mfg Invoice Amt</span>
+              <!-- Hardcoded Split -->
+              <span class="count text-success">{{ manufacturerStats.payableAmount | currency:'INR':'symbol':'1.0-0' }}</span>
+            </div>
+            <div class="action-btn" (click)="navigateTo('')">
+              <span class="label">Whlsr Invoice Amt</span>
+              <!-- Hardcoded Split -->
+              <span class="count text-success">{{ wholesalerStats.invoiceAmount | currency:'INR':'symbol':'1.0-0' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Credit Notes (Wallet) -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="dashboard-card card-credit">
+          <div class="card-header-section mb-3">
+              <div class="icon-box bg-light-orange">
+              <i class="bi bi-wallet2"></i>
+            </div>
+            <div>
+              <h5>Available Credit</h5>
+              <!-- Use the calculated total variable -->
+              <h2 class="main-stat text-warning">{{ totalCreditAmount | currency:'INR' }}</h2>
+            </div>
+          </div>
+          <div class="split-actions">
+            <div class="action-btn" (click)="navigateTo('retailer/new/mfg-group-credit-note-list')">
+              <span class="label">Mfg Credit</span>
+              <!-- Use the variable updated from API -->
+              <span class="count text-warning">{{ manufacturerStats.creditAmount | currency:'INR' }}</span>
+            </div>
+            <div class="action-btn" (click)="navigateTo('')">
+              <span class="label">Whlsr Credit</span>
+              <span class="count text-warning">{{ wholesalerStats.creditAmount | currency:'INR' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side Ad (Optional) -->
+      <!-- <div class="col-12 col-md-4 d-none d-md-block" *ngIf="false"> 
+        <app-right-side-advertise [images]="rightAdImages"></app-right-side-advertise>
       </div> -->
+
     </div>
 
-    <div class=" mb-3">
+    <!-- Bottom Ads -->
+    <!-- <div class="row mt-4">
+       <div class="col-12">
+          <app-bottom-side-advertise [images]="bottomAdImage"></app-bottom-side-advertise>
+       </div>
+    </div> -->
+    <div class="mt-4 mb-3">
       <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
     </div>
   </div>
