@@ -30,6 +30,9 @@ import { MfgGroupCreditNoteListComponent } from "./return-management/mfg-group-c
 import { MfgCreditNoteListComponent } from "./return-management/mfg-credit-note-list/mfg-credit-note-list.component";
 import { MfgCreditNoteViewComponent } from "./return-management/mfg-credit-note-view/mfg-credit-note-view.component";
 import { CreditNoteUsageDetailViewComponent } from "app/manufacturer/new-flow/return-managment/credit-note-usage-detail-view/credit-note-usage-detail-view.component";
+import { WhRetPartialPoUpdateComponent } from "./wh-ret-flow/wh-ret-partial-po-update/wh-ret-partial-po-update.component";
+import { WhlInvoiceListComponent } from "./wh-ret-flow/whl-invoice-list/whl-invoice-list.component";
+import { AddReturnWhRetComponentComponent } from "./wh-ret-flow/add-return-wh-ret-component/add-return-wh-ret-component.component";
 
 
 export const NewFlow:Route[]=[
@@ -65,6 +68,12 @@ export const NewFlow:Route[]=[
     { path: 'mfg-group-credit-note-list', component: MfgGroupCreditNoteListComponent },
     { path: 'mfg-credit-note-list/:id', component: MfgCreditNoteListComponent },
     { path: 'mfg-credit-note-view/:id', component: MfgCreditNoteViewComponent },
-    { path: 'mfg-credit-note-usage-view/:id', component:CreditNoteUsageDetailViewComponent }
+    { path: 'mfg-credit-note-usage-view/:id', component:CreditNoteUsageDetailViewComponent },
+
+    { path: 'wh-ret-partial-po-update', component: WhRetPartialPoUpdateComponent },
+    { path: 'wh-invoice-list', component: WhlInvoiceListComponent },
+    
+    { path: 'add-return-product-whl/:id', component:AddReturnWhRetComponentComponent},
+
 
 ]

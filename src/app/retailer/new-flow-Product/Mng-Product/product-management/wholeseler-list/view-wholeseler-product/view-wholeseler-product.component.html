@@ -126,33 +126,39 @@
               <option *ngFor="let color of colours" [value]="color.name">{{ color.name }}</option>
             </select>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2"> <!-- ✅ Changed from col-md-3 -->
             <label>Size:</label>
             <select [(ngModel)]="selectedSize" class="form-control select" (change)="onSizeChange()">
               <option value="" disabled> Select Size</option>
               <option *ngFor="let size of availableSizes" [value]="size">{{ size }}</option>
             </select>
           </div>
-          <div class="col-md-3">
+          <!-- ✅ ADD MRP FIELD -->
+          <div class="col-md-2">
+            <label>MRP:</label>
+            <input class="form-control" type="text" [value]="calculatedMrp" disabled readonly>
+          </div>
+          <div class="col-md-2"> <!-- ✅ Changed from col-md-3 -->
             <label>Price:</label>
             <input class="form-control" type="text" [value]="calculatedPrice" disabled readonly>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-2"> <!-- ✅ Changed from col-md-2 -->
             <label>Quantity:</label>
             <input class="form-control" type="number" [(ngModel)]="selectedQuantity" min="1">
           </div>
           <div class="col-md-1 flex pt-3">
-            <button (click)="addItem()" class="btn btn-primary ">Add</button>
+            <button (click)="addItem()" class="btn btn-primary">Add in List</button> <!-- ✅ Changed text -->
           </div>
         </div>
 
-        <!-- Temporary cart table -->
+        <!-- ✅ UPDATE TABLE WITH MRP COLUMN -->
         <div class="temp-cart" *ngIf="tempCart.length > 0">
           <table class="table">
             <thead>
               <tr>
                 <th>Color</th>
                 <th>Size</th>
+                <th>MRP</th> <!-- ✅ ADD THIS -->
                 <th>Price</th>
                 <th>Qty</th>
                 <th>Total</th>
@@ -163,6 +169,7 @@
               <tr *ngFor="let item of tempCart; let i = index">
                 <td>{{ item.colourName }}</td>
                 <td>{{ item.size }}</td>
+                <td>{{ item.mrp }}</td> <!-- ✅ ADD THIS -->
                 <td>{{ item.price }}</td>
                 <td>{{ item.quantity }}</td>
                 <td>{{ item.price * item.quantity }}</td>
@@ -175,6 +182,7 @@
           </div>
         </div>
       </div>
+
 
       <!-- <div class="">
                 <form [formGroup]="stepThree" (ngSubmit)="saveStepThree()">

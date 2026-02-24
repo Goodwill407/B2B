@@ -9,24 +9,24 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { IndianCurrencyPipe } from 'app/custom.pipe';
+import { AmountInWordsPipe } from 'app/amount-in-words.pipe';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-genraterpo',
   standalone: true,
-  imports: [CommonModule, FormsModule, AccordionModule, TableModule, IndianCurrencyPipe],
+  imports: [CommonModule, FormsModule, AccordionModule, TableModule, IndianCurrencyPipe, AmountInWordsPipe],
   templateUrl: './genraterpo.component.html',
   styleUrl: './genraterpo.component.scss',
 })
-export class GenraterpoComponent {
+export class GenraterpoComponent implements OnInit {
   purchaseOrder: any = {
     supplierName: '',
     supplierDetails: '',
     supplierAddress: '',
     supplierContact: '',
     supplierGSTIN: '',
-    logoUrl:
-      'https://upload.wikimedia.org/wikipedia/commons/3/38/MONOGRAM_LOGO_Color_200x200_v.png',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/38/MONOGRAM_LOGO_Color_200x200_v.png',
     orderNo: 'PO123',
     orderDate: new Date().toLocaleDateString(),
     deliveryDate: '',
@@ -39,14 +39,10 @@ export class GenraterpoComponent {
     totalInWords: '',
   };
 
-  mergedProducts: any[] = [];
-  currentDate = new Date().toLocaleDateString();
-
-  responseData: any; // New variable to store response data
+  responseData: any;
   distributorId: string;
   products: any[] = [];
   userProfile: any;
-  filteredData: any;
   ProductDiscount: any;
   sizeHeaders: string[] = [];
   priceHeaders: { [size: string]: number } = {};
@@ -55,16 +51,18 @@ export class GenraterpoComponent {
   gst: number = 0;
   Totalsub: number = 0;
   dicountprice: number = 0;
-  sgst: number = 0;
-  igst: number = 0;
-  cgst: number = 0;
+  sgst: any;
+  igst: any;
+  cgst: any;
+  isIntraState: any;
 
   constructor(
     public authService: AuthService,
     private router: Router,
     private communicationService: CommunicationService,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private amountInWordsPipe: AmountInWordsPipe,
   ) {
     this.distributorId = this.route.snapshot.paramMap.get('id') ?? '';
   }
@@ -79,93 +77,84 @@ export class GenraterpoComponent {
     this.authService.get(url).subscribe(
       (res: any) => {
         this.responseData = res;
-        this.chunkArray(this.responseData.set); // or whatever your full data list is
+        console.log('📦 Raw Response:', res);
+
+        const productSet = res.set || [];
+
         const discountValue = res.retailer?.productDiscount
-        ? parseFloat(res.retailer.productDiscount)
-        : 0;
-  
+          ? parseFloat(res.retailer.productDiscount)
+          : 0;
+
+        // ✅ Populate purchaseOrder without processing/merging data
         this.purchaseOrder = {
           supplierName: res.wholesaler?.companyName || '',
           supplierDetails: res.wholesaler?.fullName || '',
           supplierEmail: res.wholesaler?.email || '',
-          supplierAddress: `${res.wholesaler?.address || ''}, ${res.wholesaler?.state || ''}`,
+          supplierAddress: `${res.wholesaler?.address || ''} ${res.wholesaler?.city || ''} ${res.wholesaler?.pinCode || ''} ${res.wholesaler?.state || ''}`,
+          supplierState: res.wholesaler?.state,
           supplierContact: res.wholesaler?.mobNumber || '',
           supplierGSTIN: res.wholesaler?.GSTIN || '',
           supplierPAN: res.wholesaler?.pan || '',
           buyerName: res.retailer?.companyName || '',
           buyerDetails: res.retailer?.fullName || '',
           buyerEmail: res.retailer?.email || '',
-          buyerAddress: `${res.retailer?.address || ''}, ${res.retailer?.state || ''}`,
+          buyerAddress: `${res.retailer?.address || ''} ${res.retailer?.city || ''} ${res.retailer?.pinCode || ''} ${res.retailer?.state || ''}`,
+          buyerState: res.retailer?.state,
           buyerPhone: res.retailer?.mobNumber || '',
           buyerGSTIN: res.retailer?.GSTIN || '',
           buyerPAN: res.retailer?.pan || '',
           logoUrl: res.retailer?.profileImg || 'assets/images/company_logo.jpg',
           poNumber: res.poNumber || '',
           poDate: new Date().toLocaleDateString(),
-          products: res.set || [],
+          products: productSet,
           ProductDiscount: discountValue,
         };
-  
-        // Prepare size headers and pricing map
-        this.extractSizesAndPrices(res.set);
-  
-        // Group products by design + colour
-        this.mergedProducts = this.processGroupedProducts(res.set);
-  
+
+        // ✅ Store unprocessed product data
+        this.products = productSet;
+
+        // ✅ Extract size/price for footer summary calculations
+        this.extractSizesAndPrices(productSet);
+
+        // ✅ Calculate totals directly
+        this.calculateTotalsFromRawData(productSet);
+
+        this.updateStateType();
       },
       (error) => {
         console.error('Error fetching products:', error);
       }
     );
   }
-  
-//   validateBeforePO(): void {
-//   const missingRetailer: string[] = [];
-//   const missingWholesaler: string[] = [];
 
-//   const buyer = this.purchaseOrder;
-//   const seller = this.purchaseOrder;
+  calculateTotalsFromRawData(productSet: any[]) {
+    let subtotal = 0;
 
-//   // Retailer (Buyer) validation
-//   if (!buyer.buyerAddress) missingRetailer.push('State/Address');
-//   if (!buyer.buyerPhone) missingRetailer.push('Phone No.');
-//   if (!buyer.buyerEmail) missingRetailer.push('Email');
-//   if (!buyer.buyerGSTIN) missingRetailer.push('GSTIN');
-//   if (!buyer.buyerPAN) missingRetailer.push('PAN');
+    productSet.forEach((item) => {
+      const quantity = item.quantity || 0;
+      const rate = parseFloat(item.price) || 0;
+      subtotal += quantity * rate;
+    });
 
-//   // Wholesaler (Supplier) validation
-//   if (!seller.supplierAddress) missingWholesaler.push('State/Address');
-//   if (!seller.supplierContact) missingWholesaler.push('Phone No.');
-//   if (!seller.supplierEmail) missingWholesaler.push('Email');
-//   if (!seller.supplierGSTIN) missingWholesaler.push('GSTIN');
-//   if (!seller.supplierPAN) missingWholesaler.push('PAN');
+    this.Totalsub = subtotal;
 
-//   if (missingRetailer.length || missingWholesaler.length) {
-//     let html = '<strong>Please Complete the below Details </strong><br><br>';
+    const discount = this.purchaseOrder.ProductDiscount || 0;
+    const discountAmount = (subtotal * discount) / 100;
+    this.discountedTotal = subtotal - discountAmount;
+    this.dicountprice = discountAmount;
 
-//     if (missingRetailer.length) {
-//       html += `<strong>Retailer:</strong><ul style="text-align:left;">${missingRetailer.map(item => `<li>${item}</li>`).join('')}</ul>`;
-//     }
+    this.calculateGST();
 
-//     if (missingWholesaler.length) {
-//       html += `<strong>Wholesaler:</strong><ul style="text-align:left;">${missingWholesaler.map(item => `<li>${item}</li>`).join('')}</ul>`;
-//     }
+    this.totalGrandTotal = this.discountedTotal + this.sgst + this.cgst + this.igst;
+  }
 
-//     Swal.fire({
-//       icon: 'warning',
-//       title: 'Incomplete Details Detected',
-//       html: html,
-//       confirmButtonText: 'OK'
-//     });
-//   } else {
-//     // ✅ All fields okay, proceed to generate PO
-//     this.addpo();
-//   }
-// }
+  navigateFun() {
+    this.location.back();
+  }
 
   extractSizesAndPrices(productSet: any[]): void {
     const uniqueSizes = new Set<string>();
-    this.priceHeaders = {}; // Reset size-price mapping
+    this.priceHeaders = {};
 
     productSet.forEach((product) => {
       if (product.size && product.price > 0) {
@@ -174,348 +163,420 @@ export class GenraterpoComponent {
       }
     });
 
-    this.sizeHeaders = Array.from(uniqueSizes); // Convert Set to Array for the table header
+    this.sizeHeaders = Array.from(uniqueSizes);
   }
 
-  discountedTotal: number = 0; // Add this property
+  discountedTotal: number = 0;
 
-  processGroupedProducts(productSet: any[]): any[] {
-    const groupedByDesignNumber: any = {};
-    let totalSub = 0;
-    let totalDiscounted = 0;
+  getGstAmounts(item: any) {
+    const quantity = Number(item.quantity) || 0;
+    const rate = Number(item.price) || 0;
+    const gstRate = Number(item.hsnGst) || 0;
 
-    // Get discount percentage
-    const discountValue = this.purchaseOrder.ProductDiscount
-      ? parseFloat(this.purchaseOrder.ProductDiscount)
-      : 0;
+    // ✅ Apply discount to rate BEFORE calculating taxable value
+    const discountPercent = Number(this.purchaseOrder.ProductDiscount) || 0;
+    const discountedRate = rate - (rate * discountPercent / 100);
 
-    // Step 1: Group products by design number
-    productSet.forEach((product) => {
-      const designKey = product.designNumber;
+    const taxable = quantity * discountedRate;
 
-      if (!groupedByDesignNumber[designKey]) {
-        groupedByDesignNumber[designKey] = {
-          designNumber: product.designNumber,
-          rows: [],
-          subTotal: 0,
-          discountedTotal: 0,
-        };
-      }
+    let cgst = 0, sgst = 0, igst = 0;
 
-      let existingRow = groupedByDesignNumber[designKey].rows.find(
-        (row: any) => row.colourName === product.colourName
-      );
-
-      if (!existingRow) {
-        existingRow = {
-          colourName: product.colourName,
-          quantities: {},
-          totalPrice: 0,
-        };
-        groupedByDesignNumber[designKey].rows.push(existingRow);
-      }
-
-      existingRow.quantities[product.size] =
-        (existingRow.quantities[product.size] || 0) + product.quantity;
-      existingRow.totalPrice += product.quantity * parseFloat(product.price);
-    });
-
-    // Step 2: Calculate totals
-    Object.values(groupedByDesignNumber).forEach((group: any) => {
-      group.subTotal = group.rows.reduce(
-        (acc: number, row: any) => acc + this.calculateTotalPrice(row, false), // ✅ Now fetches full price first
-        0
-      );
-
-      let discountAmount = 0;
-      if (discountValue > 0) {
-        discountAmount = (group.subTotal * discountValue) / 100;
-      }
-
-      group.discountedTotal = group.subTotal - discountAmount;
-
-      totalSub += group.subTotal;
-      totalDiscounted += group.discountedTotal;
-    });
-
-    this.Totalsub = totalSub;
-    this.discountedTotal = totalDiscounted;
-    this.calculateGST();
-
-    return Object.values(groupedByDesignNumber);
-  }
-
-  calculateTotalPrice(row: any, applyDiscount: boolean = true): number {
-    let total = 0;
-
-    this.sizeHeaders.forEach((size) => {
-      if (row.quantities[size] > 0) {
-        total += row.quantities[size] * (this.priceHeaders[size] || 0);
-      }
-    });
-
-    // Extract discount percentage
-    const discountValue = this.purchaseOrder.ProductDiscount
-      ? parseFloat(this.purchaseOrder.ProductDiscount)
-      : 0;
-
-    let discountAmount = 0;
-    if (applyDiscount && discountValue > 0) {
-      discountAmount = (total * discountValue) / 100;
+    if (this.isIntraState) {
+      cgst = (taxable * gstRate / 2) / 100;
+      sgst = (taxable * gstRate / 2) / 100;
+    } else {
+      igst = (taxable * gstRate) / 100;
     }
 
-    const finalPrice = total - discountAmount;
+    const totalWithGst = taxable + cgst + sgst + igst;
 
-    return applyDiscount ? finalPrice : total; // 🔹 Now returns the correct price!
+    return { 
+      originalRate: rate,
+      discountedRate: discountedRate,
+      taxable: isNaN(taxable) ? 0 : taxable, 
+      gstRate: isNaN(gstRate) ? 0 : gstRate, 
+      cgst: isNaN(cgst) ? 0 : cgst, 
+      sgst: isNaN(sgst) ? 0 : sgst, 
+      igst: isNaN(igst) ? 0 : igst, 
+      totalWithGst: isNaN(totalWithGst) ? 0 : totalWithGst 
+    };
   }
+
   calculateGST() {
-    const discountedTotal = this.discountedTotal; // Get total after discount
-  
-    // Extract states from API response
-    const retailerState = this.purchaseOrder.buyerAddress.split(' ').pop()?.trim().toLowerCase();
-    const wholesalerState = this.purchaseOrder.supplierAddress.split(' ').pop()?.trim().toLowerCase();
-  
-    console.log(`🏢 Retailer State: ${retailerState}, 🏭 Wholesaler State: ${wholesalerState}`);
-  
-    if (retailerState && wholesalerState) {
-      if (retailerState === wholesalerState) {
-        // ✅ Same state → Apply SGST + CGST (9% each)
+    const discountedTotal = this.discountedTotal;
+
+    const retailerState = this.responseData?.retailer?.state?.trim().toLowerCase();
+    const supplierState = this.responseData?.wholesaler?.state?.trim().toLowerCase();
+
+    if (retailerState && supplierState) {
+      if (retailerState === supplierState) {
         this.sgst = (discountedTotal * 9) / 100;
         this.cgst = (discountedTotal * 9) / 100;
         this.igst = 0;
-        console.log(`✅ States Match → Applying SGST: ₹${this.sgst}, CGST: ₹${this.cgst}, IGST: ₹${this.igst}`);
       } else {
-        // ✅ Different states → Apply IGST (18%)
         this.sgst = 0;
         this.cgst = 0;
         this.igst = (discountedTotal * 18) / 100;
-        console.log(`✅ States Do Not Match → Applying IGST: ₹${this.igst}`);
       }
     } else {
-      console.warn("⚠️ Could not determine states correctly!");
+      this.sgst = 0;
+      this.cgst = 0;
+      this.igst = (discountedTotal * 18) / 100;
     }
-  
-    // ✅ Update Grand Total
-    this.totalGrandTotal = discountedTotal + this.sgst + this.cgst + this.igst;
-    console.log(`💰 Final Grand Total: ₹${this.totalGrandTotal}`);
-  }
-  
 
-  calculateDiscountedTotal(subTotal: number): number {
-    // Apply discount (for example, 2% in this case)
-    const discount = (subTotal * 2) / 100;
-    const discountedTotal = subTotal - discount;
-
-    // Store discount for display
-    this.dicountprice = discount;
-
-    return discountedTotal;
+    this.totalGrandTotal = parseFloat((discountedTotal + this.sgst + this.cgst + this.igst).toFixed(2));
   }
 
-  calculateGrandTotal(
-    subTotal: number,
-    discount: number,
-    igst: number
-  ): number {
-    const discountedSubtotal = subTotal - discount;
-    const igstAmount = (discountedSubtotal * igst) / 100; // Apply 18% IGST
-    return discountedSubtotal + igstAmount;
+  updateStateType() {
+    const buyerState = this.purchaseOrder.buyerState;
+    const supplierState = this.purchaseOrder.supplierState || '';
+    this.isIntraState = buyerState && supplierState && (buyerState.trim().toLowerCase() === supplierState.trim().toLowerCase());
   }
 
-  isSizeAvailable(rows: any[], size: string): boolean {
-    return rows.some((row) => row.quantities[size] > 0);
+  get colspan(): number {
+    return this.isIntraState ? 15 : 14;
   }
 
-  addpo() {
-  const cartBody = { ...this.responseData };
+  get orderTotals() {
+    let totalQty = 0;
+    let totalTaxable = 0;
+    let totalCGST = 0;
+    let totalSGST = 0;
+    let totalIGST = 0;
+    let totalWithGST = 0;
 
-  // Inject productBy into every item in set
-  if (Array.isArray(cartBody.set)) {
-    const productByValue = this.responseData?.productBy || this.userProfile?.email || '';
-    cartBody.set = cartBody.set.map((item: any) => ({
-      ...item,
-      productBy: productByValue
-    }));
-  }
-
-  // Add top-level info if missing
-  cartBody.email = this.userProfile?.email || '';
-  cartBody.productBy = this.responseData?.productBy || this.userProfile?.email || '';
-
-  // Remove unnecessary fields
-  delete cartBody._id;
-  delete cartBody.__v;
-  delete cartBody.productId;
-
-  cartBody.cartId = this.responseData?._id || '';
-
-  console.log('📤 Sending Purchase Order:', cartBody);
-
-  // this.authService.post('retailer-purchase-order-type2', cartBody).subscribe(
-  this.authService.post('/po-retailer-to-wholesaler', cartBody).subscribe(
-
-    (res: any) => {
-      this.communicationService.customSuccess('Purchase Order Generated Successfully');
-      this.navigateFun();
-    },
-    (error) => {
-      this.communicationService.customError1(error.error.message);
+    for (const item of this.products) {
+      const gst = this.getGstAmounts(item);
+      totalQty += Number(item.quantity) || 0;
+      totalTaxable += gst.taxable || 0;
+      totalCGST += gst.cgst || 0;
+      totalSGST += gst.sgst || 0;
+      totalIGST += gst.igst || 0;
+      totalWithGST += gst.totalWithGst || 0;
     }
-  );
-}
 
-  
-  flattenProductData(productSet: any[]): any[] {
-    const flatList: any[] = [];
+    return {
+      totalQty: isNaN(totalQty) ? 0 : totalQty,
+      totalTaxable: isNaN(totalTaxable) ? 0 : totalTaxable,
+      totalCGST: isNaN(totalCGST) ? 0 : totalCGST,
+      totalSGST: isNaN(totalSGST) ? 0 : totalSGST,
+      totalIGST: isNaN(totalIGST) ? 0 : totalIGST,
+      totalWithGST: isNaN(totalWithGST) ? 0 : totalWithGST
+    };
+  }
 
-    // Iterate through each product in the set
-    productSet.forEach((product) => {
-      const designKey = product.designNumber; // Assuming each product has a designNumber
+  get totalWithGSTBeforeDiscount(): number {
+    return this.orderTotals.totalWithGST || 0;
+  }
 
-      // Check if we already have a row for this designNumber + colourName
-      let existingRow = flatList.find(
-        (row) =>
-          row.designNumber === designKey &&
-          row.colourName === product.colourName
+  get totalGSTAmount(): number {
+    const totals = this.orderTotals;
+    const total = totals.totalCGST + totals.totalSGST + totals.totalIGST;
+    return isNaN(total) ? 0 : total;
+  }
+
+  get discountAmount(): number {
+    const discountPercent = Number(this.purchaseOrder.ProductDiscount) || 0;
+
+    let totalWithoutDiscount = 0;
+    for (const item of this.products) {
+      const quantity = Number(item.quantity) || 0;
+      const rate = Number(item.price) || 0;
+      totalWithoutDiscount += quantity * rate;
+    }
+
+    return (totalWithoutDiscount * discountPercent) / 100;
+  }
+
+  get actualGrandTotal(): number {
+    return this.orderTotals.totalWithGST;
+  }
+
+  async addpo() {
+    try {
+      const transportDetails = await this.postTransporterDetails();
+
+      if (!transportDetails) {
+        return;
+      }
+
+      const cartBody = { ...this.responseData };
+
+      // Inject productBy into every item in set
+      if (Array.isArray(cartBody.set)) {
+        const productByValue = this.responseData?.productBy || this.userProfile?.email || '';
+        cartBody.set = cartBody.set.map((item: any) => ({
+          ...item,
+          productBy: productByValue,
+          status: 'pending'
+        }));
+      }
+
+      const poBody = {
+        statusAll: 'pending',
+        email: this.responseData.retailer.email,
+        wholesalerEmail: this.responseData.wholesaler.email,
+        discount: this.purchaseOrder.ProductDiscount || 0,
+        retailerPoDate: new Date(),
+        poNumber: this.purchaseOrder.poNumber || '',
+        cartId: this.responseData?._id || '',
+        set: cartBody.set || [],
+
+        transportDetails: transportDetails,
+
+        wholesaler: {
+          email: this.responseData.wholesaler.email,
+          fullName: this.responseData.wholesaler.fullName,
+          companyName: this.responseData.wholesaler.companyName,
+          address: this.responseData.wholesaler.address,
+          state: this.responseData.wholesaler.state,
+          country: this.responseData.wholesaler.country || 'India',
+          pinCode: this.responseData.wholesaler.pinCode,
+          mobNumber: this.responseData.wholesaler.mobNumber,
+          GSTIN: this.responseData.wholesaler.GSTIN,
+        },
+
+        retailer: {
+          email: this.responseData.retailer.email,
+          fullName: this.responseData.retailer.fullName,
+          companyName: this.responseData.retailer.companyName,
+          address: this.responseData.retailer.address,
+          state: this.responseData.retailer.state,
+          country: this.responseData.retailer.country || 'India',
+          pinCode: this.responseData.retailer.pinCode,
+          mobNumber: this.responseData.retailer.mobNumber,
+          GSTIN: this.responseData.retailer.GSTIN,
+          logo: this.responseData.retailer.profileImg || '',
+          productDiscount: this.purchaseOrder.ProductDiscount || '',
+          category: this.responseData.retailer.category || '',
+        }
+      };
+
+      console.log('📤 Sending Purchase Order:', poBody);
+
+      this.authService.post('po-retailer-to-wholesaler', poBody).subscribe(
+        (res: any) => {
+          this.communicationService.customSuccess('Purchase Order Generated Successfully with Transport Details');
+          this.navigateFun();
+        },
+        (error) => {
+          this.communicationService.customError1(error.error.message);
+        }
       );
-
-      // If no existing row, create a new one
-      if (!existingRow) {
-        existingRow = {
-          designNumber: product.designNumber,
-          colourName: product.colourName,
-          colourImage: product.colourImage,
-          colour: product.colour,
-          quantities: {},
-          totalPrice: 0,
-        };
-        flatList.push(existingRow);
-      }
-
-      // Update quantities for this specific size
-      if (product.size && product.quantity) {
-        existingRow.quantities[product.size] =
-          (existingRow.quantities[product.size] || 0) + product.quantity;
-        existingRow.totalPrice += product.quantity * parseFloat(product.price); // Assuming price is a string
-      }
-    });
-
-    return flatList;
-  }
-
-tableChunks: any[][] = [];
-serialOffset: number[] = [];
-
-chunkArray(array: any[]): void {
-  this.tableChunks = [];
-  this.serialOffset = [];
-
-  const firstChunkSize = 20;
-  const nextChunkSize = 30;
-
-  if (array.length > 0) {
-    // Push first 20
-    this.tableChunks.push(array.slice(0, firstChunkSize));
-    this.serialOffset.push(0);
-
-    let start = firstChunkSize;
-    while (start < array.length) {
-      this.tableChunks.push(array.slice(start, start + nextChunkSize));
-      this.serialOffset.push(start); // Serial starts from this index
-      start += nextChunkSize;
+    } catch (error) {
+      console.error('Error in addpo:', error);
     }
   }
-}
 
+  downloadPO() {
+    const element = document.getElementById('purchase-order');
+    if (!element) return;
 
-printPO(): void {
-  const fullId = 'purchase-order';
-  const pdf = new jsPDF('p', 'mm', 'a4');
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const margin = 10;
-  const chunkCount = this.tableChunks.length;
-  let currentChunk = 0;
-
-  const renderChunk = () => {
-    const fullContent = document.getElementById(fullId);
-    if (!fullContent) return;
-
-    const fullClone = fullContent.cloneNode(true) as HTMLElement;
-
-    // Hide all chunks except current one
-    const chunks = fullClone.querySelectorAll('.table-chunk');
-    chunks.forEach((div, i) => {
-      (div as HTMLElement).style.display = i === currentChunk ? 'block' : 'none';
-    });
-
-    // ✅ REMOVE the full header content after first page
-    if (currentChunk > 0) {
-      const headerContent = fullClone.querySelector('.page-header-content');
-      if (headerContent) headerContent.remove();
-    }
-
-    // ✅ Include styles to maintain design
-    const styles = document.querySelectorAll('style, link[rel="stylesheet"]');
-    styles.forEach((tag) => {
-      fullClone.appendChild(tag.cloneNode(true));
-    });
-
-    // ✅ Insert into off-screen DOM for rendering
-    const tempWrapper = document.createElement('div');
-    tempWrapper.style.position = 'fixed';
-    tempWrapper.style.top = '-10000px';
-    tempWrapper.style.left = '-10000px';
-    tempWrapper.style.width = '1000px';
-    tempWrapper.style.zIndex = '-9999';
-    tempWrapper.style.opacity = '0';
-    tempWrapper.appendChild(fullClone);
-    document.body.appendChild(tempWrapper);
-
-    html2canvas(fullClone, {
-      scale: 2,
-      useCORS: true,
-      scrollY: -window.scrollY
-    }).then((canvas) => {
+    html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
-      const imgProps = pdf.getImageProperties(imgData);
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 10;
       const imgWidth = pageWidth - margin * 2;
-      const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
 
-      if (currentChunk > 0) pdf.addPage();
-      pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
+      const pxFullHeight = canvas.height;
+      const pxPageHeight = Math.floor(((pageHeight - margin * 2) * canvas.width) / imgWidth);
+      let pxPage = 0;
+      let pageNum = 1;
+      const totalPages = Math.ceil(pxFullHeight / pxPageHeight);
 
-      document.body.removeChild(tempWrapper);
+      while (pxPage < pxFullHeight) {
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = Math.min(pxPageHeight, pxFullHeight - pxPage);
+        const pageCtx = pageCanvas.getContext('2d');
 
-      currentChunk++;
-      if (currentChunk < chunkCount) {
-        renderChunk(); // Go to next table chunk
-      } else {
-const poDate = this.purchaseOrder.poDate?.replace(/\//g, '-') || 'no-date';
-const poNumber = this.purchaseOrder.poNumber || 'no-number';
-pdf.save(`PO_${poDate}_${poNumber}.pdf`);
+        if (pageCtx) {
+          pageCtx.drawImage(
+            canvas,
+            0, pxPage, canvas.width, pageCanvas.height,
+            0, 0, canvas.width, pageCanvas.height
+          );
+        }
 
+        const pageImgData = pageCanvas.toDataURL('image/png');
+        if (pageNum > 1) pdf.addPage();
+        pdf.addImage(pageImgData, 'PNG', margin, margin, imgWidth, ((pageCanvas.height * imgWidth) / pageCanvas.width));
+
+        pdf.setFontSize(10);
+        pdf.text(`Page ${pageNum} of ${totalPages}`, pageWidth / 2, pageHeight - 5, { align: 'center' });
+
+        pxPage += pxPageHeight;
+        pageNum++;
       }
+
+      const poDate = this.purchaseOrder.poDate?.replace(/\//g, '-') || 'no-date';
+      const poNumber = this.purchaseOrder.poNumber || 'no-number';
+      pdf.save(`PO_${poDate}_${poNumber}.pdf`);
     });
-  };
-
-  renderChunk();
-}
-
-
-
-  navigateFun() {
-    this.location.back();
   }
 
-  getOriginalPrice(row: any): number {
-    let total = 0;
-
-    this.sizeHeaders.forEach((size) => {
-      if (row.quantities[size] > 0) {
-        total += row.quantities[size] * (this.priceHeaders[size] || 0);
+  async postTransporterDetails(): Promise<any> {
+    const { value: transportType } = await Swal.fire({
+      title: 'Select Transport Type',
+      input: 'select',
+      inputOptions: {
+        'self': 'Self',
+        'third': '3rd Party'
+      },
+      inputPlaceholder: 'Select transport type',
+      showCancelButton: true,
+      confirmButtonText: 'Continue',
+      cancelButtonText: 'Cancel',
+      allowOutsideClick: false,
+      inputValidator: (value) => {
+        if (!value) {
+          return 'Please select a transport type!';
+        }
+        return null;
       }
     });
 
-    return total; // ✅ Returns the original price before discount
+    if (!transportType) {
+      return null;
+    }
+
+    if (transportType === 'self') {
+      return {
+        transportType: 'Self',
+        modeOfTransport: 'self',
+        transporterCompanyName: this.purchaseOrder.buyerName,
+        contactNumber: parseInt(this.purchaseOrder.buyerPhone) || 0,
+        contactPersonName: this.purchaseOrder.buyerDetails
+      };
+    }
+
+    const { value: formValues } = await Swal.fire({
+      title: 'Transporter Details',
+      html: `
+        <div style="text-align: left; max-height: 400px; overflow-y: auto;">
+
+          <div class="mb-3">
+            <label class="form-label"><strong>Mode of Transport *</strong></label>
+            <select id="modeOfTransport" class="swal2-input" style="width: 85%;">
+              <option value="">Select Mode of Transport</option>
+              <option value="road">Road</option>
+              <option value="railway">Railway</option>
+              <option value="air">Air</option>
+              <option value="sea">Sea</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label"><strong>Transporter Company Name *</strong></label>
+            <input id="transporterCompanyName" class="swal2-input" placeholder="Enter company name" style="width: 80%;">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label"><strong>Contact Person Name *</strong></label>
+            <input id="contactPersonName" class="swal2-input" placeholder="Enter contact person name" style="width: 80%;">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label"><strong>Contact Number *</strong></label>
+            <input id="contactNumber" class="swal2-input" type="tel" placeholder="Enter contact number" style="width: 80%;">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Alternative Contact Number</label>
+            <input id="altContactNumber" class="swal2-input" type="tel" placeholder="Enter alternative contact number" style="width: 80%;">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Vehicle Number</label>
+            <input id="vehicleNumber" class="swal2-input" placeholder="Enter vehicle number" style="width: 80%;">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Tracking ID<br/>(Enter Tracking Number / Consignment No. / AWB / LR / Shipment ID)</label>
+            <input id="trackingId" class="swal2-input" placeholder="Enter tracking ID" style="width: 80%;">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Delivery Address</label>
+            <textarea id="deliveryAddress" class="swal2-textarea" placeholder="Enter delivery address" style="width: 80%; height: 60px;">${this.purchaseOrder.buyerAddress}</textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">GST Number of Transporter</label>
+            <input id="gstNumber" class="swal2-input" placeholder="Enter GST number" style="width: 80%;">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Remarks</label>
+            <textarea id="remarks" class="swal2-textarea" placeholder="Enter remarks" style="width: 80%; height: 60px;"></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Add Note</label>
+            <textarea id="note" class="swal2-textarea" placeholder="Enter additional notes" style="width: 80%; height: 60px;"></textarea>
+          </div>
+        </div>
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Submit',
+      cancelButtonText: 'Cancel',
+      width: '600px',
+      allowOutsideClick: false,
+      preConfirm: () => {
+        const modeOfTransport = (document.getElementById('modeOfTransport') as HTMLSelectElement).value;
+        const transporterCompanyName = (document.getElementById('transporterCompanyName') as HTMLInputElement).value;
+        const contactPersonName = (document.getElementById('contactPersonName') as HTMLInputElement).value;
+        const contactNumber = (document.getElementById('contactNumber') as HTMLInputElement).value;
+        const altContactNumber = (document.getElementById('altContactNumber') as HTMLInputElement).value;
+        const vehicleNumber = (document.getElementById('vehicleNumber') as HTMLInputElement).value;
+        const trackingId = (document.getElementById('trackingId') as HTMLInputElement).value;
+        const deliveryAddress = (document.getElementById('deliveryAddress') as HTMLTextAreaElement).value;
+        const gstNumber = (document.getElementById('gstNumber') as HTMLInputElement).value;
+        const remarks = (document.getElementById('remarks') as HTMLTextAreaElement).value;
+        const note = (document.getElementById('note') as HTMLTextAreaElement).value;
+
+        if (!modeOfTransport) {
+          Swal.showValidationMessage('Mode of Transport is required');
+          return false;
+        }
+        if (!transporterCompanyName) {
+          Swal.showValidationMessage('Transporter Company Name is required');
+          return false;
+        }
+        if (!contactPersonName) {
+          Swal.showValidationMessage('Contact Person Name is required');
+          return false;
+        }
+        if (!contactNumber) {
+          Swal.showValidationMessage('Contact Number is required');
+          return false;
+        }
+        if (!/^\d{10}$/.test(contactNumber)) {
+          Swal.showValidationMessage('Contact Number must be 10 digits');
+          return false;
+        }
+
+        return {
+          transportType: '3rd Party',
+          modeOfTransport,
+          transporterCompanyName,
+          contactPersonName,
+          contactNumber: parseInt(contactNumber),
+          altContactNumber: altContactNumber ? parseInt(altContactNumber) : undefined,
+          vehicleNumber: vehicleNumber || undefined,
+          trackingId: trackingId || undefined,
+          deliveryAddress: deliveryAddress || undefined,
+          gstNumber: gstNumber || undefined,
+          remarks: remarks || undefined,
+          note: note || undefined,
+        };
+      }
+    });
+
+    return formValues || null;
   }
 }

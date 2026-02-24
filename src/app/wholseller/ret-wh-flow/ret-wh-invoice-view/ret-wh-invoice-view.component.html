@@ -1,0 +1,293 @@
+<section class="content">
+  <div class="content-block mb-4">
+    <!-- Page Header -->
+    <h4 class="mt-4">
+      <button class="btn navigate" (click)="navigateBack()">
+        <i class="bi bi-arrow-left-circle h4"></i>
+      </button>
+      <span>Invoice Details</span>
+    </h4>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="d-flex justify-content-center align-items-center p-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div *ngIf="!loading">
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end mb-2 me-5">
+        <button class="btn btn-success" (click)="downloadInvoice()">
+          <i class="bi bi-download me-1"></i>Download Invoice
+        </button>
+        &nbsp;
+        <!-- Retailer: Mark as Received -->
+        <button
+          *ngIf="isRetailer && invoiceData?.statusAll === 'created'"
+          class="btn btn-primary"
+          title="Mark products as received"
+          (click)="confirmReceived()">
+          <i class="bi bi-check2-circle me-1"></i>Received Product
+        </button>
+        <!-- Retailer: Return Product after delivered -->
+        <button
+          *ngIf="isRetailer && invoiceData?.statusAll === 'delivered'"
+          class="btn btn-warning pl-2"
+          title="Create Return Request"
+          [routerLink]="['/retailer/new/add-return-product-whl', invoiceId]">
+          <i class="bi bi-arrow-return-left me-1"></i>Return Product
+        </button>
+      </div>
+
+      <!-- Invoice Container -->
+      <div id="professional-invoice" class="invoice-container">
+
+        <!-- Header -->
+        <div class="invoice-header">
+          <div class="company-branding">
+            <div class="company-info">
+              <h2>{{ invoiceData.sellerName }}</h2>
+              <p class="company-address">{{ invoiceData.sellerAddress }}</p>
+              <p class="contact-info">Ph: {{ invoiceData.sellerContact }} | Email: {{ invoiceData.sellerEmail }}</p>
+            </div>
+          </div>
+          <div class="invoice-title">
+            <h1>TAX INVOICE</h1>
+            <div class="gstin-info">
+              <strong>GSTIN:</strong> {{ invoiceData.sellerGSTIN }}
+            </div>
+            <div class="original-copy">ORIGINAL FOR RECIPIENT</div>
+          </div>
+        </div>
+
+        <!-- Customer & Invoice Details -->
+        <div class="details-section">
+          <div class="customer-details">
+            <h5>Customer Detail</h5>
+            <div class="customer-info-labeled">
+              <div class="customer-row">
+                <span class="label">Company Name:</span>
+                <span class="value">{{ invoiceData.buyerName }}</span>
+              </div>
+              <div class="customer-row">
+                <span class="label">Address:</span>
+                <span class="value">{{ invoiceData.buyerAddress }}</span>
+              </div>
+              <div class="customer-row">
+                <span class="label">Mobile No:</span>
+                <span class="value">{{ invoiceData.buyerContact }}</span>
+              </div>
+              <div class="customer-row">
+                <span class="label">GST:</span>
+                <span class="value">{{ invoiceData.buyerGSTIN }}</span>
+              </div>
+              <div class="customer-row">
+                <span class="label">Place of Supply:</span>
+                <span class="value">{{ responseData?.retailer?.state }} ({{ responseData?.retailer?.pinCode }})</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="invoice-details-right">
+            <table class="invoice-info-table">
+              <tr>
+                <td class="info-label">Invoice No.</td>
+                <td class="info-value">{{ invoiceData.invoiceNumber }}</td>
+              </tr>
+              <tr>
+                <td class="info-label">Invoice Date</td>
+                <td class="info-value">{{ invoiceData.invoiceDate }}</td>
+              </tr>
+              <tr>
+                <td class="info-label">PO No.</td>
+                <td class="info-value">{{ invoiceData.poNumber }}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- Items Table -->
+        <div class="items-section">
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>Sr. No.</th>
+                <th>Name of Product / Service</th>
+                <th>HSN / SAC</th>
+                <th>Qty</th>
+                <th>Rate</th>
+                <th>Taxable Value</th>
+                <th *ngIf="isIntraState" colspan="2">CGST</th>
+                <th *ngIf="isIntraState" colspan="2">SGST</th>
+                <th *ngIf="!isIntraState" colspan="2">IGST</th>
+                <th>Total</th>
+              </tr>
+              <tr class="sub-header">
+                <th></th><th></th><th></th><th></th><th></th><th></th>
+                <th *ngIf="isIntraState">%</th>
+                <th *ngIf="isIntraState">Amount</th>
+                <th *ngIf="isIntraState">%</th>
+                <th *ngIf="isIntraState">Amount</th>
+                <th *ngIf="!isIntraState">%</th>
+                <th *ngIf="!isIntraState">Amount</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of invoiceData.deliveryItems; let i = index" class="item-row">
+                <td>{{ i + 1 }}</td>
+                <td class="product-name">
+                  <div class="product-details">
+                    <strong>{{ item.designNumber }} | Brand: {{ item.brandName }}</strong>
+                    <br><span class="product-desc">{{ item.gender }} {{ item.clothing }} - {{ item.colourName }} - Size: {{ item.size }}</span>
+                  </div>
+                </td>
+                <td>{{ item.hsnCode || 'N/A' }}</td>
+                <td class="text-center">{{ item.quantity }} NOS</td>
+                <td class="text-end">
+                  <div *ngIf="discountPercentage > 0">
+                    <span style="text-decoration: line-through; color: #999; font-size: 0.85em;">
+                      {{ getGstAmounts(item).originalRate | number:'1.2-2' }}
+                    </span>
+                    <br/>
+                    <span style="color: black; font-weight: 600;">
+                      {{ getGstAmounts(item).discountedRate | number:'1.2-2' }}
+                    </span>
+                  </div>
+                  <div *ngIf="!discountPercentage || discountPercentage === 0">
+                    {{ getItemPrice(item) | number:'1.2-2' }}
+                  </div>
+                </td>
+                <td class="text-end">{{ getGstAmounts(item).taxable | number:'1.2-2' }}</td>
+                <td *ngIf="isIntraState" class="text-center">{{ item.hsnGst/2 || 0 | number:'1.2-2' }}%</td>
+                <td *ngIf="isIntraState" class="text-end">{{ getGstAmounts(item).cgst | number:'1.2-2' }}</td>
+                <td *ngIf="isIntraState" class="text-center">{{ item.hsnGst/2 || 0 | number:'1.2-2' }}%</td>
+                <td *ngIf="isIntraState" class="text-end">{{ getGstAmounts(item).sgst | number:'1.2-2' }}</td>
+                <td *ngIf="!isIntraState" class="text-center">{{ item.hsnGst || 0 | number:'1.2-2' }}%</td>
+                <td *ngIf="!isIntraState" class="text-end">{{ getGstAmounts(item).igst | number:'1.2-2' }}</td>
+                <td class="text-end item-total">{{ getGstAmounts(item).totalWithGst | number:'1.2-2' }}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr class="totals-row">
+                <td colspan="3" class="text-end"><strong>Total</strong></td>
+                <td class="text-center"><strong>{{ itemTotals.totalQty }}</strong></td>
+                <td></td>
+                <td class="text-end"><strong>{{ itemTotals.totalTaxable | number:'1.2-2' }}</strong></td>
+                <td *ngIf="isIntraState"></td>
+                <td *ngIf="isIntraState" class="text-end"><strong>{{ itemTotals.totalCGST | number:'1.2-2' }}</strong></td>
+                <td *ngIf="isIntraState"></td>
+                <td *ngIf="isIntraState" class="text-end"><strong>{{ itemTotals.totalSGST | number:'1.2-2' }}</strong></td>
+                <td *ngIf="!isIntraState"></td>
+                <td *ngIf="!isIntraState" class="text-end"><strong>{{ itemTotals.totalIGST | number:'1.2-2' }}</strong></td>
+                <td class="text-end grand-total"><strong>{{ itemTotals.totalWithGST | number:'1.2-2' }}</strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <!-- Financial Summary -->
+        <div class="financial-summary">
+          <div class="amount-words">
+            <div class="words-section">
+              <h6>Total in words</h6>
+              <div class="amount-text">{{ totalPayAmount | amountInWords }}</div>
+              <div *ngIf="discountPercentage > 0" class="discount-note"
+                style="font-size: 0.9em; color: #2e7d32; margin-top: 8px; font-weight: 600;">
+                Note: {{ discountPercentage }}% discount applied on product rates
+                (Approx. Total Discount: Rs.{{ calculateActualDiscount() | number:'1.2-2' }})
+              </div>
+            </div>
+          </div>
+          <div class="amount-breakdown">
+            <table class="summary-table">
+              <tr>
+                <td>Taxable Amount</td>
+                <td class="text-end">{{ itemTotals.totalTaxable | number:'1.2-2' }}</td>
+              </tr>
+              <tr>
+                <td>Add: {{ isIntraState ? 'CGST + SGST' : 'IGST' }}</td>
+                <td class="text-end">{{ totalGSTAmount | number:'1.2-2' }}</td>
+              </tr>
+              <tr>
+                <td>Total Amount (Incl. Tax)</td>
+                <td class="text-end">{{ totalAmountInclTax | number:'1.2-2' }}</td>
+              </tr>
+              <tr>
+                <td>Less: Credit Note Amt</td>
+                <td class="text-end">{{ (responseData?.totalCreditNoteAmountUsed || 0) | number:'1.2-2' }}</td>
+              </tr>
+              <tr class="final-amount">
+                <td><strong>Total Pay Amount</strong></td>
+                <td class="text-end"><strong>₹{{ totalPayAmount | number:'1.2-2' }}</strong></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- Bank Details -->
+        <div class="bottom-section">
+          <div class="bank-details" *ngIf="invoiceData.bankDetails">
+            <h6>Bank Details</h6>
+            <div class="bank-info-labeled">
+              <div class="bank-row">
+                <span class="label">Bank Account Holder Name:</span>
+                <span class="value">{{ invoiceData.bankDetails.accountHolderName }}</span>
+              </div>
+              <div class="bank-row">
+                <span class="label">Bank Name:</span>
+                <span class="value">{{ invoiceData.bankDetails.bankName }}</span>
+              </div>
+              <div class="bank-row">
+                <span class="label">Branch:</span>
+                <span class="value">{{ invoiceData.bankDetails.branchName }}</span>
+              </div>
+              <div class="bank-row">
+                <span class="label">Account Number:</span>
+                <span class="value">{{ invoiceData.bankDetails.accountNumber }}</span>
+              </div>
+              <div class="bank-row">
+                <span class="label">IFSC Code:</span>
+                <span class="value">{{ invoiceData.bankDetails.ifscCode }}</span>
+              </div>
+              <div class="bank-row" *ngIf="invoiceData.bankDetails.upiId">
+                <span class="label">UPI ID:</span>
+                <span class="value">{{ invoiceData.bankDetails.upiId }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transport Details -->
+        <div class="transport-section" *ngIf="invoiceData.transportDetails">
+          <h6>Transport Details</h6>
+          <div class="transport-info">
+            <p><strong>Transport:</strong> {{ invoiceData.transportDetails.modeOfTransport | titlecase }} via {{ invoiceData.transportDetails.transporterCompanyName }}</p>
+            <p *ngIf="invoiceData.transportDetails.vehicleNumber"><strong>Vehicle No:</strong> {{ invoiceData.transportDetails.vehicleNumber }}</p>
+            <p *ngIf="invoiceData.transportDetails.trackingId"><strong>Tracking ID:</strong> {{ invoiceData.transportDetails.trackingId }}</p>
+            <p *ngIf="invoiceData.transportDetails.contactPersonName"><strong>Contact Person:</strong> {{ invoiceData.transportDetails.contactPersonName }} ({{ invoiceData.transportDetails.contactNumber }})</p>
+          </div>
+        </div>
+
+        <!-- Terms and Conditions -->
+        <div class="terms-section">
+          <h6>Terms and Conditions</h6>
+          <div class="terms-content">
+            <p>Our Responsibility Ceases as soon as goods leaves our Premises.</p>
+            <p>Goods once sold will not taken back.</p>
+            <p>Delivery Ex-Premises.</p>
+          </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer-section">
+          <hr class="disclaimer-separator">
+          <p class="disclaimer-text">This is a computer-generated invoice and does not require signature.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>

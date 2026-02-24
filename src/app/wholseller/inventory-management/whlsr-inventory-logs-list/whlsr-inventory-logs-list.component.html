@@ -1,0 +1,104 @@
+<section class="content">
+  <div class="content-block">
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-4 flex-wrap">
+      <h4 class="mb-0">
+        <i class="bi bi-clock-history h3"></i>
+        Inventory Logs
+      </h4>
+      <div class="d-flex align-items-center gap-2">
+        <input
+          type="text"
+          class="form-control"
+          style="width: 300px"
+          placeholder="Search Design No or Brand Name"
+          [(ngModel)]="searchText"
+          (keydown.enter)="search()"
+        />
+        <button class="btn btn-sm btn-outline-secondary" (click)="search()">
+          <i class="bi bi-search"></i> Search
+        </button>
+        <button class="btn btn-sm btn-outline-danger" (click)="clearSearch()" *ngIf="searchText">
+          <i class="bi bi-x-circle"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="card mt-3 p-4">
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 text-center">
+          <p-table 
+            [value]="tableData" 
+            [scrollable]="true" 
+            scrollHeight="500px"
+            styleClass="p-datatable-sm p-datatable-striped"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th style="width: 80px">#</th>
+                <th>Design No</th>
+                <th>Brand</th>
+                <th>Total Updates</th>
+                <th>Total Qty Added</th>
+                <th>Total Qty Removed</th>
+                <th>Latest Update</th>
+                <th style="width: 100px">Action</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-data let-rowIndex="rowIndex">
+              <tr>
+                <td>{{ (page - 1) * rows + rowIndex + 1 }}</td>
+                <td><strong>{{ data.designNumber }}</strong></td>
+                <td>{{ data.brandName }}</td>
+                <td>
+                  <span class="badge bg-secondary">{{ data.totalUpdates }}</span>
+                </td>
+                <td>
+                  <span class="badge bg-success" *ngIf="data.totalQuantityAdded > 0">
+                    <i class="bi bi-arrow-up-circle me-1"></i>
+                    {{ data.totalQuantityAdded }}
+                  </span>
+                  <span *ngIf="data.totalQuantityAdded === 0">-</span>
+                </td>
+                <td>
+                  <span class="badge bg-danger" *ngIf="data.totalQuantityRemoved > 0">
+                    <i class="bi bi-arrow-down-circle me-1"></i>
+                    {{ data.totalQuantityRemoved }}
+                  </span>
+                  <span *ngIf="data.totalQuantityRemoved === 0">-</span>
+                </td>
+                <td>
+                  <small>{{ data.latestUpdatedAt | date: 'dd/MMM/yyyy h:mm a' }}</small>
+                </td>
+                <td>
+                  <button class="btn btn-outline-primary btn-sm" (click)="viewRow(data)" title="View Details">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+
+          <!-- No Data Messages -->
+          <div *ngIf="!tableData" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
+            <p><i class="bi bi-exclamation-triangle text-warning me-2"></i>Inventory Logs Not Found. [Server Error]</p>
+          </div>
+          <div *ngIf="tableData?.length === 0" class="data-not-found mt-3 d-flex justify-content-center align-items-center">
+            <p><i class="bi bi-info-circle text-info me-2"></i>No Inventory Logs available.</p>
+          </div>
+
+          <!-- Pagination -->
+          <p-paginator 
+            *ngIf="tableData && tableData.length > 0"
+            (onPageChange)="onPageChange($event)"
+            [first]="first"
+            [rows]="rows"
+            [totalRecords]="totalResults"
+            [rowsPerPageOptions]="[10, 20, 30]"
+            styleClass="mt-3"
+          >
+          </p-paginator>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

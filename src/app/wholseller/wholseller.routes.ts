@@ -21,6 +21,8 @@ import { ViewDeliveryFinalComponent } from "./new-flow/product-mng/mdelivery-cha
 import { ViewProductRePriceComponent } from "./new-flow/view-product-re-price/view-product-re-price.component";
 import { WhAddStockOfProductComponent } from "./inventory-management/wh-add-stock-of-product/wh-add-stock-of-product.component";
 import { WhUpdateStockOfProductComponent } from "./inventory-management/wh-update-stock-of-product/wh-update-stock-of-product.component";
+import { WhlsrInventoryLogsListComponent } from "./inventory-management/whlsr-inventory-logs-list/whlsr-inventory-logs-list.component";
+import { WhlsrInventoryLogsViewComponent } from "./inventory-management/whlsr-inventory-logs-view/whlsr-inventory-logs-view.component";
 
 export const R_Auth: Route[] = [
     { path: 'new', loadChildren: () => import('./new-flow/new_flow.route').then((m) => m.NewFlow) },
@@ -35,6 +37,10 @@ export const R_Auth: Route[] = [
     {
         path: 'product',
         loadChildren: () => import('./product/product.route').then((mod) => mod.Product_Route)
+    },
+    {
+        path: 'ret-wh-flow',
+        loadChildren: () => import('./ret-wh-flow/ret-wh-flow.route').then((mod) => mod.Ret_Wh_Route)
     },
     { path: 'dashboard', component: DashboardComponent },
     { path: 'profile', component: WholesalerProfileComponent },
@@ -58,5 +64,7 @@ export const R_Auth: Route[] = [
 
     // New Routes by SK for Inventory
     { path: 'wh-add-stock-of-product', component: WhAddStockOfProductComponent},
-    { path: 'wh-update-stock-of-product', component: WhUpdateStockOfProductComponent }
+    { path: 'wh-update-stock-of-product', component: WhUpdateStockOfProductComponent },
+    { path: 'wh-inventory-log-list', component: WhlsrInventoryLogsListComponent },
+    { path: 'wh-inventory-log-view', component: WhlsrInventoryLogsViewComponent}
 ]

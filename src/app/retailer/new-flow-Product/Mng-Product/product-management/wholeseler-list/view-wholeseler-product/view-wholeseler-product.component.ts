@@ -1,7 +1,7 @@
 import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
-import { CommonModule, TitleCasePipe } from '@angular/common';
+import { CommonModule, TitleCasePipe, ViewportScroller  } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService, CommunicationService } from '@core';
 import { MatDialog } from '@angular/material/dialog';
@@ -34,6 +34,7 @@ export class ViewWholeselerProductComponent {
   selectedQuantity: number = 1;
   calculatedPrice: number = 0;
   manufacturerPrice: number = 0;
+  calculatedMrp: number = 0;
 
   availableSizes: string[] = [];
   retailerPrice: any;
@@ -42,14 +43,28 @@ export class ViewWholeselerProductComponent {
   hoveredColourName: string = '';
   designno: string = '';
 
-  tempCart: Array<any> = [];
+  tempCart: Array<{
+  colourName: string;
+  size: string;
+  quantity: number;
+  price: any;
+  mrp: any;  
+  designNumber: any;
+  colour: any;
+  colourImage: any;
+  hsnCode: any;
+  hsnGst: any;
+  brandName: any;
+}> = [];
+
 
   constructor(
     private route: ActivatedRoute,
     private authService: AuthService,
     private communicationService: CommunicationService,
     private renderer: Renderer2,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private viewportScroller: ViewportScroller
   ) {}
 
   ngOnInit(): void {
@@ -158,12 +173,18 @@ export class ViewWholeselerProductComponent {
     this.availableSizes = this.retailerPrice.set.map((s: any) => s.size);
     this.selectedSize = '';
     this.calculatedPrice = 0;
+    this.calculatedMrp = 0;
   }
 
   getPriceBySize(size: string): number {
     const match = this.retailerPrice.set.find((s: any) => s.size === size);
     return match ? +match.wholesalerPrice : 0;
   }
+
+  getMrpBySize(size: string): number {
+  const m = this.product?.sizes.find((s: any) => s.size === size);
+  return m ? +m.mrp : 0;
+}
 
   getManufacturerPrice(size: string): number {
     const m = this.product?.sizes.find((s: any) => s.size === size);
@@ -173,11 +194,12 @@ export class ViewWholeselerProductComponent {
   onSizeChange() {
     this.calculatedPrice = this.getPriceBySize(this.selectedSize);
     this.manufacturerPrice = this.getManufacturerPrice(this.selectedSize);
+    this.calculatedMrp = this.getMrpBySize(this.selectedSize); 
   }
 
   addItem() {
     if (!this.selectedColor || !this.selectedSize || !this.selectedQuantity) {
-      alert('Please select color, size and quantity.');
+      this.communicationService.customError1('Please select color, size and quantity.'); 
       return;
     }
 
@@ -194,16 +216,25 @@ export class ViewWholeselerProductComponent {
         size: this.selectedSize,
         quantity: this.selectedQuantity,
         price: this.calculatedPrice.toString(),
-        manufacturerPrice: this.manufacturerPrice,
+        brandName: this.product.brand,
+        mrp: this.calculatedMrp.toString(), 
         designNumber: this.designno,
         colour: matchColor?.hex || '',
         colourImage: matchColor?.image || '',
+        hsnCode: this.product.hsnCode,
+        hsnGst: this.product.hsnGst,
       });
     }
 
     this.selectedSize = '';
     this.selectedQuantity = 1;
     this.calculatedPrice = 0;
+    this.calculatedMrp = 0; 
+
+    setTimeout(() => {
+    const currentPosition = this.viewportScroller.getScrollPosition();
+    this.viewportScroller.scrollToPosition([currentPosition[0], currentPosition[1] + 500]);
+  }, 100);
   }
 
   removeItem(i: number) {
@@ -218,7 +249,7 @@ export class ViewWholeselerProductComponent {
         gender: this.product.gender,
         clothing: this.product.clothingType,
         subCategory: this.product.subCategory,
-        brandName:this.product.brand
+        brandName:this.product.brand,
       })),
       productId: this.product._id,
       email: this.userProfile.email,
@@ -231,6 +262,11 @@ export class ViewWholeselerProductComponent {
       if (res) {
         this.communicationService.customSuccess1('Product Added to Cart');
         this.tempCart = [];
+        this.selectedColor = ''; 
+        this.selectedSize = '';  
+        this.selectedQuantity = 1;
+        this.calculatedPrice = 0; 
+        this.calculatedMrp = 0;   
       }
     } catch {
       this.communicationService.customError1('Error occurred while saving...!!!');

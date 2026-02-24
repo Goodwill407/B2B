@@ -1,0 +1,754 @@
+<section class="content">
+  <div class="content-block">
+
+    <!-- Step Indicator -->
+    <div class="stepper mb-3 mt-3" *ngIf="!isLoading">
+      <div class="step" [class.active]="!showPreview">Step 1: Review</div>
+      <div class="step-sep"></div>
+      <div class="step" [class.active]="showPreview">Step 2: Preview</div>
+    </div>
+
+    <!-- Page Header -->
+    <h4 class="mt-4">
+      <button class="btn navigate" (click)="navigateFun()">
+        <i class="bi bi-arrow-left-circle h4"></i>
+      </button>
+      <span>Update Purchase Order - Partial Delivery</span>
+    </h4>
+
+    <!-- Loading Indicator -->
+    <div *ngIf="isLoading" class="loading-overlay">
+      <div class="loading-content">
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+        <p>Loading purchase order details...</p>
+      </div>
+    </div>
+
+    <!-- STEP 1: Main content -->
+    <div id="purchase-order" class="card p-3 my-2 po-card" *ngIf="!isLoading && !showPreview">
+      
+      <!-- Header Section -->
+      <div class="header d-flex justify-content-between align-items-center">
+        <h1>PURCHASE ORDER</h1>
+        <div class="text-end">
+          <p><strong>Order Date:</strong> {{ purchaseOrder.poDate }}</p>
+          <p><strong>Order No:</strong> {{ purchaseOrder.orderNumber }}</p>
+        </div>
+      </div>
+
+      <!-- Buyer and Seller Information -->
+      <div class="border rounded mt-3 p-3 d-flex align-items-start">
+        <img [src]="purchaseOrder.logoUrl" alt="Company Logo" class="me-3" style="width:80px; height:80px; object-fit:cover;" 
+             onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';" />
+        <div class="row w-100">
+          <div class="col-md-6">
+            <h5 class="mb-2"><u>Order By:</u></h5>
+            <p class="mb-1"><strong>{{ purchaseOrder.buyerName }}</strong></p>
+            <p class="mb-1">{{ purchaseOrder.buyerEmail }} &bull; {{ purchaseOrder.buyerPhone }}</p>
+            <p class="mb-1">GSTIN: {{ purchaseOrder.buyerGSTIN }} &bull; PAN: {{ purchaseOrder.buyerPAN }}</p>
+            <p class="mb-1">{{ purchaseOrder.buyerAddress }}</p>
+          </div>
+          <div class="col-md-6">
+            <h5 class="mb-2"><u>Order To:</u></h5>
+            <p class="mb-1"><strong>{{ purchaseOrder.supplierName }}</strong></p>
+            <p class="mb-1">{{ purchaseOrder.supplierEmail }} &bull; {{ purchaseOrder.supplierContact }}</p>
+            <p class="mb-1">GSTIN: {{ purchaseOrder.supplierGSTIN }} &bull; PAN: {{ purchaseOrder.supplierPAN }}</p>
+            <p class="mb-1">{{ purchaseOrder.supplierAddress }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="border rounded mt-3 p-3">
+        <h5 class="mb-2"><u>Order Summary:</u></h5>
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Confirmed Items:</strong> &nbsp; {{ totalConfirmedItems }}</p>
+            <p class="mb-1"><strong>Partial Items:</strong> &nbsp;{{ totalPartialItems }}</p>
+          </div>
+          <div class="col-md-6">
+            <!-- <p class="mb-1"><strong>Confirmed Amount:</strong> ₹{{ totalConfirmedAmount | number:'1.2-2' }}</p>
+            <p class="mb-1"><strong>Pending Amount:</strong> ₹{{ totalPendingAmount | number:'1.2-2' }}</p> -->
+            <p class="mb-1" ><strong>Expected Confirmed Dispatch Date:</strong> &nbsp; {{ expDeliveryDate | date:'dd/MM/yyyy' }}</p>
+            <p class="mb-1" ><strong>Expected Partial Order Dispatch Date:</strong> &nbsp; {{ partialDeliveryDate | date:'dd/MM/yyyy' }}</p>
+          </div>
+          <div *ngIf="wholesalerNote" class="col-md-12 p-0">
+            <p><strong>Wholesaler Note:</strong> {{ wholesalerNote }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirmed Items Section -->
+      <section class="order-details mt-3" *ngIf="confirmedItems.length > 0">
+        <h4 class="text-center mb-2">Order Details of Confirmed Sets by Design No.</h4>
+        <!-- <p class="text-center mb-3"><strong>The Estimated Dispatch Date For Available Quantity is {{ getFormattedDate(purchaseOrder.expDeliveryDate) }}</strong></p> -->
+
+        <p-table [value]="confirmedItems" [responsive]="true" [paginator]="false" class="bordered-table">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Sr. No.</th>
+              <th>Image</th>
+              <th>Clothing</th>
+              <th>Gender</th>
+              <th>Brand</th>
+              <th>Design No.</th>
+              <th>HSN Code</th>
+              <th>Colour</th>
+              <th>Size</th>
+              <th>Rate (₹)</th>
+              <th>Required Qty</th>
+              <th>Dispatch Qty</th>
+              <th>Taxable Value (₹)</th>
+              <th>GST (%)</th>
+              <!-- <th *ngIf="isIntraState">CGST (₹)</th>
+              <th *ngIf="isIntraState">SGST (₹)</th>
+              <th *ngIf="!isIntraState">IGST (₹)</th> -->
+              <th>Total with GST (₹)</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+            <tr  [ngClass]="item.status === 'w_partial' ? 'highlight-yellow' : ''">
+              <td>{{ rowIndex + 1 }}</td>
+              <td>
+                <!-- Show color square if no image -->
+                <div 
+                  *ngIf="!item.colourImage || item.colourImage === ''"
+                  class="color-preview" 
+                  [style.background-color]="item.colour || '#e0e0e0'"
+                  [title]="item.colourName">
+                </div>
+                
+                <!-- Show image if available -->
+                <img 
+                  *ngIf="item.colourImage && item.colourImage !== ''"
+                  [src]="item.colourImage" 
+                  [alt]="item.colourName"
+                  class="item-image" />
+              </td>
+
+              <td>{{ item.clothing }}</td>
+              <td>{{ item.gender }}</td>
+              <td>{{ item.brandName || 'N/A' }}</td>
+              <td>{{ item.designNumber }}</td>
+              <td>{{ item.hsnCode || 'N/A' }}</td>
+              <td>
+                <div class="color-display">
+                  <span class="color-swatch" [style.background-color]="item.colour"></span>
+                  {{ item.colourName }}
+                </div>
+              </td>
+              <td>{{ item.size }}</td>
+              <td>
+                <div *ngIf="purchaseOrder.ProductDiscount > 0" style="text-align: right;">
+                  <span style="text-decoration: line-through; color: #999; font-size: 0.9em;">
+                    {{ getGstAmounts(item).originalRate | indianCurrency }}
+                  </span>
+                  <br/>
+                  <span style="color: #28a745; font-weight: 600;">
+                    {{ getGstAmounts(item).discountedRate | indianCurrency }}
+                  </span>
+                </div>
+                <div *ngIf="!purchaseOrder.ProductDiscount || purchaseOrder.ProductDiscount === 0" style="text-align: right;">
+                  {{ item.price | indianCurrency }}
+                </div>
+              </td>
+              <td>{{ item.expectedQty }}</td>
+              <td>{{ item.quantity }}</td>
+              <td class="text-end">{{ getGstAmounts(item).taxable | indianCurrency }}</td>
+              <td>{{ item.hsnGst || 0 }}%</td>
+              <!-- <td class="text-end" *ngIf="isIntraState">{{ getGstAmounts(item).cgst | indianCurrency }}</td>
+              <td class="text-end" *ngIf="isIntraState">{{ getGstAmounts(item).sgst | indianCurrency }}</td>
+              <td class="text-end" *ngIf="!isIntraState">{{ getGstAmounts(item).igst | indianCurrency }}</td> -->
+              <td class="text-end">{{ getGstAmounts(item).totalWithGst | indianCurrency }}</td>
+            </tr>
+          </ng-template>
+          <!-- <ng-template pTemplate="footer"> -->
+            <!-- Total Row -->
+            <!-- <tr style="background: #f0f6f9; font-weight: bold;">
+              <td colspan="11" style="text-align:right; padding-right: 20px;">Total:</td>
+              <td>{{ confirmedTotals.totalQty }}</td>
+              <td class="text-end">{{ confirmedTotals.totalTaxable | indianCurrency }}</td>
+              <td></td>
+              <td *ngIf="isIntraState" class="text-end">{{ confirmedTotals.totalCGST | indianCurrency }}</td>
+              <td *ngIf="isIntraState" class="text-end">{{ confirmedTotals.totalSGST | indianCurrency }}</td>
+              <td *ngIf="!isIntraState" class="text-end">{{ confirmedTotals.totalIGST | indianCurrency }}</td>
+              <td class="text-end">{{ confirmedTotals.totalWithGST | indianCurrency }}</td>
+            </tr> -->
+            <!-- Discount on Final Total -->
+            <tr>
+              <!-- <td [attr.colspan]="colspan" style="text-align: right; font-weight: bold;">Discount ({{ purchaseOrder.ProductDiscount }}%):</td>
+              <td class="text-end">-{{ confirmedTotals.discountAmount | indianCurrency }}</td>
+            </tr> -->
+            <!-- Grand Total (after discount) -->
+            <!-- <tr>
+              <td [attr.colspan]="colspan" style="text-align: right; font-size: 1.1em; font-weight: bold; color: #002080;">Grand Total (₹):</td>
+              <td class="text-end" style="font-size: 1.1em; font-weight: bold; color: #002080;">{{ confirmedTotals.actualGrandTotal | indianCurrency }}</td>
+            </tr> -->
+            <!-- Grand Total in Words -->
+            <!-- <tr>
+              <td [attr.colspan]="colspan+1" style="font-weight: bold; font-size: 1.1em; color: #002080;">
+                Grand Total (in words): {{ confirmedTotals.actualGrandTotal | amountInWords }}
+              </td>
+            </tr>
+            <tr>
+              <td [attr.colspan]="colspan+1" style="font-weight: bold; font-size: 1.0em; color: #006600;">
+                Total GST Paid: ₹ {{totalGSTAmountConfirmed}} - {{ totalGSTAmountConfirmed | amountInWords }}
+              </td>
+            </tr>
+          </ng-template> -->
+        </p-table>
+      </section>
+
+      <!-- Make to Order Items Section -->
+      <section class="order-details mt-4" *ngIf="makeToOrderItems.length > 0">
+        <h4 class="text-center mb-2">Order Details of Partial Sets by Design No.</h4>
+        <!-- <p class="text-center mb-3"><strong>The Estimated Dispatch Date For Make To Order Items is {{ getFormattedDate(purchaseOrder.partialDeliveryDate) }}</strong></p> -->
+
+        <p-table [value]="makeToOrderItems" [responsive]="true" [paginator]="false" 
+                 class="bordered-table">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Sr. No.</th>
+              <th>Image</th>
+              <th>Clothing</th>
+              <th>Gender</th>
+              <th>Brand</th>
+              <th>Design No.</th>
+              <th>HSN Code</th>
+              <th>Colour</th>
+              <th>Size</th>
+              <th>Rate (₹)</th>
+              <th>Required Qty</th>
+              <th>Dispatch Qty</th>
+              <th>Taxable Value (₹)</th>
+              <th>GST (%)</th>
+              <!-- <th *ngIf="isIntraState">CGST (₹)</th>
+              <th *ngIf="isIntraState">SGST (₹)</th>
+              <th *ngIf="!isIntraState">IGST (₹)</th> -->
+              <th>Total with GST (₹)</th>
+              <th>Remove</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+            <tr [ngClass]="item.status === 'w_partial' ? 'highlight-yellow' : ''">
+              <td>{{ rowIndex + 1 }}</td>
+              <td>
+                <!-- Show color square if no image -->
+                <div 
+                  *ngIf="!item.colourImage || item.colourImage === ''"
+                  class="color-preview" 
+                  [style.background-color]="item.colour || '#e0e0e0'"
+                  [title]="item.colourName">
+                </div>
+                
+                <!-- Show image if available -->
+                <img 
+                  *ngIf="item.colourImage && item.colourImage !== ''"
+                  [src]="item.colourImage" 
+                  [alt]="item.colourName"
+                  class="item-image" />
+              </td>
+
+              <td>{{ item.clothing }}</td>
+              <td>{{ item.gender }}</td>
+              <td>{{ item.brandName || 'N/A' }}</td>
+              <td>{{ item.designNumber }}</td>
+              <td>{{ item.hsnCode || 'N/A'  }}</td>
+              <td>
+                <div class="color-display">
+                  <span class="color-swatch" [style.background-color]="item.colour"></span>
+                  {{ item.colourName }}
+                </div>
+              </td>
+              <td>{{ item.size }}</td>
+              <td>
+                <div *ngIf="purchaseOrder.ProductDiscount > 0" style="text-align: right;">
+                  <span style="text-decoration: line-through; color: #999; font-size: 0.9em;">
+                    {{ getGstAmounts(item).originalRate | indianCurrency }}
+                  </span>
+                  <br/>
+                  <span style="color: #28a745; font-weight: 600;">
+                    {{ getGstAmounts(item).discountedRate | indianCurrency }}
+                  </span>
+                </div>
+                <div *ngIf="!purchaseOrder.ProductDiscount || purchaseOrder.ProductDiscount === 0" style="text-align: right;">
+                  {{ item.price | indianCurrency }}
+                </div>
+              </td>
+              <td>{{ item.expectedQty }}</td>
+              <td>{{ item.quantity }}</td>
+              <td class="text-end">{{ getGstAmounts(item, item.remainingQuantity > 0).taxable | indianCurrency }}</td>
+              <td>{{ item.hsnGst || 0 }}%</td>
+              <!-- <td class="text-end" *ngIf="isIntraState">{{ getGstAmounts(item, true).cgst | indianCurrency }}</td>
+              <td class="text-end" *ngIf="isIntraState">{{ getGstAmounts(item, true).sgst | indianCurrency }}</td>
+              <td class="text-end" *ngIf="!isIntraState">{{ getGstAmounts(item, true).igst | indianCurrency }}</td> -->
+              <td class="text-end">{{  getGstAmounts(item, item.remainingQuantity > 0).totalWithGst | indianCurrency }}</td>
+              <td class="text-center">
+                <button
+                  class="btn btn-link p-0"
+                  (click)="confirmRemoveFromMakeToOrder(rowIndex)"
+                  title="Remove from Make to Order">
+                  <i class="bi bi-x-circle-fill text-danger h5"></i>
+                </button>
+              </td>
+            </tr>
+          </ng-template>
+          <!-- <ng-template pTemplate="footer"> -->
+            <!-- Total Row -->
+            <!-- <tr style="background: #f0f6f9; font-weight: bold;">
+              <td [attr.colspan]="isIntraState ? 14 : 13" style="text-align:right; padding-right: 20px;">Total:</td>
+              <td>{{ makeToOrderTotals.totalQty }}</td>
+              <td class="text-end">{{ makeToOrderTotals.totalWithGST | indianCurrency }}</td>
+              <td></td>
+            </tr> -->
+            <!-- Discount on Final Total -->
+            <!-- <tr>
+              <td [attr.colspan]="isIntraState ? 15 : 14" style="text-align: right; font-weight: bold;">Discount ({{ purchaseOrder.ProductDiscount }}%):</td>
+              <td class="text-end">-{{ makeToOrderTotals.discountAmount | indianCurrency }}</td>
+              <td></td>
+            </tr> -->
+            <!-- Grand Total (after discount) -->
+            <!-- <tr>
+              <td [attr.colspan]="isIntraState ? 15 : 14" style="text-align: right; font-size: 1.1em; font-weight: bold; color: #002080;">Grand Total (₹):</td>
+              <td class="text-end" style="font-size: 1.1em; font-weight: bold; color: #002080;">{{ makeToOrderTotals.actualGrandTotal | indianCurrency }}</td>
+              <td></td>
+            </tr> -->
+            <!-- Grand Total in Words -->
+            <!-- <tr>
+              <td [attr.colspan]="isIntraState ? 17 : 16" style="font-weight: bold; font-size: 1.1em; color: #002080;">
+                Grand Total (in words): {{ makeToOrderTotals.actualGrandTotal | amountInWords }}
+              </td>
+            </tr>
+            <tr>
+              <td [attr.colspan]="isIntraState ? 17 : 16" style="font-weight: bold; font-size: 1.0em; color: #006600;">
+                Total GST Paid: ₹ {{totalGSTAmountMakeToOrder}} - {{ totalGSTAmountMakeToOrder | amountInWords }}
+              </td>
+            </tr>
+          </ng-template> -->
+        </p-table>
+      </section>
+
+      <!-- Add click handlers to keep design intact -->
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-center mt-4">
+        <button type="button"
+                class="btn btn-primary submit-btn px-5"
+                (click)="onConfirmAndUpdatePOs()"
+                [disabled]="isLoading">
+          Confirm & View Updated POs
+        </button>
+        &nbsp;
+        <button type="button"
+                class="btn btn-danger submit-btn px-5"
+                (click)="onCancelOrder()"
+                [disabled]="isLoading">
+          Cancel Order
+        </button>
+      </div>
+      <!-- Action Section - Add after tables, before transport details -->
+      <!-- <div class="d-flex justify-content-center mt-4">
+        <div class="order-actions-card">
+          <h5 class="mb-3 text-center">
+            <i class="bi bi-gear me-2"></i>Order Actions (Please Select Appropriate Option and Submit)
+          </h5>
+          
+          <div class="action-options mb-4">
+            <label class="action-option" [class.selected]="selectedAction === 'acceptBoth'">
+              <input type="radio" 
+                    name="orderAction" 
+                    [(ngModel)]="selectedAction" 
+                    value="acceptBoth"
+                    class="d-none">
+              <i class="bi bi-check-all text-success me-2"></i>
+              <strong>Accept Both Available Quantity and Make-to-Order Items PO </strong> &nbsp;(PO will be updated with Available Qty and a new Make-to-Order PO will be generated)
+            </label>
+            
+            <label class="action-option" [class.selected]="selectedAction === 'acceptConfirmed'">
+              <input type="radio" 
+                    name="orderAction" 
+                    [(ngModel)]="selectedAction" 
+                    value="acceptConfirmed"
+                    class="d-none">
+              <i class="bi bi-check-circle text-warning me-2"></i>
+              <strong> Accept Only Available Quantity Order </strong> &nbsp; (The existing PO will be updated with the Available Qty and you will not receive Make-to-Order Items)
+            </label>
+            
+            <label class="action-option" [class.selected]="selectedAction === 'rejectAll'">
+              <input type="radio" 
+                    name="orderAction" 
+                    [(ngModel)]="selectedAction" 
+                    value="rejectAll"
+                    class="d-none">
+              <i class="bi bi-x-circle text-danger me-2"></i>
+              <strong> Cancel Order </strong> &nbsp; (Cancel the entire purchase order)
+            </label>
+          </div>
+          
+          <div class="text-center">
+            <button type="button" 
+                    class="btn btn-primary submit-btn px-5" 
+                    (click)="submitDecision()" 
+                    [disabled]="!selectedAction">
+              <i class="bi bi-send me-2"></i>Submit Decision
+            </button>
+          </div>
+        </div>
+      </div> -->
+
+      <!-- Transport Details Section -->
+      <div class="border rounded mt-3 p-3" *ngIf="purchaseOrder.transportDetails">
+        <h5 class="mb-2"><u>Transport Details:</u></h5>
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Transport Type:</strong> {{ purchaseOrder.transportDetails.transportType || 'N/A' }}</p>
+            <p class="mb-1"><strong>Contact Person:</strong> {{ purchaseOrder.transportDetails.contactPersonName || 'N/A' }}</p>
+            <p class="mb-1"><strong>Mode:</strong> {{ purchaseOrder.transportDetails.modeOfTransport || 'N/A' }}</p>
+            <p class="mb-1"><strong>GST Number:</strong> {{ purchaseOrder.transportDetails.gstNumber || 'N/A' }}</p>
+          </div>
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Company:</strong> {{ purchaseOrder.transportDetails.transporterCompanyName || 'N/A' }}</p>
+            <p class="mb-1"><strong>Contact Number:</strong> {{ purchaseOrder.transportDetails.contactNumber || 'N/A' }}</p>
+            <p class="mb-1"><strong>Vehicle Number:</strong> {{ purchaseOrder.transportDetails.vehicleNumber || 'N/A' }}</p>
+            <p class="mb-1"><strong>Tracking ID:</strong> {{ purchaseOrder.transportDetails.trackingId || 'N/A' }}</p>
+          </div>
+        </div>
+        <div *ngIf="purchaseOrder.transportDetails.remarks" class="mt-2">
+          <p class="mb-1"><strong>Remarks:</strong> {{ purchaseOrder.transportDetails.remarks }}</p>
+        </div>
+        <div *ngIf="purchaseOrder.transportDetails.note" class="mt-2">
+          <p class="mb-1"><strong>Note:</strong> {{ purchaseOrder.transportDetails.note }}</p>
+        </div>
+      </div>
+
+      <!-- Bank Details Card -->
+      <div class="border rounded mt-3 p-3" *ngIf="bankDetails">
+        <h5 class="mb-2"><u>Bank Details (Wholesaler):</u></h5>
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Account Holder:</strong> {{ bankDetails.accountHolderName || 'N/A' }}</p>
+            <p class="mb-1"><strong>Account Number:</strong> {{ bankDetails.accountNumber || 'N/A' }}</p>
+            <p class="mb-1"><strong>Account Type:</strong> {{ bankDetails.accountType ? (bankDetails.accountType | titlecase) : 'N/A' }}</p>
+            <p class="mb-1"><strong>Bank Name:</strong> {{ bankDetails.bankName || 'N/A' }}</p>
+            <p class="mb-1"><strong>UPI Id:</strong> {{ bankDetails.upiId || 'N/A' }}</p>
+          </div>
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Branch:</strong> {{ bankDetails.branchName || 'N/A' }}</p>
+            <p class="mb-1"><strong>IFSC Code:</strong> {{ bankDetails.ifscCode || 'N/A' }}</p>
+            <p class="mb-1"><strong>Swift Code:</strong> {{ bankDetails.swiftCode || 'N/A' }}</p>
+            <p class="mb-1"><strong>Location:</strong> {{ bankDetails.bankAddress || 'N/A' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Preview Overlay -->
+<!-- STEP 2: Preview Overlay -->
+    <div class="preview-overlay" *ngIf="showPreview">
+      <div class="preview-card card p-3 my-2">
+        <div class="d-flex justify-content-between align-items-center">
+          <h4 class="mb-0">Preview: Confirmed PO & Make-to-Order PO</h4>
+          <div>
+            <button class="btn btn-secondary me-2" (click)="closePreview()" [disabled]="isLoading">Back</button>
+            <button class="btn btn-primary" (click)="finalizeConfirmAndUpdatePOs()" [disabled]="isLoading">
+              Confirm & Update POs
+            </button>
+          </div>
+        </div>
+
+    <!-- Preview header info -->
+    <div class="border rounded mt-3 p-3 d-flex align-items-start">
+      <img [src]="purchaseOrder.logoUrl" alt="Company Logo" class="me-3" style="width:80px; height:80px; object-fit:cover;"
+           onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';" />
+      <div class="row w-100">
+        <div class="col-md-6">
+          <h5 class="mb-2"><u>Order By:</u></h5>
+          <p class="mb-1"><strong>{{ purchaseOrder.buyerName }}</strong></p>
+          <p class="mb-1">{{ purchaseOrder.buyerEmail }} • {{ purchaseOrder.buyerPhone }}</p>
+          <p class="mb-1">GSTIN: {{ purchaseOrder.buyerGSTIN }} • PAN: {{ purchaseOrder.buyerPAN }}</p>
+          <p class="mb-1">{{ purchaseOrder.buyerAddress }}</p>
+        </div>
+        <div class="col-md-6">
+          <h5 class="mb-2"><u>Order To:</u></h5>
+          <p class="mb-1"><strong>{{ purchaseOrder.supplierName }}</strong></p>
+          <p class="mb-1">{{ purchaseOrder.supplierEmail }} • {{ purchaseOrder.supplierContact }}</p>
+          <p class="mb-1">GSTIN: {{ purchaseOrder.supplierGSTIN }} • PAN: {{ purchaseOrder.supplierPAN }}</p>
+          <p class="mb-1">{{ purchaseOrder.supplierAddress }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmed PO preview -->
+    <section class="order-details mt-3" *ngIf="previewConfirmedItems.length > 0">
+      <h4 class="text-center mb-2">Confirmed PO (Dispatch Now)</h4>
+      <p class="text-center mb-3">
+        <strong>The Estimated Dispatch Date is {{ getFormattedDate(purchaseOrder.expDeliveryDate) }}</strong>
+      </p>
+
+      <p-table [value]="previewConfirmedItems" [responsive]="true" [paginator]="false" class="bordered-table">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Sr. No.</th>
+            <th>Image</th>
+            <th>Clothing</th>
+            <th>Gender</th>
+            <th>Brand</th>
+            <th>Design No.</th>
+            <th>HSN Code</th>
+            <th>Colour</th>
+            <th>Size</th>
+            <th>Rate (₹)</th>
+            <th>Required Qty</th>
+            <th>Dispatch Qty</th>
+            <th>Taxable Value (₹)</th>
+            <th>GST (%)</th>
+            <th *ngIf="isIntraState">CGST (₹)</th>
+            <th *ngIf="isIntraState">SGST (₹)</th>
+            <th *ngIf="!isIntraState">IGST (₹)</th>
+            <th>Total with GST (₹)</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+          <tr>
+            <td>{{ rowIndex + 1 }}</td>
+            <td>
+              <!-- Show color square if no image -->
+              <div 
+                *ngIf="!item.colourImage || item.colourImage === ''"
+                class="color-preview" 
+                [style.background-color]="item.colour || '#e0e0e0'"
+                [title]="item.colourName">
+              </div>
+              
+              <!-- Show image if available -->
+              <img 
+                *ngIf="item.colourImage && item.colourImage !== ''"
+                [src]="item.colourImage" 
+                [alt]="item.colourName"
+                class="item-image" />
+            </td>
+
+            <td>{{ item.clothing }}</td>
+            <td>{{ item.gender }}</td>
+            <td>{{ item.brandName || 'N/A' }}</td>
+            <td>{{ item.designNumber }}</td>
+            <td>{{ item.hsnCode || 'N/A' }}</td>
+            <td>
+              <div class="color-display">
+                <span class="color-swatch" [style.background-color]="item.colour"></span>
+                {{ item.colourName }}
+              </div>
+            </td>
+            <td>{{ item.size }}</td>
+            <td>
+            <div *ngIf="purchaseOrder.ProductDiscount > 0" style="text-align: right;">
+              <span style="text-decoration: line-through; color: #999; font-size: 0.9em;">
+                {{ getGstAmounts(item).originalRate | indianCurrency }}
+              </span>
+              <br/>
+              <span style="color: #28a745; font-weight: 600;">
+                {{ getGstAmounts(item).discountedRate | indianCurrency }}
+              </span>
+            </div>
+            <div *ngIf="!purchaseOrder.ProductDiscount || purchaseOrder.ProductDiscount === 0" style="text-align: right;">
+              {{ item.price | indianCurrency }}
+            </div>
+          </td>
+            <td>{{ item.expectedQty }}</td>
+            <td>{{ item.quantity }}</td>
+            <td class="text-end">{{ getGstAmounts(item).taxable | indianCurrency }}</td>
+            <td>{{ item.hsnGst || 0 }}%</td>
+            <td class="text-end" *ngIf="isIntraState">{{ getGstAmounts(item).cgst | indianCurrency }}</td>
+            <td class="text-end" *ngIf="isIntraState">{{ getGstAmounts(item).sgst | indianCurrency }}</td>
+            <td class="text-end" *ngIf="!isIntraState">{{ getGstAmounts(item).igst | indianCurrency }}</td>
+            <td class="text-end">{{ getGstAmounts(item).totalWithGst | indianCurrency }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <tr style="background:#f0f6f9;font-weight:bold;">
+            <td colspan="11" style="text-align:right; padding-right:20px;">Total:</td>
+            <td>{{ confirmedPreviewTotals.totalQty }}</td>
+            <td class="text-end">{{ confirmedPreviewTotals.totalTaxable | indianCurrency }}</td>
+            <td></td>
+            <td *ngIf="isIntraState" class="text-end">{{ confirmedPreviewTotals.totalCGST | indianCurrency }}</td>
+            <td *ngIf="isIntraState" class="text-end">{{ confirmedPreviewTotals.totalSGST | indianCurrency }}</td>
+            <td *ngIf="!isIntraState" class="text-end">{{ confirmedPreviewTotals.totalIGST | indianCurrency }}</td>
+            <td class="text-end">{{ confirmedPreviewTotals.totalWithGST | indianCurrency }}</td>
+          </tr>
+          <!-- <tr>
+            <td [attr.colspan]="colspan" style="text-align:right;font-weight:bold;">
+              Discount ({{ purchaseOrder.ProductDiscount }}%):
+            </td>
+            <td class="text-end">-{{ confirmedPreviewTotals.discountAmount | indianCurrency }}</td>
+          </tr> -->
+          <tr>
+            <td [attr.colspan]="colspan" style="text-align:right;font-size:1.1em;font-weight:bold;color:#002080;">
+              Grand Total (₹):
+            </td>
+            <td class="text-end" style="font-size:1.1em;font-weight:bold;color:#002080;">
+              {{ confirmedPreviewTotals.actualGrandTotal | indianCurrency }}
+            </td>
+          </tr>
+          <tr>
+            <td [attr.colspan]="colspan+1" style="font-weight:bold;font-size:1.1em;color:#002080;">
+              Grand Total (in words): {{ confirmedPreviewTotals.actualGrandTotal | amountInWords }}
+            </td>
+          </tr>
+          <tr>
+            <td [attr.colspan]="colspan+1" style="font-weight:bold;font-size:1.0em;color:#006600;">
+              Total GST Paid: ₹ {{ totalGSTAmountConfirmedPreview | indianCurrency }} - {{ totalGSTAmountConfirmedPreview | amountInWords }}
+            </td>
+          </tr>
+          <!-- ✅ Discount Note -->
+          <tr *ngIf="purchaseOrder.ProductDiscount > 0" style="background: #fff3cd;">
+            <td [attr.colspan]="colspan+1" style="text-align: center; font-weight: 600; color: #856404; padding: 10px;">
+              ℹ️ {{ purchaseOrder.ProductDiscount }}% discount has been applied on product rates
+              (Approx. Total Discount: {{ confirmedPreviewTotals.discountAmount | indianCurrency }})
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </section>
+
+    <!-- Make-to-Order PO preview -->
+    <section class="order-details mt-4" *ngIf="previewMakeToOrderItems.length > 0">
+      <h4 class="text-center mb-2">Make-To-Order PO (Remaining)</h4>
+      <p class="text-center mb-3">
+        <strong>The Estimated Dispatch Date is {{ getFormattedDate(purchaseOrder.partialDeliveryDate) }}</strong>
+      </p>
+
+      <p-table [value]="previewMakeToOrderItems" [responsive]="true" [paginator]="false" class="bordered-table">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Sr. No.</th>
+            <th>Image</th>
+            <th>Clothing</th>
+            <th>Gender</th>
+            <th>Brand</th>
+            <th>Design No.</th>
+            <th>HSN Code</th>
+            <th>Colour</th>
+            <th>Size</th>
+            <th>Rate (₹)</th>
+            <th>Qty</th>
+            <th>Taxable Value (₹)</th>
+            <th>GST (%)</th>
+            <th *ngIf="isIntraState">CGST (₹)</th>
+            <th *ngIf="isIntraState">SGST (₹)</th>
+            <th *ngIf="!isIntraState">IGST (₹)</th>
+            <th>Total with GST (₹)</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+          <tr>
+            <td>{{ rowIndex + 1 }}</td>
+            <td>
+              <!-- Show color square if no image -->
+              <div 
+                *ngIf="!item.colourImage || item.colourImage === ''"
+                class="color-preview" 
+                [style.background-color]="item.colour || '#e0e0e0'"
+                [title]="item.colourName">
+              </div>
+              
+              <!-- Show image if available -->
+              <img 
+                *ngIf="item.colourImage && item.colourImage !== ''"
+                [src]="item.colourImage" 
+                [alt]="item.colourName"
+                class="item-image" />
+            </td>
+
+            <td>{{ item.clothing }}</td>
+            <td>{{ item.gender }}</td>
+            <td>{{ item.brandName || 'N/A' }}</td>
+            <td>{{ item.designNumber }}</td>
+            <td>{{ item.hsnCode || 'N/A' }}</td>
+            <td>
+              <div class="color-display">
+                <span class="color-swatch" [style.background-color]="item.colour"></span>
+                {{ item.colourName }}
+              </div>
+            </td>
+            <td>{{ item.size }}</td>
+            <td>
+              <div *ngIf="purchaseOrder.ProductDiscount > 0" style="text-align: right;">
+                <span style="text-decoration: line-through; color: #999; font-size: 0.9em;">
+                  {{ getGstAmounts(item).originalRate | indianCurrency }}
+                </span>
+                <br/>
+                <span style="color: #28a745; font-weight: 600;">
+                  {{ getGstAmounts(item).discountedRate | indianCurrency }}
+                </span>
+              </div>
+              <div *ngIf="!purchaseOrder.ProductDiscount || purchaseOrder.ProductDiscount === 0" style="text-align: right;">
+                {{ item.price | indianCurrency }}
+              </div>
+            </td>
+            <td>{{ item.remainingQuantity }}</td>
+            <td class="text-end">{{ getGstAmounts(item, true).taxable | indianCurrency }}</td>
+            <td>{{ item.hsnGst || 0 }}%</td>
+            <td class="text-end" *ngIf="isIntraState">{{ getGstAmounts(item, true).cgst | indianCurrency }}</td>
+            <td class="text-end" *ngIf="isIntraState">{{ getGstAmounts(item, true).sgst | indianCurrency }}</td>
+            <td class="text-end" *ngIf="!isIntraState">{{ getGstAmounts(item, true).igst | indianCurrency }}</td>
+            <td class="text-end">{{ getGstAmounts(item, true).totalWithGst | indianCurrency }}</td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="footer">
+        <tr style="background:#f0f6f9;font-weight:bold;">
+          <td colspan="10" style="text-align:right; padding-right:20px;">Total:</td>
+          <td>{{ makeToOrderPreviewTotals.totalQty }}</td>
+          <td class="text-end">{{ makeToOrderPreviewTotals.totalTaxable | indianCurrency }}</td>
+          <td></td>
+          <td *ngIf="isIntraState" class="text-end">{{ makeToOrderPreviewTotals.totalCGST | indianCurrency }}</td>
+          <td *ngIf="isIntraState" class="text-end">{{ makeToOrderPreviewTotals.totalSGST | indianCurrency }}</td>
+          <td *ngIf="!isIntraState" class="text-end">{{ makeToOrderPreviewTotals.totalIGST | indianCurrency }}</td>
+          <td class="text-end">{{ makeToOrderPreviewTotals.totalWithGST | indianCurrency }}</td>
+        </tr>
+        <!-- <tr>
+          <td [attr.colspan]="colspan-1" style="text-align:right;font-weight:bold;">
+            Discount ({{ purchaseOrder.ProductDiscount }}%):
+          </td>
+          <td class="text-end">-{{ makeToOrderPreviewTotals.discountAmount | indianCurrency }}</td>
+        </tr> -->
+        <tr>
+          <td [attr.colspan]="colspan-1" style="text-align:right;font-size:1.1em;font-weight:bold;color:#002080;">
+            Grand Total (₹):
+          </td>
+          <td class="text-end" style="font-size:1.1em;font-weight:bold;color:#002080;">
+            {{ makeToOrderPreviewTotals.actualGrandTotal | indianCurrency }}
+          </td>
+        </tr>
+        <tr>
+          <td [attr.colspan]="colspan" style="font-weight:bold;font-size:1.1em;color:#002080;">
+            Grand Total (in words): {{ makeToOrderPreviewTotals.actualGrandTotal | amountInWords }}
+          </td>
+        </tr>
+        <tr>
+          <td [attr.colspan]="colspan" style="font-weight:bold;font-size:1.0em;color:#006600;">
+            Total GST Paid: ₹ {{ totalGSTAmountMakeToOrderPreview | indianCurrency }} - {{ totalGSTAmountMakeToOrderPreview | amountInWords }}
+          </td>
+        </tr>
+        <!-- ✅ Discount Note -->
+        <tr *ngIf="purchaseOrder.ProductDiscount > 0" style="background: #fff3cd;">
+          <td [attr.colspan]="colspan" style="text-align: center; font-weight: 600; color: #856404; padding: 10px;">
+            ℹ️ {{ purchaseOrder.ProductDiscount }}% discount has been applied on product rates
+            (Approx. Total Discount: {{ makeToOrderPreviewTotals.discountAmount | indianCurrency }})
+          </td>
+        </tr>
+      </ng-template>
+
+      </p-table>
+    </section>
+
+    <div class="text-center mt-4">
+      <button class="btn btn-primary" 
+              (click)="finalizeConfirmAndUpdatePOs()" 
+              [disabled]="isLoading">
+        {{ isLoading ? 'Loading...' : 'Confirm & Update POs' }}
+      </button>
+    </div>
+
+   </div>
+    </div>
+  
+</section>

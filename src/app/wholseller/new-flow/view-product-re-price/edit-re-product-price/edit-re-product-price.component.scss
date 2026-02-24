@@ -364,3 +364,12 @@
     max-width: 100px;
   }
   
+  .is-invalid {
+  border-color: #dc3545 !important;
+}
+
+.invalid-feedback {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}

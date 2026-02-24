@@ -1,0 +1,76 @@
+.inventory-log-header {
+  .btn { min-width: 150px; }
+}
+
+.summary-box {
+  background: #f6f8fa;
+  border-radius: 10px;
+}
+
+.group-block {
+  background: #fcfcfd;
+}
+
+.color-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid #888;
+  vertical-align: middle;
+}
+
+.current-stock-summary {
+  font-size: 1rem;
+  background: #f3f3f3;
+  border-radius: 8px;
+  padding: 5px 12px;
+  margin-top: 6px;
+}
+
+.table-sm th, .table-sm td {
+  padding: 0.3rem 0.6rem;
+}
+
+.group-heading {
+  font-size: 1.05rem;
+  color: #2c5282;
+}
+
+.table-bordered {
+  border: 1px solid #dee2e6;
+  
+  thead {
+    background: #f8f9fa;
+    
+    th {
+      font-weight: 600;
+      color: #495057;
+      border-bottom: 2px solid #dee2e6;
+    }
+  }
+  
+  tbody {
+    tr:hover {
+      background: #f1f3f5;
+    }
+  }
+}
+
+.text-success {
+  color: #28a745 !important;
+  font-weight: 600;
+}
+
+.text-danger {
+  color: #dc3545 !important;
+  font-weight: 600;
+}
+
+.btn-outline-primary {
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+    transition: all 0.3s ease;
+  }
+}
