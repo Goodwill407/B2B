@@ -32,7 +32,14 @@ import { MfgCreditNoteViewComponent } from "./return-management/mfg-credit-note-
 import { CreditNoteUsageDetailViewComponent } from "app/manufacturer/new-flow/return-managment/credit-note-usage-detail-view/credit-note-usage-detail-view.component";
 import { WhRetPartialPoUpdateComponent } from "./wh-ret-flow/wh-ret-partial-po-update/wh-ret-partial-po-update.component";
 import { WhlInvoiceListComponent } from "./wh-ret-flow/whl-invoice-list/whl-invoice-list.component";
-import { AddReturnWhRetComponentComponent } from "./wh-ret-flow/add-return-wh-ret-component/add-return-wh-ret-component.component";
+import { WhInvoiceListReturnComponent } from "./wh-ret-flow/return-credit-wh-ret/wh-invoice-list-return/wh-invoice-list-return.component";
+import { WhReturnedProductListComponent } from "./wh-ret-flow/return-credit-wh-ret/wh-returned-product-list/wh-returned-product-list.component";
+import { WhReturnedProductViewComponent } from "./wh-ret-flow/return-credit-wh-ret/wh-returned-product-view/wh-returned-product-view.component";
+import { WhAddReturnComponent } from "./wh-ret-flow/return-credit-wh-ret/wh-add-return/wh-add-return.component";
+import { WhGroupCreditNoteListComponent } from "./wh-ret-flow/return-credit-wh-ret/wh-group-credit-note-list/wh-group-credit-note-list.component";
+import { WhCreditNoteListComponent } from "./wh-ret-flow/return-credit-wh-ret/wh-credit-note-list/wh-credit-note-list.component";
+import { WhCreditNoteViewComponent } from "./wh-ret-flow/return-credit-wh-ret/wh-credit-note-view/wh-credit-note-view.component";
+import { WhCreditNoteUsageViewComponent } from "./wh-ret-flow/return-credit-wh-ret/wh-credit-note-usage-view/wh-credit-note-usage-view.component";
 
 
 export const NewFlow:Route[]=[
@@ -73,7 +80,16 @@ export const NewFlow:Route[]=[
     { path: 'wh-ret-partial-po-update', component: WhRetPartialPoUpdateComponent },
     { path: 'wh-invoice-list', component: WhlInvoiceListComponent },
     
-    { path: 'add-return-product-whl/:id', component:AddReturnWhRetComponentComponent},
+    // wh- ret - retrurn flow routes
+    { path:'whl-invoice-list-return', component:WhInvoiceListReturnComponent},
+    { path:'add-return-product-whl/:id', component:WhAddReturnComponent},
+    { path:'return-products-whl-list', component: WhReturnedProductListComponent},
+    { path:'return-order-whl-view/:id', component: WhReturnedProductViewComponent},
+
+    { path: 'wh-group-credit-note-list', component: WhGroupCreditNoteListComponent },
+    { path: 'wh-credit-note-list/:id', component: WhCreditNoteListComponent },
+    { path: 'wh-credit-note-view/:id', component: WhCreditNoteViewComponent },
+    { path: 'wh-credit-note-usage-view/:id', component: WhCreditNoteUsageViewComponent },
 
 
 ]

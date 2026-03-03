@@ -1,0 +1,28 @@
+.content {
+  .content-block {
+    h4 {
+      display: flex;
+      align-items: center;
+      color: #333;
+      font-weight: 600;
+    }
+
+    .data-not-found {
+      min-height: 200px;
+      p {
+        color: #666;
+        font-size: 1.1rem;
+      }
+    }
+
+    .btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      
+      &:hover i {
+        color: #007bff;
+      }
+    }
+  }
+}

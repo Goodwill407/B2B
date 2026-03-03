@@ -68,6 +68,7 @@ export class RetWhInvoiceViewComponent implements OnInit {
     private amountInWordsPipe: AmountInWordsPipe
   ) {
     this.invoiceId = this.route.snapshot.paramMap.get('id') ?? '';
+    console.log(this.invoiceId,"ytdhdyh");
   }
 
   ngOnInit(): void {

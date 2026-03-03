@@ -1,0 +1,319 @@
+<section class="content">
+  <div class="content-block">
+    <!-- Page Header -->
+    <h4 class="mt-4">
+      <button class="btn navigate" (click)="navigateFun()">
+        <i class="bi bi-arrow-left-circle h4"></i>
+      </button>
+      <span>Add Products for Return</span>
+    </h4>
+
+    <!-- Return Period Warning -->
+    <div *ngIf="!loading && orderData && isReturnPeriodValid && returnRequestGenerated !== 'true'"
+         class="alert alert-info d-flex align-items-center mt-3" role="alert">
+      <i class="bi bi-info-circle-fill me-2"></i>
+      <div>
+        <strong>Return Period:</strong> You have <strong>{{remainingReturnDays}}</strong> day(s) remaining to submit return requests.
+        (Valid until: {{ (orderData?.invoiceRecievedDate | date:'dd/MM/yyyy') }})
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center py-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2">Loading order details...</p>
+    </div>
+
+    <!-- Return Order Container -->
+    <div *ngIf="!loading && orderData" id="return-order" class="card p-3 my-2">
+
+      <!-- Header Section -->
+      <div class="header d-flex justify-content-between align-items-center">
+        <h1>GENERATE RETURN ORDER</h1>
+        <div class="text-end">
+          <p><strong>PO Number:</strong> {{ orderData?.poNumber }}</p>
+          <p><strong>Invoice Number:</strong> {{ orderData?.invoiceNumber }}</p>
+          <p><strong>Invoice Date:</strong> {{ orderData?.invoiceDate | date:'dd/MM/yyyy' }}</p>
+          <p *ngIf="orderData?.invoiceRecievedDate">
+            <strong>Invoice Received:</strong> {{ orderData?.invoiceRecievedDate | date:'dd/MM/yyyy' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Wholesaler and Retailer Information -->
+      <div class="border rounded mt-3 p-3 d-flex align-items-start">
+        <img [src]="orderData?.retailer?.logo || 'assets/images/company_logo.jpg'"
+             alt="Company Logo" class="me-3"
+             style="width:80px; height:80px; object-fit:cover;"
+             onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';" />
+        <div class="row w-100">
+          <div class="col-md-6">
+            <h5 class="mb-2"><u>Wholesaler Details:</u></h5>
+            <p class="mb-1"><strong>{{ orderData?.wholesaler?.companyName }}</strong></p>
+            <p class="mb-1">{{ orderData?.wholesaler?.email }} &bull; {{ orderData?.wholesaler?.mobNumber }}</p>
+            <p class="mb-1">GSTIN: {{ orderData?.wholesaler?.GSTIN }}</p>
+            <p class="mb-1">{{ orderData?.wholesaler?.address }}, {{ orderData?.wholesaler?.state }},
+              {{ orderData?.wholesaler?.country }} - {{ orderData?.wholesaler?.pinCode }}</p>
+          </div>
+          <div class="col-md-6">
+            <h5 class="mb-2"><u>Retailer Details:</u></h5>
+            <p class="mb-1"><strong>{{ orderData?.retailer?.companyName }}</strong></p>
+            <p class="mb-1">{{ orderData?.retailer?.email }} &bull; {{ orderData?.retailer?.mobNumber }}</p>
+            <p class="mb-1">GSTIN: {{ orderData?.retailer?.GSTIN }}</p>
+            <p class="mb-1">{{ orderData?.retailer?.address }}, {{ orderData?.retailer?.state }},
+              {{ orderData?.retailer?.country }} - {{ orderData?.retailer?.pinCode }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Products Available for Return -->
+      <section class="order-details mt-3">
+        <h4 class="text-center mb-3">Products Available for Return</h4>
+
+        <p-table [value]="orderData?.deliveryItems || []" [responsive]="true" [paginator]="false" class="bordered-table">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Sr. No.</th>
+              <th>Image</th>
+              <th>Clothing</th>
+              <th>Gender</th>
+              <th>Brand</th>
+              <th>Design No.</th>
+              <th>HSN Code</th>
+              <th>Colour</th>
+              <th>Size</th>
+              <th>Rate (₹)</th>
+              <th>Ordered Qty</th>
+              <th>Return Qty</th>
+              <th>Taxable Value (₹)</th>
+              <th>GST (%)</th>
+              <th>Final Amount (₹)</th>
+              <th>Action</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+            <tr>
+              <td>{{ rowIndex + 1 }}</td>
+              <td>
+                <div *ngIf="!item.colourImage || item.colourImage === ''"
+                     class="color-preview"
+                     [style.background-color]="item.colour || '#e0e0e0'"
+                     [title]="item.colourName">
+                </div>
+                <img *ngIf="item.colourImage && item.colourImage !== ''"
+                     [src]="item.colourImage"
+                     [alt]="item.colourName"
+                     class="item-image" />
+              </td>
+              <td>{{ item.clothing || item.subCategory }}</td>
+              <td>{{ item.gender }}</td>
+              <td>{{ item.brandName || 'N/A' }}</td>
+              <td>{{ item.designNumber }}</td>
+              <td>{{ item.hsnCode || 'N/A' }}</td>
+              <td>
+                <div class="color-display">
+                  <span class="color-swatch me-2" [style.background-color]="item.colour || '#000'"></span>
+                  {{ item.colourName }}
+                </div>
+              </td>
+              <td>{{ item.size }}</td>
+              <td>{{ getItemRate(item) | number:'1.2-2' }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>
+                <span class="badge bg-success">{{ item.returnQuantity || 0 }}</span>
+              </td>
+              <td>{{ getTaxableValue(item) | number:'1.2-2' }}</td>
+              <td>{{ item.hsnGst || 0 }}%</td>
+              <td>
+                <div>
+                  <span class="text-muted small text-decoration-line-through">{{ getTotalWithGST(item) | number:'1.2-2' }}</span>
+                  <br>
+                  <span class="text-success fw-bold">{{ getItemFinalAmount(item) | number:'1.2-2' }}</span>
+                  <br>
+                  <small class="text-danger">(- {{ getItemDiscount(item) | number:'1.2-2' }})</small>
+                </div>
+              </td>
+              <td>
+                <button class="btn btn-sm btn-outline-danger"
+                        (click)="onAddToReturn(item)"
+                        [disabled]="!isReturnAllowed()"
+                        [title]="!isReturnAllowed() ? (returnRequestGenerated === 'true' ? 'Return request already generated' : 'Return period expired') : 'Add to return'">
+                  <i class="bi bi-arrow-return-left me-1"></i>
+                  Add to Return
+                </button>
+              </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="footer">
+            <tr style="background: #f0f6f9; font-weight: bold;">
+              <td colspan="10" style="text-align:right; padding-right: 20px;">Total:</td>
+              <td style="text-align: center;">{{ orderData?.totalQuantity }}</td>
+              <td></td>
+              <td style="text-align: center;">{{ getTotalTaxableValue() | number:'1.2-2' }}</td>
+              <td></td>
+              <td style="text-align: center;">
+                <div>
+                  <span class="text-muted small text-decoration-line-through">{{ getTotalWithAllGST() | number:'1.2-2' }}</span>
+                  <br>
+                  <span class="text-success fw-bold">{{ getTotalFinalAmount() | number:'1.2-2' }}</span>
+                  <br>
+                  <small class="text-danger">(- {{ orderData?.discountApplied | number:'1.2-2' }})</small>
+                </div>
+              </td>
+              <td></td>
+            </tr>
+          </ng-template>
+        </p-table>
+
+        <!-- Discount Note -->
+        <p class="text-center mt-2 mb-0" *ngIf="orderData?.retailer?.productDiscount">
+          <small class="text-muted">
+            (<strong>Note:</strong> Discount of
+            <span class="text-danger fw-bold">{{ orderData?.retailer?.productDiscount }}%</span>
+            applied)
+          </small>
+        </p>
+      </section>
+
+      <!-- Returned Products Table -->
+      <section class="order-details mt-4" *ngIf="returnedItems.length > 0">
+        <h4 class="text-center mb-3 text-success">Products Added for Return</h4>
+
+        <p-table [value]="returnedItems" [responsive]="true" [paginator]="false" class="bordered-table returned-table">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Sr. No.</th>
+              <th>Image</th>
+              <th>Clothing</th>
+              <th>Gender</th>
+              <th>Brand</th>
+              <th>Design No.</th>
+              <th>HSN Code</th>
+              <th>Colour</th>
+              <th>Size</th>
+              <th>Rate (₹)</th>
+              <th>Return Qty</th>
+              <th>Taxable Value (₹)</th>
+              <th>GST (%)</th>
+              <th>Total with GST (₹)</th>
+              <th>Reason</th>
+              <th>Remove</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+            <tr class="return-row">
+              <td>{{ rowIndex + 1 }}</td>
+              <td>
+                <div *ngIf="!item.colourImage || item.colourImage === ''"
+                     class="color-preview"
+                     [style.background-color]="item.colour || '#e0e0e0'"
+                     [title]="item.colourName">
+                </div>
+                <img *ngIf="item.colourImage && item.colourImage !== ''"
+                     [src]="item.colourImage"
+                     [alt]="item.colourName"
+                     class="item-image" />
+              </td>
+              <td>{{ item.clothing || item.subCategory }}</td>
+              <td>{{ item.gender }}</td>
+              <td>{{ item.brandName || 'N/A' }}</td>
+              <td>{{ item.designNumber }}</td>
+              <td>{{ item.hsnCode || 'N/A' }}</td>
+              <td>
+                <div class="color-display">
+                  <span class="color-swatch me-2" [style.background-color]="item.colour || '#000'"></span>
+                  {{ item.colourName }}
+                </div>
+              </td>
+              <td>{{ item.size }}</td>
+              <td>{{ getItemRate(item) | number:'1.2-2' }}</td>
+              <td>{{ item.selectedReturnQuantity }}</td>
+              <td>{{ getReturnTaxableValue(item) | number:'1.2-2' }}</td>
+              <td>{{ item.hsnGst || 0 }}%</td>
+              <td>{{ getReturnTotalWithGST(item) | number:'1.2-2' }}</td>
+              <td>
+                <span class="badge bg-info">{{ item.returnReason }}</span>
+                <div *ngIf="item.customReason"
+                     class="text-muted small mt-1"
+                     [title]="item.customReason"
+                     style="cursor: pointer; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  {{ item.customReason }}
+                </div>
+              </td>
+              <td>
+                <button class="btn btn-sm btn-outline-secondary"
+                        (click)="removeFromReturn(item)">
+                  <i class="bi bi-trash me-1"></i>
+                </button>
+              </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="footer">
+            <tr style="background: #f0f6f9; font-weight: bold;">
+              <td colspan="11" style="text-align:right; padding-right: 20px;">Return Subtotal:</td>
+              <td style="text-align: center;">{{ getTotalReturnTaxableValue() | number:'1.2-2' }}</td>
+              <td></td>
+              <td style="text-align: center;">{{ getTotalReturnWithGST() | number:'1.2-2' }}</td>
+              <td colspan="2"></td>
+            </tr>
+            <tr *ngIf="getReturnDiscount() > 0" style="background: #fff3cd; font-weight: bold;">
+              <td colspan="13" style="text-align:right; padding-right: 20px;">Discount Applied:</td>
+              <td style="color: #856404; text-align: center;">- {{ getReturnDiscount() | number:'1.2-2' }}</td>
+              <td colspan="2"></td>
+            </tr>
+            <tr style="background: #d4edda; font-weight: bold; font-size: 1.1em;">
+              <td colspan="13" style="text-align:right; padding-right: 20px;">Final Return Amount:</td>
+              <td style="color: #155724; text-align: center;">{{ getFinalReturnAmount() | number:'1.2-2' }}</td>
+              <td colspan="2"></td>
+            </tr>
+          </ng-template>
+        </p-table>
+
+        <!-- Process Return Button -->
+        <div class="text-center mt-3" *ngIf="isReturnAllowed()">
+          <button class="btn btn-success btn-lg"
+                  (click)="processReturns()"
+                  [disabled]="returnedItems.length === 0">
+            <i class="bi bi-check-circle me-2"></i>
+            Process Return Request ({{ returnedItems.length }} items)
+          </button>
+        </div>
+      </section>
+
+      <!-- Return Instructions -->
+      <div class="border rounded mt-3 p-3 bg-light">
+        <h5 class="mb-2"><u>Return Instructions:</u></h5>
+        <ul class="mb-0">
+          <li>Return requests must be submitted within <strong>{{RETURN_PERIOD_DAYS}} days</strong> of invoice receipt</li>
+          <li>Select quantity and reason for each item you want to return</li>
+          <li>Return quantity cannot exceed the available return quantity for each item</li>
+          <li>Review your return items in the table below before processing</li>
+          <li>Return processing may take 2-3 business days</li>
+          <li *ngIf="orderData?.discountApplied && orderData.discountApplied > 0">
+            Applicable discount will be proportionally applied to your return
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!loading && !orderData"
+         class="error-state-container d-flex justify-content-center align-items-center"
+         style="min-height: 50vh;">
+      <div class="error-content text-center">
+        <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size: 3rem;"></i>
+        <h4 class="mt-3">No Order Data Found</h4>
+        <p class="text-muted">Unable to load order details. Please try again.</p>
+        <button class="btn btn-primary" (click)="getOrderDetails()">
+          <i class="bi bi-arrow-clockwise me-1"></i>Retry
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

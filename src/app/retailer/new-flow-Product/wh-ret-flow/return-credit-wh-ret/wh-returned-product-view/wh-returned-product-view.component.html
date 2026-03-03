@@ -1,0 +1,307 @@
+<section class="content">
+  <div class="content-block">
+
+    <!-- Page Header -->
+    <h4 class="mt-4">
+      <button class="btn navigate" (click)="navigateFun()">
+        <i class="bi bi-arrow-left-circle h4"></i>
+      </button>
+      <span>Return Order Details</span>
+    </h4>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center py-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2">Loading return order details...</p>
+    </div>
+
+    <!-- Return Order Container -->
+    <div *ngIf="!loading && returnOrderData" id="return-order" class="card p-3 my-2">
+
+      <!-- Header Section -->
+      <div class="header d-flex justify-content-between align-items-center">
+        <h1>RETURN ORDER</h1>
+        <div class="text-end">
+          <p><strong>Return Request No.:</strong> {{ returnOrderData?.returnRequestNumber }}</p>
+          <p><strong>Return Order Generated Date:</strong> {{ returnOrderData?.returnRequestGenerateDate | date:'dd/MM/yyyy' }}</p>
+        </div>
+      </div>
+
+      <!-- Wholesaler and Retailer Information -->
+      <div class="border rounded mt-3 p-3 d-flex align-items-start">
+        <img [src]="returnOrderData?.retailer?.logo || 'assets/images/company_logo.jpg'"
+             alt="Company Logo" class="me-3"
+             style="width:80px; height:80px; object-fit:cover;"
+             onerror="this.onerror=null; this.src='assets/images/company_logo.jpg';" />
+        <div class="row w-100">
+          <div class="col-md-6">
+            <h5 class="mb-2"><u>Wholesaler Details:</u></h5>
+            <p class="mb-1"><strong>{{ returnOrderData?.wholesaler?.companyName }}</strong></p>
+            <p class="mb-1">{{ returnOrderData?.wholesaler?.email }} &bull; {{ returnOrderData?.wholesaler?.mobNumber }}</p>
+            <p class="mb-1">GSTIN: {{ returnOrderData?.wholesaler?.GSTIN }}</p>
+            <p class="mb-1">{{ returnOrderData?.wholesaler?.address }}, {{ returnOrderData?.wholesaler?.state }},
+              {{ returnOrderData?.wholesaler?.country }} - {{ returnOrderData?.wholesaler?.pinCode }}</p>
+          </div>
+          <div class="col-md-6">
+            <h5 class="mb-2"><u>Retailer Details:</u></h5>
+            <p class="mb-1"><strong>{{ returnOrderData?.retailer?.companyName }}</strong></p>
+            <p class="mb-1">{{ returnOrderData?.retailer?.email }} &bull; {{ returnOrderData?.retailer?.mobNumber }}</p>
+            <p class="mb-1">GSTIN: {{ returnOrderData?.retailer?.GSTIN }}</p>
+            <p class="mb-1">{{ returnOrderData?.retailer?.address }}, {{ returnOrderData?.retailer?.state }},
+              {{ returnOrderData?.retailer?.country }} - {{ returnOrderData?.retailer?.pinCode }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Returned Products Table -->
+      <section class="order-details mt-3">
+        <h4 class="text-center mb-3">Returned Products</h4>
+
+        <p-table [value]="returnOrderData?.deliveryItems || []"
+                 [responsive]="true"
+                 [paginator]="false"
+                 class="bordered-table returned-table"
+                 dataKey="_id">
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 50px;">Reason</th>
+              <th>Sr. No.</th>
+              <th>Image</th>
+              <th>Clothing</th>
+              <th>Gender</th>
+              <th>Brand</th>
+              <th>Design No.</th>
+              <th>HSN Code</th>
+              <th>Colour</th>
+              <th>Size</th>
+              <th>Rate (₹)</th>
+              <th>Original Qty</th>
+              <th>Return Qty</th>
+              <th>Accepted Qty</th>
+              <th>Taxable Value (₹)</th>
+              <th>GST (%)</th>
+              <th>Final Amount (₹)</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-item let-rowIndex="rowIndex" let-expanded="expanded">
+            <tr class="return-row">
+              <td style="width: 50px;">
+                <button type="button"
+                        [pRowToggler]="item"
+                        class="expansion-btn">
+                  <i [class]="expanded ? 'bi bi-chevron-down' : 'bi bi-chevron-right'"></i>
+                </button>
+              </td>
+              <td>{{ rowIndex + 1 }}</td>
+              <td>
+                <div *ngIf="!item.colourImage || item.colourImage === ''"
+                     class="color-preview"
+                     [style.background-color]="item.colour || '#e0e0e0'"
+                     [title]="item.colourName">
+                </div>
+                <img *ngIf="item.colourImage && item.colourImage !== ''"
+                     [src]="item.colourImage"
+                     [alt]="item.colourName"
+                     class="item-image" />
+              </td>
+              <td>{{ item.clothing || item.subCategory }}</td>
+              <td>{{ item.gender }}</td>
+              <td>{{ item.brandName || 'N/A' }}</td>
+              <td>{{ item.designNumber }}</td>
+              <td>{{ item.hsnCode || 'N/A' }}</td>
+              <td>
+                <div class="color-display">
+                  <span class="color-swatch me-2" [style.background-color]="item.colour || '#000'"></span>
+                  {{ item.colourName }}
+                </div>
+              </td>
+              <td>{{ item.size }}</td>
+              <td>{{ getItemRate(item) | number:'1.2-2' }}</td>
+              <td>{{ item.orderQuantity }}</td>
+              <td class="fw-bold">{{ item.returnQuantity }}</td>
+              <td class="fw-bold">{{ item.acceptedQuantity }}</td>
+              <td>{{ getReturnTaxableValue(item) | number:'1.2-2' }}</td>
+              <td>{{ item.hsnGst || 0 }}%</td>
+              <td>
+                <div>
+                  <span class="text-muted small text-decoration-line-through">{{ getReturnTotalWithGST(item) | number:'1.2-2' }}</span>
+                  <br>
+                  <span class="text-success fw-bold">{{ getReturnItemFinalAmount(item) | number:'1.2-2' }}</span>
+                  <br>
+                  <small class="text-danger">(- {{ getReturnItemDiscount(item) | number:'1.2-2' }})</small>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+
+          <!-- Row Expansion — Reason & Comments -->
+          <ng-template pTemplate="rowexpansion" let-item>
+            <tr>
+              <td colspan="17" class="expansion-cell p-2">
+                <div class="expansion-content">
+
+                  <!-- Return Reason -->
+                  <div class="expansion-row">
+                    <span class="expansion-label">Return Reason:</span>
+                    <div class="expansion-value">
+                      <span class="badge bg-info">{{ item.returnReason }}</span>
+                      <span *ngIf="item.returnReason === 'Other' && item.otherReturnReason"
+                            class="text-muted ms-2 small">
+                        ({{ item.otherReturnReason }})
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Accepted Quantity -->
+                  <div *ngIf="item.acceptedQuantity !== undefined" class="expansion-row">
+                    <span class="expansion-label">
+                      <i class="bi bi-box-seam-fill text-success me-1"></i>Accepted Qty:
+                    </span>
+                    <div class="expansion-value">
+                      <span class="badge bg-success me-1">{{ item.acceptedQuantity }}</span>
+                      <span class="text-muted">/ {{ item.returnQuantity }} requested</span>
+                      <span *ngIf="item.acceptedQuantity < item.returnQuantity"
+                            class="badge bg-warning text-dark ms-2"
+                            style="font-size: 0.7rem;">
+                        PARTIALLY ACCEPTED
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Wholesaler Comments -->
+                  <div *ngIf="item.wholesalerComments" class="expansion-row">
+                    <span class="expansion-label">
+                      <i class="bi bi-chat-left-text-fill text-primary me-1"></i>Whl. Comments:
+                    </span>
+                    <div class="expansion-value">
+                      <span class="text-dark">{{ item.wholesalerComments }}</span>
+                    </div>
+                  </div>
+
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="footer">
+            <tr class="text-center" style="background: #f0f6f9; font-weight: bold;">
+              <td colspan="11" style="text-align:right; padding-right: 20px;">Return Total:</td>
+              <td class="fw-bold text-center">{{ getOriginalTotalQuantity() }}</td>
+              <td class="fw-bold text-center">{{ getTotalReturnQuantity() }}</td>
+              <td class="text-center"></td>
+              <td class="text-center">{{ getTotalReturnTaxableValue() | number:'1.2-2' }}</td>
+              <td class="text-center"></td>
+              <td class="text-center">
+                <div>
+                  <span class="text-muted small text-decoration-line-through">{{ getTotalReturnWithGST() | number:'1.2-2' }}</span>
+                  <br>
+                  <span class="text-success fw-bold">{{ getTotalReturnFinalAmount() | number:'1.2-2' }}</span>
+                  <br>
+                  <small class="text-danger">(- {{ getTotalReturnDiscount() | number:'1.2-2' }})</small>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+
+        </p-table>
+
+        <!-- Discount Note -->
+        <p class="text-center mt-2 mb-0" *ngIf="returnOrderData?.retailer?.productDiscount">
+          <small class="text-muted">
+            (<strong>Note:</strong> Discount of
+            <span class="text-danger fw-bold">{{ returnOrderData?.retailer?.productDiscount }}%</span>
+            applied)
+          </small>
+        </p>
+      </section>
+
+      <!-- Return Summary -->
+      <div class="border rounded mt-3 p-3">
+        <h5 class="mb-2"><u>Return Summary:</u></h5>
+        <div class="row">
+          <div class="col-md-4">
+            <p class="mb-1"><strong>PO Number:</strong> {{ returnOrderData?.poNumber }}</p>
+          </div>
+          <div class="col-md-4">
+            <p class="mb-1"><strong>Invoice Number:</strong> {{ returnOrderData?.invoiceNumber }}</p>
+          </div>
+          <div class="col-md-4">
+            <p class="mb-1"><strong>Invoice Date:</strong> {{ returnOrderData?.invoiceDate | date:'dd/MM/yyyy' }}</p>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-4">
+            <p class="mb-1"><strong>Total Amount:</strong> ₹{{ returnOrderData?.totalAmount | number:'1.2-2' }}</p>
+          </div>
+          <div class="col-md-4">
+            <p class="mb-1"><strong>Credit-note Amount:</strong> ₹{{ returnOrderData?.finalAmount | number:'1.2-2' }}</p>
+          </div>
+          <div class="col-md-4">
+            <p class="mb-1"><strong>Items Returned:</strong> {{ getTotalReturnQuantity() }} items</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transport Details -->
+      <div class="border rounded mt-3 p-3" *ngIf="returnOrderData?.transportDetails">
+        <h5 class="mb-2"><u>Transport Details of Invoice:</u></h5>
+        <div class="row">
+          <div class="col-md-4">
+            <p class="mb-1"><strong>Transport Type:</strong> {{ returnOrderData?.transportDetails?.transportType }}</p>
+            <p class="mb-1"><strong>Mode:</strong> {{ returnOrderData?.transportDetails?.modeOfTransport }}</p>
+          </div>
+          <div class="col-md-4">
+            <p class="mb-1"><strong>Company:</strong> {{ returnOrderData?.transportDetails?.transporterCompanyName }}</p>
+            <p class="mb-1"><strong>Contact Person:</strong> {{ returnOrderData?.transportDetails?.contactPersonName }}</p>
+          </div>
+          <div class="col-md-4">
+            <p class="mb-1"><strong>Contact Number:</strong> {{ returnOrderData?.transportDetails?.contactNumber }}</p>
+            <p class="mb-1" *ngIf="returnOrderData?.transportDetails?.vehicleNumber">
+              <strong>Vehicle Number:</strong> {{ returnOrderData?.transportDetails?.vehicleNumber }}
+            </p>
+          </div>
+        </div>
+        <div class="row mt-2" *ngIf="returnOrderData?.transportDetails?.trackingId">
+          <div class="col-md-12">
+            <p class="mb-1"><strong>Tracking ID:</strong> {{ returnOrderData?.transportDetails?.trackingId }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Return Process Information -->
+      <div class="border rounded mt-3 p-3 bg-light">
+        <h5 class="mb-2"><u>Return Process Information:</u></h5>
+        <ul class="mb-0">
+          <li>This return request was generated on {{ returnOrderData?.returnRequestGenerateDate | date:'dd/MM/yyyy' }}</li>
+          <li>Current status: <strong>{{ getStatusDisplay(returnOrderData?.statusAll) }}</strong></li>
+          <li>Return processing typically takes 2-3 business days</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!loading && !returnOrderData"
+         class="error-state-container d-flex justify-content-center align-items-center"
+         style="min-height: 50vh;">
+      <div class="error-content text-center">
+        <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size: 3rem;"></i>
+        <h4 class="mt-3">Return Order Not Found</h4>
+        <p class="text-muted">Unable to load return order details. Please check the return order ID and try again.</p>
+        <button class="btn btn-primary" (click)="getReturnOrderDetails()">
+          <i class="bi bi-arrow-clockwise me-1"></i>Retry
+        </button>
+      </div>
+    </div>
+
+    <!-- Advertisement -->
+    <div class="mb-3" *ngIf="!loading">
+      <app-bottom-side-advertise [imageUrl]="bottomAdImage"></app-bottom-side-advertise>
+    </div>
+
+  </div>
+</section>

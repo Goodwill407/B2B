@@ -1,0 +1,479 @@
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { AuthService, CommunicationService } from '@core';
+import { TableModule } from 'primeng/table';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
+import { Location } from '@angular/common';
+import Swal from 'sweetalert2';
+
+@Component({
+  selector: 'app-ret-wh-return-order-view',
+  standalone: true,
+  imports: [
+    CommonModule,
+    TableModule,
+    RouterModule,
+    FormsModule,
+    BottomSideAdvertiseComponent
+  ],
+  templateUrl: './ret-wh-return-order-view.component.html',
+  styleUrl: './ret-wh-return-order-view.component.scss'
+})
+export class RetWhReturnOrderViewComponent implements OnInit {
+
+  returnOrderData: any = null;
+  loading: boolean = false;
+  returnOrderId: string = '';
+  selectedAction: string = '';
+  creditAmount: number = 0;
+  submitting: boolean = false;
+
+  bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+    'assets/images/adv/ads.jpg'
+  ];
+
+  constructor(
+    private route: ActivatedRoute,
+    private authService: AuthService,
+    private communicationService: CommunicationService,
+    private location: Location
+  ) { }
+
+  ngOnInit(): void {
+    this.returnOrderId = this.route.snapshot.params['id'];
+    if (this.returnOrderId) {
+      this.getReturnOrderDetails();
+    }
+  }
+
+  getReturnOrderDetails() {
+    this.loading = true;
+    const url = `return-r2w/${this.returnOrderId}`;
+
+    this.authService.get(url).subscribe(
+      (res: any) => {
+        this.returnOrderData = res;
+        this.loading = false;
+        this.creditAmount = parseFloat(this.getTotalFinalAmount().toFixed(2));
+        console.log('WHL Return Order Details:', this.returnOrderData);
+      },
+      (error) => {
+        console.error('Error fetching return order details:', error);
+        this.loading = false;
+        this.communicationService.customError1('Failed to load return order details');
+      }
+    );
+  }
+
+  navigateFun() {
+    this.location.back();
+  }
+
+  submitDecision() {
+    if (this.submitting) return;
+
+    if (!this.selectedAction) {
+      this.communicationService.customError1('Please select an action');
+      return;
+    }
+
+    if (this.selectedAction === 'approve') {
+      if (!this.creditAmount || this.creditAmount <= 0) {
+        this.communicationService.customError1('Please enter a valid credit amount');
+        return;
+      }
+
+      const suggestedAmount = parseFloat(this.getTotalFinalAmount().toFixed(2));
+
+      if (this.creditAmount > suggestedAmount) {
+        this.communicationService.customError1(
+          `Credit amount (₹${this.creditAmount}) cannot exceed the suggested amount (₹${suggestedAmount})`
+        );
+        return;
+      }
+
+      this.approveReturnOrder();
+    } else if (this.selectedAction === 'reject') {
+      this.rejectReturnOrder();
+    }
+  }
+
+  getItemRate(item: any): number {
+    if (item.rate && typeof item.rate === 'number') {
+      return item.rate;
+    }
+    if (this.returnOrderData?.totalAmount && this.returnOrderData?.totalQuantity) {
+      return this.returnOrderData.totalAmount / this.returnOrderData.totalQuantity;
+    }
+    return 0;
+  }
+
+  getReturnTaxableValue(item: any): number {
+    const rate = this.getItemRate(item);
+    return rate * (item.returnQuantity || 0);
+  }
+
+  formatCreditAmount() {
+    if (this.creditAmount) {
+      this.creditAmount = parseFloat(this.creditAmount.toFixed(2));
+    }
+  }
+
+  getReturnTotalWithGST(item: any): number {
+    const taxableValue = this.getReturnTaxableValue(item);
+    const gstRate = (item.hsnGst || 0) / 100;
+    return taxableValue * (1 + gstRate);
+  }
+
+  getItemDiscount(item: any): number {
+    const totalWithGST = this.getReturnTotalWithGST(item);
+    const discountPercent = this.returnOrderData?.retailer?.productDiscount || 0;
+    return (totalWithGST * discountPercent) / 100;
+  }
+
+  getItemFinalAmount(item: any): number {
+    const totalWithGST = this.getReturnTotalWithGST(item);
+    const discount = this.getItemDiscount(item);
+    return totalWithGST - discount;
+  }
+
+  getTotalReturnQuantity(): number {
+    if (!this.returnOrderData?.deliveryItems) return 0;
+    return this.returnOrderData.deliveryItems.reduce((total: number, item: any) => {
+      return total + (item.returnQuantity || 0);
+    }, 0);
+  }
+
+  getTotalReturnTaxableValue(): number {
+    if (!this.returnOrderData?.deliveryItems) return 0;
+    return this.returnOrderData.deliveryItems.reduce((total: number, item: any) => {
+      return total + this.getReturnTaxableValue(item);
+    }, 0);
+  }
+
+  getTotalReturnWithGST(): number {
+    if (!this.returnOrderData?.deliveryItems) return 0;
+    return this.returnOrderData.deliveryItems.reduce((total: number, item: any) => {
+      return total + this.getReturnTotalWithGST(item);
+    }, 0);
+  }
+
+  getTotalDiscount(): number {
+    if (!this.returnOrderData?.deliveryItems) return 0;
+    return this.returnOrderData.deliveryItems.reduce((total: number, item: any) => {
+      return total + this.getItemDiscount(item);
+    }, 0);
+  }
+
+  getTotalFinalAmount(): number {
+    const totalWithGST = this.getTotalReturnWithGST();
+    const totalDiscount = this.getTotalDiscount();
+    return totalWithGST - totalDiscount;
+  }
+
+  getTotalAcceptedQuantity(): number {
+    if (!this.returnOrderData?.deliveryItems) return 0;
+    return this.returnOrderData.deliveryItems.reduce((total: number, item: any) => {
+      const acceptedQty = item.acceptedQuantity !== undefined
+        ? item.acceptedQuantity
+        : item.returnQuantity;
+      return total + acceptedQty;
+    }, 0);
+  }
+
+  // All 8 ReturnR2W schema statuses
+  getStatusDisplay(status: string): string {
+    switch (status) {
+      case 'return_requested':    return 'Return Requested';
+      case 'return_checked':      return 'Return Checked';
+      case 'return_approved':     return 'Return Approved';
+      case 'return_rejected':     return 'Return Rejected';
+      case 'return_in_transit':   return 'Return In Transit';
+      case 'return_received':     return 'Return Received';
+      case 'credit_note_created': return 'Credit Note Created';
+      case 'resolved':            return 'Resolved';
+      default:                    return status || 'N/A';
+    }
+  }
+
+  // All 8 ReturnR2W schema statuses
+  getStatusClass(status: string): string {
+    switch (status) {
+      case 'return_requested':    return 'badge bg-warning text-dark';
+      case 'return_checked':      return 'badge bg-info text-dark';
+      case 'return_approved':     return 'badge bg-success';
+      case 'return_rejected':     return 'badge bg-danger';
+      case 'return_in_transit':   return 'badge bg-primary';
+      case 'return_received':     return 'badge bg-secondary';
+      case 'credit_note_created': return 'badge bg-purple text-white';
+      case 'resolved':            return 'badge bg-dark';
+      default:                    return 'badge bg-secondary';
+    }
+  }
+
+  onCancelReturnItem(item: any, rowIndex: number) {
+    Swal.fire({
+      title: 'Add Wholesaler Comments',
+      html: `
+        <div class="text-start">
+          <p class="mb-3">Add comments and accepted quantity for this return item</p>
+          <p class="text-muted small mb-3">
+            <strong>Item:</strong> ${item.designNumber} - ${item.colourName} - Size ${item.size}<br>
+            <strong>Return Quantity:</strong> ${item.returnQuantity}
+          </p>
+
+          <div class="mb-3">
+            <label for="acceptedQuantity" class="form-label fw-bold">
+              <i class="bi bi-box-seam me-1"></i>Accepted Quantity <span class="text-danger">*</span>
+            </label>
+            <input
+              type="number"
+              id="acceptedQuantity"
+              class="form-control swal2-input"
+              placeholder="Enter accepted quantity"
+              value="${item.acceptedQuantity !== undefined ? item.acceptedQuantity : item.returnQuantity}"
+              min="0"
+              max="${item.returnQuantity}"
+              style="margin: 0; width: 100%; max-width: 100%;">
+            <small class="text-muted">Maximum: ${item.returnQuantity}</small>
+          </div>
+
+          <div class="mb-3">
+            <label for="wholesalerComments" class="form-label fw-bold">
+              <i class="bi bi-chat-left-text me-1"></i>Wholesaler Comments <span class="text-danger">*</span>
+            </label>
+            <textarea
+              id="wholesalerComments"
+              class="form-control swal2-textarea"
+              placeholder="Please provide your comments for this return item..."
+              rows="4"
+              style="margin: 0; width: 100%; max-width: 100%;">${item.wholesalerComments || ''}</textarea>
+            <small class="text-muted">Minimum 10 characters required</small>
+          </div>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Save',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#0d6efd',
+      cancelButtonColor: '#6c757d',
+      customClass: {
+        popup: 'swal-wide',
+        htmlContainer: 'text-start'
+      },
+      preConfirm: () => {
+        const acceptedQuantityInput = document.getElementById('acceptedQuantity') as HTMLInputElement;
+        const commentsInput = document.getElementById('wholesalerComments') as HTMLTextAreaElement;
+
+        const acceptedQuantity = parseInt(acceptedQuantityInput.value);
+        const comments = commentsInput.value.trim();
+
+        if (!acceptedQuantityInput.value || acceptedQuantity < 0) {
+          Swal.showValidationMessage('Please enter a valid accepted quantity');
+          return false;
+        }
+
+        if (acceptedQuantity > item.returnQuantity) {
+          Swal.showValidationMessage(`Accepted quantity cannot exceed return quantity (${item.returnQuantity})`);
+          return false;
+        }
+
+        if (!comments) {
+          Swal.showValidationMessage('Please provide comments');
+          return false;
+        }
+
+        if (comments.length < 10) {
+          Swal.showValidationMessage('Please provide more detailed comments (at least 10 characters)');
+          return false;
+        }
+
+        return { acceptedQuantity, wholesalerComments: comments };
+      }
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        const { acceptedQuantity, wholesalerComments } = result.value;
+
+        const itemIndex = this.returnOrderData.deliveryItems.findIndex(
+          (deliveryItem: any) => deliveryItem._id === item._id
+        );
+
+        if (itemIndex !== -1) {
+          this.returnOrderData.deliveryItems[itemIndex].wholesalerComments = wholesalerComments;
+          this.returnOrderData.deliveryItems[itemIndex].acceptedQuantity = acceptedQuantity;
+        }
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Saved Successfully',
+          html: `
+            <p>Your comments and accepted quantity have been saved locally.</p>
+            <p class="text-muted small mt-2">
+              <strong>Accepted Quantity:</strong> ${acceptedQuantity} / ${item.returnQuantity}<br>
+              Data will be sent when you approve or reject the return order.
+            </p>
+          `,
+          timer: 3000,
+          showConfirmButton: false
+        });
+
+        console.log('Saved locally for item:', item._id, { acceptedQuantity, wholesalerComments });
+      }
+    });
+  }
+
+  approveReturnOrder() {
+    this.submitting = true;
+
+    const calculatedTotalAmount = parseFloat(this.getTotalFinalAmount().toFixed(2));
+    const calculatedCreditAmount = parseFloat(this.creditAmount.toFixed(2));
+
+    // Step 1: Update return order with wholesaler comments, acceptedQuantity and amounts
+    const updateData = {
+      id: this.returnOrderId,
+      totalAmount: calculatedTotalAmount,
+      finalAmount: calculatedCreditAmount,
+      deliveryItems: this.returnOrderData.deliveryItems.map((item: any) => ({
+        ...item,
+        wholesalerComments: item.wholesalerComments || '',
+        acceptedQuantity: item.acceptedQuantity !== undefined
+          ? item.acceptedQuantity
+          : item.returnQuantity
+      }))
+    };
+
+    this.authService.patch('return-r2w', updateData).subscribe(
+      (updateRes: any) => {
+        console.log('Wholesaler comments, accepted quantities and amounts saved:', updateRes);
+
+        // Step 2: Create credit note
+        const creditNoteData = {
+          invoiceNumber: this.returnOrderData.invoiceNumber,
+          invoiceId: this.returnOrderData.invoiceId,
+          returnOrderNumber: this.returnOrderData.returnRequestNumber,
+          wholesalerEmail: this.returnOrderData.wholesalerEmail,
+          retailerEmail: this.returnOrderData.retailerEmail,
+          set: this.returnOrderData.deliveryItems.map((item: any) => ({
+            productBy: this.returnOrderData.wholesalerEmail,
+            designNumber: item.designNumber,
+            colour: item.colour,
+            colourImage: item.colourImage,
+            colourName: item.colourName,
+            size: item.size,
+            returnQuantity: item.returnQuantity,
+            acceptedQuantity: item.acceptedQuantity !== undefined
+              ? item.acceptedQuantity
+              : item.returnQuantity,
+            price: item.rate.toString(),
+            productType: item.productType,
+            gender: item.gender,
+            clothing: item.clothing,
+            subCategory: item.subCategory,
+            quantity: item.returnQuantity,
+            returnReason: item.returnReason,
+            otherReturnReason: item.otherReturnReason,
+            hsnCode: item.hsnCode,
+            hsnGst: item.hsnGst,
+            hsnDescription: item.hsnDescription,
+            brandName: item.brandName,
+            wholesalerComments: item.wholesalerComments || ''
+          })),
+          totalCreditAmount: calculatedCreditAmount,
+          totalReturnItem: this.getTotalReturnQuantity(),
+          totalAcceptedReturnItem: this.getTotalAcceptedQuantity()
+        };
+
+        this.authService.post('w-r-credit-note', creditNoteData).subscribe(
+          (creditNoteRes: any) => {
+            console.log('Credit note created successfully:', creditNoteRes);
+
+            // Step 3: Update statusAll to 'return_approved'
+            const statusUpdateData = {
+              id: this.returnOrderId,
+              statusAll: 'return_approved'
+            };
+
+            this.authService.patch('return-r2w', statusUpdateData).subscribe(
+              (statusRes: any) => {
+                this.submitting = false;
+                console.log('Return order status updated to approved:', statusRes);
+
+                this.communicationService.customSuccess1(
+                  `Return order approved successfully! Credit Note #${creditNoteRes.creditNoteNumber || 'generated'} created for ₹${calculatedCreditAmount.toFixed(2)}.`
+                );
+
+                this.getReturnOrderDetails();
+
+                setTimeout(() => {
+                  this.navigateFun();
+                }, 2000);
+              },
+              (error) => {
+                this.submitting = false;
+                console.error('Error updating return order status:', error);
+                this.communicationService.customError1(
+                  error?.error?.message || 'Credit note created but failed to update return order status.'
+                );
+              }
+            );
+          },
+          (error) => {
+            this.submitting = false;
+            console.error('Error creating credit note:', error);
+            this.communicationService.customError1(
+              error?.error?.message || 'Failed to create credit note. Please try again.'
+            );
+          }
+        );
+      },
+      (error) => {
+        this.submitting = false;
+        console.error('Error saving wholesaler data:', error);
+        this.communicationService.customError1(
+          error?.error?.message || 'Failed to save wholesaler data. Please try again.'
+        );
+      }
+    );
+  }
+
+  rejectReturnOrder() {
+    this.submitting = true;
+
+    const updateData = {
+      id: this.returnOrderId,
+      statusAll: 'return_rejected',
+      deliveryItems: this.returnOrderData.deliveryItems.map((item: any) => ({
+        ...item,
+        wholesalerComments: item.wholesalerComments || '',
+        acceptedQuantity: item.acceptedQuantity !== undefined
+          ? item.acceptedQuantity
+          : item.returnQuantity
+      }))
+    };
+
+    this.authService.patch('return-r2w', updateData).subscribe(
+      (res: any) => {
+        this.submitting = false;
+        console.log('Return order rejected with wholesaler comments:', res);
+
+        this.communicationService.customSuccess1('Return order rejected successfully');
+
+        this.getReturnOrderDetails();
+
+        setTimeout(() => {
+          this.navigateFun();
+        }, 2000);
+      },
+      (error) => {
+        this.submitting = false;
+        console.error('Error rejecting return order:', error);
+        this.communicationService.customError1(
+          error?.error?.message || 'Failed to reject return order. Please try again.'
+        );
+      }
+    );
+  }
+}

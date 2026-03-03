@@ -281,7 +281,8 @@ export class RetailerpoGenerateComponent {
 
   viewInvoice() {
     // Navigate to invoice view page
-    this.router.navigate(['/retailer/new/wh-invoice-view', this.generatedInvoiceId]);
+    // this.router.navigate(['/retailer/new/wh-invoice-view', this.generatedInvoiceId]);
+    this.router.navigate(['/wholesaler/ret-wh-flow/ret-wh-invoice-view', this.generatedInvoiceId]);
     // OR open in new tab
     // window.open(`/invoice-view/${this.poId}`, '_blank');
   }
