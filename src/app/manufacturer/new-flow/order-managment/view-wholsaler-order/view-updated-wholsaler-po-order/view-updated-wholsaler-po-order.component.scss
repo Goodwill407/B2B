@@ -1,68 +1,306 @@
+/* view-qty-updated-po.component.scss */
+
+/* Main purchase order container */
 #purchase-order {
-  width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
   font-family: Arial, sans-serif;
   border: 1px solid #ccc;
-  padding: 24px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
 }
 
+/* Header section styling */
 #purchase-order .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 2px solid #ccc;
   padding-bottom: 10px;
+  margin-bottom: 15px;
 }
 
-#purchase-order .header .company-info h1 {
-  font-size: 26px;
-  margin: 0;
-}
-
-#purchase-order .header .order-info {
-  text-align: right;
-}
-
-#purchase-order .header .order-info p {
-  margin: 4px 0;
-  font-size: 15px;
-}
-
-/* Info section */
-#purchase-order .border {
-  background: #fafbff;
-}
-
-/* Table styles */
-#purchase-order .table td,
-#purchase-order .table th {
-  padding: 6px 10px;
-  font-size: 15px;
-  white-space: nowrap;
-  vertical-align: middle;
-  max-width: 150px;
-  word-break: break-word;
-}
-#purchase-order .table th {
-  background-color: #f8f8f8;
+#purchase-order h1 {
+  font-size: 24px;
   font-weight: bold;
-}
-.partial-row {
-  background: #fff9e2 !important; /* light yellow for partial rows */
-}
-.badge {
-  font-size: 13px;
-  padding: 4px 12px;
+  margin: 0;
+  color: #333;
+  letter-spacing: 1px;
 }
 
-@media (max-width: 900px) {
-  #purchase-order {
-    width: 100%;
-    padding: 6px;
+#purchase-order .header .text-end p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Navigation button styling */
+.btn.navigate {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-right: 10px;
+//   color: #007bff;
+  transition: color 0.3s ease;
+}
+
+.btn.navigate:hover {
+//   color: #0056b3;
+}
+
+.btn.navigate i {
+  font-size: 1.5rem;
+}
+
+/* Content header */
+.content-block h4 {
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.content-block h4 span {
+  margin-left: 10px;
+}
+
+/* Info cards styling */
+#purchase-order .border {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#purchase-order .border img {
+  flex-shrink: 0;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+}
+
+#purchase-order .border h5 {
+  color: #495057;
+  font-weight: 600;
+//   border-bottom: 2px solid #007bff;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+}
+
+#purchase-order .border p {
+  color: #6c757d;
+  line-height: 1.4;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+#purchase-order .border p strong {
+  color: #333;
+  font-weight: 600;
+  min-width: 140px;
+  display: inline-block;
+}
+
+/* Status badges */
+.badge-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.badge-warning {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.badge-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+/* Table styling */
+#purchase-order .table.table-bordered {
+  margin-top: 20px;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+#purchase-order .table th {
+  background-color: #f1f3f4;
+  padding: 8px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  vertical-align: middle;
+  text-align: center;
+  border: 1px solid #dee2e6;
+  color: #495057;
+}
+
+#purchase-order .table td {
+  padding: 6px 4px;
+  font-size: 12px;
+  vertical-align: middle;
+  text-align: center;
+  border: 1px solid #dee2e6;
+  color: #333;
+}
+
+/* Row highlighting - YELLOW for partial delivery */
+#purchase-order .partial-row {
+  background-color: #fff3cd !important;
+  border-left: 4px solid #ffc107;
+}
+
+#purchase-order .confirmed-row {
+  background-color: #d4edda !important;
+  border-left: 4px solid #28a745;
+}
+
+/* Quantity mismatch highlighting */
+#purchase-order .qty-mismatch {
+  background-color: #fff3cd !important;
+  color: #856404;
+  font-weight: 600;
+}
+
+#purchase-order .confirmed-qty {
+  background-color: #d4edda !important;
+  color: #155724;
+  font-weight: 600;
+}
+
+#purchase-order .pending-qty.has-pending {
+  background-color: #f8d7da !important;
+  color: #721c24;
+  font-weight: 600;
+}
+
+/* Item images */
+.item-image {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+}
+
+/* Color display */
+.color-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.color-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  display: inline-block;
+}
+
+/* Table footer */
+#purchase-order .table tfoot td {
+  font-weight: 600;
+  background-color: #f8f9fa;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  #purchase-order .header {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
   }
+  
+  #purchase-order .header .text-end {
+    text-align: center !important;
+  }
+  
+  #purchase-order .border {
+    flex-direction: column;
+    text-align: left;
+  }
+  
+  #purchase-order .border img {
+    align-self: center;
+    margin-bottom: 15px;
+  }
+  
+  #purchase-order .table {
+    font-size: 11px;
+  }
+  
   #purchase-order .table th,
   #purchase-order .table td {
-    font-size: 12px;
-    padding: 4px 5px;
+    padding: 4px 2px;
   }
+  
+  .content-block h4 {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .content-block h4 span {
+    margin-left: 0;
+  }
+
+  .item-image {
+    width: 30px;
+    height: 30px;
+  }
+
+  .color-swatch {
+    width: 15px;
+    height: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  #purchase-order {
+    margin: 10px;
+    padding: 15px !important;
+  }
+  
+  #purchase-order .table th,
+  #purchase-order .table td {
+    padding: 3px 1px;
+    font-size: 10px;
+  }
+}
+
+/* Print styles */
+@media print {
+  #purchase-order {
+    box-shadow: none;
+    border: 1px solid #000;
+    max-width: 100%;
+    margin: 0;
+  }
+  
+  .btn, .navigate {
+    display: none !important;
+  }
+  
+  .partial-row, .confirmed-row, .qty-mismatch, .confirmed-qty, .has-pending {
+    background: transparent !important;
+    border: 1px solid #000 !important;
+  }
+}
+
+.color-preview {
+  width: 50px;
+  height: 50px;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  display: inline-block;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.item-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
 }

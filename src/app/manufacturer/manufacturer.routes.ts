@@ -58,6 +58,9 @@ import { AddProductBomComponent } from "./product-bom/add-product-bom/add-produc
 import { ViewProductBomComponent } from "./product-bom/view-product-bom/view-product-bom.component";
 import { ProductBomListComponent } from "./product-bom/product-bom-list/product-bom-list.component";
 import { RawItemInventoryComponent } from "./vendor-warehouse-master/raw-item-inventory/raw-item-inventory.component";
+import { ConfirmMtoPoInvcGenComponent } from "./new-flow/order-managment/view-wholsaler-order/confirm-mto-po-invc-gen/confirm-mto-po-invc-gen.component";
+import { MfgWhlInvoiceListComponent } from "./new-flow/order-managment/whl-invoice/mfg-whl-invoice-list/mfg-whl-invoice-list.component";
+import { MfgWhlInvoiceViewComponent } from "./new-flow/order-managment/whl-invoice/mfg-whl-invoice-view/mfg-whl-invoice-view.component";
 
 export const M_Auth: Route[] = [
     { path: 'new', loadChildren:()=> import('./new-flow/new_flow.route').then((m)=>m.NewFlow)},
@@ -95,6 +98,8 @@ export const M_Auth: Route[] = [
     // new created by sk for edit qty page
     { path: 'edit-gen-wh-po-order', component: EditGenWholsalerPoOrderComponent},
     { path: 'view-updated-wh-po-order', component: ViewUpdatedWholsalerPoOrderComponent},
+    { path: 'confm-mto-po-inv-gen/:id', component: ConfirmMtoPoInvcGenComponent },
+
     { path: 'add-stocks-for-product', component: AddStockOfProductComponent },
     { path: 'update-stocks-for-product', component: UpdateStockOfProductComponent },
     { path: 'inventory-logs', component: InventoryLogsComponent},
@@ -132,6 +137,9 @@ export const M_Auth: Route[] = [
 { path: 'ret-list-single-view', component: GenRetailerOrderPoComponent },
 
 { path:'ret-updated-qty-po-view', component: ViewQtyUpdatedPoComponent },
-{path:'confirmed-mto-po-mfg-ret-view', component:ConfirmedMtoPoMfgRetComponent }
+{ path:'confirmed-mto-po-mfg-ret-view', component:ConfirmedMtoPoMfgRetComponent },
+
+{ path:'mfg-whl-invoice-list', component: MfgWhlInvoiceListComponent },
+{ path:'mfg-whl-invoice-view/:id', component:MfgWhlInvoiceViewComponent }
 
 ]

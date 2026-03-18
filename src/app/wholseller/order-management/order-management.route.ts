@@ -22,7 +22,7 @@ import { ReturnProductCheckComponent } from "../new-flow/product-mng/performa-in
 
 export const Order_Management_Route:Route[]= [
     {path: 'place-order', component: PlaceOrderComponent},
-    {path: 'View-place-order', component: ViewPlaceOrderPoComponent},
+    {path: 'View-place-order/:id', component: ViewPlaceOrderPoComponent},
     {path:'view-challan', component:ViewChallanComponent},
     {path:'mnf-list-challan', component:MnfListChallanComponent},
     {path:'ordered-products', component:OrderedProductsComponent},

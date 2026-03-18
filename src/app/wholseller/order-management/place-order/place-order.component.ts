@@ -229,11 +229,8 @@ export class PlaceOrderComponent {
   }
   
   placeOrder(data: any): void {
-
-    this.router.navigate(['/wholesaler/order-mng/View-place-order'], {
-      queryParams: { memail: data.manufacturer.email, wemail: data.wholesaler.email, poNumber: data.poNumber, id: data.id },
-    });
-  }
+  this.router.navigate(['/wholesaler/order-mng/View-place-order', data.id]);
+}
 
   
 }

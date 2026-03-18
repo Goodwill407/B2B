@@ -7,209 +7,511 @@ import { AccordionModule } from 'primeng/accordion';
 import { TableModule } from 'primeng/table';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { IndianCurrencyPipe } from 'app/custom.pipe';
+import { AmountInWordsPipe } from 'app/amount-in-words.pipe';
+
+// ── Interfaces ────────────────────────────────────────────────────────────────
+
+interface BankDetails {
+  accountHolderName: string;
+  accountNumber: string;
+  accountType: string;
+  bankName: string;
+  branchName: string;
+  ifscCode: string;
+  swiftCode?: string;
+  upiId: string;
+  bankAddress: string;
+}
+
+interface WholesalerProfile {
+  email: string;
+  fullName: string;
+  companyName: string;
+  address: string;
+  state: string;
+  country: string;
+  pinCode: string;
+  mobNumber: string;
+  GSTIN: string;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 @Component({
   selector: 'app-view-wholesaler-po',
   standalone: true,
-  imports: [CommonModule, FormsModule, AccordionModule, TableModule, IndianCurrencyPipe],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    AccordionModule,
+    TableModule,
+    IndianCurrencyPipe,
+    AmountInWordsPipe,
+  ],
   templateUrl: './view-wholesaler-po.component.html',
   styleUrl: './view-wholesaler-po.component.scss'
 })
-export class ViewWholesalerPoComponent {
-   purchaseOrder: any = {};
-  tableChunks: any[][] = [];
-  serialOffset: number[] = [];
-  Totalsub = 0;
-  discountAmount = 0;
-  discountedTotal = 0;
-  sgst = 0;
-  cgst = 0;
-  igst = 0;
-  totalGrandTotal = 0;
-  private distributorId = ''; 
+export class ViewWholesalerPoComponent implements OnInit {
+
+  purchaseOrder: any = {
+    supplierName: '',
+    supplierDetails: '',
+    supplierAddress: '',
+    supplierContact: '',
+    supplierGSTIN: '',
+    supplierEmail: '',
+    supplierPAN: '',
+    logoUrl: '',
+    poDate: '',
+    orderNumber: '',
+    buyerName: '',
+    buyerAddress: '',
+    buyerPhone: '',
+    buyerEmail: '',
+    buyerGSTIN: '',
+    buyerPAN: '',
+    products: [],
+    ProductDiscount: 0,
+    transportDetails: null,
+  };
+
+  responseData: any;
+  poId: string = '';
+  userProfile: any;
+
+  bankDetails!: BankDetails;
+  wholesalerProfile!: WholesalerProfile;
+
+  expDeliveryDate: Date | string = '';
+  wholesalerNote: string = '';
+
+  isIntraState: boolean = false;
 
   constructor(
     public authService: AuthService,
     private router: Router,
-    private communicationService: CommunicationService,
+    private location: Location,
     private route: ActivatedRoute,
-    private location: Location
-  ) 
-  {
+    private amountInWordsPipe: AmountInWordsPipe
+  ) {
+    this.poId = this.route.snapshot.paramMap.get('id') ?? '';
   }
 
-  ngOnInit() {
-    this.distributorId = this.route.snapshot.paramMap.get('id') || '';
-    this.loadPurchaseOrder();
+  ngOnInit(): void {
+    this.userProfile = JSON.parse(localStorage.getItem('currentUser')!);
+    this.getPoDetails(this.poId);
   }
 
-   private loadPurchaseOrder() {
-    this.authService.get(`po-wholesaler-to-manufacture/${this.distributorId}`)
-      .subscribe((res: any) => {
-        // ─── Map PO metadata ────────────────────────────
+  // ── API Call ────────────────────────────────────────────────────────────────
+
+  getPoDetails(id: string): void {
+    this.authService.get(`po-wholesaler-to-manufacture/${id}`).subscribe(
+      (res: any) => {
+        this.responseData = res;
+
+        const productSet = (res.set || []).filter(
+          (item: any) => item.quantity && parseInt(item.quantity) > 0
+        );
+
         this.purchaseOrder = {
-          poNumber:        res.poNumber,
-          poDate:          new Date (res.wholesalerPODateCreated).toLocaleDateString(),
+          // ── Order By = Wholesaler (Buyer) ─────────────────────────────────
+          buyerName:    res.wholesaler.companyName,
+          buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.pinCode} - ${res.wholesaler.state}`,
+          buyerPhone:   res.wholesaler.mobNumber,
+          buyerEmail:   res.wholesaler.email,
+          buyerGSTIN:   res.wholesaler.GSTIN || '',
+          buyerPAN:     this.extractPanFromGstin(res.wholesaler.GSTIN) || '',
+
+          // ── Order To = Manufacturer (Supplier) ───────────────────────────
           supplierName:    res.manufacturer.companyName,
+          supplierDetails: res.manufacturer.fullName,
           supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.pinCode} - ${res.manufacturer.state}`,
           supplierContact: res.manufacturer.mobNumber,
+          supplierGSTIN:   res.manufacturer.GSTIN || '',
           supplierEmail:   res.manufacturer.email,
-          supplierGSTIN:   res.manufacturer.GSTIN,
-          supplierPAN:     res.manufacturer.GSTIN?.substring(2,12) || '',
-          buyerName:       res.wholesaler.companyName,
-          buyerAddress:    `${res.wholesaler.address}, ${res.wholesaler.pinCode} - ${res.wholesaler.state}`,
-          buyerPhone:      res.wholesaler.mobNumber,
-          buyerEmail:      res.wholesaler.email,
-          buyerGSTIN:      res.wholesaler.GSTIN,
-          buyerPAN:        res.wholesaler.GSTIN?.substring(2,12) || '',
-          logoUrl:         res.wholesaler.profileImg,
-          ProductDiscount: parseFloat(res.wholesaler.productDiscount || '0'),
+          supplierPAN:     this.extractPanFromGstin(res.manufacturer.GSTIN) || '',
+
+          // Logo from Wholesaler
+          logoUrl: res.wholesaler.profileImg || res.wholesaler.logo || '',
+          poDate:      new Date(res.wholesalerPODateCreated).toLocaleDateString(),
+          orderNumber: res.poNumber,
+
+          // ── Products & Discount ───────────────────────────────────────────
+          products:        productSet,
+          ProductDiscount: parseFloat(res.discount || res.wholesaler.productDiscount || 0),
+
+          transportDetails: res.transportDetails || null,
         };
 
-        // ─── Build rows & recalc totals ─────────────────
-        this.buildTable(res.set, res.manufacturer.state, res.wholesaler.state);
-      });
-  }
+        this.expDeliveryDate  = res.expDeliveryDate || res.expectedDeliveryDate || '';
+        this.wholesalerNote   = res.wholesalerNote  || res.note || '';
+        this.wholesalerProfile = res.wholesaler;
 
-  private buildTable(items: any[], mState: string, wState: string) {
-    const rows = items.map(i => ({
-      designNumber: i.designNumber,
-      colourName:   i.colourName,
-      size:         i.size,
-      price:        parseFloat(i.price) || 0,
-      quantity:     i.totalQuantity,
-      gender:       i.gender,
-      clothing:     i.clothing
-    }));
-
-    this.chunkArray(rows);
-
-    this.Totalsub = rows.reduce((s,r) => s + r.price * r.quantity, 0);
-    this.discountAmount  = (this.Totalsub * this.purchaseOrder.ProductDiscount)/100;
-    this.discountedTotal = this.Totalsub - this.discountAmount;
-
-    const ms = mState.trim().toLowerCase();
-    const ws = wState.trim().toLowerCase();
-    if (ms === ws || ms.includes(ws) || ws.includes(ms)) {
-      this.sgst = this.discountedTotal * 0.09;
-      this.cgst = this.discountedTotal * 0.09;
-      this.igst = 0;
-    } else {
-      this.sgst = 0;
-      this.cgst = 0;
-      this.igst = this.discountedTotal * 0.18;
-    }
-    this.totalGrandTotal = this.discountedTotal + this.sgst + this.cgst + this.igst;
-  }
-
-  /** Unchanged: paginate rows into chunks */
-chunkArray(array: any[]): void {
-  this.tableChunks = [];
-  this.serialOffset = [];
-
-  const firstChunkSize = 20;
-  const nextChunkSize = 30;
-
-  if (array.length > 0) {
-    this.tableChunks.push(array.slice(0, firstChunkSize));
-    this.serialOffset.push(0);
-
-    let start = firstChunkSize;
-    while (start < array.length) {
-      this.tableChunks.push(array.slice(start, start + nextChunkSize));
-      this.serialOffset.push(start);
-      start += nextChunkSize;
-    }
-  }
-}
-
-  /** Unchanged: your multi-page PDF logic */
- printPurchaseOrder(): void {
-  const fullId = 'purchase-order';
-  const pdf = new jsPDF('p', 'mm', 'a4');
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const margin = 10;
-  const chunkCount = this.tableChunks.length || 1;  // fallback to 1 chunk
-  let currentChunk = 0;
-
-  const renderChunk = () => {
-    const fullContent = document.getElementById(fullId);
-    if (!fullContent) return;
-
-    const fullClone = fullContent.cloneNode(true) as HTMLElement;
-
-    // Hide all rows except for the current chunk
-    const tableBody = fullClone.querySelector('p-table');
-    const rows = fullClone.querySelectorAll('tbody tr');
-
-    // Show all rows if chunking not enabled
-    if (this.tableChunks.length > 0) {
-      rows.forEach((row, i) => {
-        const start = this.serialOffset[currentChunk];
-        const end = start + this.tableChunks[currentChunk].length;
-        if (i < start || i >= end) {
-          (row as HTMLElement).style.display = 'none';
+        // Bank details
+        const bankData = res.bankDetails || res.wholesaler?.bankDetails;
+        if (bankData) {
+          this.bankDetails = {
+            accountHolderName: bankData.accountHolderName,
+            accountNumber:     bankData.accountNumber,
+            accountType:       bankData.accountType,
+            bankName:          bankData.bankName,
+            branchName:        bankData.branchName,
+            ifscCode:          bankData.ifscCode,
+            swiftCode:         bankData.swiftCode,
+            upiId:             bankData.upiId,
+            bankAddress:       bankData.bankAddress,
+          };
         }
-      });
-    }
 
-    // Remove the page-header-content on next pages
-    if (currentChunk > 0) {
-      const headerContent = fullClone.querySelector('.page-header-content');
-      if (headerContent) headerContent.remove();
-    }
-
-    // Copy styles
-    const styles = document.querySelectorAll('style, link[rel="stylesheet"]');
-    styles.forEach((tag) => {
-      fullClone.appendChild(tag.cloneNode(true));
-    });
-
-    // Temp container to render DOM off-screen
-    const tempWrapper = document.createElement('div');
-    tempWrapper.style.position = 'fixed';
-    tempWrapper.style.top = '-10000px';
-    tempWrapper.style.left = '-10000px';
-    tempWrapper.style.width = '1000px';
-    tempWrapper.style.zIndex = '-9999';
-    tempWrapper.style.opacity = '0';
-    tempWrapper.appendChild(fullClone);
-    document.body.appendChild(tempWrapper);
-
-    html2canvas(fullClone, {
-      scale: 2,
-      useCORS: true,
-      scrollY: -window.scrollY,
-    }).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      const imgProps = pdf.getImageProperties(imgData);
-      const imgWidth = pageWidth - margin * 2;
-      const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-
-      if (currentChunk > 0) pdf.addPage();
-      pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
-
-      document.body.removeChild(tempWrapper);
-      currentChunk++;
-
-      if (currentChunk < chunkCount) {
-        renderChunk(); // Process next chunk
-      } else {
-        const poDate = this.purchaseOrder.poDate?.replace(/\//g, '-') || 'no-date';
-        const poNumber = this.purchaseOrder.poNumber || 'no-number';
-        pdf.save(`PO_${poDate}_${poNumber}.pdf`);
+        this.updateStateType();
+      },
+      (err) => {
+        console.error('Error fetching Wholesaler PO:', err);
       }
-    });
-  };
+    );
+  }
 
-  renderChunk();
+  // ── State / GST Helpers ─────────────────────────────────────────────────────
+
+  updateStateType(): void {
+  const buyerState    = this.responseData?.wholesaler?.state?.trim().toLowerCase();
+  const supplierState = this.responseData?.manufacturer?.state?.trim().toLowerCase();
+  this.isIntraState   = !!(buyerState && supplierState && buyerState === supplierState);
 }
 
+  get colspan(): number {
+    return this.isIntraState ? 15 : 14;
+  }
 
-  navigateFun() {
+  getGstAmounts(item: any) {
+    const quantity        = Number(item.quantity)  || 0;
+    const rate            = Number(item.price)     || 0;
+    const gstRate         = Number(item.hsnGst)    || 0;
+    const discountPercent = Number(this.purchaseOrder.ProductDiscount) || 0;
+    const discountedRate  = rate - (rate * discountPercent / 100);
+    const taxable         = quantity * discountedRate;
+
+    let cgst = 0, sgst = 0, igst = 0;
+
+    if (this.isIntraState) {
+      cgst = (taxable * gstRate / 2) / 100;
+      sgst = (taxable * gstRate / 2) / 100;
+    } else {
+      igst = (taxable * gstRate) / 100;
+    }
+
+    const totalWithGst = taxable + cgst + sgst + igst;
+
+    return {
+      originalRate:   rate,
+      discountedRate: discountedRate,
+      taxable:        isNaN(taxable)      ? 0 : taxable,
+      gstRate:        isNaN(gstRate)      ? 0 : gstRate,
+      cgst:           isNaN(cgst)         ? 0 : cgst,
+      sgst:           isNaN(sgst)         ? 0 : sgst,
+      igst:           isNaN(igst)         ? 0 : igst,
+      totalWithGst:   isNaN(totalWithGst) ? 0 : totalWithGst,
+    };
+  }
+
+  get orderTotals() {
+    let totalQty = 0, totalTaxable = 0;
+    let totalCGST = 0, totalSGST = 0, totalIGST = 0, totalWithGST = 0;
+
+    for (const item of this.purchaseOrder.products) {
+      const gst = this.getGstAmounts(item);
+      totalQty     += Number(item.quantity) || 0;
+      totalTaxable += gst.taxable      || 0;
+      totalCGST    += gst.cgst         || 0;
+      totalSGST    += gst.sgst         || 0;
+      totalIGST    += gst.igst         || 0;
+      totalWithGST += gst.totalWithGst || 0;
+    }
+
+    return {
+      totalQty:     isNaN(totalQty)     ? 0 : totalQty,
+      totalTaxable: isNaN(totalTaxable) ? 0 : totalTaxable,
+      totalCGST:    isNaN(totalCGST)    ? 0 : totalCGST,
+      totalSGST:    isNaN(totalSGST)    ? 0 : totalSGST,
+      totalIGST:    isNaN(totalIGST)    ? 0 : totalIGST,
+      totalWithGST: isNaN(totalWithGST) ? 0 : totalWithGST,
+    };
+  }
+
+  get discountAmount(): number {
+    const discountPercent = Number(this.purchaseOrder.ProductDiscount) || 0;
+    let totalWithoutDiscount = 0;
+    for (const item of this.purchaseOrder.products) {
+      totalWithoutDiscount += (Number(item.quantity) || 0) * (Number(item.price) || 0);
+    }
+    return (totalWithoutDiscount * discountPercent) / 100;
+  }
+
+  get actualGrandTotal(): number {
+    return this.orderTotals.totalWithGST;
+  }
+
+  get totalGSTAmount(): number {
+    const t = this.orderTotals;
+    const total = t.totalCGST + t.totalSGST + t.totalIGST;
+    return isNaN(total) ? 0 : total;
+  }
+
+  // ── Navigation ──────────────────────────────────────────────────────────────
+
+  navigateFun(): void {
     this.location.back();
   }
 
-  
+  extractPanFromGstin(gstin: string): string {
+    if (!gstin || gstin.length !== 15) return '';
+    try {
+      return gstin.substring(2, 12).toUpperCase();
+    } catch {
+      return '';
+    }
+  }
+
+  // ── PDF Download ────────────────────────────────────────────────────────────
+
+  downloadPO(): void {
+    const doc        = new jsPDF('p', 'mm', 'a4');
+    let yPosition    = 20;
+    const pageWidth  = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+
+    // Title
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('PURCHASE ORDER', pageWidth / 2, yPosition, { align: 'center' });
+    yPosition += 15;
+
+    // Order Meta
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Order Date: ${this.purchaseOrder.poDate}`,      pageWidth - 20, yPosition,     { align: 'right' });
+    doc.text(`Order No: ${this.purchaseOrder.orderNumber}`,   pageWidth - 20, yPosition + 5, { align: 'right' });
+    yPosition += 20;
+
+    // Buyer / Supplier headers
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Order By (Wholesaler):', 20,  yPosition);
+    doc.text('Order To (Retailer):',   110, yPosition);
+    yPosition += 8;
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+
+    const supplierInfo = [
+      this.purchaseOrder.supplierName    || '',
+      this.purchaseOrder.supplierAddress || '',
+      `Phone: ${this.purchaseOrder.supplierContact || 'N/A'}`,
+      `Email: ${this.purchaseOrder.supplierEmail   || 'N/A'}`,
+      `GSTIN: ${this.purchaseOrder.supplierGSTIN   || 'N/A'}`,
+      `PAN: ${this.purchaseOrder.supplierPAN       || 'N/A'}`,
+    ];
+
+    const buyerInfo = [
+      this.purchaseOrder.buyerName    || '',
+      this.purchaseOrder.buyerAddress || '',
+      `Phone: ${this.purchaseOrder.buyerPhone   || 'N/A'}`,
+      `Email: ${this.purchaseOrder.buyerEmail   || 'N/A'}`,
+      `GSTIN: ${this.purchaseOrder.buyerGSTIN   || 'N/A'}`,
+      `PAN: ${this.purchaseOrder.buyerPAN       || 'N/A'}`,
+    ];
+
+    for (let i = 0; i < Math.max(supplierInfo.length, buyerInfo.length); i++) {
+      if (supplierInfo[i]) doc.text(supplierInfo[i], 20,  yPosition);
+      if (buyerInfo[i])    doc.text(buyerInfo[i],    110, yPosition);
+      yPosition += 5;
+    }
+    yPosition += 10;
+
+    // Products Table
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Order Details', pageWidth / 2, yPosition, { align: 'center' });
+    yPosition += 10;
+
+    const tableHeaders = this.isIntraState
+      ? ['Sr.','Design No.','HSN','Colour','Gender','Size','Rate (Rs.)','Qty','Taxable (Rs.)','GST%','CGST (Rs.)','SGST (Rs.)','Total (Rs.)']
+      : ['Sr.','Design No.','HSN','Colour','Gender','Size','Rate (Rs.)','Qty','Taxable (Rs.)','GST%','IGST (Rs.)','Total (Rs.)'];
+
+    const tableData = this.purchaseOrder.products.map((item: any, index: number) => {
+      const g = this.getGstAmounts(item);
+      const base = [
+        (index + 1).toString(),
+        item.designNumber || '',
+        item.hsnCode      || '',
+        item.colourName   || '',
+        item.gender       || '',
+        item.size         || '',
+        (parseFloat(item.price) || 0).toFixed(2),
+        item.quantity?.toString() || '0',
+        g.taxable.toFixed(2),
+        `${item.hsnGst || 0}%`,
+      ];
+      return this.isIntraState
+        ? [...base, g.cgst.toFixed(2), g.sgst.toFixed(2), g.totalWithGst.toFixed(2)]
+        : [...base, g.igst.toFixed(2), g.totalWithGst.toFixed(2)];
+    });
+
+    const t = this.orderTotals;
+    const totalRow = this.isIntraState
+      ? ['','','','','','','Total:', t.totalQty.toString(), t.totalTaxable.toFixed(2), '',
+          t.totalCGST.toFixed(2), t.totalSGST.toFixed(2), t.totalWithGST.toFixed(2)]
+      : ['','','','','','','Total:', t.totalQty.toString(), t.totalTaxable.toFixed(2), '',
+          t.totalIGST.toFixed(2), t.totalWithGST.toFixed(2)];
+
+    tableData.push(totalRow);
+
+    autoTable(doc, {
+      startY: yPosition,
+      head: [tableHeaders],
+      body: tableData,
+      columnStyles: this.getColumnStyles(),
+      styles: { fontSize: 8, cellPadding: 1.5, overflow: 'linebreak', halign: 'center', valign: 'middle' },
+      headStyles: { fillColor: [240, 246, 249], textColor: [0, 0, 0], fontStyle: 'bold', fontSize: 7 },
+      alternateRowStyles: { fillColor: [250, 250, 250] },
+      didParseCell: (data) => {
+        if (data.row.index === tableData.length - 1) {
+          data.cell.styles.fillColor = [220, 235, 255];
+          data.cell.styles.fontStyle = 'bold';
+          data.cell.styles.fontSize  = 8;
+        }
+      },
+      margin: { top: 10, right: 10, bottom: 30, left: 10 },
+    });
+
+    yPosition = (doc as any).lastAutoTable.finalY + 15;
+
+    if (yPosition > pageHeight - 60) { doc.addPage(); yPosition = 30; }
+    this.addFinancialSummary(doc, yPosition, pageWidth);
+    yPosition += 40;
+
+    if (this.purchaseOrder.transportDetails) {
+      if (yPosition > pageHeight - 80) { doc.addPage(); yPosition = 30; }
+      yPosition = this.addTransportDetails(doc, yPosition, pageWidth);
+      yPosition += 20;
+    }
+
+    if (this.bankDetails) {
+      if (yPosition > pageHeight - 80) { doc.addPage(); yPosition = 30; }
+      this.addBankDetails(doc, yPosition, pageWidth);
+    }
+
+    const poDate   = this.purchaseOrder.poDate?.replace(/\//g, '-') || 'no-date';
+    const poNumber = this.purchaseOrder.orderNumber || 'no-number';
+    doc.save(`PO_${poDate}_${poNumber}.pdf`);
+  }
+
+  getColumnStyles(): { [key: string]: Partial<any> } {
+    const base = {
+      6:  { halign: 'right'  as const },
+      7:  { halign: 'center' as const },
+      8:  { halign: 'right'  as const },
+      9:  { halign: 'center' as const },
+      10: { halign: 'right'  as const },
+      11: { halign: 'right'  as const },
+    };
+    return this.isIntraState ? { ...base, 12: { halign: 'right' as const } } : base;
+  }
+
+  addFinancialSummary(doc: jsPDF, startY: number, pageWidth: number): void {
+    const rightAlign = pageWidth - 20;
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+
+    if (this.purchaseOrder.ProductDiscount > 0) {
+      doc.text(`Note: ${this.purchaseOrder.ProductDiscount}% discount applied on product rates`, 20, startY);
+      doc.text(`(Total Discount: Rs. ${this.discountAmount.toFixed(2)})`, 20, startY + 5);
+      startY += 15;
+    }
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text(`Grand Total: Rs. ${this.actualGrandTotal.toFixed(2)}`, rightAlign, startY, { align: 'right' });
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    const amountInWords = this.amountInWordsPipe.transform(this.actualGrandTotal);
+    doc.text(`Amount in Words: ${amountInWords}`, 20, startY + 10);
+    doc.text(
+      `Total GST: Rs. ${this.totalGSTAmount.toFixed(2)} - ${this.amountInWordsPipe.transform(this.totalGSTAmount)}`,
+      20, startY + 15
+    );
+  }
+
+  addTransportDetails(doc: jsPDF, startY: number, pageWidth: number): number {
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Transport Details', pageWidth / 2, startY, { align: 'center' });
+    startY += 10;
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+
+    const tr = this.purchaseOrder.transportDetails;
+    const left  = [
+      `Transport Type: ${tr.transportType            || 'N/A'}`,
+      `Company: ${tr.transporterCompanyName          || 'N/A'}`,
+      `Contact Person: ${tr.contactPersonName        || 'N/A'}`,
+      `Contact: ${tr.contactNumber                   || 'N/A'}`,
+      `Alt Contact: ${tr.altContactNumber            || 'N/A'}`,
+    ];
+    const right = [
+      `Vehicle Number: ${tr.vehicleNumber            || 'N/A'}`,
+      `Tracking ID: ${tr.trackingId                  || 'N/A'}`,
+      `Mode: ${tr.modeOfTransport                    || 'N/A'}`,
+      `Delivery Address: ${tr.deliveryAddress        || 'N/A'}`,
+      '',
+    ];
+
+    for (let i = 0; i < left.length; i++) {
+      doc.text(left[i],  20,  startY);
+      if (right[i]) doc.text(right[i], 110, startY);
+      startY += 5;
+    }
+    if (tr.remarks) { doc.text(`Remarks: ${tr.remarks}`, 20, startY); startY += 5; }
+    if (tr.note)    { doc.text(`Note: ${tr.note}`,       20, startY); startY += 5; }
+
+    return startY;
+  }
+
+  addBankDetails(doc: jsPDF, startY: number, pageWidth: number): number {
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Bank Details (Wholesaler)', pageWidth / 2, startY, { align: 'center' });
+    startY += 10;
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+
+    const left  = [
+      `Account Holder: ${this.bankDetails.accountHolderName || 'N/A'}`,
+      `Account Number: ${this.bankDetails.accountNumber     || 'N/A'}`,
+      `Account Type: ${this.bankDetails.accountType         || 'N/A'}`,
+      `Bank Name: ${this.bankDetails.bankName               || 'N/A'}`,
+      `UPI ID: ${this.bankDetails.upiId                     || 'N/A'}`,
+    ];
+    const right = [
+      `Branch: ${this.bankDetails.branchName   || 'N/A'}`,
+      `IFSC Code: ${this.bankDetails.ifscCode  || 'N/A'}`,
+      `Swift Code: ${this.bankDetails.swiftCode || 'N/A'}`,
+      `Location: ${this.bankDetails.bankAddress || 'N/A'}`,
+      '',
+    ];
+
+    for (let i = 0; i < left.length; i++) {
+      doc.text(left[i],  20,  startY);
+      if (right[i]) doc.text(right[i], 110, startY);
+      startY += 5;
+    }
+    return startY;
+  }
 }

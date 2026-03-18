@@ -4,103 +4,213 @@
       <button class="btn navigate" (click)="navigateBack()">
         <i class="bi bi-arrow-left-circle h4"></i>
       </button>
-      <span>
-        {{ statusAll === 'm_order_confirmed'
-          ? 'Updated Quantities of Wholesaler\'s Purchase Order'
-          : 'Partially Updated Quantities of Wholesaler\'s Purchase Order'
-        }}
+      <span>Purchase Order Details - {{ getStatusText() }}</span>
+      <span class="badge ms-3" [class]="getStatusBadgeClass()">
+        {{ getStatusText() }}
       </span>
     </h4>
 
-    <div id="purchase-order" class="challan-container card my-2">
-      <div class="page-header-content">
-        <div class="header d-flex justify-content-between align-items-center">
-          <div class="company-info">
-            <h1>PURCHASE ORDER</h1>
-          </div>
-          <div class="order-info text-end">
-            <p><strong>Order Date:</strong> {{ poDate | date:'dd/MM/yyyy' }}</p>
-            <p><strong>Order No:</strong> {{ poNumber }}</p>
-          </div>
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <div id="purchase-order" class="card p-3 my-2" *ngIf="!isLoading">
+
+      <!-- Header -->
+      <div class="header d-flex justify-content-between align-items-center">
+        <h1>PURCHASE ORDER</h1>
+        <div class="text-end">
+          <p><strong>Order Date:</strong> {{ poDate | date:'dd/MM/yyyy' }}</p>
+          <p><strong>Order No:</strong> {{ poNumber }}</p>
         </div>
       </div>
 
-      <!-- Wholesaler info box -->
-      <div class="border rounded mt-2 p-3 mb-4 d-flex align-items-start">
-        <div class="me-4">
-          <img [src]="wholesaler.profileImg"
-            alt="Logo"
-            class="d-block"
-            style="width:80px; height:80px; object-fit:cover;" />
-        </div>
+      <!-- Wholesaler Info -->
+      <div class="border rounded mt-3 p-3 d-flex align-items-start">
+        <img [src]="wholesalerLogo" alt="Logo" class="me-3"
+             style="width:80px; height:80px; object-fit:cover;" />
         <div>
-          <h5 class="mb-2"><u>Order From:</u></h5>
-          <p class="mb-1"><strong>{{ wholesaler.companyName }}</strong></p>
-          <p class="mb-1">{{ wholesaler.email }} &bull; {{ wholesaler.mobNumber }}</p>
-          <p class="mb-1">GSTIN: {{ wholesaler.GSTIN }}</p>
-          <p class="mb-1">{{ wholesaler.address }}, {{ wholesaler.pinCode }} – {{ wholesaler.state }}</p>
+          <h5 class="mb-2"><u>Order From (Wholesaler):</u></h5>
+          <p class="mb-1"><strong>{{ wholesalerCompany }}</strong></p>
+          <p class="mb-1">{{ wholesalerEmail }} &bull; {{ wholesalerMobile }}</p>
+          <p class="mb-1">GSTIN: {{ wholesalerGSTIN }} &bull; PAN: {{ wholesalerPAN }}</p>
+          <p class="mb-1">{{ wholesalerAddress }}</p>
         </div>
       </div>
 
-      <!-- Order Details Table -->
-      <section class="order-details">
-        <ng-container *ngIf="isLoading">
-          <div class="text-center my-4">Loading...</div>
-        </ng-container>
-        <div *ngIf="orderedSet?.length && !isLoading">
-          <table class="table table-bordered text-center">
-            <thead class="table-light">
-              <tr>
-                <th>Sr. No.</th>
-                <th>Clothing</th>
-                <th>Gender</th>
-                <th>Colour Name</th>
-                <th>Design No.</th>
-                <th>Size</th>
-                <th>Required Qty</th>
-                <th>Updated Qty</th>
-                <th *ngIf="statusAll !== 'm_order_confirmed'">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let item of orderedSet"
-                  [ngClass]="{'partial-row': isPartialRow(item)}">
-                <td>{{ item.srNo }}</td>
-                <td>{{ item.clothing }}</td>
-                <td>{{ item.gender }}</td>
-                <td>{{ item.colourName }}</td>
-                <td>{{ item.designNumber }}</td>
-                <td>{{ item.size }}</td>
-                <td>{{ item.totalQuantity }}</td>
-                <td>{{ item.availableQuantity }}</td>
-                <td *ngIf="statusAll !== 'm_order_confirmed'">
-                  <span [ngClass]="{
-                    'badge bg-success': item.status === 'm_confirmed',
-                    'badge bg-warning text-dark': item.status === 'm_partial_delivery'
-                  }">
-                    {{ item.status === 'm_confirmed' ? 'Confirmed' : (item.status === 'm_partial_delivery' ? 'Partial' : item.status) }}
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      <!-- Order Summary (Partial Delivery only) -->
+      <div class="border rounded mt-3 p-3" *ngIf="isPartialDelivery()">
+        <h5 class="mb-2"><u>Order Summary:</u></h5>
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Total Items:</strong> {{ getTotalItemsCount() }}</p>
+            <p class="mb-1"><strong>Confirmed Items:</strong> {{ getConfirmedItemsCount() }}</p>
+            <p class="mb-1"><strong>Partial Items:</strong> {{ getPartialItemsCount() }}</p>
+          </div>
+          <div class="col-md-6">
+            <p class="mb-1">
+              <strong>Expected Dispatch Date:</strong>
+              {{ expDeliveryDate | date:'dd/MM/yyyy' }}
+            </p>
+            <p class="mb-1">
+              <strong>Partial Dispatch Date:</strong>
+              {{ partialDeliveryDate | date:'dd/MM/yyyy' }}
+            </p>
+          </div>
+          <div *ngIf="manufacturerNote" class="col-md-12 mt-2">
+            <p class="mb-0"><strong>Manufacturer Note:</strong> {{ manufacturerNote }}</p>
+          </div>
         </div>
-        <div *ngIf="!orderedSet?.length && !isLoading" class="text-center text-muted py-3">
-          No PO items found.
-        </div>
-      </section>
+      </div>
 
-      <!-- Delivery Dates -->
-      <div class="mt-4">
-        <div class="mb-2">
-          <strong>Estimated Delivery Date for Available Quantity:</strong>
+      <!-- Items Table -->
+      <div *ngIf="orderedSet.length" class="mt-3">
+        <table class="table table-bordered text-center">
+          <thead class="table-light">
+            <tr>
+              <th>Sr. No.</th>
+              <th>Image</th>
+              <th>Clothing</th>
+              <th>Gender</th>
+              <th>Brand</th>
+              <th>Design No.</th>
+              <th>Colour</th>
+              <th>Size</th>
+              <th>Required Qty</th>
+              <th>Confirmed Qty</th>
+              <th *ngIf="isPartialDelivery()">Pending Qty</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of orderedSet; let i = index"
+                [class.partial-row]="hasQuantityMismatch(item)"
+                [class.confirmed-row]="!hasQuantityMismatch(item)">
+
+              <td>{{ i + 1 }}</td>
+
+              <!-- Image / Colour Swatch -->
+              <td>
+                <div *ngIf="!item.colourImage || item.colourImage === ''"
+                     class="color-preview"
+                     [style.background-color]="item.colour || '#e0e0e0'"
+                     [title]="item.colourName">
+                </div>
+                <img *ngIf="item.colourImage && item.colourImage !== ''"
+                     [src]="item.colourImage"
+                     [alt]="item.colourName"
+                     class="item-image" />
+              </td>
+
+              <td>{{ item.clothing }}</td>
+              <td>{{ item.gender }}</td>
+              <td>{{ item.brandName || 'N/A' }}</td>
+              <td>{{ item.designNumber }}</td>
+
+              <!-- Colour with swatch -->
+              <td>
+                <div class="color-display">
+                  <span class="color-swatch"
+                        [style.background-color]="item.colour"></span>
+                  {{ item.colourName }}
+                </div>
+              </td>
+
+              <td>{{ item.size }}</td>
+              <td [class.qty-mismatch]="hasQuantityMismatch(item)">
+                {{ item.quantity }}
+              </td>
+              <td [class.qty-mismatch]="hasQuantityMismatch(item)">
+                {{ item.availableQuantity }}
+              </td>
+
+              <!-- Pending Qty (partial delivery only) -->
+              <td *ngIf="isPartialDelivery()"
+                  class="pending-qty"
+                  [class.has-pending]="(item.quantity - item.availableQuantity) > 0">
+                {{ item.quantity - item.availableQuantity }}
+              </td>
+
+              <!-- Status Badge -->
+              <td>
+                <span class="badge"
+                      [class.badge-success]="item.status === 'm_confirmed'"
+                      [class.badge-warning]="item.status === 'm_partial_delivery'">
+                  {{ item.status === 'm_confirmed' ? 'Confirmed' : 'Partial' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Delivery Info (Fully Confirmed only) -->
+      <div *ngIf="isFullyConfirmed()" class="mt-3">
+        <p *ngIf="expDeliveryDate">
+          <strong>Expected Dispatch Date:</strong>
           {{ expDeliveryDate | date:'dd/MM/yyyy' }}
+        </p>
+        <p *ngIf="manufacturerNote">
+          <strong>Manufacturer Note:</strong> {{ manufacturerNote }}
+        </p>
+      </div>
+
+      <!-- Transport Details -->
+      <div class="border rounded mt-3 p-3" *ngIf="transportDetails">
+        <h5 class="mb-2"><u>Transport Details:</u></h5>
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Transport Type:</strong> {{ transportDetails.transportType || 'N/A' }}</p>
+            <p class="mb-1"><strong>Transport Company:</strong> {{ transportDetails.transporterCompanyName || 'N/A' }}</p>
+            <p class="mb-1"><strong>Mode:</strong> {{ transportDetails.modeOfTransport || 'N/A' }}</p>
+            <p class="mb-1"><strong>Contact Person:</strong> {{ transportDetails.contactPersonName || 'N/A' }}</p>
+          </div>
+          <div class="col-md-6">
+            <p class="mb-1">
+              <strong>Contact Number:</strong>
+              {{ transportDetails.contactNumber }}
+              <span *ngIf="transportDetails.altContactNumber">
+                / {{ transportDetails.altContactNumber }}
+              </span>
+            </p>
+            <p class="mb-1"><strong>Vehicle Number:</strong> {{ transportDetails.vehicleNumber || 'N/A' }}</p>
+            <p class="mb-1"><strong>Tracking ID:</strong> {{ transportDetails.trackingId || 'N/A' }}</p>
+            <p class="mb-1"><strong>Delivery Address:</strong> {{ transportDetails.deliveryAddress || 'N/A' }}</p>
+          </div>
         </div>
-        <div *ngIf="partialDeliveryDate" class="mb-2">
-          <strong>Estimated Delivery Date for Make-to-Order Items:</strong>
-          {{ partialDeliveryDate | date:'dd/MM/yyyy' }}
+        <div *ngIf="transportDetails.remarks || transportDetails.note" class="mt-2">
+          <p class="mb-1" *ngIf="transportDetails.remarks">
+            <strong>Remarks:</strong> {{ transportDetails.remarks }}
+          </p>
+          <p class="mb-1" *ngIf="transportDetails.note">
+            <strong>Note:</strong> {{ transportDetails.note }}
+          </p>
         </div>
       </div>
+
+      <!-- Bank Details -->
+      <div class="border rounded mt-3 p-3" *ngIf="bankDetails">
+        <h5 class="mb-2"><u>Bank Details (Manufacturer):</u></h5>
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Account Holder:</strong> {{ bankDetails.accountHolderName || 'N/A' }}</p>
+            <p class="mb-1"><strong>Account Number:</strong> {{ bankDetails.accountNumber || 'N/A' }}</p>
+            <p class="mb-1"><strong>Account Type:</strong> {{ bankDetails.accountType ? (bankDetails.accountType | titlecase) : 'N/A' }}</p>
+            <p class="mb-1"><strong>Bank Name:</strong> {{ bankDetails.bankName || 'N/A' }}</p>
+            <p class="mb-1"><strong>UPI Id:</strong> {{ bankDetails.upiId || 'N/A' }}</p>
+          </div>
+          <div class="col-md-6">
+            <p class="mb-1"><strong>Branch:</strong> {{ bankDetails.branchName || 'N/A' }}</p>
+            <p class="mb-1"><strong>IFSC Code:</strong> {{ bankDetails.ifscCode || 'N/A' }}</p>
+            <p class="mb-1"><strong>Swift Code:</strong> {{ bankDetails.swiftCode || 'N/A' }}</p>
+            <p class="mb-1"><strong>Location:</strong> {{ bankDetails.bankAddress || 'N/A' }}</p>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>

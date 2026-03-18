@@ -9,6 +9,7 @@ import {
   Renderer2,
   HostListener,
   OnDestroy,
+  ViewChild 
 } from '@angular/core';
 import { ROUTES, ROUTES2 } from './sidebar-items';
 import { AuthService, Role } from '@core';
@@ -41,6 +42,7 @@ export class SidebarComponent extends UnsubscribeOnDestroyAdapter implements OnI
   headerHeight = 60;
   currentRoute?: string;
   showFlag: boolean = false;
+  
   constructor(
     @Inject(DOCUMENT) private document: Document,
     private renderer: Renderer2,
@@ -54,9 +56,20 @@ export class SidebarComponent extends UnsubscribeOnDestroyAdapter implements OnI
       if (event instanceof NavigationEnd) {
         // close sidebar on mobile screen after menu select
         this.renderer.removeClass(this.document.body, 'overlay-open');
+        this.scrollToActive(); 
       }
     });
   }
+
+  @ViewChild(NgScrollbar) scrollbar!: NgScrollbar;   // ← ADD THIS
+  private scrollToActive() {
+    setTimeout(() => {
+      const activeEl = this.elementRef.nativeElement.querySelector('li.active-top, li .active');
+      if (activeEl) activeEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }, 100);
+  }
+
+
   @HostListener('window:resize', ['$event'])
   windowResizecall() {
     this.setMenuHeight();
@@ -120,6 +133,7 @@ export class SidebarComponent extends UnsubscribeOnDestroyAdapter implements OnI
 
     this.initLeftSidebar();
     this.bodyTag = this.document.body;
+    this.scrollToActive(); 
   }
   initLeftSidebar() {
     // eslint-disable-next-line @typescript-eslint/no-this-alias

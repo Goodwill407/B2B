@@ -15,6 +15,10 @@ import { RetCreditNoteListComponent } from "./return-managment/ret-credit-note-l
 import { RetailerGroupCreditNoteListComponent } from "./return-managment/retailer-group-credit-note-list/retailer-group-credit-note-list.component";
 import { MfgCreditNoteViewComponent } from "app/retailer/new-flow-Product/return-management/mfg-credit-note-view/mfg-credit-note-view.component";
 import { CreditNoteUsageDetailViewComponent } from "./return-managment/credit-note-usage-detail-view/credit-note-usage-detail-view.component";
+import { WhlCreditNoteListComponent } from "./return-managment/whl-credit-note-list/whl-credit-note-list.component";
+import { WhlCreditNoteUsageViewComponent } from "./return-managment/whl-credit-note-usage-view/whl-credit-note-usage-view.component";
+import { WhlGroupCreditNoteListComponent } from "./return-managment/whl-group-credit-note-list/whl-group-credit-note-list.component";
+import { WhlCreditNoteViewComponent } from "./return-managment/whl-credit-note-view/whl-credit-note-view.component";
 
 export const NewFlow:Route[]=[
     {path:'add-product2',component:AddProduct2Component},
@@ -34,8 +38,14 @@ export const NewFlow:Route[]=[
     {path:'ret-credit-note-list/:id', component:RetCreditNoteListComponent},
     {path:'ret-credit-note-usage-view/:id', component:CreditNoteUsageDetailViewComponent},
     {path:'ret-credit-note-group-list', component:RetailerGroupCreditNoteListComponent},
+    {path: 'ret-credit-note-view/:id', component:MfgCreditNoteViewComponent},
 
-    {path: 'ret-credit-note-view/:id', component:MfgCreditNoteViewComponent}
+    {path:'whl-credit-note-list/:id', component: WhlCreditNoteListComponent },
+    {path:'whl-credit-note-usage-view/:id', component: WhlCreditNoteUsageViewComponent },
+    {path:'whl-credit-note-group-list', component: WhlGroupCreditNoteListComponent},
+    {path:'whl-credit-note-view/:id', component: WhlCreditNoteViewComponent}
+
+ 
 
 ]
 

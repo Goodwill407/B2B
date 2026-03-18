@@ -1,503 +1,556 @@
-  import { CommonModule, Location } from '@angular/common';
-  import { Component, OnInit } from '@angular/core';
-  import { FormsModule } from '@angular/forms';
-  import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-  import { AuthService, CommunicationService } from '@core';
-  import { AccordionModule } from 'primeng/accordion';
-  import { TableModule } from 'primeng/table';
-  import html2canvas from 'html2canvas';
-  import jsPDF from 'jspdf';
-  import { IndianCurrencyPipe } from 'app/custom.pipe';
-  @Component({
-    selector: 'app-genratepo',
-    standalone: true,
-    imports: [CommonModule, FormsModule, AccordionModule, TableModule, IndianCurrencyPipe],
-    templateUrl: './genratepo.component.html',
-    styleUrls: ['./genratepo.component.scss'],
-  })
-  export class GenratepoComponent implements OnInit {
-    purchaseOrder: any = {
-      supplierName: '',
-      supplierDetails: '',
-      supplierAddress: '',
-      supplierContact: '',
-      supplierGSTIN: '',
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/38/MONOGRAM_LOGO_Color_200x200_v.png',
-      orderNo: 'PO123',
-      orderDate: new Date().toLocaleDateString(),
-      deliveryDate: '',
-      buyerName: '',
-      buyerAddress: '',
-      buyerPhone: '',
-      buyerGSTIN: '',
-      products: [],
-      totalAmount: 0,
-      totalInWords: '',
-      ProductDiscount:'',
-    };
+import { CommonModule, Location } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { AuthService, CommunicationService } from '@core';
+import { AccordionModule } from 'primeng/accordion';
+import { TableModule } from 'primeng/table';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import { IndianCurrencyPipe } from 'app/custom.pipe';
+import { AmountInWordsPipe } from 'app/amount-in-words.pipe';
+import Swal from 'sweetalert2';
 
-    mergedProducts: any[] = [];
-    sgst: number = 0;
-    igst: number = 0;
-    cgst: number = 0;
-    responseData: any; // New variable to store response data
-    distributorId: string;
-    products: any[] = [];
-    userProfile: any;
-    filteredData: any;
-    sizeHeaders: string[] = [];
-    priceHeaders: { [size: string]: number } = {};
+@Component({
+  selector: 'app-genratepo',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    AccordionModule,
+    TableModule,
+    IndianCurrencyPipe,
+    AmountInWordsPipe
+  ],
+  templateUrl: './genratepo.component.html',
+  styleUrls: ['./genratepo.component.scss'],
+})
+export class GenratepoComponent implements OnInit {
 
-    discountAmount: number = 0;     // ₹ value of the discount
-    discountedTotal: number = 0;    // net total after discount
-
-    totalGrandTotal: number = 0;
-    gst: number = 0;
-    Totalsub: number = 0;
-
-    constructor(
-      public authService: AuthService,
-      private router: Router,
-      private communicationService: CommunicationService,
-      private route: ActivatedRoute,
-      private location: Location
-    ) {
-      this.distributorId = this.route.snapshot.paramMap.get('id') ?? '';
-   
-    }
-
-    ngOnInit(): void {
-      this.userProfile = JSON.parse(localStorage.getItem('currentUser')!);
-      this.getAllProducts(this.distributorId);
-    
-    }
-getAllProducts(distributorId: string) {
-  const url = `type2-cart/place-order/products/${distributorId}`;
-  this.authService.get(url).subscribe(
-    (res: any) => {
-      console.log('✅ Full API response:', res);
-
-      // Extract product set (actual cart items)
-      const productSet = res.set || [];
-
-      // Store full response in a local variable
-      this.responseData = res;
-
-      // Assign PO details and product list properly
-      this.purchaseOrder = {
-        supplierName: res.manufacturer.companyName,
-        supplierDetails: res.manufacturer.fullName,
-        supplierAddress: `${res.manufacturer.address}, ${res.manufacturer.city}, ${res.manufacturer.state} - ${res.manufacturer.pinCode}`,
-        supplierContact: res.manufacturer.mobNumber,
-        supplierGSTIN: res.manufacturer.GSTIN || 'GSTIN_NOT_PROVIDED',
-
-        buyerName: res.wholesaler.companyName,
-        buyerAddress: `${res.wholesaler.address}, ${res.wholesaler.city}, ${res.wholesaler.state} - ${res.wholesaler.pinCode}`,
-        buyerPhone: res.wholesaler.mobNumber,
-        buyerEmail: res.wholesaler.email,
-        buyerDetails: res.wholesaler.fullName,
-        buyerGSTIN: res.wholesaler.GSTIN || 'GSTIN_NOT_PROVIDED',
-        logoUrl: res.wholesaler.profileImg || '',
-
-        poDate: new Date().toLocaleDateString(),
-        poNumber: res.poNumber,
-
-        products: productSet,  // ✅ Assign actual product data here
-        ProductDiscount: res.wholesaler.productDiscount !== undefined && res.wholesaler.productDiscount !== ''
-          ? parseFloat(res.wholesaler.productDiscount)
-          : 0,
-      };
-
-      // ✅ Proceed with calculations and table rendering
-      this.calculateTotalsFromRawData(productSet);         // flat table version
-      this.extractSizesAndPrices(productSet);              // if needed
-      this.chunkArray(productSet);                         // if using chunked PDF export
-    },
-    (error) => {
-      console.error('❌ Error fetching products:', error);
-      this.communicationService.customError1('Failed to load purchase order data.');
-    }
-  );
-}
-
-calculateTotalsFromRawData(productSet: any[]): void {
-  let subtotal = 0;
-
-  productSet.forEach((item) => {
-    const quantity = item.quantity || 0;
-    const rate = parseFloat(item.price) || 0;
-    subtotal += quantity * rate;
-  });
-
-  this.Totalsub = subtotal;
-
-  const discount = this.purchaseOrder.ProductDiscount || 0;
-  const discountAmount = (subtotal * discount) / 100;
-  this.discountAmount = discountAmount;
-  this.discountedTotal = subtotal - discountAmount;
-
-  this.calculateGST();
-  this.totalGrandTotal = this.discountedTotal + this.sgst + this.cgst + this.igst;
-}
-
-    extractSizesAndPrices(productSet: any[]): void {
-      const uniqueSizes = new Set<string>();
-      this.priceHeaders = {}; // Reset size-price mapping
-
-      productSet.forEach((product) => {
-        if (product.size && product.price > 0) {
-          uniqueSizes.add(product.size);
-          this.priceHeaders[product.size] = product.price;
-        }
-      });
-
-      this.sizeHeaders = Array.from(uniqueSizes); // Convert Set to Array for the table header
-    }
-
-    processGroupedProducts(productSet: any[]): any[] {
-      const grouped: Record<string, {
-        designNumber: string;
-        rows: { colourName: string; quantities: Record<string, number> }[];
-        subTotal: number;
-        discountedTotal: number;
-        grandTotal: number;
-      }> = {};
-    
-      let totalSub = 0;
-      let totalDiscounted = 0;
-      let totalGrandTotal = 0;
-    
-      // Build groups by designNumber + colourName
-      productSet.forEach(product => {
-        const key = product.designNumber;
-        if (!grouped[key]) {
-          grouped[key] = { designNumber: key, rows: [], subTotal: 0, discountedTotal: 0, grandTotal: 0 };
-        }
-        let row = grouped[key].rows.find(r => r.colourName === product.colourName);
-        if (!row) {
-          row = { colourName: product.colourName, quantities: {} };
-          grouped[key].rows.push(row);
-        }
-        row.quantities[product.size] = (row.quantities[product.size] || 0) + product.quantity;
-      });
-    
-      // Compute subtotals and discounted totals
-      Object.values(grouped).forEach(group => {
-        group.subTotal = group.rows.reduce(
-          (sum, row) => sum + this.calculateTotalPrice(row, false),
-          0
-        );
-        group.discountedTotal = group.rows.reduce(
-          (sum, row) => sum + this.calculateTotalPrice(row, true),
-          0
-        );
-        totalSub        += group.subTotal;
-        totalDiscounted += group.discountedTotal;
-      });
-    
-      // Store overall discount & post-discount subtotal
-      this.discountAmount  = totalSub - totalDiscounted;
-      this.Totalsub        = totalSub;
-      this.discountedTotal = totalDiscounted;
-    
-      // Recompute GST on the post-discount total
-      this.calculateGST();
-    
-      // Compute grand totals
-      // Object.values(grouped).forEach(group => {
-      //   group.grandTotal = group.discountedTotal + this.sgst + this.cgst + this.igst;
-      //   totalGrandTotal += group.grandTotal;
-      // });
-      // this.totalGrandTotal = totalGrandTotal;
-    
-      return Object.values(grouped);
-    }
-    
-    
-    calculateTotalPrice(row: any, applyDiscount: boolean = true): number {
-      let total = 0;
-    
-      // Loop through each size header and calculate the total price
-      this.sizeHeaders.forEach((size) => {
-        // If there is a quantity for the current size, add to the total
-        if (row.quantities[size] > 0) {
-          total += row.quantities[size] * (this.priceHeaders[size] || 0);
-        }
-      });
-    
-      // Apply the discount if flag is true and discount is greater than 0
-      if (applyDiscount && this.purchaseOrder.ProductDiscount > 0) {
-        const discount = (total * this.purchaseOrder.ProductDiscount) / 100;
-        total -= discount;
-      }
-    
-      // Return the final calculated total price (round to 2 decimal places for consistency)
-      return parseFloat(total.toFixed(2));  // Optional: rounds off the value to 2 decimal points
-    }
-    
-    
-    
-
-    calculateGST(): void {
-      const dt = this.discountedTotal;
-    
-      const manuState = this.responseData.manufacturer.state?.trim().toLowerCase();
-      const whoState  = this.responseData.wholesaler.state?.trim().toLowerCase();
-    
-      if (manuState && whoState && manuState === whoState) {
-        // intra-state
-        this.sgst = (dt * 9) / 100;
-        this.cgst = (dt * 9) / 100;
-        this.igst = 0;
-      } else {
-        // inter-state
-        this.sgst = 0;
-        this.cgst = 0;
-        this.igst = (dt * 18) / 100;
-      }
-    
-      this.totalGrandTotal = +(dt + this.sgst + this.cgst + this.igst).toFixed(2);
-    }
-    
-    
-    
-    getStateFromAddress(address: string): string | null {
-      if (!address) {
-        console.error('Address is empty or invalid:', address);
-        return null;  // Address is missing or invalid
-      }
-    
-      console.log('Address:', address);  // Debug the address string
-    
-      // Split the address by commas to separate the components
-      const addressParts = address.split(',');
-    
-      console.log('Address Parts:', addressParts);  // Log the parts for debugging
-    
-      // If there are at least two parts, assume the second to last part is the state
-      if (addressParts.length >= 2) {
-        const state = addressParts[addressParts.length - 1]?.trim();  // Second last part should be the state
-    
-        // Ensure that the state is a valid non-numeric string
-        if (state && isNaN(parseInt(state))) {
-          return state;
-        } else {
-          console.error('Invalid state detected:', state);
-        }
-      }
-    
-      // If state is missing or invalid, return null
-      return null;
-    } 
-    dicountprice: number = 0;
-    calculateDiscountedTotal(subTotal: number): number {
-      // Apply discount (for example, 2% in this case)
-      const discount = (subTotal * 2) / 100;
-      const discountedTotal = subTotal - discount;
-    
-      // Store discount for display
-      this.dicountprice = discount;  
-    
-      return discountedTotal;
-    }
-    
-
-    calculateGrandTotal(subTotal: number, discount: number, igst: number): number {
-      const discountedSubtotal = subTotal - discount;
-      const igstAmount = (discountedSubtotal * igst) / 100;  // Apply 18% IGST
-      return discountedSubtotal + igstAmount;
-    }
-
-    isSizeAvailable(rows: any[], size: string): boolean {
-      return rows.some((row) => row.quantities[size] > 0);
-    }
-    addpo() {
-      const cartBody = { ...this.responseData }; // Create a copy of the response data
-    
-      // Remove unwanted fields
-      delete cartBody.__v;
-      delete cartBody._id;
-      delete cartBody.productId;
-    
-      // Post the cleaned data to the backend
-      this.authService.post('type2-purchaseorder', cartBody).subscribe(
-        (res: any) => {
-          this.communicationService.customSuccess('Purchace Order Genrated Succesfully');
-        },
-        (error) => {
-          this.communicationService.customError1(error.error.message);
-        }
-      );
-    }
-
-    flattenProductData(productSet: any[]): any[] {
-      const flatList: any[] = [];
-  
-      // Iterate through each product in the set
-      productSet.forEach((product) => {
-          const designKey = product.designNumber; // Assuming each product has a designNumber
-  
-          // Check if we already have a row for this designNumber + colourName
-          let existingRow = flatList.find(row => row.designNumber === designKey && row.colourName === product.colourName);
-  
-          // If no existing row, create a new one
-          if (!existingRow) {
-              existingRow = {
-                  designNumber: product.designNumber,
-                  colourName: product.colourName,
-                  colourImage: product.colourImage,
-                  colour: product.colour,
-                  quantities: {},
-                  totalPrice: 0
-              };
-              flatList.push(existingRow);
-          }
-  
-          // Update quantities for this specific size
-          if (product.size && product.quantity) {
-              existingRow.quantities[product.size] = (existingRow.quantities[product.size] || 0) + product.quantity;
-              existingRow.totalPrice += product.quantity * parseFloat(product.price); // Assuming price is a string
-          }
-      });
-  
-      return flatList;
-  }
-  
-  printPurchaseOrder(): void {
-    const data = document.getElementById('purchase-order');
-    if (data) {
-      html2canvas(data, {
-        scale: 3,  // Adjust scale for better quality
-        useCORS: true,
-      }).then((canvas) => {
-        const imgWidth = 208;  // A4 page width in mm
-        const pageHeight = 295;  // A4 page height in mm
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        let heightLeft = imgHeight;
-  
-        const contentDataURL = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');  // Create new PDF
-        const margin = 10;  // Margin for PDF
-        let position = margin;
-  
-        // Add first page
-        pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
-        heightLeft -= pageHeight;
-  
-        // Loop over content to add remaining pages if content exceeds one page
-        while (heightLeft > 0) {
-          pdf.addPage();  // Add new page
-          position = margin - heightLeft;  // Position for the next page
-          pdf.addImage(contentDataURL, 'PNG', margin, position, imgWidth - 2 * margin, imgHeight);
-          heightLeft -= pageHeight;
-        }
-  
-        // Save PDF file
-        pdf.save('purchase-order.pdf');
-      }).catch((error) => {
-        console.error("Error generating PDF:", error);
-      });
-    } else {
-      console.error("Element with id 'purchase-order' not found.");
-    }
-  }
-
-  tableChunks: any[][] = [];
-serialOffset: number[] = [];
-
-chunkArray(array: any[]): void {
-  this.tableChunks = [];
-  this.serialOffset = [];
-
-  const firstPage = 20; // first page item limit
-  const restPages = 30; // subsequent page item limit
-
-  if (array.length <= firstPage) {
-    this.tableChunks.push(array);
-    this.serialOffset.push(0);
-  } else {
-    this.tableChunks.push(array.slice(0, firstPage));
-    this.serialOffset.push(0);
-
-    let start = firstPage;
-    while (start < array.length) {
-      this.tableChunks.push(array.slice(start, start + restPages));
-      this.serialOffset.push(start);
-      start += restPages;
-    }
-  }
-}
-
-  
- printPO(): void {
-  const fullId = 'purchase-order';
-  const pdf = new jsPDF('p', 'mm', 'a4');
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const margin = 10;
-  const chunkCount = this.tableChunks.length;
-  let currentChunk = 0;
-
-  const renderChunk = () => {
-    const fullContent = document.getElementById(fullId);
-    if (!fullContent) return;
-
-    const fullClone = fullContent.cloneNode(true) as HTMLElement;
-
-    // ✅ Hide all table chunks except current one
-    const chunks = fullClone.querySelectorAll('.table-chunk');
-    chunks.forEach((div, i) => {
-      (div as HTMLElement).style.display = i === currentChunk ? 'block' : 'none';
-    });
-
-    // ✅ Remove the header on all pages after the first
-    if (currentChunk > 0) {
-      const header = fullClone.querySelector('#purchase-header');
-      if (header) header.remove();
-    }
-
-    const tempWrapper = document.createElement('div');
-    tempWrapper.style.position = 'fixed';
-    tempWrapper.style.top = '-10000px';
-    tempWrapper.style.left = '-10000px';
-    tempWrapper.style.width = '1000px';
-    tempWrapper.style.zIndex = '-9999';
-    tempWrapper.style.opacity = '0';
-    tempWrapper.appendChild(fullClone);
-    document.body.appendChild(tempWrapper);
-
-    html2canvas(fullClone, {
-      scale: 2,
-      useCORS: true,
-      scrollY: -window.scrollY,
-    }).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      const imgProps = pdf.getImageProperties(imgData);
-      const imgWidth = pageWidth - margin * 2;
-      const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-
-      if (currentChunk > 0) pdf.addPage();
-      pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
-
-      document.body.removeChild(tempWrapper);
-
-      currentChunk++;
-      if (currentChunk < chunkCount) {
-        renderChunk();
-      } else {
-   const poDate = this.purchaseOrder.poDate?.replace(/\//g, '-') || 'no-date';
-const poNumber = this.purchaseOrder.poNumber || 'no-number';
-pdf.save(`PO_${poDate}_${poNumber}.pdf`);
-      }
-    });
+  purchaseOrder: any = {
+    supplierName: '',
+    supplierDetails: '',
+    supplierAddress: '',
+    supplierContact: '',
+    supplierGSTIN: '',
+    logoUrl: 'assets/images/company_logo.jpg',
+    orderDate: new Date().toLocaleDateString(),
+    buyerName: '',
+    buyerAddress: '',
+    buyerPhone: '',
+    buyerGSTIN: '',
+    products: [],
+    totalAmount: 0,
+    ProductDiscount: 0,
   };
 
-  renderChunk();
+  responseData: any;
+  wholesalerEmail: string;
+  manufacturerEmail: string;
+
+  products: any[] = [];
+  userProfile: any;
+  sizeHeaders: string[] = [];
+  priceHeaders: { [size: string]: number } = {};
+
+  totalGrandTotal: number = 0;
+  Totalsub: number = 0;
+  dicountprice: number = 0;
+  discountedTotal: number = 0;
+
+  sgst: number = 0;
+  cgst: number = 0;
+  igst: number = 0;
+  isIntraState: boolean = false;
+
+  tableChunks: any[][] = [];
+  serialOffset: number[] = [];
+
+  constructor(
+    public authService: AuthService,
+    private router: Router,
+    private communicationService: CommunicationService,
+    private route: ActivatedRoute,
+    private location: Location,
+    private amountInWordsPipe: AmountInWordsPipe,
+  ) {
+    this.wholesalerEmail = this.route.snapshot.paramMap.get('wholesalerEmail') ?? '';
+    this.manufacturerEmail = this.route.snapshot.paramMap.get('manufacturerEmail') ?? '';
+  }
+
+  ngOnInit(): void {
+    this.userProfile = JSON.parse(localStorage.getItem('currentUser')!);
+    this.getAllProducts(this.wholesalerEmail, this.manufacturerEmail);
+  }
+
+  getAllProducts(wholesalerEmail: string, manufacturerEmail: string): void {
+    const url = `wholesaler-cart/cart-products/po?wholesalerEmail=${wholesalerEmail}&manufacturerEmail=${manufacturerEmail}`;
+    this.authService.get(url).subscribe(
+      (res: any) => {
+        console.log('✅ Full API response:', res);
+        this.responseData = res;
+
+        const productSet = res.products?.[0]?.set || [];
+
+        this.purchaseOrder = {
+          // Supplier = Manufacturer
+          supplierName: res.manufacturer?.companyName || '',
+          supplierDetails: res.manufacturer?.fullName || '',
+          supplierAddress: `${res.manufacturer?.address || ''} ${res.manufacturer?.city || ''} ${res.manufacturer?.pinCode || ''} ${res.manufacturer?.state || ''}`,
+          supplierState: res.manufacturer?.state || '',
+          supplierContact: res.manufacturer?.mobNumber || '',
+          supplierGSTIN: res.manufacturer?.GSTIN || '',
+          supplierEmail: res.manufacturer?.email || '',
+          supplierPAN: res.manufacturer?.pan || '',
+
+          // Buyer = Wholesaler
+          buyerName: res.wholesaler?.companyName || '',
+          buyerDetails: res.wholesaler?.fullName || '',
+          buyerEmail: res.wholesaler?.email || '',
+          buyerAddress: `${res.wholesaler?.address || ''} ${res.wholesaler?.city || ''} ${res.wholesaler?.pinCode || ''} ${res.wholesaler?.state || ''}`,
+          buyerState: res.wholesaler?.state || '',
+          buyerPhone: res.wholesaler?.mobNumber || '',
+          buyerGSTIN: res.wholesaler?.GSTIN || '',
+          buyerPAN: res.wholesaler?.pan || '',
+          logoUrl: res.wholesaler?.profileImg || 'assets/images/company_logo.jpg',
+
+          poDate: new Date().toLocaleDateString(),
+          poNumber: res.orderNumber || '',      // ✅ was res.poNumber
+          orderNumber: res.orderNumber || '',   // ✅ was res.poNumber
+          // orderNumber: res.poNumber || '',
+
+          products: productSet,
+          ProductDiscount: res.wholesaler?.productDiscount
+            ? parseFloat(res.wholesaler.productDiscount)
+            : 0,
+        };
+
+        this.products = productSet;
+        this.extractSizesAndPrices(productSet);
+        this.calculateTotalsFromRawData(productSet);
+        this.chunkArray(productSet);
+        this.updateStateType();
+      },
+      (error) => {
+        console.error('❌ Error fetching products:', error);
+        this.communicationService.customError1('Failed to load purchase order data.');
+      }
+    );
+  }
+
+  calculateTotalsFromRawData(productSet: any[]): void {
+    let subtotal = 0;
+    productSet.forEach((item) => {
+      const quantity = item.quantity || 0;
+      const rate = parseFloat(item.price) || 0;
+      subtotal += quantity * rate;
+    });
+
+    this.Totalsub = subtotal;
+
+    const discount = this.purchaseOrder.ProductDiscount || 0;
+    const discountAmount = (subtotal * discount) / 100;
+    this.dicountprice = discountAmount;
+    this.discountedTotal = subtotal - discountAmount;
+
+    this.calculateGST();
+    this.totalGrandTotal = this.discountedTotal + this.sgst + this.cgst + this.igst;
+  }
+
+  extractSizesAndPrices(productSet: any[]): void {
+    const uniqueSizes = new Set<string>();
+    this.priceHeaders = {};
+    productSet.forEach((product) => {
+      if (product.size && product.price > 0) {
+        uniqueSizes.add(product.size);
+        this.priceHeaders[product.size] = product.price;
+      }
+    });
+    this.sizeHeaders = Array.from(uniqueSizes);
+  }
+
+  calculateGST(): void {
+    const dt = this.discountedTotal;
+    const manuState = this.responseData?.manufacturer?.state?.trim().toLowerCase();
+    const whoState = this.responseData?.wholesaler?.state?.trim().toLowerCase();
+
+    if (manuState && whoState && manuState === whoState) {
+      this.sgst = (dt * 9) / 100;
+      this.cgst = (dt * 9) / 100;
+      this.igst = 0;
+    } else {
+      this.sgst = 0;
+      this.cgst = 0;
+      this.igst = (dt * 18) / 100;
+    }
+
+    this.totalGrandTotal = +(dt + this.sgst + this.cgst + this.igst).toFixed(2);
+  }
+
+  updateStateType(): void {
+    const buyerState = this.purchaseOrder.buyerState?.trim().toLowerCase();
+    const supplierState = this.purchaseOrder.supplierState?.trim().toLowerCase();
+    this.isIntraState = !!(buyerState && supplierState && buyerState === supplierState);
+  }
+
+  get colspan(): number {
+    return this.isIntraState ? 15 : 14;
+  }
+
+  getGstAmounts(item: any) {
+    const quantity = Number(item.quantity) || 0;
+    const rate = Number(item.price) || 0;
+    const gstRate = Number(item.hsnGst) || 0;
+
+    const discountPercent = Number(this.purchaseOrder.ProductDiscount) || 0;
+    const discountedRate = rate - (rate * discountPercent / 100);
+    const taxable = quantity * discountedRate;
+
+    let cgst = 0, sgst = 0, igst = 0;
+    if (this.isIntraState) {
+      cgst = (taxable * gstRate / 2) / 100;
+      sgst = (taxable * gstRate / 2) / 100;
+    } else {
+      igst = (taxable * gstRate) / 100;
+    }
+
+    const totalWithGst = taxable + cgst + sgst + igst;
+
+    return {
+      originalRate: isNaN(rate) ? 0 : rate,
+      discountedRate: isNaN(discountedRate) ? 0 : discountedRate,
+      taxable: isNaN(taxable) ? 0 : taxable,
+      gstRate: isNaN(gstRate) ? 0 : gstRate,
+      cgst: isNaN(cgst) ? 0 : cgst,
+      sgst: isNaN(sgst) ? 0 : sgst,
+      igst: isNaN(igst) ? 0 : igst,
+      totalWithGst: isNaN(totalWithGst) ? 0 : totalWithGst
+    };
+  }
+
+  get orderTotals() {
+    let totalQty = 0;
+    let totalTaxable = 0;
+    let totalCGST = 0;
+    let totalSGST = 0;
+    let totalIGST = 0;
+    let totalWithGST = 0;
+
+    for (const item of this.products) {
+      const gst = this.getGstAmounts(item);
+      totalQty += Number(item.quantity) || 0;
+      totalTaxable += gst.taxable || 0;
+      totalCGST += gst.cgst || 0;
+      totalSGST += gst.sgst || 0;
+      totalIGST += gst.igst || 0;
+      totalWithGST += gst.totalWithGst || 0;
+    }
+
+    return {
+      totalQty: isNaN(totalQty) ? 0 : totalQty,
+      totalTaxable: isNaN(totalTaxable) ? 0 : totalTaxable,
+      totalCGST: isNaN(totalCGST) ? 0 : totalCGST,
+      totalSGST: isNaN(totalSGST) ? 0 : totalSGST,
+      totalIGST: isNaN(totalIGST) ? 0 : totalIGST,
+      totalWithGST: isNaN(totalWithGST) ? 0 : totalWithGST
+    };
+  }
+
+  get totalWithGSTBeforeDiscount(): number {
+    return this.orderTotals.totalWithGST || 0;
+  }
+
+  get totalGSTAmount(): number {
+    const totals = this.orderTotals;
+    const total = totals.totalCGST + totals.totalSGST + totals.totalIGST;
+    return isNaN(total) ? 0 : total;
+  }
+
+  get discountAmount(): number {
+    const discountPercent = Number(this.purchaseOrder.ProductDiscount) || 0;
+    let totalWithoutDiscount = 0;
+    for (const item of this.products) {
+      totalWithoutDiscount += (Number(item.quantity) || 0) * (Number(item.price) || 0);
+    }
+    return (totalWithoutDiscount * discountPercent) / 100;
+  }
+
+  get actualGrandTotal(): number {
+    return this.orderTotals.totalWithGST;
+  }
+
+  isSizeAvailable(rows: any[], size: string): boolean {
+    return rows.some((row) => row.quantities[size] > 0);
+  }
+
+  async addpo(): Promise<void> {
+  try {
+    const transportDetails = await this.postTransporterDetails();
+    if (!transportDetails) return;
+
+    const cartData = this.responseData;
+
+    const poBody = {
+      statusAll: 'pending',
+      wholesalerEmail: cartData.wholesaler?.email || '',
+      manufacturerEmail: cartData.manufacturer?.email || '',
+      discount: String(cartData.wholesaler?.productDiscount || '0'),
+      wholesalerPODateCreated: new Date(),
+      poNumber: cartData.orderNumber || '',
+      cartId: cartData.products?.[0]?._id || '',
+
+      // ✅ Send raw set directly like reference, just add model fields
+      // set: (cartData.products?.[0]?.set || []).map((item: any) => ({
+      //   ...item,                                    // ✅ spread everything as-is
+      //   totalQuantity: item.quantity,               // ✅ model field
+      //   expectedQty: item.quantity,                 // ✅ model field
+      //   colourImage: item.colourImage || '',        // ✅ ensure not null
+      //   status: 'pending',
+      //   confirmed: false,
+      //   rejected: false,
+      // })),
+
+      set: cartData.products?.[0]?.set || [],
+
+      transportDetails: transportDetails,
+
+      manufacturer: {
+        email: cartData.manufacturer?.email || '',
+        fullName: cartData.manufacturer?.fullName || '',
+        companyName: cartData.manufacturer?.companyName || '',
+        address: cartData.manufacturer?.address || '',
+        state: cartData.manufacturer?.state || '',
+        country: cartData.manufacturer?.country || 'India',
+        pinCode: cartData.manufacturer?.pinCode || '',
+        mobNumber: cartData.manufacturer?.mobNumber || '',
+        GSTIN: cartData.manufacturer?.GSTIN || '',
+        profileImg: cartData.manufacturer?.profileImg || '',
+      },
+
+      wholesaler: {
+        email: cartData.wholesaler?.email || '',
+        fullName: cartData.wholesaler?.fullName || '',
+        companyName: cartData.wholesaler?.companyName || '',
+        address: cartData.wholesaler?.address || '',
+        state: cartData.wholesaler?.state || '',
+        country: cartData.wholesaler?.country || 'India',
+        pinCode: cartData.wholesaler?.pinCode || '',
+        mobNumber: cartData.wholesaler?.mobNumber || '',
+        GSTIN: cartData.wholesaler?.GSTIN || '',
+        productDiscount: String(cartData.wholesaler?.productDiscount || ''),
+        category: cartData.wholesaler?.category || '',
+        profileImg: cartData.wholesaler?.profileImg || '',
+      }
+    };
+
+    this.authService.post('po-wholesaler-to-manufacture', poBody).subscribe(
+      (res: any) => {
+        this.communicationService.customSuccess('Purchase Order Generated Successfully');
+        this.navigateFun();
+      },
+      (error) => {
+        this.communicationService.customError1(error.error.message);
+      }
+    );
+
+  } catch (error) {
+    console.error('Error in addpo:', error);
+  }
 }
 
 
+  async postTransporterDetails(): Promise<any> {
+    const { value: transportType } = await Swal.fire({
+      title: 'Select Transport Type',
+      input: 'select',
+      inputOptions: { 'self': 'Self', 'third': '3rd Party' },
+      inputPlaceholder: 'Select transport type',
+      showCancelButton: true,
+      confirmButtonText: 'Continue',
+      cancelButtonText: 'Cancel',
+      allowOutsideClick: false,
+      inputValidator: (value) => !value ? 'Please select a transport type!' : null
+    });
 
-  navigateFun() {
+    if (!transportType) return null;
+
+    if (transportType === 'self') {
+      return {
+        transportType: 'Self',
+        modeOfTransport: 'self',
+        transporterCompanyName: this.purchaseOrder.buyerName,
+        contactNumber: parseInt(this.purchaseOrder.buyerPhone) || 0,
+        contactPersonName: this.purchaseOrder.buyerDetails
+      };
+    }
+
+    const { value: formValues } = await Swal.fire({
+      title: 'Transporter Details',
+      html: `
+        <div style="text-align: left; max-height: 400px; overflow-y: auto;">
+          <div class="mb-3">
+            <label><strong>Mode of Transport *</strong></label>
+            <select id="modeOfTransport" class="swal2-input" style="width: 85%;">
+              <option value="">Select Mode</option>
+              <option value="road">Road</option>
+              <option value="railway">Railway</option>
+              <option value="air">Air</option>
+              <option value="sea">Sea</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label><strong>Transporter Company Name *</strong></label>
+            <input id="transporterCompanyName" class="swal2-input" placeholder="Company name" style="width: 80%;">
+          </div>
+          <div class="mb-3">
+            <label><strong>Contact Person Name *</strong></label>
+            <input id="contactPersonName" class="swal2-input" placeholder="Contact person" style="width: 80%;">
+          </div>
+          <div class="mb-3">
+            <label><strong>Contact Number *</strong></label>
+            <input id="contactNumber" class="swal2-input" type="tel" placeholder="10-digit number" style="width: 80%;">
+          </div>
+          <div class="mb-3">
+            <label>Alternative Contact Number</label>
+            <input id="altContactNumber" class="swal2-input" type="tel" placeholder="Alt contact number" style="width: 80%;">
+          </div>
+          <div class="mb-3">
+            <label>Vehicle Number</label>
+            <input id="vehicleNumber" class="swal2-input" placeholder="Vehicle number" style="width: 80%;">
+          </div>
+          <div class="mb-3">
+            <label>Tracking ID</label>
+            <input id="trackingId" class="swal2-input" placeholder="Tracking / AWB / LR No." style="width: 80%;">
+          </div>
+          <div class="mb-3">
+            <label>Delivery Address</label>
+            <textarea id="deliveryAddress" class="swal2-textarea" style="width: 80%; height: 60px;">${this.purchaseOrder.buyerAddress}</textarea>
+          </div>
+          <div class="mb-3">
+            <label>GST Number of Transporter</label>
+            <input id="gstNumber" class="swal2-input" placeholder="GST number" style="width: 80%;">
+          </div>
+          <div class="mb-3">
+            <label>Remarks</label>
+            <textarea id="remarks" class="swal2-textarea" placeholder="Remarks" style="width: 80%; height: 60px;"></textarea>
+          </div>
+          <div class="mb-3">
+            <label>Note</label>
+            <textarea id="note" class="swal2-textarea" placeholder="Additional notes" style="width: 80%; height: 60px;"></textarea>
+          </div>
+        </div>
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Submit',
+      cancelButtonText: 'Cancel',
+      width: '600px',
+      allowOutsideClick: false,
+      preConfirm: () => {
+        const modeOfTransport = (document.getElementById('modeOfTransport') as HTMLSelectElement).value;
+        const transporterCompanyName = (document.getElementById('transporterCompanyName') as HTMLInputElement).value;
+        const contactPersonName = (document.getElementById('contactPersonName') as HTMLInputElement).value;
+        const contactNumber = (document.getElementById('contactNumber') as HTMLInputElement).value;
+        const altContactNumber = (document.getElementById('altContactNumber') as HTMLInputElement).value;
+        const vehicleNumber = (document.getElementById('vehicleNumber') as HTMLInputElement).value;
+        const trackingId = (document.getElementById('trackingId') as HTMLInputElement).value;
+        const deliveryAddress = (document.getElementById('deliveryAddress') as HTMLTextAreaElement).value;
+        const gstNumber = (document.getElementById('gstNumber') as HTMLInputElement).value;
+        const remarks = (document.getElementById('remarks') as HTMLTextAreaElement).value;
+        const note = (document.getElementById('note') as HTMLTextAreaElement).value;
+
+        if (!modeOfTransport) { Swal.showValidationMessage('Mode of Transport is required'); return false; }
+        if (!transporterCompanyName) { Swal.showValidationMessage('Transporter Company Name is required'); return false; }
+        if (!contactPersonName) { Swal.showValidationMessage('Contact Person Name is required'); return false; }
+        if (!contactNumber) { Swal.showValidationMessage('Contact Number is required'); return false; }
+        if (!/^\d{10}$/.test(contactNumber)) { Swal.showValidationMessage('Contact Number must be 10 digits'); return false; }
+
+        return {
+          transportType: '3rd Party',
+          modeOfTransport,
+          transporterCompanyName,
+          contactPersonName,
+          contactNumber: parseInt(contactNumber),
+          altContactNumber: altContactNumber ? parseInt(altContactNumber) : undefined,
+          vehicleNumber: vehicleNumber || undefined,
+          trackingId: trackingId || undefined,
+          deliveryAddress: deliveryAddress || undefined,
+          gstNumber: gstNumber || undefined,
+          remarks: remarks || undefined,
+          note: note || undefined,
+        };
+      }
+    });
+
+    return formValues || null;
+  }
+
+  navigateFun(): void {
     this.location.back();
   }
 
+  chunkArray(array: any[]): void {
+    this.tableChunks = [];
+    this.serialOffset = [];
+    const firstPage = 20;
+    const restPages = 30;
+
+    if (array.length <= firstPage) {
+      this.tableChunks.push(array);
+      this.serialOffset.push(0);
+    } else {
+      this.tableChunks.push(array.slice(0, firstPage));
+      this.serialOffset.push(0);
+      let start = firstPage;
+      while (start < array.length) {
+        this.tableChunks.push(array.slice(start, start + restPages));
+        this.serialOffset.push(start);
+        start += restPages;
+      }
+    }
   }
+
+  downloadPO(): void {
+    const element = document.getElementById('purchase-order');
+    if (!element) return;
+
+    html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 10;
+      const imgWidth = pageWidth - margin * 2;
+
+      const pxFullHeight = canvas.height;
+      const pxPageHeight = Math.floor(((pageHeight - margin * 2) * canvas.width) / imgWidth);
+      let pxPage = 0;
+      let pageNum = 1;
+      const totalPages = Math.ceil(pxFullHeight / pxPageHeight);
+
+      while (pxPage < pxFullHeight) {
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = Math.min(pxPageHeight, pxFullHeight - pxPage);
+        const pageCtx = pageCanvas.getContext('2d');
+        if (pageCtx) {
+          pageCtx.drawImage(canvas, 0, pxPage, canvas.width, pageCanvas.height,
+            0, 0, canvas.width, pageCanvas.height);
+        }
+        const pageImgData = pageCanvas.toDataURL('image/png');
+        if (pageNum > 1) pdf.addPage();
+        pdf.addImage(pageImgData, 'PNG', margin, margin, imgWidth,
+          (pageCanvas.height * imgWidth) / pageCanvas.width);
+        pdf.setFontSize(10);
+        pdf.text(`Page ${pageNum} of ${totalPages}`, pageWidth / 2, pageHeight - 5, { align: 'center' });
+        pxPage += pxPageHeight;
+        pageNum++;
+      }
+
+      const poDate = this.purchaseOrder.poDate?.replace(/\//g, '-') || 'no-date';
+      const poNumber = this.purchaseOrder.poNumber || 'no-number';
+      pdf.save(`PO_${poDate}_${poNumber}.pdf`);
+    });
+  }
+}

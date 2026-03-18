@@ -44,8 +44,22 @@
                     <td>{{ i + 1 }}</td>
                     <td>{{ item.designNumber }}</td>
                     <td>{{ item.colourName }}</td>
-                    <td>
-                      <img [src]="item.colourImage" alt="Colour Image" style="width: 50px; height: 50px; object-fit: cover;" />
+                    <td style="text-align: center; vertical-align: middle;">
+                      <!-- Colour square fallback -->
+                      <div
+                        *ngIf="!item.colourImage || item.colourImage === ''"
+                        [style.background-color]="item.colour || '#e0e0e0'"
+                        [title]="item.colourName"
+                        style="width: 50px; height: 50px; border-radius: 4px; display: inline-block;">
+                      </div>
+
+                      <!-- Image -->
+                      <img
+                        *ngIf="item.colourImage && item.colourImage !== ''"
+                        [src]="item.colourImage"
+                        [alt]="item.colourName"
+                        (error)="handleImageError($event, item)"
+                        style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; display: inline-block;" />
                     </td>
                     <td>{{ item.size }}</td>
                     <td>{{ item.price | indianCurrency}}</td>

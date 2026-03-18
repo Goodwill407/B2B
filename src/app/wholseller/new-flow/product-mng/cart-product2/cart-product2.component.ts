@@ -45,7 +45,7 @@
     }
   
     getAllProducts(email: string): void {
-      const url = `type2-cart?email=${email}`;
+      const url = `wholesaler-cart?wholesalerEmail=${email}`;
       this.authService.get(url).subscribe(
         (res: any) => {
           if (res && res.results) {
@@ -85,7 +85,7 @@
       }).then((result) => {
         if (result.isConfirmed && result.value) {
           const updatedQuantity = result.value;
-          const url = `/type2-cart/updatecart/${cartId}/set/${item._id}`;
+          const url = `/wholesaler-cart/updatecart/${cartId}/set/${item._id}`;
     
           this.authService.patchpimage(url, { quantity: updatedQuantity }).subscribe({
             next: () => {
@@ -121,7 +121,7 @@
         confirmButtonText: 'Yes, delete it!',
       }).then((result) => {
         if (result.isConfirmed) {
-          const url = `type2-cart/${cartId}/set/${item._id}`;
+          const url = `wholesaler-cart/${cartId}/set/${item._id}`;
     
           this.authService.delete2(url).subscribe({
             next: () => {
@@ -154,7 +154,7 @@
         cancelButtonText: 'Cancel'
       }).then((result) => {
         if (result.isConfirmed) {
-          const url = `type2-cart/${prod._id}`;
+          const url = `wholesaler-cart/${prod._id}`;
           this.authService.delete2(url).subscribe({
             next: () => {
               this.products = this.products.filter(p => p._id !== prod._id);
@@ -279,17 +279,36 @@
       return { subTotal, gst, grandTotal };
     }
   
+    // placeOrder(prod: any): void {
+    //   if (!prod || !prod._id) {
+    //     console.error('No distributor ID found:', prod);
+    //     return;
+    //   }
+    //   this.authService.setOrderData({ distributorId: prod._id });
+    //   this.router.navigate(['wholesaler/new/product/viewpo', prod._id]);
+    // }
+
     placeOrder(prod: any): void {
-      if (!prod || !prod._id) {
-        console.error('No distributor ID found:', prod);
-        return;
-      }
-      this.authService.setOrderData({ distributorId: prod._id });
-      this.router.navigate(['wholesaler/new/product/viewpo', prod._id]);
-    }
+  if (!prod?.wholesalerEmail || !prod?.manufacturerEmail) {
+    console.error('Missing emails for PO navigation:', prod);
+    return;
+  }
+  this.router.navigate(['wholesaler/new/product/viewpo', prod.wholesalerEmail, prod.manufacturerEmail]);
+}
+
 
     trackByManufacturer(index: number, item: any): string {
       return item.manufacturer._id || item.manufacturer.fullName;
     }
+
+    handleImageError(event: any, item: any): void {
+  if (item.colour) {
+    item.colourImage = '';         // triggers colour square to show
+    event.target.style.display = 'none';
+  } else {
+    event.target.src = 'assets/images/Product_Alt.jpeg';
+  }
+}
+
   }
   

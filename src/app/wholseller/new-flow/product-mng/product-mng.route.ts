@@ -16,6 +16,8 @@ import { MdeliveryChallanComponent } from "./mdelivery-challan/mdelivery-challan
 import { PoQuantityUpdateFromMfgComponent } from "./po-quantity-update-from-mfg/po-quantity-update-from-mfg.component";
 import { ViewQuantityUpdaedPoOfMfgComponent } from "./po-quantity-update-from-mfg/view-quantity-updaed-po-of-mfg/view-quantity-updaed-po-of-mfg.component";
 import { ViewPartialQuantityRetPoComponent } from "./po-quantity-update-from-mfg/view-partial-quantity-ret-po/view-partial-quantity-ret-po.component";
+import { UpdatePartialMgfWhPoComponent } from "./po-quantity-update-from-mfg/update-partial-mgf-wh-po/update-partial-mgf-wh-po.component";
+import { MfgWhlInvoiceViewComponent } from "app/manufacturer/new-flow/order-managment/whl-invoice/mfg-whl-invoice-view/mfg-whl-invoice-view.component";
 
 
 export const ProductMng:Route[]=[
@@ -27,13 +29,15 @@ export const ProductMng:Route[]=[
     {path: 'view-product-price', component: EditPriceComponent},
     // {path: 'wishlist-product', component: WishlistProductComponent},
     {path: 'add-to-cart', component: CartProduct2Component},
-    {path: 'viewpo/:id', component: GenratepoComponent },
+    {path: 'viewpo/:wholesalerEmail/:manufacturerEmail', component: GenratepoComponent },
+    { path: 'update-partial-mfg-wh-po/:id', component: UpdatePartialMgfWhPoComponent },
     {path: 'wholesaler-discount', component: WholesalerDiscountComponent},
     {path: 'getmanpo', component: ReMaPoShowComponent },
     {path: 'po-quantity-updated-bymfg', component: PoQuantityUpdateFromMfgComponent},
     {path: 'view-po-quantity-updated-bymfg', component: ViewQuantityUpdaedPoOfMfgComponent},
-    {path: 'view-partial-quantity-ret-po', component:ViewPartialQuantityRetPoComponent}
+    {path: 'view-partial-quantity-ret-po', component:ViewPartialQuantityRetPoComponent},
     
+     { path: 'mfg-invoice-view/:id', component: MfgWhlInvoiceViewComponent },
     
     // {path: 'ordered-products', component:OrderedProductComponent},
     // {path: 'view-Product', component:ViewProductOwnComponent},

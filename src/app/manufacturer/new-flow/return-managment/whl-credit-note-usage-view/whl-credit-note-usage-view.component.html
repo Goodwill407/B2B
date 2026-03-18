@@ -1,0 +1,147 @@
+<section class="content">
+  <div class="content-block">
+    <h4 class="mt-4">
+      <i class="bi bi-wallet2 h3"></i> Credit Note Usage Details
+    </h4>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center mt-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2">Loading wallet details...</p>
+    </div>
+
+    <!-- Main Content -->
+    <div *ngIf="!isLoading && walletData">
+
+      <!-- Summary Card -->
+      <div class="card mt-3 p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">
+            <i class="bi bi-info-circle-fill text-primary"></i> Wallet Summary
+          </h5>
+          <button class="btn btn-primary" (click)="downloadPDF()">
+            <i class="bi bi-download me-2"></i> Download PDF
+          </button>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="info-item mb-3">
+              <label class="text-muted">Wholesaler Email:</label>  <!-- ✅ -->
+              <p class="fw-bold mb-0">{{ walletData.wholesalerEmail }}</p>
+            </div>
+            <div class="info-item mb-3">
+              <label class="text-muted">Manufacturer Email:</label>
+              <p class="fw-bold mb-0">{{ walletData.manufacturerEmail }}</p>
+            </div>
+            <div class="info-item mb-3">
+              <label class="text-muted">Currency:</label>
+              <p class="fw-bold mb-0">{{ walletData.currency }}</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="info-item mb-3">
+              <label class="text-muted">Current Balance:</label>
+              <p class="fw-bold text-success fs-4 mb-0">₹{{ walletData.balance | number:'1.2-2' }}</p>
+            </div>
+            <div class="info-item mb-3">
+              <label class="text-muted">Total Credited:</label>
+              <p class="fw-bold text-primary mb-0">₹{{ walletData.totalCredited | number:'1.2-2' }}</p>
+            </div>
+            <div class="info-item mb-3">
+              <label class="text-muted">Total Debited:</label>
+              <p class="fw-bold text-danger mb-0">₹{{ walletData.totalDebited | number:'1.2-2' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transactions Table -->
+      <div class="card mt-4 p-4">
+        <h5 class="mb-3">
+          <i class="bi bi-list-ul text-primary"></i> Transaction History
+          <span class="badge bg-info ms-2">{{ transactions.length }} Transactions</span>
+        </h5>
+
+        <p-table
+          [value]="transactions"
+          [tableStyle]="{ 'min-width': '50rem' }"
+          styleClass="p-datatable-striped"
+          [paginator]="transactions.length > 10"
+          [rows]="10"
+          [showCurrentPageReport]="true"
+          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} transactions">
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 60px;">Sr. No.</th>
+              <th>Date & Time</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Balance After</th>
+              <th>Credit Note #</th>
+              <th>Credit Invoice #</th>
+              <th>Debit Invoice #</th>
+              <th>Description</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-transaction let-rowIndex="rowIndex">
+            <tr>
+              <td class="text-center">{{ rowIndex + 1 }}</td>
+              <td>{{ transaction.createdAt | date:'medium' }}</td>
+              <td>
+                <span [class]="'badge bg-' + getTransactionTypeClass(transaction.type)">
+                  <i [class]="'bi ' + getTransactionTypeIcon(transaction.type) + ' me-1'"></i>
+                  {{ transaction.type | uppercase }}
+                </span>
+              </td>
+              <td class="fw-bold">
+                <span [class]="transaction.type === 'credit' ? 'text-success' : 'text-danger'">
+                  {{ transaction.type === 'credit' ? '+' : '-' }}₹{{ transaction.amount | number:'1.2-2' }}
+                </span>
+              </td>
+              <td class="text-success fw-bold">₹{{ transaction.balanceAfter | number:'1.2-2' }}</td>
+              <td class="text-center">
+                <span class="badge bg-secondary">{{ transaction.creditNoteNumber || '-' }}</span>
+              </td>
+              <td class="text-center">
+                <span class="badge bg-info">{{ transaction.creditInvoiceNumber || '-' }}</span>
+              </td>
+              <td class="text-center">
+                <span class="badge bg-warning">{{ transaction.debitInvoiceNumber || '-' }}</span>
+              </td>
+              <td>
+                <small class="text-muted">{{ transaction.description }}</small>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+
+        <div *ngIf="transactions.length === 0" class="text-center mt-4 mb-4">
+          <i class="bi bi-inbox h1 text-muted"></i>
+          <p class="text-muted">No transactions found.</p>
+        </div>
+      </div>
+
+      <!-- Back Button -->
+      <div class="mt-4 mb-4">
+        <button class="btn btn-secondary" (click)="goBack()">
+          <i class="bi bi-arrow-left me-2"></i> Go Back
+        </button>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!isLoading && !walletData" class="card mt-3 p-5 text-center">
+      <i class="bi bi-exclamation-triangle h1 text-warning"></i>
+      <h5 class="mt-3">No Data Found</h5>
+      <p class="text-muted">Unable to load wallet details. Please try again.</p>
+      <button class="btn btn-primary mt-3" (click)="goBack()">
+        <i class="bi bi-arrow-left me-2"></i> Go Back
+      </button>
+    </div>
+  </div>
+</section>

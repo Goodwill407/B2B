@@ -1,68 +1,423 @@
-/* edit-gen-wholsaler-po-order.component.scss */
+/* ret-wh-po-qty-update.component.scss */
+
+/* Main purchase order container */
 #purchase-order {
   max-width: 1100px;
   margin: 0 auto;
   font-family: Arial, sans-serif;
   border: 1px solid #ccc;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
 }
 
-/* Header */
+/* Header section styling */
 #purchase-order .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 2px solid #ccc;
   padding-bottom: 10px;
+  margin-bottom: 15px;
 }
+
 #purchase-order h1 {
   font-size: 24px;
+  font-weight: bold;
   margin: 0;
+  color: #333;
+  letter-spacing: 1px;
 }
 
-/* Wholesaler Info */
-#purchase-order .border {
-  background: #fff;
+#purchase-order .header .text-end p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
 }
+
+/* Navigation button styling */
+.btn.navigate {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-right: 10px;
+  transition: color 0.3s ease;
+}
+
+.btn.navigate:hover {
+  color: #0056b3;
+}
+
+.btn.navigate i {
+  font-size: 1.5rem;
+}
+
+/* Content header */
+.content-block h4 {
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.content-block h4 span {
+  margin-left: 10px;
+}
+
+/* Info cards styling - uniform for all cards */
+#purchase-order .border {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
 #purchase-order .border img {
   flex-shrink: 0;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
 }
 
-/* Table */
+#purchase-order .border h5 {
+  color: #495057;
+  font-weight: 600;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+}
+
+#purchase-order .border p {
+  color: #6c757d;
+  line-height: 1.4;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+#purchase-order .border p strong {
+  color: #333;
+  font-weight: 600;
+  min-width: 140px;
+  display: inline-block;
+}
+
+/* Table styling */
 #purchase-order .table.table-bordered {
   margin-top: 20px;
   width: 100%;
-}
-#purchase-order .table th,
-#purchase-order .table td {
-  padding: 4px 6px;
+  border-collapse: collapse;
   font-size: 14px;
+}
+
+#purchase-order .table th {
+  background-color: #f1f3f4;
+  padding: 8px 6px;
+  font-size: 13px;
+  font-weight: 600;
   vertical-align: middle;
+  text-align: center;
+  border: 1px solid #dee2e6;
+  color: #495057;
 }
+
+#purchase-order .table td {
+  padding: 6px 4px;
+  font-size: 13px;
+  vertical-align: middle;
+  text-align: center;
+  border: 1px solid #dee2e6;
+  color: #333;
+}
+
+/* Enhanced row highlighting */
 #purchase-order .partial-row {
-  background-color: #fffbe7 !important;
+  background-color: #fff8e1 !important;
+  border-left: 4px solid #ff9800;
 }
+
+/* Enhanced stock level indicators */
 #purchase-order .low-stock {
   background-color: #fff3cd !important;
+  color: #856404;
+  font-weight: 600;
+  border: 2px solid #ffc107;
 }
-#purchase-order .no-stock {
+
+#purchase-order .out-of-stock {
   background-color: #f8d7da !important;
   color: #b71c1c;
   font-weight: bold;
-}
-input.is-invalid {
-  border: 1px solid red !important;
-  box-shadow: 0 0 5px rgba(255,0,0,0.4);
+  border: 2px solid #dc3545;
+  animation: pulse 1.5s ease-in-out infinite alternate;
 }
 
-/* Delivery date rows */
+/* Quantity mismatch highlighting */
+#purchase-order .qty-mismatch {
+  background-color: #fff3cd !important;
+  color: #856404;
+  font-weight: 600;
+  border: 2px solid #ffc107 !important;
+}
+
+/* Pulse animation for critical alerts */
+@keyframes pulse {
+  from { opacity: 1; }
+  to { opacity: 0.7; }
+}
+
+/* Input field styling */
+#purchase-order input[type="number"] {
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 13px;
+  text-align: center;
+  padding: 4px 6px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#purchase-order input[type="number"]:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  outline: none;
+}
+
+/* Invalid input styling */
+input.is-invalid {
+  border: 2px solid #dc3545 !important;
+  box-shadow: 0 0 5px rgba(220, 53, 69, 0.4) !important;
+  background-color: #fff5f5;
+}
+
+/* Error message styling */
+.text-danger.small {
+  font-size: 11px;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* Delivery date section */
 .row .col-form-label {
   font-weight: 500;
+  color: #495057;
+  font-size: 14px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
-/* Responsive */
-@media (max-width: 576px) {
+#purchase-order input[type="date"] {
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+#purchase-order input[type="date"]:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  outline: none;
+}
+
+/* Update button styling */
+.btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+  padding: 12px 35px;
+  font-weight: 600;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  font-size: 16px;
+}
+
+.btn-success:hover:not(:disabled) {
+  background-color: #218838;
+  border-color: #1e7e34;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.btn-success:disabled {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+/* Transport and Bank details styling */
+#purchase-order .border .row {
+  margin: 0;
+}
+
+#purchase-order .border .col-md-6 {
+  padding-left: 0;
+  padding-right: 15px;
+}
+
+/* Enhanced responsive design */
+@media (max-width: 768px) {
   #purchase-order .header {
     flex-direction: column;
     text-align: center;
+    gap: 10px;
   }
+
+  #purchase-order .header .text-end {
+    text-align: center !important;
+  }
+
+  #purchase-order .border {
+    flex-direction: column;
+    text-align: left;
+  }
+
+  #purchase-order .border img {
+    align-self: center;
+    margin-bottom: 15px;
+  }
+
+  #purchase-order .table {
+    font-size: 12px;
+  }
+
+  #purchase-order .table th,
+  #purchase-order .table td {
+    padding: 4px 2px;
+  }
+
+  .content-block h4 {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .content-block h4 span {
+    margin-left: 0;
+  }
+
+  #purchase-order .border .col-md-6 {
+    padding-right: 0;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  #purchase-order {
+    margin: 10px;
+    padding: 15px !important;
+  }
+
+  .row .col-form-label {
+    font-size: 13px;
+    margin-bottom: 5px;
+  }
+
+  #purchase-order input[type="number"] {
+    width: 60px !important;
+    font-size: 12px;
+  }
+
+  .btn-success {
+    padding: 10px 25px;
+    font-size: 14px;
+  }
+}
+
+/* Print styles */
+@media print {
+  #purchase-order {
+    box-shadow: none;
+    border: 1px solid #000;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .btn, .navigate {
+    display: none !important;
+  }
+
+  #purchase-order input {
+    border: none;
+    background: transparent;
+  }
+
+  .qty-mismatch, .low-stock, .out-of-stock {
+    background: transparent !important;
+    border: 1px solid #000 !important;
+  }
+}
+
+/* Item images */
+.item-image {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+}
+
+/* Color display */
+.color-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.color-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  display: inline-block;
+}
+
+/* Wholesaler note styling */
+#purchase-order textarea.form-control {
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+  resize: vertical;
+}
+
+#purchase-order textarea.form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  outline: none;
+}
+
+#purchase-order .form-text {
+  color: #6c757d;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+/* Responsive design for note section */
+@media (max-width: 768px) {
+  #purchase-order .row .col-sm-3 {
+    margin-bottom: 10px;
+  }
+}
+
+.color-preview {
+  width: 50px;
+  height: 50px;
+  border: 2px solid #dee2e6;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .color-initial {
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.item-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
 }
