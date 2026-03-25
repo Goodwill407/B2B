@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { AuthService, CommunicationService } from '@core';
 import { HttpClient } from '@angular/common/http';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-signup',
@@ -297,7 +298,7 @@ export class SignupComponent implements OnInit {
       console.log('Password Form Submitted:', this.setPasswordFrom.value);
       const data = this.setPasswordFrom.value;
       delete data.confirmPassword
-      this.http.patch(`https://backend.fashiontradershub.com/v1/users/update-pass?email=${this.mgfRegistrationForm.value.email}`, data).subscribe((res: any) => {
+      this.http.patch(`${environment.apiURL}users/update-pass?email=${this.mgfRegistrationForm.value.email}`, data).subscribe((res: any) => {
         this.router.navigate([`/authentication/signin`]);
         this.changeUserStatus(this.email);
       }, (err: any) => {
@@ -453,8 +454,9 @@ export class SignupComponent implements OnInit {
       this.communicationService.showNotification('snackbar-success', 'User status updated successfully', 'bottom', 'center');
     });
   }
-  gotoHome() {
-    window.open('https://fashiontradershub.com/', '_self');
+
+    gotoHome() {
+    window.open(environment.appURL, '_self');
   }
 
   getAllCountry() {

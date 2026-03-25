@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService, CommunicationService } from '@core';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 import { CustomDatePipe } from 'app/common/custom-pipe.pipe';
 import { ImageDialogComponent } from 'app/ui/modal/image-dialog/image-dialog.component';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
@@ -10,12 +11,18 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 @Component({
   selector: 'app-view-manufacturer-details',
   standalone: true,
-  imports: [NgFor, CommonModule, CustomDatePipe, NgxSpinnerModule],
+  imports: [NgFor, CommonModule, CustomDatePipe, NgxSpinnerModule, BottomSideAdvertiseComponent],
   templateUrl: './view-manufacturer-details.component.html',
   styleUrls: ['./view-manufacturer-details.component.scss'],
   providers: [DatePipe]
 })
 export class ViewManufacturerDetailsComponent implements OnInit {
+
+   bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+    'assets/images/adv/ads.jpg'
+  ];
+
   company: any;
   email: any;
   CompanyData: any;

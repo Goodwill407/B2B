@@ -63,7 +63,8 @@
                         <a [routerLink]="sidebarSubItem3.submenu.length > 0 ? null : [sidebarSubItem3.path]"
                           (click)="callToggleMenu($event,sidebarSubItem3.submenu.length)"
                           [ngClass]="[sidebarSubItem3.class]">
-                          {{sidebarSubItem3.title | translate}}
+                          {{sidebarSubItem3.title | translate}}  
+                          <!-- | titlecase -->
                         </a>
                       </li>
                       }

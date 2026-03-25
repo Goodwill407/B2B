@@ -9,6 +9,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { PaginatorModule } from 'primeng/paginator';
 import Swal from 'sweetalert2';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 
 @Component({
   selector: 'app-wh-update-stock-of-product',
@@ -21,7 +22,8 @@ import Swal from 'sweetalert2';
     PanelModule,
     InputTextModule,
     ButtonModule,
-    PaginatorModule
+    PaginatorModule,
+    BottomSideAdvertiseComponent
   ],
   templateUrl: './wh-update-stock-of-product.component.html',
   styleUrl: './wh-update-stock-of-product.component.scss'
@@ -39,6 +41,11 @@ export class WhUpdateStockOfProductComponent {
   rows: number = 10;
   totalRecords: number = 0;
   searchText: string = '';
+
+   bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+  'assets/images/adv/ads.jpg'
+  ];
 
   constructor(
     private location: Location,

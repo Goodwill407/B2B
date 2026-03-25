@@ -24,30 +24,30 @@
 
             <ng-template pTemplate="header">
               <tr>
-                <th>Manufacturer Name</th>
-                <th>Company Name</th>
-                <th>Manufacturer Email</th>
+                <th>Wholesaler Name</th>       
+                <th>Wholesaler Company</th>   
+                <th>Wholesaler Email</th>
                 <th>PO Number</th>
                 <th>Invoice Number</th>
                 <th>Invoice Date</th>
                 <th>Total Quantity</th>
                 <th>Final Amount</th>
-                <th>Status</th>
+                <!-- <th>Status</th> -->
                 <th>Action</th>
               </tr>
             </ng-template>
 
             <ng-template pTemplate="body" let-data>
               <tr>
-                <td class="text-center">{{ data.manufacturer?.fullName || 'N/A' }}</td>
-                <td class="text-center">{{ data.manufacturer?.companyName || 'N/A' }}</td>
-                <td class="text-center">{{ data.manufacturerEmail || 'N/A' }}</td>
+                <td class="text-center">{{ data.wholesaler?.fullName || 'N/A' }}</td>
+                <td class="text-center">{{ data.wholesaler?.companyName || 'N/A' }}</td>
+                <td class="text-center">{{ data.wholesalerEmail || 'N/A' }}</td>
                 <td class="text-center">{{ data.poNumber || 'N/A' }}</td>
                 <td class="text-center">{{ data.invoiceNumber || 'N/A' }}</td>
                 <td class="text-center">{{ (data.invoiceDate | date:'dd/MM/yyyy') || 'N/A' }}</td>
                 <td class="text-center">{{ data.totalQuantity || 0 }}</td>
                 <td class="text-center">₹ {{ data.finalAmount | number:'1.2-2' }}</td>
-                <td class="text-center">
+                <!-- <td class="text-center">
                   <span class="badge"
                     [ngClass]="{
                       'bg-secondary':  data.statusAll === 'created',
@@ -59,7 +59,7 @@
                     }">
                     {{ data.statusAll | titlecase }}
                   </span>
-                </td>
+                </td> -->
                 <td class="text-center">
                   <button
                     class="btn"

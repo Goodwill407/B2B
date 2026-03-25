@@ -5,6 +5,7 @@ import { User } from '../models/user';
 import { Role } from '@core/models/role';
 import { Router } from '@angular/router';
 import { DirectionService } from './direction.service';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,8 @@ export class AuthService {
 
   private orderDataSubject = new BehaviorSubject<any>(null);  // Initializing with null or empty data
   orderData$ = this.orderDataSubject.asObservable();
-  apiURL: any = 'https://backend.fashiontradershub.com/v1/'; // main server
+  // apiURL: any = 'https://backend.fashiontradershub.com/v1/'; // main server
+  apiURL: string = environment.apiURL;
   // apiURL: any = 'http://165.22.211.140:3000/v1/'; // local server
 
   token = '';

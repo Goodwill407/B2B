@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { AuthService } from '@core';
 import ColorThief from 'colorthief';
 import { PaginatorModule } from 'primeng/paginator';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-view-manage-product',
@@ -237,8 +238,9 @@ export class ViewManageProductComponent implements OnInit, OnDestroy {
   }
 
   getProductUrl(product: any): string {
-    return `http://fashiontradershub.com`; // Change to your actual product URL
-  }  
+    return environment.appURL;
+  }
+ 
 
   // Method to return truncated description
   // getTruncatedDescription(description: string, limit: number): string {

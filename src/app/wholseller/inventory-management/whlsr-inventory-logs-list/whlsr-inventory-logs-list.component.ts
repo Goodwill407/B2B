@@ -5,11 +5,12 @@ import { TableModule } from 'primeng/table';
 import { PaginatorModule } from 'primeng/paginator';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { BottomSideAdvertiseComponent } from '@core/models/advertisement/bottom-side-advertise/bottom-side-advertise.component';
 
 @Component({
   selector: 'app-whlsr-inventory-logs-list',
   standalone: true,
-  imports: [CommonModule, TableModule, PaginatorModule, FormsModule],
+  imports: [CommonModule, TableModule, PaginatorModule, FormsModule, BottomSideAdvertiseComponent],
   templateUrl: './whlsr-inventory-logs-list.component.html',
   styleUrl: './whlsr-inventory-logs-list.component.scss'
 })
@@ -20,6 +21,11 @@ export class WhlsrInventoryLogsListComponent implements OnInit {
   rows: number = 10;
   first: number = 0;
   searchText: string = '';
+
+   bottomAdImage: string[] = [
+    'assets/images/adv/ads2.jpg',
+  'assets/images/adv/ads.jpg'
+  ];
 
   constructor(
     private authService: AuthService,

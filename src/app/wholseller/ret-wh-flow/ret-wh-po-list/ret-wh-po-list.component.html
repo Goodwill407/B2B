@@ -24,7 +24,7 @@
                 <p-table [value]="pendingData">
                   <ng-template pTemplate="header">
                     <tr>
-                      <th>Wholesaler Name</th>
+                      <th>Retailer Name</th>
                       <th>Company Name</th>
                       <th>Email</th>
                       <th>PO Number</th>
@@ -33,9 +33,9 @@
                   </ng-template>
                   <ng-template pTemplate="body" let-data>
                     <tr>
-                      <td class="text-center">{{ data.wholesaler?.fullName || 'N/A' }}</td>
-                      <td class="text-center">{{ data.wholesaler?.companyName || 'N/A' }}</td>
-                      <td class="text-center">{{ data.wholesaler?.email || 'N/A' }}</td>
+                      <td class="text-center">{{ data.retailer?.fullName || 'N/A' }}</td>
+                      <td class="text-center">{{ data.retailer?.companyName || 'N/A' }}</td>
+                      <td class="text-center">{{ data.retailer?.email || 'N/A' }}</td>
                       <td class="text-center">{{ data.poNumber || 'N/A' }}</td>
                       <td class="text-center">
                         <a [routerLink]="['/wholesaler/ret-wh-flow/ret-wh-update-qty', { id: data.id }]">
@@ -83,7 +83,7 @@
                 <p-table [value]="partialData">
                   <ng-template pTemplate="header">
                     <tr>
-                      <th>Wholesaler Name</th>
+                      <th>Retailer Name</th>
                       <th>Company Name</th>
                       <th>Email</th>
                       <th>PO Number</th>
@@ -92,9 +92,9 @@
                   </ng-template>
                   <ng-template pTemplate="body" let-data>
                     <tr>
-                      <td class="text-center">{{ data.wholesaler?.fullName || 'N/A' }}</td>
-                      <td class="text-center">{{ data.wholesaler?.companyName || 'N/A' }}</td>
-                      <td class="text-center">{{ data.wholesaler?.email || 'N/A' }}</td>
+                      <td class="text-center">{{ data.retailer?.fullName || 'N/A' }}</td>
+                      <td class="text-center">{{ data.retailer?.companyName || 'N/A' }}</td>
+                      <td class="text-center">{{ data.retailer?.email || 'N/A' }}</td>
                       <td class="text-center">{{ data.poNumber || 'N/A' }}</td>
                       <td class="text-center">
                         <a [routerLink]="['/wholesaler/ret-wh-flow/ret-wh-partial-po-view', { id: data.id }]">
@@ -142,7 +142,7 @@
                 <p-table [value]="makeToOrderData">
                   <ng-template pTemplate="header">
                     <tr>
-                      <th>Wholesaler Name</th>
+                      <th>Retailer Name</th>
                       <th>Company Name</th>
                       <th>Email</th>
                       <th>PO Number</th>
@@ -152,9 +152,9 @@
                   </ng-template>
                   <ng-template pTemplate="body" let-data>
                     <tr>
-                      <td class="text-center">{{ data.wholesaler?.fullName || 'N/A' }}</td>
-                      <td class="text-center">{{ data.wholesaler?.companyName || 'N/A' }}</td>
-                      <td class="text-center">{{ data.wholesaler?.email || 'N/A' }}</td>
+                      <td class="text-center">{{ data.retailer?.fullName || 'N/A' }}</td>
+                      <td class="text-center">{{ data.retailer?.companyName || 'N/A' }}</td>
+                      <td class="text-center">{{ data.retailer?.email || 'N/A' }}</td>
                       <td class="text-center">{{ data.poNumber || 'N/A' }}</td>
                       <td class="text-center">
                         <span *ngIf="data.invoiceGenerated" class="badge bg-success">
@@ -210,7 +210,7 @@
                 <p-table [value]="confirmedData">
                   <ng-template pTemplate="header">
                     <tr>
-                      <th>Wholesaler Name</th>
+                      <th>Retailer Name</th>
                       <th>Company Name</th>
                       <th>Email</th>
                       <th>PO Number</th>
@@ -220,9 +220,9 @@
                   </ng-template>
                   <ng-template pTemplate="body" let-data>
                     <tr>
-                      <td class="text-center">{{ data.wholesaler?.fullName || 'N/A' }}</td>
-                      <td class="text-center">{{ data.wholesaler?.companyName || 'N/A' }}</td>
-                      <td class="text-center">{{ data.wholesaler?.email || 'N/A' }}</td>
+                      <td class="text-center">{{ data.retailer?.fullName || 'N/A' }}</td>
+                      <td class="text-center">{{ data.retailer?.companyName || 'N/A' }}</td>
+                      <td class="text-center">{{ data.retailer?.email || 'N/A' }}</td>
                       <td class="text-center">{{ data.poNumber || 'N/A' }}</td>
                       <td class="text-center">
                         <span *ngIf="data.invoiceGenerated" class="badge bg-success">

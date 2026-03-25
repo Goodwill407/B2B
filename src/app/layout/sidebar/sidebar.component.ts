@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Router, NavigationEnd, RouterLinkActive, RouterLink } from '@angular/router';
-import { DOCUMENT, NgClass } from '@angular/common';
+import { DOCUMENT, NgClass, TitleCasePipe } from '@angular/common';
 import {
   Component,
   Inject,
@@ -28,6 +28,7 @@ import { UnsubscribeOnDestroyAdapter } from '@shared';
     RouterLink,
     NgClass,
     TranslateModule,
+    TitleCasePipe
   ],
 })
 export class SidebarComponent extends UnsubscribeOnDestroyAdapter implements OnInit {

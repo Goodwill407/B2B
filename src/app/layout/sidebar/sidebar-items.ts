@@ -1459,7 +1459,7 @@ export const ROUTES2: RouteInfo[] = [
       },
       {
         "path": "/mnf/view-raw-items",
-        "title": "Raw item Management",
+        "title": "Raw Item Management",
         "iconType": "",
         "icon": "",
         "class": "ml-menu",
@@ -1471,7 +1471,7 @@ export const ROUTES2: RouteInfo[] = [
       },
       {
         "path": "/mnf/raw-item-inventory",
-        "title": "Raw item Inventory",
+        "title": "Raw Item Inventory",
         "iconType": "",
         "icon": "",
         "class": "ml-menu",
@@ -1525,7 +1525,7 @@ export const ROUTES2: RouteInfo[] = [
       },
       {
         path: '/mnf/wls-po-list',
-        title: 'Wholesaler po list',
+        title: 'Wholesaler PO List',
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -1563,7 +1563,7 @@ export const ROUTES2: RouteInfo[] = [
       
       {
         path: '/mnf/ret-po-list',
-        title: 'Retailer po list',
+        title: 'Retailer PO List',
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -1951,7 +1951,7 @@ export const ROUTES2: RouteInfo[] = [
       
       {
         path: '/retailer/product-list-of-mfg',
-        title: "Product List of Manufacturer",
+        title: "Product List Of Manufacturer",
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -1975,7 +1975,7 @@ export const ROUTES2: RouteInfo[] = [
       },
       {
         path: '/retailer/new/wholseller-list3',
-        title: "Product List of Wholesaler",
+        title: "Product List Of Wholesaler",
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -2442,7 +2442,7 @@ export const ROUTES2: RouteInfo[] = [
       },
       {
         path: '/wholesaler/retailers-requests-list',
-        title: "Request's of Retailers",
+        title: "Request's Of Retailers",
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -2552,7 +2552,7 @@ export const ROUTES2: RouteInfo[] = [
       },
       {
         path: '/wholesaler/wh-inventory-log-list',
-        title: `Inventory logs`,
+        title: `Inventory Logs`,
         iconType: '',
         icon: '',
         class: 'ml-menu',

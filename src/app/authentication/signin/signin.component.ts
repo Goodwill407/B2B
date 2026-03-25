@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { NgxSpinner } from 'ngx-spinner';
+import { environment } from 'environments/environment';
 @Component({
   selector: 'app-signin',
   templateUrl: './signin.component.html',
@@ -111,7 +112,7 @@ export class SigninComponent
     }
 
     gotoHome(){
-      window.open('https://fashiontradershub.com/','_self');
+      window.open(environment.appURL,'_self');
     }
 
     navigate(email:string){
