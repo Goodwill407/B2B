@@ -136,7 +136,7 @@ export class ConfirmMtoPoInvcGenComponent implements OnInit {
           buyerGSTIN: res.wholesaler.GSTIN,
           buyerPAN: this.extractPanFromGstin(res.wholesaler.GSTIN) || res.wholesaler.PAN || '',
 
-          logoUrl: res.wholesaler.logo || res.manufacturer.logo || '',
+          logoUrl: res.wholesaler.profileImg || res.manufacturer.logo || '',
           poDate: new Date(res.wholesalerPoDate || res.createdAt).toLocaleDateString(),
           orderNumber: res.poNumber,
           products: productSet,

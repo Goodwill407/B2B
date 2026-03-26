@@ -273,7 +273,7 @@ export class ViewPlaceOrderPoComponent implements OnInit {
   // ── Actions ─────────────────────────────────────────────────────────────────
 
   viewInvoice(): void {
-    this.router.navigate(['/wholesaler/order-mng/invoice-view', this.generatedInvoiceId]);
+    this.router.navigate(['/wholesaler/new/product/mfg-invoice-view/', this.generatedInvoiceId]);
   }
 
   navigateFun(): void {
