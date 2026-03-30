@@ -1412,7 +1412,7 @@ export const ROUTES2: RouteInfo[] = [
   },
 {
     path: '',
-    title: `Manage Raw item`,
+    title: `Manage Raw Item`,
     iconType: 'material-icons-outlined',
     icon: 'person',
     class: 'menu-toggle',
