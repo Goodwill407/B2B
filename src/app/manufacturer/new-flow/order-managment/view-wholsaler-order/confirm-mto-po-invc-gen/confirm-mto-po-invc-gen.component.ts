@@ -526,7 +526,7 @@ export class ConfirmMtoPoInvcGenComponent implements OnInit {
         .patchpimage(`po-wholesaler-to-manufacture/${this.poId}`, {
           invoiceGenerated: true,
           invoiceId,
-          // statusAll: 'invoice_generated',                // status remain same
+          statusAll: 'invoice_generated',                // status remain same
         })
         .toPromise();
 

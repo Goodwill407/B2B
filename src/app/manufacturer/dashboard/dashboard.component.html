@@ -1,6 +1,6 @@
-<section class="content ps-md-4"> <!-- Added left padding -->
+<section class="content ps-md-4">
   <div class="container-fluid">
-    
+
     <div class="row mb-4">
       <div class="col-12">
         <h4 class="page-title mt-4 pt-2 mb-2">Dashboard Overview</h4>
@@ -14,9 +14,101 @@
       </div>
     </div>
 
-    <div *ngIf="!isLoading" class="row g-4"> <!-- g-4 for better gap -->
-      
-      <!-- 1. Retailer POs (Large Card) -->
+    <div *ngIf="!isLoading" class="row g-4">
+
+      <!-- 2. Wholesaler POs -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="dashboard-card card-po-wholesale" (click)="navigateTo('/mnf/wls-list')">
+          <div class="card-header-section">
+            <div class="icon-box bg-light-purple">
+              <i class="bi bi-buildings"></i>
+            </div>
+            <div>
+              <h5>Wholesaler POs</h5>
+              <h2 class="main-stat">{{ wholesalerPoData?.total || 0 }}</h2>
+            </div>
+          </div>
+          <div class="card-body-section">
+            <div class="stat-grid">
+              <div class="stat-item"><span class="dot pending"></span> Pending: <strong>{{ wholesalerPoData?.pending || 0 }}</strong></div>
+              <div class="stat-item"><span class="dot confirmed"></span> Confirmed: <strong>{{ wholesalerPoData?.confirmed || 0 }}</strong></div>
+              <div class="stat-item"><span class="dot partial"></span> Partial: <strong>{{ wholesalerPoData?.partial || 0 }}</strong></div>
+              <div class="stat-item"><span class="dot mto"></span> MTO: <strong>{{ wholesalerPoData?.makeToOrder || 0 }}</strong></div>
+            </div>
+            <div class="mt-3 pt-3 border-top">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class=" small">Invoice Generated</span>
+                <strong class="text-dark">{{ wholesalerPoData?.invoiceGenerated || 0 }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. Wholesaler Invoices -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="dashboard-card card-invoice" (click)="navigateTo('mnf/mfg-whl-invoice-list')">
+          <div class="card-header-section">
+            <div class="icon-box bg-light-purple">
+              <i class="bi bi-receipt"></i>
+            </div>
+            <div>
+              <h5>Wholesaler Invoices</h5>
+              <h2 class="main-stat">{{ wholesalerInvoiceData?.total || 0 }}</h2>
+            </div>
+          </div>
+          <div class="card-body-section">
+            <div class="stat-grid">
+              <div class="stat-item"><span class="dot delivered"></span> Delivered: <strong>{{ wholesalerInvoiceData?.delivered || 0 }}</strong></div>
+              <div class="stat-item"><span class="dot partial"></span> In Transit: <strong>{{ wholesalerInvoiceData?.total - wholesalerInvoiceData?.delivered || 0 }}</strong></div>
+              <!-- <div class="stat-item"><span class="dot pending"></span> Cancelled: <strong>{{ wholesalerInvoiceData?.cancelled || 0 }}</strong></div> -->
+            </div>
+             <div class="amount-summary mt-3 pt-3 border-top">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="text-muted small">Payable Amount</span>
+                <strong class="text-dark">&#8377;{{ wholesalerInvoiceData?.payableAmount | number:'1.2-2' }}</strong>
+              </div>
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="text-muted small">Total Discount</span>
+                <strong class="text-warning">&#8377;{{ wholesalerInvoiceData?.totalDiscount | number:'1.2-2' }}</strong>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted small">Credit Used</span>
+                <strong class="text-success">&#8377;{{ wholesalerInvoiceData?.creditUsed | number:'1.2-2' }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Wholesaler Returns -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="dashboard-card card-returns">
+          <div class="card-header-section mb-3">
+            <div class="icon-box bg-light-red">
+              <i class="bi bi-arrow-return-left"></i>
+            </div>
+            <div>
+              <h5>Wholesaler Returns</h5>
+              <h2 class="main-stat text-danger">{{ wholesalerReturnCounts?.total || 0 }}</h2>
+            </div>
+          </div>
+          <div class="stat-grid mb-3">
+            <div class="stat-item"><span class="dot pending"></span> Requested: <strong>{{ wholesalerReturnCounts?.requested || 0 }}</strong></div>
+            <div class="stat-item"><span class="dot confirmed"></span> Approved: <strong>{{ wholesalerReturnCounts?.approved || 0 }}</strong></div>
+            <div class="stat-item"><span class="dot mto"></span> Rejected: <strong>{{ wholesalerReturnCounts?.rejected || 0 }}</strong></div>
+            <div class="stat-item"><span class="dot partial"></span> In Transit: <strong>{{ wholesalerReturnCounts?.inTransit || 0 }}</strong></div>
+          </div>
+          <div class="split-actions">
+            <div class="action-btn" (click)="navigateTo('/mnf/new/Return-products')">
+              <span class="label">View Wholesaler Returns</span>
+              <i class="bi bi-chevron-right"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1. Retailer POs -->
       <div class="col-12 col-md-6 col-xl-4">
         <div class="dashboard-card card-po" (click)="navigateTo('/mnf/ret-list')">
           <div class="card-header-section">
@@ -34,68 +126,152 @@
               <div class="stat-item"><span class="dot confirmed"></span> Confirmed: <strong>{{ retailerPoData?.confirmed || 0 }}</strong></div>
               <div class="stat-item"><span class="dot partial"></span> Partial: <strong>{{ retailerPoData?.partialDelivery || 0 }}</strong></div>
               <div class="stat-item"><span class="dot mto"></span> MTO: <strong>{{ retailerPoData?.makeToOrder || 0 }}</strong></div>
-              <div class="stat-item"><span class="dot delivered"></span> Delivered: <strong>{{ retailerPoData?.delivered || 0 }}</strong></div>
+              <!-- <div class="stat-item"><span class="dot delivered"></span> Delivered: <strong>{{ retailerPoData?.delivered || 0 }}</strong></div> -->
+            </div>
+            <div class="mt-3 pt-3 border-top">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="small">Invoice Generated</span>
+                <strong class="text-dark">{{ retailerPoData?.invoiceGenerated || 0 }}</strong>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 2. Wholesaler POs (Large Card) -->
+      <!-- 6. Retailer Invoices -->
       <div class="col-12 col-md-6 col-xl-4">
-        <div class="dashboard-card card-po-wholesale" (click)="navigateTo('/mnf/wls-list')">
+        <div class="dashboard-card card-invoice" (click)="navigateTo('/mnf/new/mfg-proforma-invoice-list')">
           <div class="card-header-section">
-            <div class="icon-box bg-light-purple">
-              <i class="bi bi-buildings"></i>
+            <div class="icon-box bg-light-blue">
+              <i class="bi bi-receipt"></i>
             </div>
             <div>
-              <h5>Wholesaler POs</h5>
-              <h2 class="main-stat">{{ wholesalerPoData?.total || 0 }}</h2>
+              <h5>Retailer Invoices</h5>
+              <h2 class="main-stat">{{ retailerInvoiceData?.totalInvoices || 0 }}</h2>
             </div>
           </div>
           <div class="card-body-section">
-             <div class="stat-grid">
-              <div class="stat-item"><span class="dot pending"></span> Pending: <strong>{{ wholesalerPoData?.pending || 0 }}</strong></div>
-              <div class="stat-item"><span class="dot confirmed"></span> Confirmed: <strong>{{ wholesalerPoData?.confirmed || 0 }}</strong></div>
-              <div class="stat-item"><span class="dot partial"></span> Partial: <strong>{{ wholesalerPoData?.partialDelivery || 0 }}</strong></div>
-              <div class="stat-item"><span class="dot mto"></span> MTO: <strong>{{ wholesalerPoData?.makeToOrder || 0 }}</strong></div>
-              <div class="stat-item"><span class="dot delivered"></span> Delivered: <strong>{{ wholesalerPoData?.delivered || 0 }}</strong></div>
+            <div class="stat-grid">
+              <div class="stat-item"><span class="dot delivered"></span> Delivered: <strong>{{ retailerInvoiceData?.delivered || 0 }}</strong></div>
+              <div class="stat-item"><span class="dot partial"></span> In Process: <strong>{{ retailerInvoiceData?.totalInvoices - retailerInvoiceData?.delivered || 0 }}</strong></div>
+              <!-- <div class="stat-item"><span class="dot pending"></span> Cancelled: <strong>{{ retailerInvoiceData?.cancelled || 0 }}</strong></div> -->
+            </div>
+            <div class="amount-summary mt-3 pt-3 border-top">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="text-muted small">Payable Amount</span>
+                <strong class="text-dark">&#8377;{{ retailerInvoiceData?.payableAmount | number:'1.2-2' }}</strong>
+              </div>
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="text-muted small">Total Discount</span>
+                <strong class="text-warning">&#8377;{{ retailerInvoiceData?.totalDiscount | number:'1.2-2' }}</strong>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted small">Credit Used</span>
+                <strong class="text-success">&#8377;{{ retailerInvoiceData?.creditUsed | number:'1.2-2' }}</strong>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 3. Return Orders (Split Action Card) -->
+      <!-- 3. Retailer Returns -->
       <div class="col-12 col-md-6 col-xl-4">
         <div class="dashboard-card card-returns">
           <div class="card-header-section mb-3">
-             <div class="icon-box bg-light-red">
+            <div class="icon-box bg-light-red">
               <i class="bi bi-arrow-return-left"></i>
             </div>
             <div>
-              <h5>Total Returns</h5>
-              <h2 class="main-stat text-danger">{{ returnCounts?.requested + returnsData.wholesalerCount }}</h2>
+              <h5>Retailer Returns</h5>
+              <h2 class="main-stat text-danger">{{ retailerReturnCounts?.total || 0 }}</h2>
             </div>
           </div>
-          <!-- Split Actions -->
+          <div class="stat-grid mb-3">
+            <div class="stat-item"><span class="dot pending"></span> Requested: <strong>{{ retailerReturnCounts?.requested || 0 }}</strong></div>
+            <div class="stat-item"><span class="dot confirmed"></span> Approved: <strong>{{ retailerReturnCounts?.approved || 0 }}</strong></div>
+            <div class="stat-item"><span class="dot mto"></span> Rejected: <strong>{{ retailerReturnCounts?.rejected || 0 }}</strong></div>
+            <div class="stat-item"><span class="dot delivered"></span> In Transit: <strong>{{ retailerReturnCounts?.inTransit || 0 }}</strong></div>
+          </div>
           <div class="split-actions">
-            <div class="action-btn" (click)="navigateTo('/mnf/new/Return-order-ret-list')"> <!-- Add Retailer Return Route -->
-              <span class="label">Retailers</span>
-              <span class="count">{{ returnCounts?.requested || 0 }}</span>
-              <i class="bi bi-chevron-right"></i>
-            </div>
-            <div class="action-btn" (click)="navigateTo('/mnf/new/Return-products')"> <!-- Add Wholesaler Return Route -->
-              <span class="label">Wholesalers</span>
-              <span class="count">{{ returnsData.wholesalerCount }}</span>
+            <div class="action-btn" (click)="navigateTo('/mnf/new/Return-order-ret-list')">
+              <span class="label">View Retailer Returns</span>
               <i class="bi bi-chevron-right"></i>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 4. Products Summary -->
+      
+      
+
+      <!-- 8. Retailer Credit Notes -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="dashboard-card card-credit" (click)="navigateTo('/mnf/new/ret-credit-note-group-list')">
+          <div class="card-header-section">
+            <div class="icon-box bg-light-green">
+              <i class="bi bi-journal-check"></i>
+            </div>
+            <div>
+              <h5>Retailer Credit Notes</h5>
+              <h2 class="main-stat">{{ creditNoteData?.totalNotes || 0 }}</h2>
+            </div>
+          </div>
+          <div class="card-body-section">
+            <div class="stat-grid">
+              <div class="stat-item"><span class="dot confirmed"></span> Unused: <strong>{{ creditNoteData?.unusedNotes || 0 }}</strong></div>
+              <div class="stat-item"><span class="dot delivered"></span> Used: <strong>{{ creditNoteData?.usedNotes || 0 }}</strong></div>
+              <!-- <div class="stat-item"><span class="dot pending"></span> Deleted: <strong>{{ creditNoteData?.deletedNotes || 0 }}</strong></div> -->
+            </div>
+            <div class="amount-summary mt-3 pt-3 border-top">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="text-muted small">Total Credit</span>
+                <strong class="text-dark">&#8377;{{ creditNoteData?.totalCreditAmount | number:'1.2-2' }}</strong>
+              </div>
+              <!-- <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted small">Unused Credit</span>
+                <strong class="text-success">&#8377;{{ creditNoteData?.unusedCreditAmount | number:'1.2-2' }}</strong>
+              </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. Wholesaler Credit Notes -->
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="dashboard-card card-credit" (click)="navigateTo('/mnf/new/whl-credit-note-group-list')">
+          <div class="card-header-section">
+            <div class="icon-box bg-light-purple">
+              <i class="bi bi-journal-check"></i>
+            </div>
+            <div>
+              <h5>Wholesaler Credit Notes</h5>
+              <h2 class="main-stat">{{ wholesalerCreditNotes?.total || 0 }}</h2>
+            </div>
+          </div>
+          <div class="card-body-section">
+            <div class="stat-grid">
+              <div class="stat-item"><span class="dot confirmed"></span> Unused: <strong>{{ wholesalerCreditNotes?.unused || 0 }}</strong></div>
+              <div class="stat-item"><span class="dot delivered"></span> Used: <strong>{{ wholesalerCreditNotes?.used || 0 }}</strong></div>
+            </div>
+            <div class="amount-summary mt-3 pt-3 border-top">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="text-muted small">Total Credit</span>
+                <strong class="text-dark">&#8377;{{ wholesalerCreditNotes?.totalCreditAmount | number:'1.2-2' }}</strong>
+              </div>
+              <!-- <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted small">Unused Credit</span>
+                <strong class="text-success">&#8377;{{ wholesalerCreditNotes?.unusedCreditAmount | number:'1.2-2' }}</strong>
+              </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+
+      <!-- 5. Products Summary -->
       <div class="col-12 col-md-6 col-xl-4">
         <div class="dashboard-card card-products h-100">
-          <!-- Main Header with Total Count -->
           <div class="d-flex justify-content-between align-items-start mb-3" (click)="navigateTo('/mnf/new/manage-product2')">
             <div>
               <h5 class="text-muted mb-1">Total Products</h5>
@@ -105,25 +281,22 @@
               <i class="bi bi-box-seam"></i>
             </div>
           </div>
-
-          <!-- Clickable BOM Sections -->
           <div class="product-actions mt-auto">
             <div class="action-row filled" (click)="navigateTo('/mnf/product-bom-list')">
               <div class="d-flex align-items-center">
                 <div class="status-icon bg-success-subtle text-success me-3">
                   <i class="bi bi-check-lg"></i>
                 </div>
-                <span class="text-secondary fw-medium">BOM Filled</span>
+                <span class="text-secondary fw-medium">Raw Material Linked</span>
               </div>
               <span class="fw-bold text-dark fs-5">{{ productData?.bomFilled || 0 }}</span>
             </div>
-
             <div class="action-row not-filled mt-2" (click)="navigateTo('/mnf/product-bom-list')">
               <div class="d-flex align-items-center">
                 <div class="status-icon bg-danger-subtle text-danger me-3">
                   <i class="bi bi-x-lg"></i>
                 </div>
-                <span class="text-secondary fw-medium">Not Filled</span>
+                <span class="text-secondary fw-medium">Raw Material Not Linked</span>
               </div>
               <span class="fw-bold text-dark fs-5">{{ productData?.bomNotFilled || 0 }}</span>
             </div>
@@ -131,93 +304,142 @@
         </div>
       </div>
 
-      <!-- 5. Network Stats (Combined) -->
+
+      <!-- 10. Network Stats -->
       <div class="col-12 col-md-6 col-xl-4">
         <div class="dashboard-card card-network">
           <h5 class="mb-4">Network Connections</h5>
           <div class="network-row" (click)="navigateTo('/mnf/manage-distributor')">
-             <div class="d-flex align-items-center gap-3">
-               <div class="mini-icon text-primary"><i class="bi bi-shop"></i></div>
-               <span>Connected Retailers</span>
-             </div>
-             <span class="badge bg-primary rounded-pill">{{ connectedRetailersCount }}</span>
+            <div class="d-flex align-items-center gap-3">
+              <div class="mini-icon text-primary"><i class="bi bi-shop"></i></div>
+              <div>
+                <span>Connected Retailers</span>
+                <small class="d-block text-muted">{{ retailersData?.active || 0 }} active</small>
+              </div>
+            </div>
+            <span class="badge bg-primary rounded-pill">{{ connectedRetailersCount }}</span>
           </div>
-           <div class="network-row mt-3" (click)="navigateTo('/mnf/manage-distributor')">
-             <div class="d-flex align-items-center gap-3">
-               <div class="mini-icon text-info"><i class="bi bi-buildings"></i></div>
-               <span>Connected Wholesalers</span>
-             </div>
-             <span class="badge bg-info rounded-pill">{{ connectedWholesalersCount }}</span>
+          <div class="network-row mt-3" (click)="navigateTo('/mnf/manage-distributor')">
+            <div class="d-flex align-items-center gap-3">
+              <div class="mini-icon text-info"><i class="bi bi-buildings"></i></div>
+              <div>
+                <span>Connected Wholesalers</span>
+                <small class="d-block text-muted">{{ wholesalersData?.active || 0 }} active</small>
+              </div>
+            </div>
+            <span class="badge bg-info rounded-pill">{{ connectedWholesalersCount }}</span>
           </div>
-           <div class="network-row mt-3" (click)="navigateTo('/mnf/invite-status')">
-             <div class="d-flex align-items-center gap-3">
-               <div class="mini-icon text-warning"><i class="bi bi-envelope"></i></div>
-               <span>Pending Invites</span>
-             </div>
-             <span class="badge bg-warning rounded-pill">{{ pendingInvitesCount }}</span>
-          </div>
+          <!-- <div class="network-row mt-3" (click)="navigateTo('/mnf/invite-status')">
+            <div class="d-flex align-items-center gap-3">
+              <div class="mini-icon text-warning"><i class="bi bi-envelope"></i></div>
+              <div>
+                <span>Pending Invites</span>
+                <small class="d-block text-muted">
+                  {{ invitationData?.retailer || 0 }} retailers &middot; {{ invitationData?.wholesaler || 0 }} wholesalers
+                </small>
+              </div>
+            </div>
+            <span class="badge bg-warning rounded-pill">{{ pendingInvitesCount }}</span>
+          </div> -->
         </div>
       </div>
 
-      <!-- 6. Inventory Alerts -->
+      <!-- 11. Inventory Alerts -->
+<div class="col-12 col-md-6 col-xl-4">
+  <div class="dashboard-card card-inventory">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h5 class="mb-0">Inventory Alerts</h5>
+      <div class="icon-box bg-light-orange"><i class="bi bi-exclamation-triangle"></i></div>
+    </div>
+
+    <div class="network-row" (click)="navigateTo('/mnf/raw-item-inventory')">
+      <div class="d-flex align-items-center gap-3">
+        <div class="mini-icon text-danger"><i class="bi bi-box-seam"></i></div>
+        <div>
+          <span>Raw Material Low Stock</span>
+          <small class="d-block text-muted">Critical level</small>
+        </div>
+      </div>
+      <span class="badge bg-danger rounded-pill">{{ inventoryData?.rawMaterialLowStock || 0 }}</span>
+    </div>
+
+    <!-- <div class="network-row mt-3" (click)="navigateTo('/mnf/finished-goods-inventory')">
+      <div class="d-flex align-items-center gap-3">
+        <div class="mini-icon text-warning"><i class="bi bi-archive"></i></div>
+        <div>
+          <span>Finished Goods Low Stock</span>
+          <small class="d-block text-muted">Warning level</small>
+        </div>
+      </div>
+      <span class="badge bg-warning rounded-pill">{{ inventoryData?.finishedGoodsLowStock || 0 }}</span>
+    </div> -->
+
+    <div class="network-row mt-3" (click)="navigateTo('mnf/update-stocks-for-product')">
+      <div class="d-flex align-items-center gap-3">
+        <div class="mini-icon text-secondary"><i class="bi bi-layers"></i></div>
+        <div>
+          <span>Total Low Stock Products</span>
+          <small class="d-block text-muted">All categories</small>
+        </div>
+      </div>
+      <span class="badge bg-secondary rounded-pill">{{ inventoryData?.totalLowStockItems || 0 }}</span>
+    </div>
+
+  </div>
+</div>
+
+      <!-- 12. Invitations Summary -->
       <div class="col-12 col-md-6 col-xl-4">
-        <div class="dashboard-card card-inventory" (click)="navigateTo('')">
-          <div class="d-flex justify-content-between mb-3">
-            <h5>Inventory Alerts</h5>
-            <div class="icon-box bg-light-orange"><i class="bi bi-exclamation-triangle"></i></div>
-          </div>
-          
-          <!-- Raw Material Section -->
-          <div class="alert-item mb-4" (click)="navigateTo('/mnf/raw-item-inventory')">
-            <div class="d-flex justify-content-between align-items-center mb-1">
-              <span class="text-secondary">Raw Material Low Stock</span>
-              <span class="badge bg-danger-subtle text-danger rounded-pill px-3">Critical</span>
-            </div>
-            <div class="d-flex justify-content-between align-items-end">
-                <h3 class="mb-0 text-dark fw-bold">{{ inventoryData?.rawMaterialLowStock || 0 }}</h3>
-                <small class="text-muted">Items</small>
-            </div>
-            <div class="progress mt-2" style="height: 6px;">
-              <div class="progress-bar bg-danger" style="width: 60%"></div>
-            </div>
-          </div>
-
-          <!-- Low Stock Products Section -->
-          <div class="alert-item" (click)="navigateTo('mnf/update-stocks-for-product')">
-            <div class="d-flex justify-content-between align-items-center mb-1">
-              <span class="text-secondary">Low Stock Products</span>
-              <span class="badge bg-warning-subtle text-warning rounded-pill px-3">Warning</span>
-            </div>
-            <div class="d-flex justify-content-between align-items-end">
-                <h3 class="mb-0 text-dark fw-bold">{{ inventoryData?.totalLowStockItems || 0 }}</h3>
-                <small class="text-muted">Products</small>
-            </div>
-            <div class="progress mt-2" style="height: 6px;">
-              <div class="progress-bar bg-warning" style="width: 45%"></div>
-            </div>
-          </div>
-        </div>
+  <div class="dashboard-card card-invitations">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="mb-0">Invitations & Requests</h5>
+      <div class="icon-box bg-light-purple">
+        <i class="bi bi-envelope-paper"></i>
       </div>
+    </div>
 
+    <!-- Invitations -->
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <span class="text-muted small fw-semibold text-uppercase">Invitations</span>
+      <span class="text-muted small">{{ invitationData?.total || 0 }} total</span>
+    </div>
+    <div class="stat-grid mb-3" (click)="navigateTo('/mnf/invite-status')" style="cursor:pointer;">
+      <div class="stat-item"><span class="dot pending"></span> Pending: <strong>{{ invitationData?.pending || 0 }}</strong></div>
+      <div class="stat-item"><span class="dot confirmed"></span> Accepted: <strong>{{ invitationData?.accepted || 0 }}</strong></div>
+      <!-- <div class="stat-item"><span class="dot mto"></span> Retailers: <strong>{{ invitationData?.retailer || 0 }}</strong></div>
+      <div class="stat-item"><span class="dot partial"></span> Wholesalers: <strong>{{ invitationData?.wholesaler || 0 }}</strong></div> -->
+    </div>
 
-      <!-- 7. Brands Scroller -->
+    <hr class="my-2">
+
+    <!-- Requests -->
+    <div class="d-flex justify-content-between align-items-center mb-2 mt-2">
+      <span class="text-muted small fw-semibold text-uppercase">Requests</span>
+      <span class="text-muted small">{{ requestData?.total || 0 }} total</span>
+    </div>
+    <div class="stat-grid" (click)="navigateTo('/mnf/wholselers-Requests')" style="cursor:pointer;">
+      <div class="stat-item"><span class="dot pending"></span> Pending: <strong>{{ requestData?.pending || 0 }}</strong></div>
+      <div class="stat-item"><span class="dot confirmed"></span> Accepted: <strong>{{ requestData?.accepted || 0 }}</strong></div>
+      <div class="stat-item"><span class="dot mto"></span> Rejected: <strong>{{ requestData?.rejected || 0 }}</strong></div>
+    </div>
+
+  </div>
+</div>
+
+      <!-- 13. Brands Scroller -->
       <div class="col-12 mt-4">
         <div class="dashboard-card card-brands">
           <div class="d-flex justify-content-between align-items-center mb-4">
             <h5 class="mb-0 text-dark fw-bold">My Brands <span class="badge bg-secondary rounded-pill ms-2">{{ brandsCount }}</span></h5>
             <button class="btn btn-sm btn-link text-decoration-none" (click)="navigateTo('/mnf/brand')">View All <i class="bi bi-arrow-right"></i></button>
           </div>
-
           <div class="brand-list-container">
-            <!-- Loop through brands -->
             <div class="brand-item" *ngFor="let brand of brands" (click)="navigateTo('/mnf/brand')">
               <div class="brand-logo-circle">
                 <img [src]="brand.brandLogo" (error)="handleImageError($event)" alt="{{ brand.brandName }}">
               </div>
               <span class="brand-name mt-2">{{ brand.brandName }}</span>
             </div>
-
-            <!-- Empty State -->
             <div *ngIf="brands.length === 0" class="text-center w-100 py-4 text-muted">
               <i class="bi bi-tags fs-1 d-block mb-2 opacity-25"></i>
               No brands found

@@ -28,16 +28,19 @@ export class DashboardComponent implements OnInit {
   connectedManufacturersCount: number = 0;
 
   // Inventory
-  inventoryProductCount: number = 0;
+lowStockDesigns: number = 0;
+totalDesigns: number = 0;
 
-  // Dashboard API Data
+  // Retailer → Wholesaler
   retailerPo: any = {};
-  mfgPo: any = {};
   retailerInvoice: any = {};
-  mfgInvoice: any = {};
   retailerReturns: any = {};
-  mfgReturns: any = {};
   retailerCreditNotes: any = {};
+
+  // Wholesaler → Manufacturer
+  mfgPo: any = {};
+  mfgInvoice: any = {};
+  mfgReturns: any = {};
   mfgCreditNotes: any = {};
 
   constructor(
@@ -54,50 +57,47 @@ export class DashboardComponent implements OnInit {
   loadDashboardData() {
     this.isLoading = true;
     const email = this.userProfile.email;
-    const userId = this.userProfile.id;
 
-    const dashReq = this.authService.get(`wholesaler-dashboard/dashboard-counts/wholesaler/${email}`)
-      .pipe(catchError(err => { console.error('Dashboard counts failed', err); return of(null); }));
+    const whlDashReq = this.authService
+      .get(`wholesaler-dashboard/dashboard-counts/wholesaler/${email}`)
+      .pipe(catchError(err => { console.error('WHL Dashboard failed', err); return of(null); }));
 
-    const retListReq = this.authService.get(`wholesaler/get-referred/retailer?page=1&limit=1&refByEmail=${email}`)
+    const retListReq = this.authService
+      .get(`wholesaler/get-referred/retailer?page=1&limit=1&refByEmail=${email}`)
       .pipe(catchError(err => { console.error('Retailer list failed', err); return of(null); }));
 
-    const mfgListReq = this.authService.get(`wholesaler/manufactureList/${email}?page=1&limit=1&userCategory=orderwise`)
+    const mfgListReq = this.authService
+      .get(`wholesaler/manufactureList/${email}?page=1&limit=1&userCategory=orderwise`)
       .pipe(catchError(err => { console.error('Manufacturer list failed', err); return of(null); }));
 
-    const inventoryReq = this.authService.get(`wholesaler-inventory?userEmail=${email}&limit=1&page=1`)
-      .pipe(catchError(err => { console.error('Inventory failed', err); return of(null); }));
-
     forkJoin({
-      dash: dashReq,
+      whlDash: whlDashReq,
       retList: retListReq,
       mfgList: mfgListReq,
-      inventory: inventoryReq
     }).subscribe({
       next: (res: any) => {
 
-        // 1. Dashboard Counts
-        if (res.dash?.data) {
-          const r2w = res.dash.data.retailerToWholesaler;
-          const w2m = res.dash.data.wholesalerToManufacturer;
+        if (res.whlDash?.data) {
+          const r2w = res.whlDash.data.retailerToWholesaler;
+          const w2m = res.whlDash.data.wholesalerToManufacturer;
 
-          this.retailerPo          = r2w?.po           || {};
-          this.retailerInvoice     = r2w?.invoice      || {};
-          this.retailerReturns     = r2w?.returns      || {};
-          this.retailerCreditNotes = r2w?.creditNotes  || {};
+          this.retailerPo          = r2w?.po          || {};
+          this.retailerInvoice     = r2w?.invoice     || {};
+          this.retailerReturns     = r2w?.returns     || {};
+          this.retailerCreditNotes = r2w?.creditNotes || {};
 
-          this.mfgPo               = w2m?.po           || {};
-          this.mfgInvoice          = w2m?.invoice      || {};
-          this.mfgReturns          = w2m?.returns      || {};
-          this.mfgCreditNotes      = w2m?.creditNotes  || {};
+          this.mfgPo               = w2m?.po          || {};
+          this.mfgInvoice          = w2m?.invoice     || {};
+          this.mfgReturns          = w2m?.returns     || {};
+          this.mfgCreditNotes      = w2m?.creditNotes || {};
         }
 
-        // 2. Partner Counts
-        if (res.retList) this.connectedRetailersCount     = res.retList.totalResults || 0;
-        if (res.mfgList) this.connectedManufacturersCount = res.mfgList.totalDocs    || 0;
-
-        // 3. Inventory Count
-        if (res.inventory) this.inventoryProductCount = res.inventory.totalResults || 0;
+        if (res.retList)   this.connectedRetailersCount     = res.retList.totalResults || 0;
+        if (res.mfgList)   this.connectedManufacturersCount = res.mfgList.totalDocs    || 0;
+        
+        const inv = res.whlDash.data.inventory;
+        this.lowStockDesigns    = inv?.lowStockDesigns  || 0;
+        this.totalDesigns = inv?.totalDesigns  || 0;
 
         this.isLoading = false;
       },

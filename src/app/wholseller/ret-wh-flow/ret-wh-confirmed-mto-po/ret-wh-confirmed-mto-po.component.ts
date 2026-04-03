@@ -572,7 +572,7 @@ export class RetWhConfirmedMtoPoComponent implements OnInit {
       await this.authService.patchpimage(`po-retailer-to-wholesaler/${this.poId}`, { 
         invoiceGenerated: true,
         invoiceId: invoiceId,
-        // statusAll: "invoice_generated"
+        statusAll: "invoice_generated"
       }).toPromise();
       
       console.log('✅ PO updated successfully');
