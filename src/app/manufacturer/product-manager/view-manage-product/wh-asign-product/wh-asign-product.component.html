@@ -1,0 +1,413 @@
+<section class="content">
+  <div class="content-block">
+    <h4 class="mt-4">Manage Product Assignments</h4>
+
+    <!-- TAB HEADER -->
+    <div class="tab-header">
+      <button
+        class="tab-btn"
+        [class.tab-btn--active]="activeTab === 'assign'"
+        (click)="switchTab('assign')"
+      >
+        <i class="bi bi-send me-2"></i>Assign Products
+      </button>
+      <button
+        class="tab-btn"
+        [class.tab-btn--active]="activeTab === 'assigned'"
+        (click)="switchTab('assigned')"
+      >
+        <i class="bi bi-grid-3x3-gap me-2"></i>Assigned Products
+      </button>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         TAB 1 — ASSIGN
+    ══════════════════════════════════════════ -->
+    <div class="card p-4" *ngIf="activeTab === 'assign'">
+
+      <!-- WHOLESALER SELECTION PANEL -->
+      <div class="wholesaler-panel">
+        <div class="wholesaler-panel__header">
+          <h6 class="mb-0">
+            <i class="bi bi-people-fill me-2"></i>Select Wholesalers
+            <span class="badge-count" *ngIf="selectedWholesalerEmails.size > 0">
+              {{selectedWholesalerEmails.size}} selected
+            </span>
+          </h6>
+          <input
+            type="text"
+            class="form-control wholesaler-search"
+            placeholder="Search wholesalers..."
+            [(ngModel)]="wholesalerSearch"
+            (ngModelChange)="getAllWholesalers()"
+          />
+        </div>
+
+        <div class="selected-tags" *ngIf="selectedWholesalerObjects.length > 0">
+          <span class="wh-tag" *ngFor="let w of selectedWholesalerObjects">
+            <span class="wh-tag__avatar">{{ w.fullName?.charAt(0)?.toUpperCase() }}</span>
+            <span class="wh-tag__name">{{ w.companyName || w.fullName }}</span>
+            <button class="wh-tag__remove" (click)="removeWholesaler(w.email)">
+              <i class="bi bi-x"></i>
+            </button>
+          </span>
+        </div>
+
+        <div class="wholesaler-chips">
+          <div
+            *ngFor="let w of filteredWholesalers"
+            class="wh-chip"
+            [class.wh-chip--selected]="isWholesalerSelected(w.email)"
+            (click)="toggleWholesalerSelection(w.email)"
+          >
+            <div class="wh-chip__avatar">{{ w.fullName?.charAt(0)?.toUpperCase() }}</div>
+            <div class="wh-chip__info">
+              <span class="wh-chip__name">{{ w.companyName || w.fullName }}</span>
+              <span class="wh-chip__email">{{ w.email }}</span>
+            </div>
+            <div class="wh-chip__check" *ngIf="isWholesalerSelected(w.email)">
+              <i class="bi bi-check-circle-fill"></i>
+            </div>
+          </div>
+          <div class="wh-empty" *ngIf="filteredWholesalers.length === 0">No wholesalers found.</div>
+        </div>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="search-bar mt-3">
+        <select class="form-select" [(ngModel)]="filters.brand">
+          <option value="">Select Brand</option>
+          <option *ngFor="let brand of allBrand" [value]="brand.brandName">{{brand.brandName}}</option>
+        </select>
+        <select class="form-select" [(ngModel)]="filters.productType" (change)="getCategoryByProductTypeAndGender()">
+          <option value="">Select Product Type</option>
+          <option *ngFor="let type of allProductType" [value]="type">{{type}}</option>
+        </select>
+        <select class="form-select" [(ngModel)]="filters.gender" (change)="getCategoryByProductTypeAndGender()">
+          <option value="">Select Gender</option>
+          <option *ngFor="let gender of allGender" [value]="gender">{{gender}}</option>
+        </select>
+        <select class="form-select" [(ngModel)]="filters.category" (change)="getSubCategoryBYProductType_Gender_and_Category()">
+          <option value="">Select Category</option>
+          <option *ngFor="let category of allcategory" [value]="category">{{category}}</option>
+          <option *ngIf="allcategory.length === 0" disabled style="color:tomato">** Select Product Type & Gender first **</option>
+        </select>
+        <select class="form-select" [(ngModel)]="filters.subCategory">
+          <option value="">Select Sub-Category</option>
+          <option *ngFor="let sub of allSubCategory" [value]="sub">{{sub}}</option>
+          <option *ngIf="allSubCategory.length === 0" disabled style="color:tomato">** Select Category first **</option>
+        </select>
+        <button class="btn btn-info" (click)="getAllProducts()">Display</button>
+      </div>
+
+      <hr />
+
+      <!-- ACTION BAR -->
+      <div class="action-bar">
+        <div class="action-bar__left">
+          <div class="form-check mb-0">
+            <input class="form-check-input" type="checkbox" id="selectAll"
+              [checked]="allCurrentPageSelected" (change)="toggleSelectAllCurrentPage()" />
+            <label class="form-check-label" for="selectAll">Select All on Page</label>
+          </div>
+          <span class="selection-info" *ngIf="selectedProductIds.size > 0">
+            <i class="bi bi-check2-square me-1"></i>{{ selectedProductIds.size }} product(s) selected
+          </span>
+          <button class="btn btn-sm btn-outline-secondary" *ngIf="selectedProductIds.size > 0"
+            (click)="clearProductSelection()">Clear</button>
+        </div>
+        <div class="action-bar__right">
+          <button class="btn btn-assign" [disabled]="!canAssign() || isAssigning" (click)="assignProducts()">
+            <span *ngIf="isAssigning">
+              <span class="spinner-border spinner-border-sm me-1"></span> Assigning...
+            </span>
+            <span *ngIf="!isAssigning">
+              <i class="bi bi-send-fill me-1"></i>
+              Assign {{ selectedProductIds.size > 0 ? selectedProductIds.size + ' Product(s)' : 'Products' }}
+              <span *ngIf="selectedWholesalerEmails.size > 0"> to {{ selectedWholesalerEmails.size }} Wholesaler(s)</span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- PRODUCT CARDS -->
+      <div class="cards-container">
+        <div
+          *ngFor="let product of products"
+          class="product-card"
+          [class.product-card--selected]="isProductSelected(product.id)"
+          (mouseenter)="onMouseEnter(product)"
+          (mouseleave)="onMouseLeave(product)"
+        >
+          <div class="product-card__checkbox" (click)="toggleProductSelection(product.id)">
+            <input type="checkbox" [checked]="isProductSelected(product.id)"
+              (click)="$event.stopPropagation()" (change)="toggleProductSelection(product.id)" />
+          </div>
+          <div class="design-no">{{ product.designNo }}</div>
+          <div class="image-carousel" (click)="toggleProductSelection(product.id)">
+            <img class="main-img" [src]="product.selectedImageUrl || 'assets/images/no-image.png'" [alt]="product.title" />
+            <div class="carousel-dots">
+              <span *ngFor="let img of product.selectedImageUrls; let i = index"
+                [class.active]="i === product.hoverIndex"
+                (click)="$event.stopPropagation(); navigateToImage(product, i)"></span>
+            </div>
+          </div>
+          <div class="product-details">
+            <div class="color-options">
+              <button *ngFor="let color of product.colors"
+                [ngStyle]="{ 'background-color': color, 'border': color === '#FFFFFF' ? '1px solid #000' : 'none' }"
+                [class.active]="product.selectedColor === color"
+                [disabled]="disableImage(product, color)"
+                (click)="changeProductImage(product, color)"></button>
+            </div>
+            <h6 class="title">{{ product.title }}</h6>
+            <p class="truncate-text">{{ product.description }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="products.length === 0">
+        <i class="bi bi-box-seam empty-state__icon"></i>
+        <p>No products found. Try adjusting your filters.</p>
+      </div>
+
+      <p-paginator *ngIf="products && products.length > 0"
+        (onPageChange)="onPageChange($event)"
+        [first]="first" [rows]="rows" [totalRecords]="totalResults"
+        [rowsPerPageOptions]="[20, 30, 50]"></p-paginator>
+    </div>
+
+   <!-- ══════════════════════════════════════════
+     TAB 2 — ASSIGNED PRODUCTS
+══════════════════════════════════════════ -->
+<div class="card p-4" *ngIf="activeTab === 'assigned'">
+
+  <!-- WHOLESALER SEARCH PANEL (same style as assign tab) -->
+  <div class="wholesaler-panel">
+    <div class="wholesaler-panel__header">
+      <h6 class="mb-0">
+        <i class="bi bi-people-fill me-2"></i>Select Wholesaler
+        <span class="badge-count" *ngIf="selectedAssignedWholesaler">
+          1 selected
+        </span>
+      </h6>
+      <input
+        type="text"
+        class="form-control wholesaler-search"
+        placeholder="Search wholesalers..."
+        [(ngModel)]="assignedWholesalerSearch"
+        (ngModelChange)="onAssignedWholesalerSearch()"
+      />
+    </div>
+
+    <!-- Selected Tag -->
+    <div class="selected-tags" *ngIf="selectedAssignedWholesaler">
+      <span class="wh-tag">
+        <span class="wh-tag__avatar">{{ selectedAssignedWholesaler.fullName?.charAt(0)?.toUpperCase() }}</span>
+        <span class="wh-tag__name">{{ selectedAssignedWholesaler.companyName || selectedAssignedWholesaler.fullName }}</span>
+        <button class="wh-tag__remove" (click)="clearAssignedWholesaler()">
+          <i class="bi bi-x"></i>
+        </button>
+      </span>
+    </div>
+
+    <!-- Wholesaler Chips (max 6) -->
+    <div class="wholesaler-chips" *ngIf="assignedWholesalers.length > 0">
+      <div
+        *ngFor="let w of assignedWholesalers"
+        class="wh-chip"
+        [class.wh-chip--selected]="selectedAssignedWholesaler?.email === w.email"
+        (click)="selectAssignedWholesaler(w)"
+      >
+        <div class="wh-chip__avatar">{{ w.fullName?.charAt(0)?.toUpperCase() }}</div>
+        <div class="wh-chip__info">
+          <span class="wh-chip__name">{{ w.companyName || w.fullName }}</span>
+          <span class="wh-chip__email">{{ w.email }}</span>
+        </div>
+        <div class="wh-chip__check" *ngIf="selectedAssignedWholesaler?.email === w.email">
+          <i class="bi bi-check-circle-fill"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="wh-empty" *ngIf="assignedWholesalers.length === 0 && assignedWholesalerSearch">
+      No wholesalers found for "{{ assignedWholesalerSearch }}".
+    </div>
+    <div class="wh-empty" *ngIf="assignedWholesalers.length === 0 && !assignedWholesalerSearch">
+      Start typing to search wholesalers.
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="search-bar mt-3">
+    <!-- <input
+      type="text"
+      class="form-control"
+      style="max-width:180px; height:36px; font-size:13px"
+      placeholder="Search products..."
+      [(ngModel)]="assignedFilters.search"
+    /> -->
+    <select class="form-select" [(ngModel)]="assignedFilters.brand">
+      <option value="">All Brands</option>
+      <option *ngFor="let brand of allBrand" [value]="brand.brandName">{{ brand.brandName }}</option>
+    </select>
+    <select class="form-select" [(ngModel)]="assignedFilters.productType" (change)="getAssignedCategoryByProductTypeAndGender()">
+      <option value="">All Types</option>
+      <option *ngFor="let type of allProductType" [value]="type">{{ type }}</option>
+    </select>
+    <select class="form-select" [(ngModel)]="assignedFilters.gender" (change)="getAssignedCategoryByProductTypeAndGender()">
+      <option value="">All Genders</option>
+      <option *ngFor="let gender of allGender" [value]="gender">{{ gender }}</option>
+    </select>
+    <select class="form-select" [(ngModel)]="assignedFilters.category" (change)="getAssignedSubCategory()">
+      <option value="">All Categories</option>
+      <option *ngFor="let category of assignedAllCategory" [value]="category">{{ category }}</option>
+      <option *ngIf="assignedAllCategory.length === 0" disabled style="color:tomato">
+        ** Select Type & Gender first **
+      </option>
+    </select>
+    <select class="form-select" [(ngModel)]="assignedFilters.subCategory">
+      <option value="">All Sub-Categories</option>
+      <option *ngFor="let sub of assignedAllSubCategory" [value]="sub">{{ sub }}</option>
+      <option *ngIf="assignedAllSubCategory.length === 0" disabled style="color:tomato">
+        ** Select Category first **
+      </option>
+    </select>
+    <button
+      class="btn btn-info"
+      [disabled]="!selectedAssignedWholesaler"
+      (click)="getAssignedProducts()"
+    >
+      Load Products
+    </button>
+  </div>
+
+  <hr />
+
+  <!-- ACTION BAR (shown only when products are loaded) -->
+  <div class="action-bar" *ngIf="assignedProducts.length > 0">
+    <div class="action-bar__left">
+      <div class="form-check mb-0">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          id="selectAllAssigned"
+          [checked]="allAssignedPageSelected"
+          (change)="toggleSelectAllAssignedPage()"
+        />
+        <label class="form-check-label" for="selectAllAssigned">Select All on Page</label>
+      </div>
+      <span class="selection-info" *ngIf="selectedForRemoval.size > 0">
+        <i class="bi bi-check2-square me-1"></i>{{ selectedForRemoval.size }} selected
+      </span>
+      <button
+        class="btn btn-sm btn-outline-secondary"
+        *ngIf="selectedForRemoval.size > 0"
+        (click)="selectedForRemoval.clear()"
+      >
+        Clear
+      </button>
+    </div>
+    <div class="action-bar__right" *ngIf="selectedForRemoval.size > 0">
+      <button class="btn btn-remove" [disabled]="isRemoving" (click)="removeAssignedProducts()">
+        <span *ngIf="isRemoving">
+          <span class="spinner-border spinner-border-sm me-1"></span> Removing...
+        </span>
+        <span *ngIf="!isRemoving">
+          <i class="bi bi-trash me-1"></i>
+          Unassign {{ selectedForRemoval.size }} Product(s)
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ASSIGNED PRODUCT CARDS -->
+  <div class="cards-container" *ngIf="assignedProducts.length > 0">
+    <div
+      *ngFor="let product of assignedProducts"
+      class="product-card"
+      [class.product-card--remove]="isSelectedForRemoval(product.id)"
+      (mouseenter)="onMouseEnter(product)"
+      (mouseleave)="onMouseLeave(product)"
+    >
+      <!-- Remove Checkbox -->
+      <div class="product-card__checkbox" (click)="toggleRemovalSelection(product.id)">
+        <input
+          type="checkbox"
+          [checked]="isSelectedForRemoval(product.id)"
+          (click)="$event.stopPropagation()"
+          (change)="toggleRemovalSelection(product.id)"
+        />
+      </div>
+
+      <div class="design-no">{{ product.designNo }}</div>
+
+      <div class="image-carousel" (click)="toggleRemovalSelection(product.id)">
+        <img
+          class="main-img"
+          [src]="product.selectedImageUrl || 'assets/images/no-image.png'"
+          [alt]="product.title"
+        />
+        <div class="carousel-dots">
+          <span
+            *ngFor="let img of product.selectedImageUrls; let i = index"
+            [class.active]="i === product.hoverIndex"
+            (click)="$event.stopPropagation(); navigateToImage(product, i)"
+          ></span>
+        </div>
+      </div>
+
+      <div class="product-details">
+        <div class="color-options">
+          <button
+            *ngFor="let color of product.colors"
+            [ngStyle]="{ 'background-color': color, 'border': color === '#FFFFFF' ? '1px solid #000' : 'none' }"
+            [class.active]="product.selectedColor === color"
+            [disabled]="disableImage(product, color)"
+            (click)="changeProductImage(product, color)"
+          ></button>
+        </div>
+        <h6 class="title">{{ product.title }}</h6>
+        <p class="truncate-text">{{ product.description }}</p>
+        <div class="product-meta">
+          <span class="meta-badge">{{ product.brand }}</span>
+          <span class="meta-badge">{{ product.productType }}</span>
+        </div>
+      </div>
+
+      <!-- Quick single unassign button -->
+      <button
+        class="btn-quick-remove"
+        title="Unassign this product"
+        (click)="$event.stopPropagation(); selectedForRemoval.clear(); selectedForRemoval.add(product.id); removeAssignedProducts()"
+      >
+        <i class="bi bi-x-circle-fill"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="assignedProducts.length === 0 && selectedAssignedWholesaler">
+    <i class="bi bi-box-seam empty-state__icon"></i>
+    <p>No products assigned to this wholesaler yet.</p>
+  </div>
+
+  <div class="empty-state" *ngIf="!selectedAssignedWholesaler">
+    <i class="bi bi-person-lines-fill empty-state__icon"></i>
+    <p>Search and select a wholesaler above, then click <strong>Load Products</strong>.</p>
+  </div>
+
+  <!-- Paginator -->
+  <p-paginator
+    *ngIf="assignedProducts && assignedProducts.length > 0"
+    (onPageChange)="onAssignedPageChange($event)"
+    [first]="assignedFirst"
+    [rows]="assignedRows"
+    [totalRecords]="assignedTotalResults"
+    [rowsPerPageOptions]="[20, 30, 50]"
+  ></p-paginator>
+
+</div>
+
+  </div>
+</section>

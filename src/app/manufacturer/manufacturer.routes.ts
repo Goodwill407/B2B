@@ -61,6 +61,7 @@ import { RawItemInventoryComponent } from "./vendor-warehouse-master/raw-item-in
 import { ConfirmMtoPoInvcGenComponent } from "./new-flow/order-managment/view-wholsaler-order/confirm-mto-po-invc-gen/confirm-mto-po-invc-gen.component";
 import { MfgWhlInvoiceListComponent } from "./new-flow/order-managment/whl-invoice/mfg-whl-invoice-list/mfg-whl-invoice-list.component";
 import { MfgWhlInvoiceViewComponent } from "./new-flow/order-managment/whl-invoice/mfg-whl-invoice-view/mfg-whl-invoice-view.component";
+import { WhAsignProductComponent } from "./product-manager/view-manage-product/wh-asign-product/wh-asign-product.component";
 
 export const M_Auth: Route[] = [
     { path: 'new', loadChildren:()=> import('./new-flow/new_flow.route').then((m)=>m.NewFlow)},
@@ -130,16 +131,18 @@ export const M_Auth: Route[] = [
     { path: 'product-bom-list', component: ProductBomListComponent },
 
     //new flow ret to man
-{ path: 'ret-po-list', component: RetailerToManPoListComponent },
-{ path: 'ret-po-list', component: RetailerToManPoListComponent },
-{ path: 'ret-po-list-view', component: RetailerToManPoViewComponent },
-{ path: 'ret-list', component: ViewRetailerOrderComponent },
-{ path: 'ret-list-single-view', component: GenRetailerOrderPoComponent },
+    { path: 'ret-po-list', component: RetailerToManPoListComponent },
+    { path: 'ret-po-list', component: RetailerToManPoListComponent },
+    { path: 'ret-po-list-view', component: RetailerToManPoViewComponent },
+    { path: 'ret-list', component: ViewRetailerOrderComponent },
+    { path: 'ret-list-single-view', component: GenRetailerOrderPoComponent },
 
-{ path:'ret-updated-qty-po-view', component: ViewQtyUpdatedPoComponent },
-{ path:'confirmed-mto-po-mfg-ret-view', component:ConfirmedMtoPoMfgRetComponent },
+    { path:'ret-updated-qty-po-view', component: ViewQtyUpdatedPoComponent },
+    { path:'confirmed-mto-po-mfg-ret-view', component:ConfirmedMtoPoMfgRetComponent },
 
-{ path:'mfg-whl-invoice-list', component: MfgWhlInvoiceListComponent },
-{ path:'mfg-whl-invoice-view/:id', component:MfgWhlInvoiceViewComponent }
+    { path:'mfg-whl-invoice-list', component: MfgWhlInvoiceListComponent },
+    { path:'mfg-whl-invoice-view/:id', component:MfgWhlInvoiceViewComponent },
+
+    { path:'wh-asign-prod', component:WhAsignProductComponent },
 
 ]

@@ -73,7 +73,7 @@ export class EditRePriceComponent {
 
   applyFilters(): void {
     console.log('Filters applied:', this.filters);
-  }
+  }  
 
   getAllBrands() {
     this.authService.get(`brand?brandOwner=${this.mnfEmail}`).subscribe((res: any) => {
@@ -82,15 +82,19 @@ export class EditRePriceComponent {
   }
 
   getAllProducts(email: any) {
-    let url = `/type2-products/filter-products/for-wholesaler?wholesalerEmail=${this.user}&limit=${this.limit}&page=${this.page}&sortBy=createdAt:desc`;
+    let url = `type2-products/filter-products/for-wholesaler`;
 
     const Object = {
       productBy: email,
       brand: this.filters.brand,
       productType: this.filters.productType,
-      gender: this.filters.gender,
+      gender: this.filters.gender, 
       clothing: this.filters.category,
       subCategory: this.filters.subCategory,
+      wholesalerEmail:this.user,
+      manufacturerEmail: email,
+      limit:this.limit,
+      page:this.page
     };
 
     this.authService.post(url, Object).subscribe(

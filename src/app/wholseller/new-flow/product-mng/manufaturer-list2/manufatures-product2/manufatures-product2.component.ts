@@ -46,9 +46,11 @@ export class ManufaturesProduct2Component {
   mnfEmail: any;
   wishlistItems: Set<string> = new Set(); // Set to store wishlist product IDs
   allcategory: any;
+  wholesalerEmail: any;
 
   constructor(public authService: AuthService, private route: ActivatedRoute, private location: Location) {
     this.userProfile = JSON.parse(localStorage.getItem('currentUser')!);
+    this.wholesalerEmail = this.userProfile.email 
   }
 
   ngOnInit(): void {
@@ -81,7 +83,7 @@ export class ManufaturesProduct2Component {
   }
 
   getAllProducts(email: any) {
-    let url = `type2-products/filter-products`;
+    let url = `type2-products/products/manufacturewise`;
 
     const Object = {
       limit: this.limit,
@@ -92,6 +94,7 @@ export class ManufaturesProduct2Component {
       gender: this.filters.gender,
       clothing: this.filters.category,
       subCategory: this.filters.subCategory,
+      wholesalerEmail: this.wholesalerEmail,
     };
 
     this.authService.post(url, Object).subscribe(
@@ -284,7 +287,7 @@ export class ManufaturesProduct2Component {
       const productType = this.filters.productType;
       const gender = this.filters.gender;
       const category = this.filters.category;
-      const object=
+      const object= 
         {
           "productType":productType ,
           "gender":gender ,
@@ -294,6 +297,7 @@ export class ManufaturesProduct2Component {
   
       this.authService.post(`sub-category/filter`,object).subscribe((res: any) => {
         if (res) {
+          this.filters.subCategory = "",
           this.allSubCategory = []
         }
         this.allSubCategory = Array.from(new Set(res.results.map((item: any) => item.subCategory)));
