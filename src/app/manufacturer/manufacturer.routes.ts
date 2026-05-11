@@ -62,6 +62,12 @@ import { ConfirmMtoPoInvcGenComponent } from "./new-flow/order-managment/view-wh
 import { MfgWhlInvoiceListComponent } from "./new-flow/order-managment/whl-invoice/mfg-whl-invoice-list/mfg-whl-invoice-list.component";
 import { MfgWhlInvoiceViewComponent } from "./new-flow/order-managment/whl-invoice/mfg-whl-invoice-view/mfg-whl-invoice-view.component";
 import { WhAsignProductComponent } from "./product-manager/view-manage-product/wh-asign-product/wh-asign-product.component";
+import { AddChannelPartnerComponent } from "./add-distributor/add-channel-partner/add-channel-partner/add-channel-partner.component";
+import { ViewChannelPartnerComponent } from "./add-distributor/add-channel-partner/view-channel-partner/view-channel-partner.component";
+import { ListChannelPartnerComponent } from "./add-distributor/add-channel-partner/list-channel-partner/list-channel-partner.component";
+import { LinkChannelPartnerComponent } from "./add-distributor/add-channel-partner/link-channel-partner/link-channel-partner.component";
+import { AddCommissionListComponent } from "./add-distributor/add-channel-partner/add-commission-list/add-commission-list.component";
+import { CpBrokerRequestsComponent } from "./wholselers-requests/cp-broker-requests/cp-broker-requests.component";
 
 export const M_Auth: Route[] = [
     { path: 'new', loadChildren:()=> import('./new-flow/new_flow.route').then((m)=>m.NewFlow)},
@@ -81,6 +87,7 @@ export const M_Auth: Route[] = [
     { path: 'stock-inventory', component: InventryStockComponent },
     { path: 'category', component: CategoryComponent },
     { path: 'wholselers-Requests', component: WholselersRequestsComponent },
+    { path: 'broker-requests', component: CpBrokerRequestsComponent},
     { path: 'Rejected-Requests', component: RejectedRequestsListComponent },
     { path: 'Wholseler-Details', component: WholselerDetailsViewComponent },
     { path: 'wls-list', component: ViewWholsalerOrderComponent },
@@ -143,6 +150,11 @@ export const M_Auth: Route[] = [
     { path:'mfg-whl-invoice-list', component: MfgWhlInvoiceListComponent },
     { path:'mfg-whl-invoice-view/:id', component:MfgWhlInvoiceViewComponent },
 
-    { path:'wh-asign-prod', component:WhAsignProductComponent },
+    { path: 'wh-asign-prod', component:WhAsignProductComponent },
+    { path: 'add-ch-partner', component:AddChannelPartnerComponent },
+    { path: 'link-ch-partner', component:LinkChannelPartnerComponent },
+    { path: 'view-ch-partner/:id', component:ViewChannelPartnerComponent },
+    { path: 'list-ch-partner', component: ListChannelPartnerComponent },
+    { path: 'add-commission', component: AddCommissionListComponent },
 
 ]

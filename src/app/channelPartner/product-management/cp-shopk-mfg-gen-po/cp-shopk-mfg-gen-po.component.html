@@ -1,0 +1,248 @@
+<section class="content">
+  <div class="content-block">
+
+    <!-- Header -->
+    <h4 class="mt-4 d-flex align-items-center gap-2">
+      <button class="btn p-0" (click)="navigateFun()">
+        <i class="bi bi-arrow-left-circle h4 mb-0"></i>
+      </button>
+      Generate Purchase Order
+    </h4>
+
+    <!-- Loading -->
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner-border text-primary"></div>
+      <p class="mt-2">Loading PO Preview...</p>
+    </div>
+
+    <ng-container *ngIf="!loading && previewData">
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mb-3">
+        <button class="btn btn-outline-secondary" (click)="downloadPO()">
+          <i class="bi bi-download"></i> Download PDF
+        </button>
+        <button class="btn btn-success" (click)="generatePO()" [disabled]="submitting">
+          <span *ngIf="submitting" class="spinner-border spinner-border-sm me-1"></span>
+          <i *ngIf="!submitting" class="bi bi-cart-check-fill"></i>
+          {{ submitting ? 'Generating...' : 'Generate Purchase Order' }}
+        </button>
+      </div>
+
+      <!-- ── PO Document ── -->
+      <div id="purchase-order" class="po-container card p-4">
+
+        <!-- ── Header ── -->
+        <div class="po-header">
+          <div class="po-title">
+            <h2>PURCHASE ORDER</h2>
+            <span class="po-badge">PREVIEW</span>
+          </div>
+          <div class="po-meta">
+            <p><strong>PO Number:</strong> {{ purchaseOrder.poNumber }}</p>
+            <p><strong>PO Date:</strong> {{ purchaseOrder.poDate }}</p>
+            <p><strong>Shopkeeper:</strong> {{ purchaseOrder.shopName }}</p>
+          </div>
+        </div>
+
+        <hr class="my-3">
+
+        <!-- ── 3 Party Info ── -->
+        <div class="party-section">
+
+          <!-- CP - Order By -->
+          <div class="party-card">
+            <div class="party-label cp-label">Channel Partner (Order By)</div>
+            <img *ngIf="purchaseOrder.cpLogo" [src]="purchaseOrder.cpLogo"
+              onerror="this.onerror=null;this.src='assets/images/company_logo.jpg';"
+              class="party-logo" alt="CP Logo">
+            <p class="party-name">{{ purchaseOrder.cpName }}</p>
+            <p>{{ purchaseOrder.cpFullName }}</p>
+            <p>{{ purchaseOrder.cpAddress }}</p>
+            <p><i class="bi bi-telephone"></i> {{ purchaseOrder.cpPhone }}</p>
+            <p><i class="bi bi-envelope"></i> {{ purchaseOrder.cpEmail }}</p>
+            <p *ngIf="purchaseOrder.cpGSTIN"><strong>GSTIN:</strong> {{ purchaseOrder.cpGSTIN }}</p>
+            <p *ngIf="purchaseOrder.cpPAN"><strong>PAN:</strong> {{ purchaseOrder.cpPAN }}</p>
+          </div>
+
+          <!-- Shopkeeper - Deliver To -->
+          <div class="party-card">
+            <div class="party-label sk-label">Shopkeeper (Deliver To)</div>
+            <img *ngIf="purchaseOrder.shopLogo" [src]="purchaseOrder.shopLogo"
+              onerror="this.onerror=null;this.style.display='none';"
+              class="party-logo" alt="Shop Logo">
+            <p class="party-name">{{ purchaseOrder.shopName }}</p>
+            <p>{{ purchaseOrder.shopFullName }}</p>
+            <p>{{ purchaseOrder.shopAddress }}</p>
+            <p><i class="bi bi-telephone"></i> {{ purchaseOrder.shopPhone }}</p>
+            <p><i class="bi bi-envelope"></i> {{ purchaseOrder.shopEmail }}</p>
+            <p *ngIf="purchaseOrder.shopGSTIN"><strong>GSTIN:</strong> {{ purchaseOrder.shopGSTIN }}</p>
+            <p *ngIf="purchaseOrder.shopPAN"><strong>PAN:</strong> {{ purchaseOrder.shopPAN }}</p>
+          </div>
+
+          <!-- Manufacturer - Order To -->
+          <div class="party-card">
+            <div class="party-label mfg-label">Manufacturer (Order To)</div>
+            <img *ngIf="purchaseOrder.mfgLogo" [src]="purchaseOrder.mfgLogo"
+              onerror="this.onerror=null;this.style.display='none';"
+              class="party-logo" alt="Mfg Logo">
+            <p class="party-name">{{ purchaseOrder.mfgName }}</p>
+            <p>{{ purchaseOrder.mfgFullName }}</p>
+            <p>{{ purchaseOrder.mfgAddress }}</p>
+            <p><i class="bi bi-telephone"></i> {{ purchaseOrder.mfgPhone }}</p>
+            <p><i class="bi bi-envelope"></i> {{ purchaseOrder.mfgEmail }}</p>
+            <p *ngIf="purchaseOrder.mfgGSTIN"><strong>GSTIN:</strong> {{ purchaseOrder.mfgGSTIN }}</p>
+            <p *ngIf="purchaseOrder.mfgPAN"><strong>PAN:</strong> {{ purchaseOrder.mfgPAN }}</p>
+          </div>
+        </div>
+
+        <hr class="my-3">
+
+        <!-- ── GST Type Badge ── -->
+        <div class="gst-badge-row">
+          <span class="gst-badge" [class.intra]="isIntraState" [class.inter]="!isIntraState">
+            <i class="bi bi-info-circle"></i>
+            {{ isIntraState ? 'Intra-State (CGST + SGST @ 9% each)' : 'Inter-State (IGST @ 18%)' }}
+          </span>
+          <span *ngIf="purchaseOrder.discount > 0" class="discount-badge">
+            {{ purchaseOrder.discount }}% Discount Applied
+          </span>
+        </div>
+
+        <!-- ── Items Table ── -->
+        <h5 class="mt-3 mb-2">Order Details</h5>
+        <div class="table-responsive">
+          <p-table [value]="products" [responsive]="true" [paginator]="false" class="bordered-table">
+
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Sr.</th>
+                <th>Image</th>
+                <th>Clothing</th>
+                <th>Gender</th>
+                <th>Brand</th>
+                <th>Design No.</th>
+                <th>HSN</th>
+                <th>Colour</th>
+                <th>Size</th>
+                <th>Rate (&#8377;)</th>
+                <th>Qty</th>
+                <th>Taxable (&#8377;)</th>
+                <th>GST %</th>
+                <th *ngIf="isIntraState">CGST (&#8377;)</th>
+                <th *ngIf="isIntraState">SGST (&#8377;)</th>
+                <th *ngIf="!isIntraState">IGST (&#8377;)</th>
+                <th>Total (&#8377;)</th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-item let-i="rowIndex">
+              <tr>
+                <td>{{ i + 1 }}</td>
+                <td class="text-center">
+                  <div *ngIf="!item.colourImage || item.colourImage === ''"
+                    class="color-preview"
+                    [style.background-color]="item.colour || '#e0e0e0'"
+                    [title]="item.colourName">
+                  </div>
+                  <img *ngIf="item.colourImage && item.colourImage !== ''"
+                    [src]="item.colourImage"
+                    [alt]="item.colourName"
+                    class="item-image"
+                    onerror="this.onerror=null;this.style.display='none';">
+                </td>
+                <td>{{ item.clothing }}</td>
+                <td>{{ item.gender }}</td>
+                <td>{{ item.brandName || 'N/A' }}</td>
+                <td>{{ item.designNumber }}</td>
+                <td>{{ item.hsnCode || 'N/A' }}</td>
+                <td>
+                  <div class="color-display">
+                    <span class="color-swatch" [style.background-color]="item.colour"></span>
+                    {{ item.colourName }}
+                  </div>
+                </td>
+                <td>{{ item.size }}</td>
+                <td class="text-end">
+                  <span *ngIf="purchaseOrder.discount > 0">
+                    <span class="orig-rate">{{ getGstAmounts(item).originalRate | indianCurrency }}</span><br>
+                    <span class="disc-rate">{{ getGstAmounts(item).discountedRate | indianCurrency }}</span>
+                  </span>
+                  <span *ngIf="!purchaseOrder.discount || purchaseOrder.discount === 0">
+                    {{ item.price | indianCurrency }}
+                  </span>
+                </td>
+                <td>{{ item.quantity }}</td>
+                <td class="text-end">{{ getGstAmounts(item).taxable | indianCurrency }}</td>
+                <td>{{ item.hsnGst || 0 }}%</td>
+                <td class="text-end" *ngIf="isIntraState">{{ getGstAmounts(item).cgst | indianCurrency }}</td>
+                <td class="text-end" *ngIf="isIntraState">{{ getGstAmounts(item).sgst | indianCurrency }}</td>
+                <td class="text-end" *ngIf="!isIntraState">{{ getGstAmounts(item).igst | indianCurrency }}</td>
+                <td class="text-end">{{ getGstAmounts(item).totalWithGst | indianCurrency }}</td>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <!-- Totals row -->
+              <tr class="footer-total-row">
+                <td colspan="10" class="text-end fw-bold">Total:</td>
+                <td>{{ orderTotals.totalQty }}</td>
+                <td class="text-end">{{ orderTotals.totalTaxable | indianCurrency }}</td>
+                <td></td>
+                <td *ngIf="isIntraState" class="text-end">{{ orderTotals.totalCGST | indianCurrency }}</td>
+                <td *ngIf="isIntraState" class="text-end">{{ orderTotals.totalSGST | indianCurrency }}</td>
+                <td *ngIf="!isIntraState" class="text-end">{{ orderTotals.totalIGST | indianCurrency }}</td>
+                <td class="text-end">{{ orderTotals.totalWithGST | indianCurrency }}</td>
+              </tr>
+              <!-- Grand Total -->
+              <tr class="footer-grand-row">
+                <td [attr.colspan]="colspan" class="text-end">Grand Total (&#8377;):</td>
+                <td class="text-end grand-val">{{ actualGrandTotal | indianCurrency }}</td>
+              </tr>
+              <!-- Amount in words -->
+              <tr>
+                <td [attr.colspan]="colspan + 1" class="text-start amount-words">
+                  Grand Total (in words): {{ actualGrandTotal | amountInWords }}
+                </td>
+              </tr>
+              <!-- GST paid -->
+              <tr>
+                <td [attr.colspan]="colspan + 1" class="text-start gst-words">
+                  Total GST Paid: &#8377; {{ totalGSTAmount | indianCurrency }} — {{ totalGSTAmount | amountInWords }}
+                </td>
+              </tr>
+              <!-- Discount info -->
+              <tr *ngIf="purchaseOrder.discount > 0" class="discount-info-row">
+                <td [attr.colspan]="colspan + 1" class="text-center">
+                  &#8505;&#65039; {{ purchaseOrder.discount }}% discount applied on product rates
+                  (Total Discount: &#8377; {{ discountAmount | indianCurrency }})
+                </td>
+              </tr>
+            </ng-template>
+
+          </p-table>
+        </div>
+
+      </div><!-- /po-container -->
+
+      <!-- Bottom action -->
+      <div class="text-center my-4">
+        <button class="btn btn-success btn-lg px-5" (click)="generatePO()" [disabled]="submitting">
+          <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2"></span>
+          <i *ngIf="!submitting" class="bi bi-cart-check-fill me-2"></i>
+          {{ submitting ? 'Generating...' : 'Generate Purchase Order' }}
+        </button>
+      </div>
+
+    </ng-container>
+
+    <!-- No data -->
+    <div *ngIf="!loading && !previewData" class="empty-state">
+      <i class="bi bi-exclamation-circle empty-icon"></i>
+      <h5>Preview Not Available</h5>
+      <p>Unable to load PO preview. Please go back and try again.</p>
+      <button class="btn btn-primary mt-2" (click)="navigateFun()">Go Back</button>
+    </div>
+
+  </div>
+</section>

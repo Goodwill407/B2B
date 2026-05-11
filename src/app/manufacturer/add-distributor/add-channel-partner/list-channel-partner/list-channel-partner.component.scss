@@ -1,0 +1,140 @@
+::ng-deep .p-datatable,
+.btn {
+  font-size: 13px !important;
+}
+
+::ng-deep .p-datatable-header,
+.p-datatable-thead > tr > th,
+.p-datatable-tbody > tr > td {
+  text-align: center;
+}
+
+::ng-deep .p-tooltip-text {
+  font-size: 10px !important;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.search-container {
+  position: relative;
+
+  .search-box {
+    padding-right: 35px;
+    min-width: 220px;
+    font-size: 13px;
+  }
+
+  .search-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    font-size: 13px;
+  }
+}
+
+.add-btn {
+  background-color: #f0ad4e;
+  color: #fff;
+  font-size: 13px;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: #e09a35;
+    color: #fff;
+  }
+}
+
+// Status badges
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.badge-approved {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.badge-pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.badge-blocked {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+// Registration type badge
+.reg-type-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  background-color: #e8f0fe;
+  color: #1a56db;
+}
+
+.data-not-found {
+  color: #888;
+  font-size: 14px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.btn-icon {
+  border: none;
+  background: transparent;
+  color: #555;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #f0ad4e;
+  }
+
+  &.text-danger {
+    color: #dc3545 !important;   // ← add !important
+    &:hover { color: #c0392b !important; }
+  }
+
+  &.text-warning {
+    color: #f0ad4e !important;   // ← add this block
+    &:hover { color: #d68910 !important; }
+  }
+
+  &.text-success {
+    color: #28a745 !important;   // ← add this block
+    &:hover { color: #1e7e34 !important; }
+  }
+}
+
+.pagination-container {
+  text-align: center;
+  margin-top: auto;
+}
+
+.commission-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  background-color: #d4edda;
+  color: #155724;
+}

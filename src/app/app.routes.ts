@@ -47,6 +47,13 @@ export const APP_ROUTE: Route[] = [
         loadChildren: () =>
           import('./retailer/retailer.routes').then((m) => m.Retailer_Route),
       },
+      {
+        path: 'cp',
+        canActivate:[AuthGuard],
+        data:{role:Role.ChannelPartner},
+        loadChildren: () =>
+          import('./channelPartner/channelPartner.routes').then((m) => m.CP_Auth),
+      },
     ],
   },
   {

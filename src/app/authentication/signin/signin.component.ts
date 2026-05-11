@@ -92,6 +92,8 @@ export class SigninComponent
                   this.router.navigate(['/wholesaler/dashboard']);
                 } else if (role === Role.Retailer) {
                   this.router.navigate(['/retailer/dashboard']);
+                } else if (role === Role.ChannelPartner) {
+                  this.router.navigate(['/cp/cp-dashboard']);
                 } else {
                   this.router.navigate(['/authentication/signin']);
                 }

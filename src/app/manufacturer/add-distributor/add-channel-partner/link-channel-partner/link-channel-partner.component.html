@@ -1,0 +1,152 @@
+<section class="content">
+  <div class="content-block">
+    <h4 class="mt-4">
+      <i class="bi bi-link-45deg h3"></i> Link Channel Partner
+    </h4>
+
+    <div class="card-table p-3">
+
+      <!-- Header -->
+      <div class="table-header mt-3">
+        <h5 class="mb-0">Search & Link Channel Partner</h5>
+        <button class="btn back-btn" (click)="navigateBack()">
+          <i class="bi bi-arrow-left-circle me-1"></i> Back to List
+        </button>
+      </div>
+      <hr>
+
+      <!-- Search Box -->
+    <div class="search-section mt-3">
+    <div class="search-row">
+        <input
+        type="text"
+        class="form-control search-input"
+        placeholder="Search by name, company or email..."
+        [(ngModel)]="searchKey"
+        (keydown)="onSearchInput($event)">
+        <button
+        class="btn search-btn"
+        (click)="searchChannelPartners()"
+        [disabled]="isSearching">
+        <span *ngIf="isSearching" class="spinner-border spinner-border-sm me-1"></span>
+        <i *ngIf="!isSearching" class="fas fa-search me-1"></i>
+        {{ isSearching ? 'Searching...' : 'Search' }}
+        </button>
+    </div>
+    <small class="text-muted mt-2 d-block">
+        <i class="bi bi-info-circle me-1"></i>
+        Search channel partners by full name, company name or email. Press Enter or click Search.
+    </small>
+    </div>
+
+      <!-- Results -->
+      <div class="mt-4" *ngIf="searchPerformed">
+
+        <!-- Loading -->
+        <div *ngIf="isSearching" class="text-center py-4">
+          <div class="spinner-border text-warning" role="status"></div>
+          <p class="mt-2 text-muted">Searching...</p>
+        </div>
+
+        <!-- No Results -->
+        <div *ngIf="!isSearching && searchResults.length === 0"
+          class="data-not-found text-center mt-3">
+          <i class="bi bi-search fs-2 text-muted"></i>
+          <p class="mt-2">No channel partners found for "<strong>{{ searchKey }}</strong>"</p>
+        </div>
+
+        <!-- Results Table -->
+        <div *ngIf="!isSearching && searchResults.length > 0">
+          <p class="result-count mb-2">
+            <i class="bi bi-check-circle-fill text-success me-1"></i>
+            {{ searchResults.length }} result(s) found
+          </p>
+
+          <div class="table-responsive">
+            <table class="table table-bordered result-table">
+              <thead>
+                <tr>
+                  <th>Sr.</th>
+                  <th>Full Name</th>
+                  <th>Company Name</th>
+                  <th>Email</th>
+                  <th>Mobile</th>
+                  <th>City</th>
+                  <!-- <th>Status</th>
+                  <th>Link Status</th> -->
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let cp of searchResults; let i = index">
+                  <td class="text-center">{{ i + 1 }}</td>
+                  <td class="text-center">{{ cp.fullName }}</td>
+                  <td class="text-center">{{ cp.companyName || '-' }}</td>
+                  <td class="text-center">{{ cp.email }}</td>
+                  <td class="text-center">{{ cp.mobNumber || '-' }}</td>
+                  <td class="text-center">{{ cp.city || '-' }}</td>
+                  <!-- <td class="text-center">
+                    <span class="status-badge" [ngClass]="'badge-' + cp.status">
+                      {{ cp.status | titlecase }}
+                    </span>
+                  </td> -->
+                  <!-- <td class="text-center">
+                    <span *ngIf="isAlreadyLinked(cp)" class="linked-badge">
+                      <i class="bi bi-check-circle-fill me-1"></i> Linked
+                    </span>
+                    <span *ngIf="!isAlreadyLinked(cp)" class="not-linked-badge">
+                      <i class="bi bi-x-circle me-1"></i> Not Linked
+                    </span>
+                  </td> -->
+                  <td>
+                    <div class="button-container text-center">
+                      <!-- View Button -->
+                      <button
+                        class="btn btn-icon p-2"
+                        pTooltip="View Profile"
+                        tooltipPosition="top"
+                        (click)="viewChannelPartner(cp)">
+                        <i class="fas fa-eye"></i>
+                      </button>
+
+                      <!-- Link Button -->
+                      <!-- <button
+                        *ngIf="!isAlreadyLinked(cp)"
+                        class="btn btn-icon p-2 text-success"
+                        pTooltip="Link Channel Partner"
+                        tooltipPosition="top"
+                        [disabled]="linkingEmail === cp.email"
+                        (click)="linkChannelPartner(cp)">
+                        <span *ngIf="linkingEmail === cp.email"
+                          class="spinner-border spinner-border-sm"></span>
+                        <i *ngIf="linkingEmail !== cp.email" class="bi bi-link-45deg fs-6"></i>
+                      </button> -->
+
+                      <!-- Already Linked (disabled) -->
+                      <!-- <button
+                        *ngIf="isAlreadyLinked(cp)"
+                        class="btn btn-icon p-2 text-muted"
+                        pTooltip="Already Linked"
+                        tooltipPosition="top"
+                        disabled>
+                        <i class="bi bi-check2-circle fs-6"></i>
+                      </button> -->
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Initial State -->
+      <div *ngIf="!searchPerformed" class="initial-state text-center py-5">
+        <i class="bi bi-people fs-1 text-muted"></i>
+        <p class="mt-3 text-muted">Search for a Channel Partner to link with your account.</p>
+      </div>
+
+    </div>
+  </div>
+</section>

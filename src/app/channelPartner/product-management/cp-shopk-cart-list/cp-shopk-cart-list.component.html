@@ -1,0 +1,80 @@
+<section class="content">
+  <div class="content-block">
+    <h4 class="mt-4">
+      <i class="bi bi-cart3 h3"></i>&nbsp; Shopkeeper Cart List
+    </h4>
+    <p class="text-muted mb-4">Select a shopkeeper to view their cart items</p>
+
+    <!-- Loading -->
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-2">Loading carts...</p>
+    </div>
+
+    <!-- Cards grid -->
+    <div class="shopkeeper-grid" *ngIf="!loading && shopkeeperCarts.length > 0">
+      <div
+        class="shopkeeper-card"
+        *ngFor="let sk of shopkeeperCarts"
+        (click)="openCart(sk)"
+        >
+        <div class="card-left">
+            <div class="avatar-wrap">
+            <img
+                *ngIf="sk.profileImg"
+                [src]="sk.profileImg"
+                onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                class="avatar-img"
+                alt="profile"
+            />
+            <div class="avatar-initial" [style.display]="sk.profileImg ? 'none' : 'flex'">
+                {{ getInitial(sk.shopkeeperName || sk.shopName || '') }}
+            </div>
+            </div>
+        </div>
+
+        <div class="card-body-content">
+            <div class="sk-name">{{ sk.shopkeeperName || sk.shopkeeperEmail }}</div>
+            <div class="sk-email text-muted">{{ sk.shopkeeperEmail }}</div>
+            <div class="sk-location text-muted" *ngIf="sk.city">
+            <i class="bi bi-geo-alt-fill"></i> {{ sk.city }}, {{ sk.state }}
+            </div>
+
+            <div class="sk-stats">
+            <div class="stat-chip">
+                <i class="bi bi-box-seam"></i>
+                <span>{{ sk.cartTotalQty }} Items</span>
+            </div>
+            <div class="stat-chip green">
+                <i class="bi bi-currency-rupee"></i>
+                <span>{{ sk.cartFinalAmount | number:'1.0-0' }}</span>
+            </div>
+            <div class="stat-chip blue" *ngIf="sk.manufacturerCount">
+                <i class="bi bi-buildings"></i>
+                <span>{{ sk.manufacturerCount }} Mfg</span>
+            </div>
+            </div>
+        </div>
+
+        <div class="card-actions">
+            <button
+            class="btn btn-sm btn-danger"
+            (click)="onDeleteCart($event, sk)"
+            title="Delete Cart"
+            >
+            <i class="bi bi-trash-fill"></i>
+            </button>
+            <i class="bi bi-chevron-right text-muted"></i>
+        </div>
+        </div>
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state" *ngIf="!loading && shopkeeperCarts.length === 0">
+      <i class="bi bi-cart-x empty-icon"></i>
+      <h5>No Carts Found</h5>
+      <p>No shopkeeper has items in cart yet.</p>
+    </div>
+
+  </div>
+</section>

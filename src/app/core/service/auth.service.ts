@@ -99,6 +99,13 @@ postpimage(url: string, data: any) {
     return this.http.delete<any>(this.apiURL + url,  { headers: this.headerToken });
   }
 
+  delete2WithBody(url: string, body: any): Observable<any> {
+  return this.http.delete<any>(this.apiURL + url, { 
+    headers: this.headerToken, 
+    body: body        // ← passes body with headers together
+  });
+}
+
   setTokens() {
     const token = JSON.parse(sessionStorage.getItem('tokens') || '{}');
     if (token && token.access) {

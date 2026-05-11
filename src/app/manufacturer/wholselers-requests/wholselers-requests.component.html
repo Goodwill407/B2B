@@ -3,7 +3,7 @@
     <div class="content-block">
       <h4 class="mt-4"><i class="bi bi-person-vcard-fill h3"></i> Wholesaler Request List</h4>
       <div class="card-table p-3">
-        <h5 class="mt-2">Wholesaler  List</h5>
+        <h5 class="mt-2">Wholesaler List</h5>
         <hr>
         <div class="p-grid p-fluid">
           <div class="p-col-12 text-center">
@@ -12,6 +12,7 @@
                 <tr>
                   <th>Wholesaler's Name</th>
                   <th>Company/Firm Name</th>
+                  
                   <th>Mobile Number</th>
                   <th>Email</th>
                   <th>Status</th>
@@ -22,6 +23,7 @@
                 <tr>
                   <td class="text-center">{{request.requestByFullName}}</td>
                   <td class="text-center">{{request.requestByCompanyName}}</td>
+                  
                   <td class="text-center">{{request.requestByMobileNumber}}</td>
                   <td class="text-center">{{request.requestByEmail}}</td>
                   <td class="text-center" [ngClass]="{

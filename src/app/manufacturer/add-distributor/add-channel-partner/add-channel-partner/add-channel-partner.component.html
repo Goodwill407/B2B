@@ -1,0 +1,319 @@
+<section class="content">
+  <div class="content-block">
+    <div class="registration-form p-4 mt-4">
+
+      <div class="card p-4 pt-2">
+        <h5 class="mb-0">
+          <!-- <button class="btn text-start" (click)="navigateBack()">
+            <i class="bi bi-arrow-left-circle h4"></i>
+          </button> -->
+          <i class="bi bi-person-plus-fill h5 ms-1"></i> Add Channel Partner
+        </h5>
+        <hr class="mt-2">
+
+       
+
+        <form [formGroup]="cpForm" (ngSubmit)="onSubmit()">
+
+          <!-- Basic Info -->
+          <h6 class="section-title mt-2">Basic Information</h6>
+          <hr class="my-2">
+          <div class="row">
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Full Name <span>*</span></label>
+                <input type="text" class="form-control" formControlName="fullName" placeholder="Enter full name"
+                  [ngClass]="{'is-invalid': isInvalid('fullName')}">
+                <div class="invalid-feedback" *ngIf="isInvalid('fullName')">Full name is required.</div>
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Company Name</label>
+                <input type="text" class="form-control" formControlName="companyName" placeholder="Enter company name">
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Email <span>*</span></label>
+                <input type="email" class="form-control" formControlName="email" placeholder="Enter email"
+                  [ngClass]="{'is-invalid': isInvalid('email')}">
+                <div class="invalid-feedback" *ngIf="isInvalid('email')">Valid email is required.</div>
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Primary Mobile <span>*</span></label>
+                <input type="text" class="form-control" formControlName="mobNumber" placeholder="10-digit mobile number"
+                  [ngClass]="{'is-invalid': isInvalid('mobNumber')}">
+                <div class="invalid-feedback" *ngIf="isInvalid('mobNumber')">Valid 10-digit mobile number required.</div>
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Alternative Mobile</label>
+                <input type="text" class="form-control" formControlName="mobNumber2" placeholder="Alternative mobile"
+                [ngClass]="{'is-invalid': isInvalid('mobNumber2')}" >
+                <div class="invalid-feedback" *ngIf="isInvalid('mobNumber')">Valid 10-digit mobile number required.</div>
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Alternative Email</label>
+                <input type="email" class="form-control" formControlName="email2" placeholder="Alternative email"
+                  [ngClass]="{'is-invalid': isInvalid('email2')}">
+                <div class="invalid-feedback" *ngIf="isInvalid('email2')">Enter a valid email.</div>
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>GSTIN</label>
+                <input type="text" class="form-control" formControlName="GSTIN" placeholder="e.g. 27ABCDE1234F1Z5"
+                  [ngClass]="{'is-invalid': isInvalid('GSTIN')}">
+                <div class="invalid-feedback" *ngIf="isInvalid('GSTIN')">Enter valid GSTIN format.</div>
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>PAN</label>
+                <input type="text" class="form-control" formControlName="pan" placeholder="e.g. ABCDE1234F"
+                  [ngClass]="{'is-invalid': isInvalid('pan')}">
+                <div class="invalid-feedback" *ngIf="isInvalid('pan')">Enter valid PAN format.</div>
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Establishment Date</label>
+                <input type="date" class="form-control" formControlName="establishDate">
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Turnover</label>
+                <input type="text" class="form-control" formControlName="turnover" placeholder="Annual turnover">
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Legal Status of Firm</label>
+                <select class="form-control" formControlName="leagalStatusOfFirm">
+                  <option value="">Select Legal Status</option>
+                  <option value="Proprietorship">Proprietorship</option>
+                  <option value="Partnership">Partnership</option>
+                  <option value="LLP">LLP</option>
+                  <option value="Private Limited">Private Limited</option>
+                  <option value="Public Limited">Public Limited</option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Address -->
+          <h6 class="section-title mt-4">Address Information</h6>
+          <hr class="my-2">
+          <div class="row">
+
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+              <div class="label-input">
+                <label>Address</label>
+                <input type="text" class="form-control" formControlName="address" placeholder="Enter full address">
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Country</label>
+                <input type="text" class="form-control" formControlName="country" placeholder="Country">
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>State</label>
+                <input type="text" class="form-control" formControlName="state" placeholder="State">
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>City</label>
+                <input type="text" class="form-control" formControlName="city" placeholder="City">
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Pin Code</label>
+                <input type="text" class="form-control" formControlName="pinCode" placeholder="6-digit pin code"
+                  [ngClass]="{'is-invalid': isInvalid('pinCode')}">
+                <div class="invalid-feedback" *ngIf="isInvalid('pinCode')">Enter valid 6-digit pin code.</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Social Media -->
+          <h6 class="section-title mt-4">Social Media <small class="text-muted fw-normal">(Optional)</small></h6>
+          <hr class="my-2">
+          <div class="row" formGroupName="socialMedia">
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Facebook</label>
+                <input type="text" class="form-control" formControlName="facebook" placeholder="Facebook profile URL">
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Instagram</label>
+                <input type="text" class="form-control" formControlName="instagram" placeholder="Instagram profile URL">
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>LinkedIn</label>
+                <input type="text" class="form-control" formControlName="linkedIn" placeholder="LinkedIn profile URL">
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Website</label>
+                <input type="text" class="form-control" formControlName="webSite" placeholder="Company website URL">
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bank Details -->
+          <h6 class="section-title mt-4">Bank Account Details <small class="text-muted fw-normal">(Optional)</small></h6>
+          <hr class="my-2">
+          <div class="row" formGroupName="BankDetails">
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Account Number</label>
+                <input type="text" class="form-control" formControlName="accountNumber" placeholder="Bank account number"
+                  [ngClass]="{'is-invalid': cpForm.get('BankDetails.accountNumber')?.invalid && cpForm.get('BankDetails.accountNumber')?.touched}">
+                <div class="invalid-feedback">Enter valid account number (9-18 digits).</div>
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Account Type</label>
+                <select class="form-control" formControlName="accountType">
+                  <option value="">Select Account Type</option>
+                  <option value="Savings">Savings</option>
+                  <option value="Current">Current</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Bank Name</label>
+                <input type="text" class="form-control" formControlName="bankName" placeholder="Bank name">
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>IFSC Code</label>
+                <input type="text" class="form-control" formControlName="IFSCcode" placeholder="e.g. SBIN0001234"
+                  [ngClass]="{'is-invalid': cpForm.get('BankDetails.IFSCcode')?.invalid && cpForm.get('BankDetails.IFSCcode')?.touched}">
+                <div class="invalid-feedback">Enter valid IFSC code.</div>
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Branch Name</label>
+                <input type="text" class="form-control" formControlName="branch" placeholder="Branch name">
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Swift Code</label>
+                <input type="text" class="form-control" formControlName="swiftCode" placeholder="Swift code">
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Bank Country</label>
+                <input type="text" class="form-control" formControlName="country" placeholder="Bank country">
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Bank City</label>
+                <input type="text" class="form-control" formControlName="city" placeholder="Bank city">
+              </div>
+            </div>
+
+          </div>
+
+          <!-- File Uploads -->
+          <h6 class="section-title mt-4">Documents & Profile Image</h6>
+          <hr class="my-2">
+          <div class="row">
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Profile Image</label>
+                <input type="file" class="form-control" accept="image/*" (change)="onProfileImgChange($event)">
+                <div *ngIf="profileImgPreview" class="mt-2">
+                  <img [src]="profileImgPreview" alt="Preview" class="img-preview">
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+              <div class="label-input">
+                <label>Document (PDF/Doc)</label>
+                <input type="file" class="form-control" accept=".pdf,.doc,.docx" (change)="onDocumentChange($event)">
+                <small class="text-muted" *ngIf="documentFile">Selected: {{ documentFile.name }}</small>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Submit -->
+          <div class="text-center mt-4">
+            <button type="button" class="btn btn-secondary me-3" (click)="navigateBack()">Cancel</button>
+            <button type="submit" class="btn submit-btn" [disabled]="isSubmitting">
+              <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-1"></span>
+              {{ isSubmitting ? 'Saving...' : 'Add Channel Partner' }}
+            </button>
+          </div>
+
+        </form>
+
+        <div class="alert alert-info d-flex align-items-center gap-2 mt-3 mb-1 text-dark" role="alert">
+            <i class="bi bi-info-circle-fill fs-5"></i>
+            <div class=" text-black">
+                <strong class=" text-black">Default Password:</strong> A default password <code>AB123456</code> will be set for this Channel Partner.
+                They must update it after their first login.
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,264 @@
+.po-container {
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+/* ── Header ────────────────────────────────── */
+.po-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.po-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #002080;
+    letter-spacing: 1px;
+  }
+}
+
+.po-badge {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffc107;
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.po-meta p {
+  margin: 2px 0;
+  font-size: 13px;
+  text-align: right;
+}
+
+/* ── Party Section ──────────────────────────── */
+.party-section {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.party-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 13px;
+  position: relative;
+
+  p {
+    margin: 3px 0;
+    color: #444;
+  }
+}
+
+.party-name {
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  color: #212529 !important;
+  margin-top: 6px !important;
+}
+
+.party-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+.cp-label  { background: #cfe2ff; color: #084298; }
+.sk-label  { background: #d1e7dd; color: #0f5132; }
+.mfg-label { background: #f8d7da; color: #842029; }
+
+.party-logo {
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* ── GST Badge ──────────────────────────────── */
+.gst-badge-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.gst-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+
+  &.intra { background: #d1e7dd; color: #0f5132; }
+  &.inter { background: #cfe2ff; color: #084298; }
+}
+
+.discount-badge {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffc107;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ── Table ──────────────────────────────────── */
+.table-responsive { overflow-x: auto; }
+
+.bordered-table {
+  font-size: 0.9rem;
+
+  th, td {
+    border: 1px solid #dee2e6;
+    padding: 7px 8px;
+    text-align: center;
+  }
+
+  th {
+    background: #f2f6fa;
+    font-weight: 600;
+    color: #2a2a2a;
+    white-space: nowrap;
+  }
+
+  tfoot tr td { background: #f8fafc; }
+}
+
+/* ── Table footer rows ──────────────────────── */
+.footer-total-row td { font-weight: 600; }
+
+.footer-grand-row td {
+  font-size: 1.05em;
+  font-weight: 700;
+  color: #002080;
+}
+
+.grand-val {
+  font-size: 1.1em;
+  color: #002080;
+}
+
+.amount-words {
+  font-weight: 700;
+  font-size: 1em;
+  color: #002080;
+}
+
+.gst-words {
+  font-weight: 600;
+  font-size: 0.95em;
+  color: #006600;
+}
+
+.discount-info-row td {
+  background: #fff3cd;
+  color: #856404;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+/* ── Images / colours ───────────────────────── */
+.item-image {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+  display: block;
+  margin: 0 auto;
+}
+
+.color-preview {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+  display: block;
+  margin: 0 auto;
+}
+
+.color-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.color-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.orig-rate {
+  text-decoration: line-through;
+  color: #999;
+  font-size: 0.88em;
+}
+
+.disc-rate {
+  color: #28a745;
+  font-weight: 600;
+}
+
+/* ── Loading / Empty ────────────────────────── */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+  color: #6c757d;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+  color: #6c757d;
+  text-align: center;
+
+  .empty-icon { font-size: 52px; margin-bottom: 16px; color: #dee2e6; }
+  h5 { color: #343a40; margin-bottom: 6px; }
+  p  { font-size: 14px; }
+}
+
+/* ── Responsive ─────────────────────────────── */
+@media (max-width: 992px) {
+  .party-section { grid-template-columns: 1fr; }
+  .po-header { flex-direction: column; }
+  .po-meta p { text-align: left; }
+}
+
+@media print {
+  body * { visibility: hidden; }
+  #purchase-order, #purchase-order * { visibility: visible; }
+  #purchase-order { position: absolute; left: 0; top: 0; width: 100%; }
+}

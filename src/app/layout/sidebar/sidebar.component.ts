@@ -126,8 +126,10 @@ export class SidebarComponent extends UnsubscribeOnDestroyAdapter implements OnI
       }
       else if (userRole === Role.cluster) {
         this.userType = this.authService.currentUserValue.cluster;
-      }
-      else {
+
+      }else if (userRole === Role.ChannelPartner) {
+        this.userType = 'Channel Partner'
+      }else {
         this.userType = "Manufacturer";
       }
     }

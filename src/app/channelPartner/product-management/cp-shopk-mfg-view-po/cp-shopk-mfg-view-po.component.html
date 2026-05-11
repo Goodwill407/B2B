@@ -1,0 +1,322 @@
+<section class="content">
+  <div class="content-block">
+
+    <!-- Header -->
+    <div class="d-flex align-items-center justify-content-between mt-4 mb-3 flex-wrap gap-2">
+      <h4 class="mb-0 d-flex align-items-center gap-2">
+        <button class="btn p-0" (click)="navigateFun()">
+          <i class="bi bi-arrow-left-circle h4 mb-0"></i>
+        </button>
+        <i class="bi bi-receipt-cutoff text-primary"></i>
+        View Purchase Order
+      </h4>
+      <div class="d-flex gap-2" *ngIf="po && !loading">
+        <span class="status-badge ms-2" [ngClass]="getStatusClass(po.statusAll)">
+          {{ po.statusAll | titlecase }}
+        </span>
+        <button class="btn btn-outline-primary btn-sm px-3" (click)="downloadPDF()" [disabled]="downloading">
+          <span *ngIf="downloading" class="spinner-border spinner-border-sm me-1"></span>
+          <i *ngIf="!downloading" class="bi bi-download me-1"></i>
+          {{ downloading ? 'Downloading...' : 'Download PDF' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner-border text-primary"></div>
+      <p class="mt-2">Loading Purchase Order...</p>
+    </div>
+
+    <!-- No data -->
+    <div *ngIf="!loading && !po" class="empty-state card p-5">
+      <i class="bi bi-exclamation-circle empty-icon"></i>
+      <h5>PO Not Found</h5>
+      <button class="btn btn-primary mt-2" (click)="navigateFun()">Go Back</button>
+    </div>
+
+    <!-- ── PO Document ── -->
+    <div id="po-document" class="po-wrap card p-4" *ngIf="!loading && po">
+
+      <!-- ── PO Header ── -->
+      <div class="po-header-row">
+        <div>
+          <h2 class="po-title-text">PURCHASE ORDER</h2>
+          <p class="text-muted mb-0" style="font-size:13px">
+            Generated via Channel Partner Portal
+          </p>
+        </div>
+        <div class="po-meta-box">
+          <div class="po-meta-item">
+            <span class="meta-label">PO Number</span>
+            <span class="meta-value po-num"># {{ po.poNumber }}</span>
+          </div>
+          <div class="po-meta-item">
+            <span class="meta-label">PO Date</span>
+            <span class="meta-value">{{ po.poDate | date:'dd MMM yyyy' }}</span>
+          </div>
+          <div class="po-meta-item">
+            <span class="meta-label">Invoice</span>
+            <span class="meta-value">
+              <i class="bi" [class.bi-check-circle-fill]="po.isInvoiceGenerated"
+                [class.bi-x-circle-fill]="!po.isInvoiceGenerated"
+                [class.text-success]="po.isInvoiceGenerated"
+                [class.text-secondary]="!po.isInvoiceGenerated"></i>
+              {{ po.isInvoiceGenerated ? 'Generated' : 'Pending' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <hr class="my-3">
+
+      <!-- ── 3 Party Cards ── -->
+      <div class="party-grid">
+
+        <!-- CP -->
+        <div class="party-card">
+          <div class="party-label cp-label"><i class="bi bi-person-badge"></i> Channel Partner (Order By)</div>
+          <p class="party-name">{{ po.cp?.companyName || po.cp?.fullName }}</p>
+          <p *ngIf="po.cp?.fullName && po.cp?.companyName">{{ po.cp?.fullName }}</p>
+          <p *ngIf="po.cp?.address">{{ po.cp?.address }}<span *ngIf="po.cp?.city">, {{ po.cp?.city }}</span><span *ngIf="po.cp?.state">, {{ po.cp?.state }}</span><span *ngIf="po.cp?.pinCode"> - {{ po.cp?.pinCode }}</span></p>
+          <p *ngIf="po.cp?.mobNumber"><i class="bi bi-telephone"></i> {{ po.cp?.mobNumber }}</p>
+          <p *ngIf="po.cpEmail"><i class="bi bi-envelope"></i> {{ po.cpEmail }}</p>
+          <p *ngIf="po.cp?.GSTIN"><strong>GSTIN:</strong> {{ po.cp?.GSTIN }}</p>
+          <p *ngIf="po.cp?.pan"><strong>PAN:</strong> {{ po.cp?.pan }}</p>
+        </div>
+
+        <!-- Shopkeeper -->
+        <div class="party-card">
+          <div class="party-label sk-label"><i class="bi bi-shop"></i> Shopkeeper (Deliver To)</div>
+          <p class="party-name">{{ po.shopkeeper?.shopName || po.shopkeeper?.companyName || po.shopkeeper?.fullName }}</p>
+          <p *ngIf="po.shopkeeper?.fullName">{{ po.shopkeeper?.fullName }}</p>
+          <p *ngIf="po.shopkeeper?.address">{{ po.shopkeeper?.address }}<span *ngIf="po.shopkeeper?.city">, {{ po.shopkeeper?.city }}</span><span *ngIf="po.shopkeeper?.state">, {{ po.shopkeeper?.state }}</span><span *ngIf="po.shopkeeper?.pinCode"> - {{ po.shopkeeper?.pinCode }}</span></p>
+          <p *ngIf="po.shopkeeper?.mobNumber"><i class="bi bi-telephone"></i> {{ po.shopkeeper?.mobNumber }}</p>
+          <p *ngIf="po.shopKeeperEmail"><i class="bi bi-envelope"></i> {{ po.shopKeeperEmail }}</p>
+          <p *ngIf="po.shopkeeper?.GSTIN"><strong>GSTIN:</strong> {{ po.shopkeeper?.GSTIN }}</p>
+          <p *ngIf="po.shopkeeper?.pan"><strong>PAN:</strong> {{ po.shopkeeper?.pan }}</p>
+        </div>
+
+        <!-- Manufacturer -->
+        <div class="party-card">
+          <div class="party-label mfg-label"><i class="bi bi-building"></i> Manufacturer (Order To)</div>
+          <p class="party-name">{{ po.manufacturer?.companyName || po.manufacturer?.fullName }}</p>
+          <p *ngIf="po.manufacturer?.fullName && po.manufacturer?.companyName">{{ po.manufacturer?.fullName }}</p>
+          <p *ngIf="po.manufacturer?.address">{{ po.manufacturer?.address }}<span *ngIf="po.manufacturer?.city">, {{ po.manufacturer?.city }}</span><span *ngIf="po.manufacturer?.state">, {{ po.manufacturer?.state }}</span><span *ngIf="po.manufacturer?.pinCode"> - {{ po.manufacturer?.pinCode }}</span></p>
+          <p *ngIf="po.manufacturer?.mobNumber"><i class="bi bi-telephone"></i> {{ po.manufacturer?.mobNumber }}</p>
+          <p *ngIf="po.manufacturerEmail"><i class="bi bi-envelope"></i> {{ po.manufacturerEmail }}</p>
+          <p *ngIf="po.manufacturer?.GSTIN"><strong>GSTIN:</strong> {{ po.manufacturer?.GSTIN }}</p>
+          <p *ngIf="po.manufacturer?.pan"><strong>PAN:</strong> {{ po.manufacturer?.pan }}</p>
+        </div>
+
+      </div>
+
+      <hr class="my-3">
+
+      <!-- ── Transport Details ── -->
+      <div class="section-block" *ngIf="po.transportDetails">
+        <h6 class="section-title"><i class="bi bi-truck"></i> Transport Details</h6>
+        <div class="transport-grid">
+          <div class="t-item" *ngIf="po.transportDetails.transportType">
+            <span class="t-label">Type</span>
+            <span class="t-val">{{ po.transportDetails.transportType }}</span>
+          </div>
+          <div class="t-item" *ngIf="po.transportDetails.modeOfTransport">
+            <span class="t-label">Mode</span>
+            <span class="t-val">{{ po.transportDetails.modeOfTransport | titlecase }}</span>
+          </div>
+          <div class="t-item" *ngIf="po.transportDetails.transporterCompanyName">
+            <span class="t-label">Company</span>
+            <span class="t-val">{{ po.transportDetails.transporterCompanyName }}</span>
+          </div>
+          <div class="t-item" *ngIf="po.transportDetails.contactNumber">
+            <span class="t-label">Contact</span>
+            <span class="t-val">{{ po.transportDetails.contactNumber }}</span>
+          </div>
+          <div class="t-item" *ngIf="po.transportDetails.vehicleNumber">
+            <span class="t-label">Vehicle No.</span>
+            <span class="t-val">{{ po.transportDetails.vehicleNumber }}</span>
+          </div>
+          <div class="t-item" *ngIf="po.transportDetails.trackingId">
+            <span class="t-label">Tracking ID</span>
+            <span class="t-val fw-semibold text-primary">{{ po.transportDetails.trackingId }}</span>
+          </div>
+          <div class="t-item" *ngIf="po.transportDetails.deliveryAddress" style="grid-column: span 2">
+            <span class="t-label">Delivery Address</span>
+            <span class="t-val">{{ po.transportDetails.deliveryAddress }}</span>
+          </div>
+          <div class="t-item" *ngIf="po.transportDetails.remarks" style="grid-column: span 2">
+            <span class="t-label">Remarks</span>
+            <span class="t-val">{{ po.transportDetails.remarks }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Notes ── -->
+      <div class="notes-grid"
+        *ngIf="po.cpNote || po.shopkeeperNote || po.manufacturerNote">
+        <div class="note-card" *ngIf="po.cpNote">
+          <span class="note-label">CP Note</span>
+          <p>{{ po.cpNote }}</p>
+        </div>
+        <div class="note-card" *ngIf="po.shopkeeperNote">
+          <span class="note-label">Shopkeeper Note</span>
+          <p>{{ po.shopkeeperNote }}</p>
+        </div>
+        <div class="note-card" *ngIf="po.manufacturerNote">
+          <span class="note-label">Manufacturer Note</span>
+          <p>{{ po.manufacturerNote }}</p>
+        </div>
+      </div>
+
+      <hr class="my-3">
+
+      <!-- ── GST Badge ── -->
+      <div class="gst-badge-row">
+        <span class="gst-badge" [class.intra]="isIntraState" [class.inter]="!isIntraState">
+          <i class="bi bi-info-circle"></i>
+          {{ isIntraState ? 'Intra-State — CGST + SGST @ 9% each' : 'Inter-State — IGST @ 18%' }}
+        </span>
+        <span *ngIf="po.discount > 0" class="discount-badge">
+          {{ po.discount }}% Discount Applied
+        </span>
+      </div>
+
+      <!-- ── Items Table ── -->
+      <h6 class="section-title mt-3"><i class="bi bi-box-seam"></i> Order Items</h6>
+      <div class="table-responsive">
+        <table class="table po-table">
+          <thead>
+            <tr>
+              <th>Sr.</th>
+              <th>Image</th>
+              <th>Clothing</th>
+              <th>Gender</th>
+              <th>Brand</th>
+              <th>Design No.</th>
+              <th>HSN</th>
+              <th>Colour</th>
+              <th>Size</th>
+              <th>Rate (&#8377;)</th>
+              <th>Qty</th>
+              <th>Taxable (&#8377;)</th>
+              <th>GST %</th>
+              <th *ngIf="isIntraState">CGST (&#8377;)</th>
+              <th *ngIf="isIntraState">SGST (&#8377;)</th>
+              <th *ngIf="!isIntraState">IGST (&#8377;)</th>
+              <th>Total (&#8377;)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of po.items; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td class="text-center">
+                <div *ngIf="!item.colourImage || item.colourImage === ''"
+                  class="color-preview" [style.background-color]="item.colour || '#e0e0e0'"
+                  [title]="item.colourName"></div>
+                <img *ngIf="item.colourImage && item.colourImage !== ''"
+                  [src]="item.colourImage" [alt]="item.colourName"
+                  class="item-image"
+                  onerror="this.onerror=null;this.style.display='none';">
+              </td>
+              <td>{{ item.clothing || '—' }}</td>
+              <td>{{ item.gender || '—' }}</td>
+              <td>{{ item.brandName || '—' }}</td>
+              <td><strong>{{ item.designNumber }}</strong></td>
+              <td>{{ item.hsnCode || '—' }}</td>
+              <td>
+                <div class="colour-cell">
+                  <span class="colour-dot" [style.background-color]="item.colour"></span>
+                  {{ item.colourName }}
+                </div>
+              </td>
+              <td>{{ item.size }}</td>
+              <td class="text-end">
+                <span *ngIf="po.discount > 0">
+                  <span class="orig-rate">{{ getGstAmounts(item).originalRate | indianCurrency }}</span><br>
+                  <span class="disc-rate">{{ getGstAmounts(item).discountedRate | indianCurrency }}</span>
+                </span>
+                <span *ngIf="!po.discount || po.discount === 0">{{ item.price | indianCurrency }}</span>
+              </td>
+              <td class="text-center">{{ item.quantity }}</td>
+              <td class="text-end">{{ getGstAmounts(item).taxable | indianCurrency }}</td>
+              <td class="text-center">{{ item.hsnGst || 0 }}%</td>
+              <td class="text-end" *ngIf="isIntraState">{{ getGstAmounts(item).cgst | indianCurrency }}</td>
+              <td class="text-end" *ngIf="isIntraState">{{ getGstAmounts(item).sgst | indianCurrency }}</td>
+              <td class="text-end" *ngIf="!isIntraState">{{ getGstAmounts(item).igst | indianCurrency }}</td>
+              <td class="text-end fw-semibold">{{ getGstAmounts(item).totalWithGst | indianCurrency }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr class="footer-total">
+              <td colspan="10" class="text-end fw-bold">Total:</td>
+              <td class="text-center fw-bold">{{ orderTotals.totalQty }}</td>
+              <td class="text-end fw-bold">{{ orderTotals.totalTaxable | indianCurrency }}</td>
+              <td></td>
+              <td *ngIf="isIntraState" class="text-end fw-bold">{{ orderTotals.totalCGST | indianCurrency }}</td>
+              <td *ngIf="isIntraState" class="text-end fw-bold">{{ orderTotals.totalSGST | indianCurrency }}</td>
+              <td *ngIf="!isIntraState" class="text-end fw-bold">{{ orderTotals.totalIGST | indianCurrency }}</td>
+              <td class="text-end fw-bold">{{ orderTotals.totalWithGST | indianCurrency }}</td>
+            </tr>
+            <tr class="footer-grand">
+              <td [attr.colspan]="colspan" class="text-end">Grand Total (&#8377;):</td>
+              <td class="text-end grand-val">{{ actualGrandTotal | indianCurrency }}</td>
+            </tr>
+            <tr>
+              <td [attr.colspan]="colspan + 1" class="amount-words">
+                In Words: {{ actualGrandTotal | amountInWords }}
+              </td>
+            </tr>
+            <tr>
+              <td [attr.colspan]="colspan + 1" class="gst-words">
+                Total GST: &#8377; {{ totalGSTAmount | indianCurrency }} — {{ totalGSTAmount | amountInWords }}
+              </td>
+            </tr>
+            <tr *ngIf="po.discount > 0" class="discount-row">
+              <td [attr.colspan]="colspan + 1" class="text-center">
+                &#8505;&#65039; {{ po.discount }}% discount applied — Total Discount: &#8377; {{ discountAmount | indianCurrency }}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- ── Bank Details ── -->
+      <div class="section-block mt-3" *ngIf="po.bankDetails && (po.bankDetails.accountNumber || po.bankDetails.bankName)">
+        <h6 class="section-title"><i class="bi bi-bank"></i> Bank Details</h6>
+        <div class="transport-grid">
+          <div class="t-item" *ngIf="po.bankDetails.accountHolderName">
+            <span class="t-label">Account Holder</span>
+            <span class="t-val">{{ po.bankDetails.accountHolderName }}</span>
+          </div>
+          <div class="t-item" *ngIf="po.bankDetails.bankName">
+            <span class="t-label">Bank</span>
+            <span class="t-val">{{ po.bankDetails.bankName }}</span>
+          </div>
+          <div class="t-item" *ngIf="po.bankDetails.accountNumber">
+            <span class="t-label">Account No.</span>
+            <span class="t-val">{{ po.bankDetails.accountNumber }}</span>
+          </div>
+          <div class="t-item" *ngIf="po.bankDetails.accountType">
+            <span class="t-label">Type</span>
+            <span class="t-val">{{ po.bankDetails.accountType }}</span>
+          </div>
+          <div class="t-item" *ngIf="po.bankDetails.ifscCode">
+            <span class="t-label">IFSC</span>
+            <span class="t-val">{{ po.bankDetails.ifscCode }}</span>
+          </div>
+          <div class="t-item" *ngIf="po.bankDetails.branchName">
+            <span class="t-label">Branch</span>
+            <span class="t-val">{{ po.bankDetails.branchName }}</span>
+          </div>
+          <div class="t-item" *ngIf="po.bankDetails.upiId">
+            <span class="t-label">UPI</span>
+            <span class="t-val">{{ po.bankDetails.upiId }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /po-document -->
+
+  </div>
+</section>

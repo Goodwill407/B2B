@@ -1,0 +1,171 @@
+<section class="content">
+  <div class="content-block">
+    <h4 class="mt-4">
+      <i class="bi h3"></i> Add Commission
+    </h4>
+
+    <div class="card p-3">
+
+      <div class="commission-layout">
+
+        <!-- LHS: Form (40%) -->
+        <div class="commission-form-panel">
+          <h5 class="mt-2">{{ categoryType }} Commission</h5>
+          <hr class="mt-0">
+
+          <form [formGroup]="commissionForm" (ngSubmit)="onSubmit()">
+
+            <!-- Commission Title -->
+            <div class="mb-3">
+              <label for="category">
+                Commission Title <span class="required">*</span>
+              </label>
+              <input
+                type="text"
+                id="category"
+                formControlName="category"
+                class="form-control"
+                placeholder="Enter Commission Title"
+              />
+              <div
+                *ngIf="commissionForm.get('category')?.touched && commissionForm.get('category')?.invalid"
+                class="text-danger"
+              >
+                Commission Title is required.
+              </div>
+            </div>
+
+            <!-- Product Commission -->
+            <div class="mb-3">
+              <label for="productCommission">
+                Product Commission <span class="required">*</span>
+                <small>(in %)</small>
+              </label>
+              <input
+                type="text"
+                id="productCommission"
+                formControlName="productCommission"
+                class="form-control"
+                placeholder="Enter Product Commission ( % )"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^0+(?!$)/, ''); if (this.value > 100) this.value = 100;"
+                max="100"
+              />
+              <div
+                *ngIf="commissionForm.get('productCommission')?.touched && commissionForm.get('productCommission')?.invalid"
+                class="text-danger"
+              >
+                Product Commission is required.
+              </div>
+            </div>
+
+            <!-- <div class="mb-3">
+              <label for="shippingCommission">
+                Shipping Commission <span class="required">*</span>
+                <small>(in %)</small>
+              </label>
+              <input
+                type="text"
+                id="shippingCommission"
+                formControlName="shippingCommission"
+                class="form-control"
+                placeholder="Enter Shipping Commission ( % )"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^0+(?!$)/, ''); if (this.value > 100) this.value = 100;"
+                max="100"
+              />
+              <div
+                *ngIf="commissionForm.get('shippingCommission')?.touched && commissionForm.get('shippingCommission')?.invalid"
+                class="text-danger"
+              >
+                Shipping Commission is required.
+              </div>
+            </div> -->
+
+            <!-- Action Buttons -->
+            <div class="form-group text-center mt-4">
+              <button type="submit" class="btn submit-btn" [disabled]="commissionForm.invalid">
+                {{ formType }}
+              </button>
+              <button type="button" class="btn cancel-btn ms-2" (click)="resetForm()">
+                Cancel
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+        <!-- Vertical Divider -->
+        <div class="commission-divider"></div>
+
+        <!-- RHS: Table (60%) -->
+        <div class="commission-table-panel">
+          <h5 class="mt-2">Commission List:</h5>
+          <hr class="mt-0">
+
+          <p-table [value]="commissionList">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Commission Title</th>
+                <th>Product Commission <small>(in %)</small></th>
+                <!-- <th>Shipping Commission <small>(in %)</small></th> -->
+                <th>Action</th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-item>
+              <tr>
+                <td class="text-center py-0">{{ item.category }}</td>
+                <td class="text-center py-0">{{ item.productCommission }}</td>
+                <!-- <td class="text-center py-0">{{ item.shippingCommission }}</td> -->
+                <td class="py-0">
+                  <div class="button-container text-center">
+                    <button
+                      class="btn btn-icon p-2"
+                      pTooltip="Edit"
+                      tooltipPosition="top"
+                      (click)="editCommission(item)"
+                    >
+                      <i class="bi bi-pencil-fill"></i>
+                    </button>
+                    <button
+                      class="btn btn-icon p-2"
+                      [disabled]="deleteBtnDisabled"
+                      pTooltip="Delete"
+                      tooltipPosition="top"
+                      (click)="deleteCommission(item)"
+                    >
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+
+          @if(commissionList && commissionList.length > 0) {
+            <p-paginator
+              (onPageChange)="onPageChange($event)"
+              [first]="first"
+              [rows]="rows"
+              [totalRecords]="totalResults"
+              [rowsPerPageOptions]="[10, 20, 30]"
+            ></p-paginator>
+          }
+
+          @if(!commissionList) {
+            <p class="mt-3 data-not-found text-center">
+              Commission list not found. [Server Error]
+            </p>
+          }
+
+          @if(commissionList && commissionList.length === 0) {
+            <p class="mt-3 data-not-found text-center">
+              No Commissions Added Yet
+            </p>
+          }
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>

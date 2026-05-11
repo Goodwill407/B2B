@@ -1,0 +1,283 @@
+<section class="content">
+  <div class="content-block  mb-4">
+
+    <h4 class="mt-4">
+      <span>
+        <button class="btn navigate" (click)="goBack()">
+          <i class="bi bi-arrow-left-circle h4"></i>
+        </button>
+        {{ isEditMode ? 'Edit Shopkeeper' : 'Add Shopkeeper' }}
+      </span>
+    </h4>
+
+    <div class="body">
+      <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <div class="card">
+            <div class="header">
+              <h2>Shopkeeper Details</h2>
+            </div>
+            <div class="body">
+              <form [formGroup]="addShopForm" (ngSubmit)="onSubmit()">
+
+                <!-- Profile Image -->
+                <div class="row mb-3 justify-content-center">
+                  <div class="col-md-3 text-center">
+                    <div class="profile-img-wrap">
+                      <img [src]="profilePreview || 'assets/images/user.png'" alt="Profile"
+                        class="profile-preview-img" />
+                    </div>
+                    <label class="btn btn-sm btn-outline-primary mt-2">
+                      <i class="fas fa-upload me-1"></i> Upload Photo
+                      <input type="file" hidden accept="image/*" (change)="onProfileImgChange($event)" />
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Required Fields -->
+                <div class="row">
+                  <div class="col-md-12">
+                    <h5 class="section-title"><i class="fas fa-user me-2"></i>Login Credentials</h5>
+                    <hr />
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Full Name <span class="text-danger">*</span></label>
+                      <input type="text" formControlName="fullName" class="form-control"
+                        [ngClass]="{ 'is-invalid': isInvalid('fullName') }" placeholder="Enter full name" />
+                      <div *ngIf="isInvalid('fullName')" class="invalid-feedback">Full name is required.</div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Email <span class="text-danger">*</span></label>
+                      <input type="email" formControlName="email" class="form-control"
+                        [ngClass]="{ 'is-invalid': isInvalid('email') }" placeholder="Enter email"
+                        [attr.disabled]="isEditMode ? true : null" />
+                      <div *ngIf="isInvalid('email')" class="invalid-feedback">Valid email is required.</div>
+                    </div>
+                  </div>
+
+                  <!-- <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Password <span class="text-danger">*</span></label>
+                      <input type="password" formControlName="password" class="form-control"
+                        [ngClass]="{ 'is-invalid': isInvalid('password') }" placeholder="Min 8 characters" />
+                      <div *ngIf="isInvalid('password')" class="invalid-feedback">Minimum 8 characters required.</div>
+                    </div>
+                  </div> -->
+
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Mobile Number <span class="text-danger">*</span></label>
+                      <input type="text" formControlName="mobileNumber" class="form-control"
+                        [ngClass]="{ 'is-invalid': isInvalid('mobileNumber') }"
+                        placeholder="Enter 10-digit mobile number" maxlength="10" />
+                      <div *ngIf="isInvalid('mobileNumber')" class="invalid-feedback">
+                        <span *ngIf="addShopForm.get('mobileNumber')?.errors?.['required']">
+                          Mobile number is required.
+                        </span>
+                        <span *ngIf="addShopForm.get('mobileNumber')?.errors?.['pattern']">
+                          Enter a valid 10-digit mobile number (e.g. 9876543210).
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Business Info -->
+                <div class="row mt-3">
+                  <div class="col-md-12">
+                    <h5 class="section-title"><i class="fas fa-store me-2"></i>Shop & Business Info</h5>
+                    <hr />
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Shop Name</label>
+                      <input type="text" formControlName="shopName" class="form-control"
+                        placeholder="Enter shop name" />
+                    </div>
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Company Name</label>
+                      <input type="text" formControlName="companyName" class="form-control"
+                        placeholder="Enter company name" />
+                    </div>
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Turnover</label>
+                      <input type="text" formControlName="turnover" class="form-control"
+                        placeholder="Annual turnover" />
+                    </div>
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Establish Date</label>
+                      <input type="date" formControlName="establishDate" class="form-control" />
+                    </div>
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>GSTIN <span class="text-danger">*</span></label>
+                      <input type="text" formControlName="GSTIN" class="form-control"
+                        [ngClass]="{ 'is-invalid': isInvalid('GSTIN') }" placeholder="Enter GSTIN" maxlength="15"
+                        style="text-transform: uppercase" (blur)="toUpperCase('GSTIN')" />
+                      <div *ngIf="isInvalid('GSTIN')" class="invalid-feedback">
+                        <span *ngIf="addShopForm.get('GSTIN')?.errors?.['required']">
+                          GSTIN is required.
+                        </span>
+                        <span *ngIf="addShopForm.get('GSTIN')?.errors?.['pattern']">
+                          Invalid GSTIN format. Example: <strong>27ABCDE1234F1Z5</strong>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>PAN <span class="text-danger">*</span></label>
+                      <input type="text" formControlName="pan" class="form-control"
+                        [ngClass]="{ 'is-invalid': isInvalid('pan') }" placeholder="Enter PAN" maxlength="10"
+                        style="text-transform: uppercase" (blur)="toUpperCase('pan')" />
+                      <div *ngIf="isInvalid('pan')" class="invalid-feedback">
+                        <span *ngIf="addShopForm.get('pan')?.errors?.['required']">
+                          PAN is required.
+                        </span>
+                        <span *ngIf="addShopForm.get('pan')?.errors?.['pattern']">
+                          Invalid PAN format. Example: <strong>ABCDE1234F</strong>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label>Introduction</label>
+                      <textarea formControlName="introduction" class="form-control" rows="3"
+                        placeholder="About the shopkeeper..."></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Address -->
+                <div class="row mt-3">
+                  <div class="col-md-12">
+                    <h5 class="section-title"><i class="fas fa-map-marker-alt me-2"></i>Address</h5>
+                    <hr />
+                  </div>
+
+                  <div class="col-md-8">
+                    <div class="form-group">
+                      <label>Address</label>
+                      <input type="text" formControlName="address" class="form-control" placeholder="Street address" />
+                    </div>
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>City</label>
+                      <input type="text" formControlName="city" class="form-control" placeholder="City" />
+                    </div>
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>State</label>
+                      <input type="text" formControlName="state" class="form-control" placeholder="State" />
+                    </div>
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Country</label>
+                      <input type="text" formControlName="country" class="form-control" placeholder="Country" />
+                    </div>
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label>Pin Code</label>
+                      <input type="text" formControlName="pinCode" class="form-control" placeholder="Pin code" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Document Upload -->
+                <div class="row mt-3">
+                  <div class="col-md-12">
+                    <h5 class="section-title"><i class="fas fa-file-upload me-2"></i>Document Upload</h5>
+                    <hr />
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Upload Document (PDF / Image)</label>
+                      <input type="file" class="form-control" (change)="onFileChange($event)" accept=".pdf,image/*" />
+                      <small class="text-muted">GST certificate, PAN card, etc.</small>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6" *ngIf="isEditMode && existingFile">
+                    <div class="alert alert-secondary d-flex align-items-center gap-2 py-2">
+                      <i class="bi bi-file-earmark-check text-success"></i>
+                      <span class="fs-13">
+                        Current: <strong>{{ existingFileName || 'Uploaded Document' }}</strong>
+                      </span>
+                      <a [href]="existingFile" target="_blank" class="ms-auto btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-eye me-1"></i>View
+                      </a>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Default Password Note -->
+                <div class="row mt-3">
+                  <div class="col-md-12">
+                    <div class="alert alert-info d-flex align-items-start gap-2">
+                      <i class="bi bi-info-circle-fill mt-1"></i>
+                      <div>
+                        <strong>Default Password:</strong> A default password <code>Shop1234</code> will be set for this
+                        shopkeeper.
+                        Please ask them to update their password after first login.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="row mt-4">
+                  <div class="col-md-12 text-end">
+                    <button type="button" class="btn btn-secondary me-2" (click)="goBack()">
+                      <i class="fas fa-arrow-left me-1"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+                      <span *ngIf="!isSubmitting">
+                        <i class="fas me-1" [ngClass]="isEditMode ? 'fa-save' : 'fa-plus-circle'"></i>
+                        {{ isEditMode ? 'Update Shopkeeper' : 'Create Shopkeeper' }}
+                      </span>
+                      <span *ngIf="isSubmitting">
+                        <span class="spinner-border spinner-border-sm me-1"></span>
+                        {{ isEditMode ? 'Updating...' : 'Creating...' }}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

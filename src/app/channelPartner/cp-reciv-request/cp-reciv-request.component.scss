@@ -1,0 +1,58 @@
+   // for ads..
+    /* Right-side ads styling */
+
+    .ads-flex {
+        display: flex;
+        flex-wrap: nowrap;
+      }
+      
+      .ads-right {
+        margin: 24px;
+        margin-right: 0;
+        flex-shrink: 0;
+        width: 175px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px; /* Space between ads */
+        // justify-content: space-around;
+      }
+
+      
+      .form-select {
+        color: #666565 !important;
+      }
+      
+      
+      /* Bottom ads styling */
+      .ads-bottom {
+        height: 130px;
+        width: 100%;   
+        bottom: 0;
+        left: 0;
+        z-index: 1000;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center; 
+      }
+      
+      /* Responsive styling */
+      @media (max-width: 768px) {
+        .ads-flex {
+          flex-direction: column;
+        }
+      
+        .ads-right {
+          margin-left: 0;
+          margin-top: 20px;
+          width: 100%;
+          flex-direction: row;
+          gap: 10px; /* Space between ads for row layout */
+        }
+        .ads-bottom {
+          position: static;
+          height: auto;
+        }
+                
+       
+      }

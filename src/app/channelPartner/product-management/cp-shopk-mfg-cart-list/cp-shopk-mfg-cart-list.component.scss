@@ -1,0 +1,129 @@
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.accordion-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.header-chip {
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+
+  &.items {
+    background: #e9ecef;
+    color: #495057;
+  }
+
+  &.amount {
+    background: #d1e7dd;
+    color: #0f5132;
+  }
+}
+
+.del-all-btn {
+  flex-shrink: 0;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.color-preview {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  margin: 0 auto;        // ← centers the box in td
+  display: block;        // ← needed for margin auto to work
+}
+
+.colour-image {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  display: block;        // ← same
+  margin: 0 auto;        // ← centers the image
+}
+
+/* ── Manufacturer Footer ─────────────────────── */
+.mfg-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 4px 4px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.totals-summary {
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+  flex-wrap: wrap;
+}
+
+.btn-po {
+  background: #f0ad4e;
+  color: #fff;
+  font-weight: 600;
+  padding: 8px 22px;
+  border-radius: 8px;
+
+  &:hover {
+    background: #e09832;
+    color: #fff;
+  }
+}
+
+/* ── Cart Grand Total Bar ────────────────────── */
+.cart-grand-total {
+  display: flex;
+  justify-content: flex-end;
+  gap: 28px;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  padding: 14px 24px;
+  margin-top: 16px;
+  font-size: 15px;
+}
+
+/* ── Loading / Empty ─────────────────────────── */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+  color: #6c757d;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+  color: #6c757d;
+  text-align: center;
+
+  .empty-icon {
+    font-size: 52px;
+    margin-bottom: 16px;
+    color: #dee2e6;
+  }
+
+  h5 { color: #343a40; margin-bottom: 6px; }
+  p  { font-size: 14px; }
+}

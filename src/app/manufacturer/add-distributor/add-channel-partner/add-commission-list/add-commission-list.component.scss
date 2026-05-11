@@ -1,0 +1,81 @@
+/* ── Layout ─────────────────────────────────────────── */
+.commission-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.commission-form-panel {
+  width: 40%;
+  flex-shrink: 0;
+  padding-right: 1.5rem;
+}
+
+.commission-divider {
+  width: 1px;
+  background-color: #dee2e6;
+  align-self: stretch;
+  flex-shrink: 0;
+}
+
+.commission-table-panel {
+  flex: 1;
+  padding-left: 1.5rem;
+  min-width: 0; /* prevent flex overflow */
+}
+
+/* ── Responsive: stack on small screens ─────────────── */
+@media (max-width: 768px) {
+  .commission-layout {
+    flex-direction: column;
+  }
+  .commission-form-panel {
+    width: 100%;
+    padding-right: 0;
+    padding-bottom: 1.5rem;
+  }
+  .commission-divider {
+    width: 100%;
+    height: 1px;
+    align-self: auto;
+  }
+  .commission-table-panel {
+    width: 100%;
+    padding-left: 0;
+  }
+}
+
+/* ── Buttons ─────────────────────────────────────────── */
+.submit-btn {
+  padding-right: 3rem !important;
+  padding-left: 3rem !important;
+  background-color: #f0ad4e;
+  color: #fff;
+}
+
+.cancel-btn {
+  padding-right: 2.5rem !important;
+  padding-left: 2.5rem !important;
+  background-color: #fc7b4c;
+  color: #fff;
+}
+
+.btn:disabled {
+  border: none !important;
+}
+
+/* ── PrimeNG overrides ───────────────────────────────── */
+::ng-deep .p-datatable,
+.btn {
+  font-size: 13px !important;
+}
+
+::ng-deep .p-datatable-header,
+.p-datatable-thead > tr > th,
+.p-datatable-tbody > tr > td {
+  text-align: center;
+}
+
+::ng-deep .p-tooltip-text {
+  font-size: 10px !important;
+}

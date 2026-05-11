@@ -1,0 +1,124 @@
+<section class="content">
+  <div class="content-block">
+    <h4 class="mt-4">
+      <i class="bi bi-people-fill h3"></i> Channel Partners
+    </h4>
+
+    <div class="card-table p-3">
+
+      <!-- Table Header -->
+      <div class="table-header mt-3">
+        <h5 class="mb-0">Our Linked Channel Partner List</h5>
+        <div class="d-flex align-items-center gap-2">
+          <div class="search-container">
+            <input
+              type="text"
+              class="form-control search-box"
+              placeholder="Search Channel Partner"
+              (input)="onSearchChange($event)">
+            <i class="fas fa-search search-icon"></i>
+          </div>
+          <button class="btn add-btn ms-2" (click)="addChannelPartner()">
+            <i class="bi bi-plus-lg me-1"></i> Link New Channel Partner
+          </button>
+        </div>
+      </div>
+
+      <hr>
+
+      <!-- Table -->
+      <div class="p-grid p-fluid">
+        <div class="p-col-12 text-center">
+          <p-table [value]="channelPartners" [loading]="isLoading">
+
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Sr. No</th>
+                <th>Full Name</th>
+                <th>Company Name</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>City</th>
+                <th>Sales Commission</th>
+                <th>Commission Title</th>
+                <th>Action</th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-cp let-i="rowIndex">
+              <tr>
+                <td class="text-center">{{ (page - 1) * limit + i + 1 }}</td>
+                <td class="text-center">{{ cp.fullName }}</td>
+                <td class="text-center">{{ cp.companyName || '-' }}</td>
+                <td class="text-center">{{ cp.email }}</td>
+                <td class="text-center">{{ cp.mobNumber || '-' }}</td>
+                <td class="text-center">{{ cp.city || '-' }}</td>
+                <td class="text-center">
+                  <span *ngIf="getMyCommission(cp) as comm; else noComm" class="commission-badge">
+                    {{ comm.productCommission }}%
+                  </span>
+                  <ng-template #noComm><span class="text-muted">-</span></ng-template>
+                </td>
+                <td class="text-center">
+                  <span *ngIf="getMyCommission(cp) as comm; else noCat" class="reg-type-badge">
+                    {{ comm.category }}
+                  </span>
+                  <ng-template #noCat><span class="text-muted">-</span></ng-template>
+                </td>
+                <td>
+                <div class="button-container text-center">
+                    <!-- View -->
+                    <button class="btn btn-icon p-2" pTooltip="View Profile"
+                    tooltipPosition="top" (click)="viewChannelPartner(cp)">
+                    <i class="fas fa-eye"></i>
+                    </button>
+
+                    <!-- Unlink -->
+                    <!-- <button class="btn btn-icon p-2 text-warning" pTooltip="Unlink"
+                    tooltipPosition="top" (click)="unlinkChannelPartner(cp)">
+                    <i class="bi bi-link-slash fs-6"></i>
+                    </button> -->
+
+                    <!-- Delete -->
+                    <!-- <button class="btn btn-icon p-2 text-danger" pTooltip="Delete"
+                    tooltipPosition="top" (click)="deleteChannelPartner(cp)">
+                    <i class="fas fa-trash-alt"></i>
+                    </button> -->
+                </div>
+                </td>
+              </tr>
+            </ng-template>
+
+          </p-table>
+        </div>
+      </div>
+
+      <!-- Empty States -->
+      <div *ngIf="channelPartners && channelPartners.length === 0 && !searchPerformed && !isLoading"
+        class="data-not-found text-center mt-4">
+        <p>No Channel Partners added yet.</p>
+      </div>
+      <div *ngIf="searchPerformed && channelPartners.length === 0 && !isLoading"
+        class="data-not-found text-center mt-4">
+        <p>No data found. Try a different search.</p>
+      </div>
+      <div *ngIf="!channelPartners && !isLoading"
+        class="data-not-found text-center mt-4">
+        <p>No Channel Partners data found. [Server Error]</p>
+      </div>
+
+      <!-- Pagination -->
+      <div class="text-center mt-3">
+        <p-paginator
+          *ngIf="channelPartners && channelPartners.length > 0"
+          (onPageChange)="onPageChange($event)"
+          [first]="first"
+          [rows]="rows"
+          [totalRecords]="totalResults"
+          [rowsPerPageOptions]="[10, 20, 30]">
+        </p-paginator>
+      </div>
+
+    </div>
+  </div>
+</section>

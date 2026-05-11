@@ -13,4 +13,5 @@ export enum Role {
   Manufacture = 'manufacture',
   Wholesaler='wholesaler',
   Retailer='retailer',
+  ChannelPartner='channelPartner',
 }

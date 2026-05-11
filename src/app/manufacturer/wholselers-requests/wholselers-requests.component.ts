@@ -37,7 +37,7 @@ export class WholselersRequestsComponent {
 
   getAllMnf(): void {
     // Construct the API endpoint URL dynamically
-    const endpoint = `request?email=${this.user.email}&page=${this.page}&limit=${this.limit}`;
+    const endpoint = `request?email=${this.user.email}&requestByRole=wholesaler&page=${this.page}&limit=${this.limit}`;
     
     // Call the API using the authService
     this.authService.get(endpoint).subscribe({

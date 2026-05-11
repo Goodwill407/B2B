@@ -1,0 +1,205 @@
+<section class="content">
+  <div class="content-block">
+
+    <!-- Page Header -->
+<div class="d-flex align-items-center justify-content-between mt-4 mb-3 flex-wrap gap-2">
+  <h4 class="mb-0 d-flex align-items-center gap-2">
+    <i class="bi bi-receipt-cutoff text-primary"></i>
+    Purchase Orders
+  </h4>
+  <span class="results-count" *ngIf="!loading">
+    <i class="bi bi-list-ul"></i> {{ totalResults }} PO(s)
+  </span>
+</div>
+
+    <!-- Filters -->
+    <div class="filter-bar card p-3 mb-3">
+    <div class="row g-2 align-items-center">
+
+        <!-- Search -->
+        <div class="col-12 col-md-5">
+        <div class="search-wrap">
+            <i class="bi bi-search search-icon"></i>
+            <input
+            type="text"
+            class="form-control search-input-field"
+            placeholder="Search PO No, Manufacturer, Shopkeeper..."
+            [(ngModel)]="searchTerm"
+            (input)="applySearch()">
+            <button class="search-clear-btn" *ngIf="searchTerm" (click)="searchTerm=''; applySearch()">
+            <i class="bi bi-x"></i>
+            </button>
+        </div>
+        </div>
+
+        <!-- Status -->
+        <div class="col-6 col-md-3">
+        <select class="form-select" [(ngModel)]="selectedStatus" (change)="onFilterChange()">
+            <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</option>
+        </select>
+        </div>
+
+        <!-- Manufacturer -->
+        <div class="col-6 col-md-3">
+        <select class="form-select" [(ngModel)]="selectedManufacturer" (change)="onFilterChange()">
+            <option value="">All Manufacturers</option>
+            <option *ngFor="let m of manufacturerOptions" [value]="m">{{ m }}</option>
+        </select>
+        </div>
+
+        <!-- Reset -->
+        <div class="col-12 col-md-1 d-flex justify-content-end">
+        <button class="btn btn-outline-danger"
+            [disabled]="!searchTerm && !selectedStatus && !selectedManufacturer"
+            (click)="searchTerm=''; selectedStatus=''; selectedManufacturer=''; onFilterChange()"
+            title="Reset Filters">
+            <i class="bi bi-x-circle"></i>
+        </button>
+        </div>
+
+    </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner-border text-primary"></div>
+      <p class="mt-2">Loading Purchase Orders...</p>
+    </div>
+
+    <!-- PO Table -->
+    <div class="card" *ngIf="!loading">
+      <div class="table-responsive">
+        <table class="table po-table mb-0">
+          <thead>
+            <tr>
+              <th>Sr.</th>
+              <th>PO Number</th>
+              <th>PO Date</th>
+              <th>Manufacturer</th>
+              <th>Shopkeeper</th>
+              <th class="text-center">Total Qty</th>
+              <th class="text-end">Amount (&#8377;)</th>
+              <th class="text-end">Final (&#8377;)</th>
+              <th class="text-center">Status</th>
+              <th class="text-center">Invoice</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- No data -->
+            <tr *ngIf="filteredPos.length === 0">
+              <td colspan="11" class="text-center py-5">
+                <div class="empty-state">
+                  <i class="bi bi-receipt empty-icon"></i>
+                  <h6>No Purchase Orders Found</h6>
+                  <p class="text-muted">No POs match your current filters.</p>
+                </div>
+              </td>
+            </tr>
+
+            <!-- PO Rows -->
+            <tr *ngFor="let po of filteredPos; let i = index" class="po-row">
+              <td>{{ (page - 1) * limit + i + 1 }}</td>
+
+              <!-- PO Number -->
+              <td>
+                <span class="po-number"># {{ po.poNumber }}</span>
+              </td>
+
+              <!-- PO Date -->
+              <td class="text-nowrap">
+                {{ po.poDate | date:'dd MMM yyyy' }}
+              </td>
+
+              <!-- Manufacturer -->
+              <td>
+                <div class="entity-info">
+                  <span class="entity-name">{{ po.manufacturer?.companyName || po.manufacturer?.fullName || '—' }}</span>
+                  <span class="entity-email">{{ po.manufacturerEmail }}</span>
+                </div>
+              </td>
+
+              <!-- Shopkeeper -->
+              <td>
+                <div class="entity-info">
+                  <span class="entity-name">{{ po.shopkeeper?.shopName || po.shopkeeper?.fullName || '—' }}</span>
+                  <span class="entity-email">{{ po.shopKeeperEmail }}</span>
+                </div>
+              </td>
+
+              <!-- Qty -->
+              <td class="text-center">
+                <span class="qty-badge">{{ po.totalQty }}</span>
+              </td>
+
+              <!-- Total Amount -->
+              <td class="text-end fw-semibold">
+                &#8377; {{ po.totalAmount | number:'1.0-0' }}
+              </td>
+
+              <!-- Final Amount -->
+              <td class="text-end">
+                <span class="final-amt">&#8377; {{ po.finalAmount | number:'1.0-0' }}</span>
+                <span *ngIf="po.discount > 0" class="discount-tag">-{{ po.discount }}%</span>
+              </td>
+
+              <!-- Status -->
+              <td class="text-center">
+                <span class="status-badge" [ngClass]="getStatusClass(po.statusAll)">
+                  {{ po.statusAll | titlecase }}
+                </span>
+              </td>
+
+              <!-- Invoice -->
+              <td class="text-center">
+                <i class="bi"
+                  [class.bi-check-circle-fill]="po.isInvoiceGenerated"
+                  [class.bi-x-circle-fill]="!po.isInvoiceGenerated"
+                  [class.text-success]="po.isInvoiceGenerated"
+                  [class.text-secondary]="!po.isInvoiceGenerated">
+                </i>
+              </td>
+
+              <!-- Action -->
+              <td class="text-center">
+                <button class="btn btn-sm btn-view" (click)="viewPO(po)">
+                  <i class="bi bi-eye"></i> View PO
+                </button>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="d-flex justify-content-between align-items-center p-3 border-top flex-wrap gap-2"
+        *ngIf="totalPages > 1">
+        <span class="text-muted small">
+          Page {{ page }} of {{ totalPages }}
+        </span>
+        <div class="d-flex gap-1 flex-wrap">
+          <button class="btn btn-sm btn-outline-secondary"
+            [disabled]="page === 1" (click)="onPageChange(page - 1)">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          <button
+            *ngFor="let p of pages"
+            class="btn btn-sm"
+            [class.btn-primary]="p === page"
+            [class.btn-outline-secondary]="p !== page"
+            (click)="onPageChange(p)">
+            {{ p }}
+          </button>
+          <button class="btn btn-sm btn-outline-secondary"
+            [disabled]="page === totalPages" (click)="onPageChange(page + 1)">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>

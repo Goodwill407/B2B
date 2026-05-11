@@ -1,0 +1,230 @@
+
+/* Search Section Styling */
+/* General Styles */
+.search-section {
+  background-color: #ffff;
+  // border: 1px solid #dcdcdc;
+  border-radius: 6px 6px 0px 0px;
+  padding: 20px;
+ }
+
+.nav-tabs {
+  border-bottom: 2px solid #dcdcdc;
+}
+
+.nav-link {
+  font-size: 1rem;
+  color: #2c3e50;
+  padding: 10px 15px;
+  border: 1px solid transparent;
+}
+
+.nav-link.active {
+  color: #ffffff;
+  // background-color: #3498db;
+  border-color: #3498db;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+  background-color: #3498db;
+  // border-color: #3498db;
+}
+
+.tab-content {
+  // padding: 15px;
+}
+
+.brand-search, .product-search {
+  width:100% ;
+  position: relative;
+}
+.brand-search input{
+  width:400px;
+}
+
+.search-label {
+  font-size: 1rem;
+  width: 100px;
+  color: #2c3e50;
+}
+
+.vertical-line {
+  height: 24px;
+  width: 1px;
+  background-color: #dcdcdc;
+  margin: 0 10px;
+}
+
+.form-control, .form-select {
+  border-radius: 6px;
+  border: 1px solid #dcdcdc;
+}
+
+.btn-primary {
+  background-color: #3498db;
+  border-color: #3498db;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background-color: #2980b9;
+  border-color: #2980b9;
+}
+
+
+
+
+/* Brand List Section */
+.brand-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+    padding: 1rem;
+}
+
+.brand-box {
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 20px;
+    width: 200px;
+    text-align: center;
+    background-color: #ffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 14px;
+}
+
+.brand-logo-container {
+    height: 100px;
+    width: 100px;
+    margin-bottom: 16px;
+    border-radius: 50%;
+    background-color:#ffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.brand-logo {
+    max-width: 80%;
+    height: auto;
+}
+
+.brand-name {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.brand-location {
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: gray;
+}
+
+.brand-box button {
+    width: 100%;
+    margin: 4px 0;
+}
+
+.request-btn {
+    margin-top: 8px;
+    border-radius: 20px;
+    background-color: white !important;
+}
+
+
+   
+   
+   // for ads..
+    /* Right-side ads styling */
+
+    .ads-flex {
+        display: flex;
+        flex-wrap: nowrap;
+      }
+      
+      .ads-right {
+        margin: 24px;
+        margin-right: 0;
+        flex-shrink: 0;
+        width: 175px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px; /* Space between ads */
+        // justify-content: space-around;
+      }
+
+      
+      .form-select {
+        color: #666565 !important;
+      }
+      
+      
+      /* Bottom ads styling */
+      .ads-bottom {
+        height: 130px;
+        width: 100%;   
+        bottom: 0;
+        left: 0;
+        z-index: 1000;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center; 
+      }
+      
+      /* Responsive styling */
+      @media (max-width: 768px) {
+        .ads-flex {
+          flex-direction: column;
+        }
+      
+        .ads-right {
+          margin-left: 0;
+          margin-top: 20px;
+          width: 100%;
+          flex-direction: row;
+          gap: 10px; /* Space between ads for row layout */
+        }
+        .ads-bottom {
+          position: static;
+          height: auto;
+        }
+                
+       
+      }
+
+     
+        
+         // suggestions for Brand
+         .suggestions-list {
+          list-style-type: none;
+          padding: 0;
+          margin-top: 120px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          background-color: white;
+          max-height: 150px;
+          overflow-y: auto;
+          min-width:200px;
+          z-index: 1000; /* Ensure the suggestions appear above other elements */
+        }
+        
+        .suggestions-list li {
+          padding: 8px;
+          cursor: pointer;
+        }
+        
+        .suggestions-list li:hover {
+          background-color: #f0f0f0;
+        }
+      
+      
+      
+        

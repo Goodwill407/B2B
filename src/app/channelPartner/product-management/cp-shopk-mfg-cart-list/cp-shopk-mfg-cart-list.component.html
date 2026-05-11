@@ -1,0 +1,129 @@
+<section class="content">
+  <div class="content-block">
+
+    <h4 class="mt-4 d-flex align-items-center gap-2">
+      <button class="btn p-0" (click)="navigateFun()">
+        <i class="bi bi-arrow-left-circle h4 mb-0"></i>
+      </button>
+      <i class="bi bi-cart3"></i>
+      Cart for : <span class="text-primary ms-1">{{ shopkeeperName }}</span>
+    </h4>
+    <p class="text-muted mb-3">
+      <i class="bi bi-envelope"></i> {{ shopkeeperEmail }}
+    </p>
+
+    <!-- Loading -->
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-2">Loading cart...</p>
+    </div>
+
+    <!-- Accordion -->
+    <p-accordion [activeIndex]="0" *ngIf="!loading && cart && cart.manufacturers && cart.manufacturers.length > 0">
+      <ng-container *ngFor="let mfg of cart.manufacturers">
+        <p-accordionTab>
+          <ng-template pTemplate="header">
+            <div class="accordion-header">
+              <div class="accordion-title">
+                <i class="bi bi-buildings text-primary"></i>
+                <span class="fw-bold">{{ mfg.manufacturerName || mfg.manufacturerEmail }}</span>
+                <span class="header-chip items">{{ getTotalQty(mfg) }} Items</span>
+                <span class="header-chip amount">&#8377; {{ getTotalAmount(mfg) | number:'1.0-0' }}</span>
+              </div>
+              <button class="btn btn-sm btn-danger del-all-btn"
+                (click)="$event.stopPropagation(); onDeleteMfgCart(mfg)">
+                <i class="bi bi-trash-fill"></i> Delete All
+              </button>
+            </div>
+          </ng-template>
+
+          <!-- Table -->
+          <div class="table-wrapper">
+            <p-table [value]="mfg.items" [responsive]="true">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Sr.</th>
+                  <th>Design No.</th>
+                  <th>Colour</th>
+                  <th>Image</th>
+                  <th>Size</th>
+                  <th>MRP (&#8377;)</th>
+                  <th>Rate (&#8377;)</th>
+                  <th>Qty</th>
+                  <th>Total (&#8377;)</th>
+                  <th>Action</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-item let-i="rowIndex">
+                <tr>
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ item.designNumber }}</td>
+                  <td>{{ item.colourName }}</td>
+                  <td class="align-items-center">
+                    <div class="color-preview"
+                      *ngIf="!item.colourImage && item.colour"
+                      [style.background-color]="item.colour"
+                      [title]="item.colourName">
+                    </div>
+                    <img
+                      *ngIf="item.colourImage"
+                      [src]="item.colourImage"
+                      [alt]="item.colourName"
+                      class="colour-image"
+                      (error)="handleImageError($event, item)"
+                    />
+                  </td>
+                  <td>{{ item.size }}</td>
+                  <td>{{ item.mrp || '—' }}</td>
+                  <td>{{ item.price | number:'1.0-0' }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>{{ item.price * item.quantity | number:'1.0-0' }}</td>
+                  <td>
+                    <button class="btn btn-sm btn-primary me-1" (click)="onEdit(item, mfg)">
+                      <i class="bi bi-pencil-fill"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" (click)="onDelete(item, mfg)">
+                      <i class="bi bi-trash-fill"></i>
+                    </button>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+
+          <!-- Manufacturer Footer -->
+          <div class="mfg-footer">
+            <div class="totals-summary">
+              <span>Subtotal: <strong>&#8377; {{ getTotalAmount(mfg) | number:'1.0-0' }}</strong></span>
+              <span *ngIf="mfg.discount">
+                Discount: <strong class="text-danger">- &#8377; {{ mfg.discount }}</strong>
+              </span>
+              <span>Final: <strong class="text-success">&#8377; {{ mfg.finalAmount | number:'1.0-0' }}</strong></span>
+            </div>
+            <button class="btn btn-po" (click)="placeOrder(mfg)">
+              <i class="bi bi-cart-check-fill"></i> Purchase Order
+            </button>
+          </div>
+
+        </p-accordionTab>
+      </ng-container>
+    </p-accordion>
+
+    <!-- Cart Grand Total Bar -->
+    <div class="cart-grand-total"
+    *ngIf="!loading && cart && cart.manufacturers && cart.manufacturers.length > 0">
+      <span>Total Qty: <strong>{{ cart.cartTotalQty }}</strong></span>
+      <span>Total Amount: <strong>&#8377; {{ cart.cartTotalAmount | number:'1.0-0' }}</strong></span>
+      <span>Final Amount: <strong class="text-success">&#8377; {{ cart.cartFinalAmount | number:'1.0-0' }}</strong></span>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state"
+      *ngIf="!loading && (!cart || !cart.manufacturers?.length)">
+      <i class="bi bi-cart-x empty-icon"></i>
+      <h5>No Items in Cart</h5>
+      <p>This shopkeeper's cart is empty.</p>
+    </div>
+
+  </div>
+</section>

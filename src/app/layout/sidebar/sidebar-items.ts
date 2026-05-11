@@ -1238,6 +1238,18 @@ export const ROUTES: RouteInfo[] = [
         submenu: [],
       },
       {
+        path: '/mnf/list-ch-partner',
+        title: 'Manage Channel Partner',
+        iconType: 'feather',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+      {
         path: '/mnf/manage-distributor',
         title: 'View & Manage Distributors',
         iconType: '',
@@ -1290,6 +1302,18 @@ export const ROUTES: RouteInfo[] = [
       {
         path: '/mnf/wholselers-Requests',
         title: "Wholesaler Request List",
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+      {
+        path: '/mnf/broker-requests',
+        title: "Broker Request List",
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -2911,6 +2935,95 @@ export const ROUTES: RouteInfo[] = [
     role: ['superadmin'],
     submenu: []
   },
+  // -------------------------------------- Channel Partner -------------------------------------//
+
+  {
+    path: '/cp/cp-dashboard',
+    title: `Dashboard`,
+    iconType: 'material-icons-outlined',
+    icon: 'space_dashboard',
+    class: '',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['channelPartner'],
+    submenu: []
+  },
+  {
+    path: '/cp/cp-profile',
+    title: `Profile`,
+    iconType: 'material-icons-outlined',
+    icon: 'space_dashboard',
+    class: '',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['channelPartner'],
+    submenu: []
+  },
+ {
+  path: '',
+  title: 'Request Management',
+  iconType: 'material-icons-outlined',
+  icon: 'widgets',
+  class: 'menu-toggle',
+  groupTitle: false,
+  badge: '',
+  badgeClass: '',
+  role: ['channelPartner'],
+  submenu: [
+    {
+      path: '/cp/cp-sent-requests',
+      title: 'Request To Manufacturer',
+      iconType: '',
+      icon: '',
+      class: 'ml-menu',
+      groupTitle: false,
+      badge: '',
+      badgeClass: '',
+      role: ['channelPartner'],
+      submenu: []
+    },
+    {
+      path: '/cp/cp-received-requests',
+      title: 'Received Requests',
+      iconType: '',
+      icon: '',
+      class: 'ml-menu',
+      groupTitle: false,
+      badge: '',
+      badgeClass: '',
+      role: ['channelPartner'],
+      submenu: []
+    }
+  ]
+},
+  // {
+  //   path: '/cp',
+  //   title: `Channel Partner`,
+  //   iconType: 'material-icons-outlined',
+  //   icon: 'supervised_user_circle',
+  //   class: 'menu-toggle',
+  //   groupTitle: false,
+  //   badge: '',
+  //   badgeClass: '',
+  //   role: ['wholesaler'],
+  //   submenu: [
+      
+  //     {
+  //       path: '/common/user-category',
+  //       title: 'Setting',
+  //       iconType: '',
+  //       icon: '',
+  //       class: 'ml-menu',
+  //       groupTitle: false,
+  //       badge: '',
+  //       badgeClass: '',
+  //       role: [''],
+  //       submenu: [],
+  //     },
+  //   ],
+  // },
 
 ];
 export const ROUTES2: RouteInfo[] = [
@@ -2990,6 +3103,55 @@ export const ROUTES2: RouteInfo[] = [
     role: ['manufacture'],
     submenu: []
   },
+   {
+    path: '',
+    title: `Manage Channel Partner`,
+    iconType: 'material-icons-outlined',
+    icon: 'group_add',
+    class: 'menu-toggle',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['manufacture'],
+    submenu: [
+      {
+        path: '/mnf/add-commission',
+        title: 'Add Commission',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+      {
+        path: '/mnf/add-ch-partner',
+        title: 'Add New Channel Partner',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+      {
+        path: '/mnf/list-ch-partner',
+        title: 'View Channel Partner',
+        iconType: 'feather',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      }
+    ],
+    },
   {
     path: '',
     title: `Distributor's Management`,
@@ -3076,6 +3238,18 @@ export const ROUTES2: RouteInfo[] = [
         submenu: [],
       },
       {
+        path: '/mnf/broker-requests',
+        title: "Broker Request List",
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+      {
         path: '/mnf/Rejected-Requests',
         title: "Rejected Request List",
         iconType: '',
@@ -4687,5 +4861,141 @@ export const ROUTES2: RouteInfo[] = [
     role: ['superadmin'],
     submenu: []
   },
+  
+
+  {
+    path: '/cp/cp-dashboard',
+    title: `Dashboard`,
+    iconType: 'material-icons-outlined',
+    icon: 'space_dashboard',
+    class: '',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['channelPartner'],
+    submenu: []
+  },
+  {
+    path: '/cp/cp-profile',
+    title: `Profile`,
+    iconType: 'material-icons-outlined',
+    icon: 'space_dashboard',
+    class: '',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['channelPartner'],
+    submenu: []
+  },
+  {
+  path: '',
+  title: 'Request Management',
+  iconType: 'material-icons-outlined',
+  icon: 'widgets',
+  class: 'menu-toggle',
+  groupTitle: false,
+  badge: '',
+  badgeClass: '',
+  role: ['channelPartner'],
+  submenu: [
+    {
+      path: '/cp/request-to-manufacturer',
+      title: 'Request To Manufacturer',   // ✅ Search & send
+      iconType: '', icon: '', class: 'ml-menu',
+      groupTitle: false, badge: '', badgeClass: '',
+      role: ['channelPartner'], submenu: []
+    },
+    {
+      path: '/cp/cp-sent-requests',
+      title: 'Sent Request List',          // ✅ Outgoing list
+      iconType: '', icon: '', class: 'ml-menu',
+      groupTitle: false, badge: '', badgeClass: '',
+      role: ['channelPartner'], submenu: []
+    },
+    {
+      path: '/cp/cp-received-requests',
+      title: 'Received Requests',          // ✅ Incoming list
+      iconType: '', icon: '', class: 'ml-menu',
+      groupTitle: false, badge: '', badgeClass: '',
+      role: ['channelPartner'], submenu: []
+    }
+  ]
+},
+
+{
+  path: '/cp/cp-shop-list',
+  title: `Shop List`,
+  iconType: 'material-icons-outlined',
+  icon: 'storefront',
+  class: '',
+  groupTitle: false,
+  badge: '',
+  badgeClass: '',
+  role: ['channelPartner'],
+  submenu: []
+},
+
+{
+  path: '',
+  title: 'Order Management',
+  iconType: 'material-icons-outlined',
+  icon: 'space_dashboard',
+  class: 'menu-toggle',
+  groupTitle: false,
+  badge: '',
+  badgeClass: '',
+  role: ['channelPartner'],
+  submenu: [
+    {
+      path: '/cp/cp-ass-mfg-list',
+      title: 'Manufacturer List',
+      iconType: '',
+      icon: '',
+      class: 'ml-menu',
+      groupTitle: false,
+      badge: '',
+      badgeClass: '',
+      role: [''],
+      submenu: [],
+    },
+    {
+      path: '/cp/cp-shopk-cart-list',
+      title: 'Shopers Cart',
+      iconType: '',
+      icon: '',
+      class: 'ml-menu',
+      groupTitle: false,
+      badge: '',
+      badgeClass: '',
+      role: [''],
+      submenu: [],
+    },
+    {
+      path: '/cp/cp-shopk-mfg-po-list',
+      title: 'PO List',
+      iconType: '',
+      icon: '',
+      class: 'ml-menu',
+      groupTitle: false,
+      badge: '',
+      badgeClass: '',
+      role: [''],
+      submenu: [],
+    },
+    {
+      path: '/cp/cp-shopk-mfg-invoice-list',
+      title: 'Invoice List',
+      iconType: '',
+      icon: '',
+      class: 'ml-menu',
+      groupTitle: false,
+      badge: '',
+      badgeClass: '',
+      role: [''],
+      submenu: [],
+    },
+   
+  ],
+},
 
 ];
