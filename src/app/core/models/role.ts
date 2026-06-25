@@ -14,4 +14,9 @@ export enum Role {
   Wholesaler='wholesaler',
   Retailer='retailer',
   ChannelPartner='channelPartner',
+
+  RawMaterialManager = 'rawMaterialManager',
+  FinishedGoodsManager = 'finishedGoodsManager',
+  ProductManager = 'productManager',
+  OrderManager = 'orderManager',
 }

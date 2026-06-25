@@ -96,7 +96,8 @@ export class SidebarComponent extends UnsubscribeOnDestroyAdapter implements OnI
   }
   ngOnInit() {
     if (this.authService.currentUserValue) {
-      const userRole = this.authService.currentUserValue.role;
+      const userRole = this.authService.currentUserValue.actualRole 
+                 ?? this.authService.currentUserValue.role;
       // const userRole = 'Admin'
       this.authService.get('users/' + this.authService.currentUserValue.id).subscribe((res: any) => {
         this.userImg = res.profile ? res.profile : 'assets/images/user/person.png';
@@ -129,6 +130,16 @@ export class SidebarComponent extends UnsubscribeOnDestroyAdapter implements OnI
 
       }else if (userRole === Role.ChannelPartner) {
         this.userType = 'Channel Partner'
+      
+      } else if (userRole === 'rawMaterialManager') {
+        this.userType = 'Raw Material Manager';
+      } else if (userRole === 'finishedGoodsManager') {
+        this.userType = 'Finished Goods Manager';
+      } else if (userRole === 'productManager') {
+        this.userType = 'Product Manager';
+      } else if (userRole === 'orderManager') {
+        this.userType = 'Order Manager';
+
       }else {
         this.userType = "Manufacturer";
       }

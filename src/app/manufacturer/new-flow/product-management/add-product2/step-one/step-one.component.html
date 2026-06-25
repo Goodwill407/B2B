@@ -655,6 +655,72 @@
                 </select>
             </div>
 
+            <!-- Weave Method -->
+            <div *ngIf="visibleFields.includes('weavemethod')"
+                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                <label class="label-input" for="weavemethod">Weave Method</label>
+                <select name="weavemethod" id="weavemethod" class="form-select"
+                    formControlName="weavemethod">
+                    <option value="" disabled selected>Select</option>
+                    <option [value]="type.name" *ngFor="let type of allWeaveMethod">{{type.name}}</option>
+                </select>
+            </div>
+
+            <!-- Embroidery Types (not mandatory) -->
+            <div *ngIf="visibleFields.includes('embroiderytypes')"
+                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                <label class="label-input" for="embroiderytypes">Embroidery Types</label>
+                <select name="embroiderytypes" id="embroiderytypes" class="form-select"
+                    formControlName="embroiderytypes">
+                    <option value="" disabled selected>Select</option>
+                    <option [value]="type.name" *ngFor="let type of allEmbroideryTypes">{{type.name}}</option>
+                </select>
+            </div>
+
+            <!-- Print Design -->
+            <div *ngIf="visibleFields.includes('printdesign')"
+                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                <label class="label-input" for="printdesign">Print-Based Designs</label>
+                <select name="printdesign" id="printdesign" class="form-select"
+                    formControlName="printdesign">
+                    <option value="" disabled selected>Select</option>
+                    <option [value]="type.name" *ngFor="let type of allPrintDesign">{{type.name}}</option>
+                </select>
+            </div>
+
+            <!-- Dyeing Designs -->
+            <div *ngIf="visibleFields.includes('dyeingdesigns')"
+                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                <label class="label-input" for="dyeingdesigns">Dyeing Ethnic Designs</label>
+                <select name="dyeingdesigns" id="dyeingdesigns" class="form-select"
+                    formControlName="dyeingdesigns">
+                    <option value="" disabled selected>Select</option>
+                    <option [value]="type.name" *ngFor="let type of allDyeingDesigns">{{type.name}}</option>
+                </select>
+            </div>
+
+            <!-- Surface Embellishments -->
+            <div *ngIf="visibleFields.includes('surfaceembellishments')"
+                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                <label class="label-input" for="surfaceembellishments">Surface Embellishment Designs</label>
+                <select name="surfaceembellishments" id="surfaceembellishments" class="form-select"
+                    formControlName="surfaceembellishments">
+                    <option value="" disabled selected>Select</option>
+                    <option [value]="type.name" *ngFor="let type of allSurfaceEmbellishments">{{type.name}}</option>
+                </select>
+            </div>
+
+            <!-- Patchwork Designs -->
+            <div *ngIf="visibleFields.includes('patchworkdesigns')"
+                class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                <label class="label-input" for="patchworkdesigns">Patchwork Designs</label>
+                <select name="patchworkdesigns" id="patchworkdesigns" class="form-select"
+                    formControlName="patchworkdesigns">
+                    <option value="" disabled selected>Select</option>
+                    <option [value]="type.name" *ngFor="let type of allPatchworkDesigns">{{type.name}}</option>
+                </select>
+            </div>
+
             <!-- Apparel Silhouette Dropdown -->
             <div *ngIf="visibleFields.includes('apparelSilhouette')"
                 class="col-xl-3 col-lg-3 col-md-3 col-sm-3">

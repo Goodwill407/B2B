@@ -68,6 +68,8 @@ import { ListChannelPartnerComponent } from "./add-distributor/add-channel-partn
 import { LinkChannelPartnerComponent } from "./add-distributor/add-channel-partner/link-channel-partner/link-channel-partner.component";
 import { AddCommissionListComponent } from "./add-distributor/add-channel-partner/add-commission-list/add-commission-list.component";
 import { CpBrokerRequestsComponent } from "./wholselers-requests/cp-broker-requests/cp-broker-requests.component";
+import { MfgAddStaffComponent } from "./add-staff/mfg-add-staff/mfg-add-staff.component";
+import { SubDashboardComponent } from "./sub-dashboard/sub-dashboard.component";
 
 export const M_Auth: Route[] = [
     { path: 'new', loadChildren:()=> import('./new-flow/new_flow.route').then((m)=>m.NewFlow)},
@@ -102,6 +104,9 @@ export const M_Auth: Route[] = [
     { path: 'customise_profile', component: CustomiseProfileComponent },
     { path: 'preview-profile', component: PreviewProfileComponent },
     { path: 'product-summary', component: ProductSummaryComponent },
+
+    { path: 'add-staff', component: MfgAddStaffComponent },
+    { path: 'sub-dashboard', component: SubDashboardComponent },
 
     // new created by sk for edit qty page
     { path: 'edit-gen-wh-po-order', component: EditGenWholsalerPoOrderComponent},

@@ -29,7 +29,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
   templateUrl: './step-one.component.html',
   styleUrl: './step-one.component.scss',
   providers: [DatePipe]
-})
+})  
 export class StepOneComponent {
   @Input() productId: any  // Allow nullable type
   @Output() next = new EventEmitter<any>(); 
@@ -123,6 +123,13 @@ export class StepOneComponent {
   filteredHsnList: any[] = [];
   // description: string = '';
   showHsnDropdown: boolean = false;
+
+  allWeaveMethod: any[] = []
+  allEmbroideryTypes: any[] = []
+  allPrintDesign: any[] = []
+  allDyeingDesigns: any[] = []
+  allSurfaceEmbellishments: any[] = []
+  allPatchworkDesigns: any[] = []
 
   today!: string;
 
@@ -227,6 +234,14 @@ export class StepOneComponent {
     this.getallItemLength()
     this.getAllWorkType()
     this.getAllelasticity()
+
+    this.getWeaveMethod()
+    this.getEmbroideryTypes()
+    this.getPrintDesign()
+    this.getDyeingDesigns()
+    this.getSurfaceEmbellishments()
+    this.getPatchworkDesigns()
+
     if (this.productId) {
       this.getProductDataById()
     }
@@ -1454,6 +1469,37 @@ getAllelasticity(){
 error => {
     console.log('error');
 });
+}
+
+getWeaveMethod() {
+  this.authService.get('weavemethod').subscribe(res => {
+    if (res) this.allWeaveMethod = res.results;
+  })
+}
+getEmbroideryTypes() {
+  this.authService.get('embroiderytypes').subscribe(res => {
+    if (res) this.allEmbroideryTypes = res.results;
+  })
+}
+getPrintDesign() {
+  this.authService.get('printdesign').subscribe(res => {
+    if (res) this.allPrintDesign = res.results;
+  })
+}
+getDyeingDesigns() {
+  this.authService.get('dyeingdesigns').subscribe(res => {
+    if (res) this.allDyeingDesigns = res.results;
+  })
+}
+getSurfaceEmbellishments() {
+  this.authService.get('surfaceembellishments').subscribe(res => {
+    if (res) this.allSurfaceEmbellishments = res.results;
+  })
+}
+getPatchworkDesigns() {
+  this.authService.get('patchworkdesigns').subscribe(res => {
+    if (res) this.allPatchworkDesigns = res.results;
+  })
 }
 
 // getAllFitStyle(){

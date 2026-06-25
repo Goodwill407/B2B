@@ -1532,7 +1532,7 @@ export const ROUTES: RouteInfo[] = [
     groupTitle: false,
     badge: '',
     badgeClass: '',
-    role: ['manufacture'],
+    role: ['manufacture','productManager'],
     submenu: [
       
       {
@@ -1633,7 +1633,7 @@ export const ROUTES: RouteInfo[] = [
     groupTitle: false,
     badge: '',
     badgeClass: '',
-    role: ['manufacture'],
+    role: ['manufacture', 'productManager'],
     submenu: [
       {
         path: '/mnf/new/Return-products',
@@ -3026,6 +3026,8 @@ export const ROUTES: RouteInfo[] = [
   // },
 
 ];
+
+//   // ----------------------- Devlopment Sidebar ------------------------- ---------------------
 export const ROUTES2: RouteInfo[] = [
   // Admin Modules
 
@@ -3039,6 +3041,22 @@ export const ROUTES2: RouteInfo[] = [
     badge: '',
     badgeClass: '',
     role: ['manufacture'],
+    submenu: []
+  },
+  {
+    path: '/mnf/sub-dashboard',
+    title: `Dashboard`,
+    iconType: 'material-icons-outlined',
+    icon: 'space_dashboard',
+    class: '',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: [
+      'rawMaterialManager',
+      'finishedGoodsManager',
+      'productManager',
+      'orderManager'],
     submenu: []
   },
   {
@@ -3067,6 +3085,18 @@ export const ROUTES2: RouteInfo[] = [
       {
         path: '/mnf/customise_profile',
         title: 'Customize Profile for Customers',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: [''],
+        submenu: [],
+      },
+      {
+        path: '/mnf/add-staff',
+        title: 'Add Staff',
         iconType: '',
         icon: '',
         class: 'ml-menu',
@@ -3284,7 +3314,7 @@ export const ROUTES2: RouteInfo[] = [
     groupTitle: false,
     badge: '',
     badgeClass: '',
-    role: ['manufacture'],
+    role: ['manufacture','productManager'],
     submenu: [
       {
         path: '/mnf/new/add-product2',
@@ -3295,7 +3325,7 @@ export const ROUTES2: RouteInfo[] = [
         groupTitle: false,
         badge: '',
         badgeClass: '',
-        role: ['manufacture'],
+        role: ['manufacture','productManager'],
         submenu: [],
       },
       {
@@ -3307,7 +3337,7 @@ export const ROUTES2: RouteInfo[] = [
         groupTitle: false,
         badge: '',
         badgeClass: '',
-        role: [''],
+        role: ['manufacture','productManager'],
         submenu: [],
       },
       {
@@ -3319,7 +3349,7 @@ export const ROUTES2: RouteInfo[] = [
         groupTitle: false,
         badge: '',
         badgeClass: '',
-        role: [''],
+        role: ['manufacture','productManager'],
         submenu: [],
       },
       // {
@@ -3334,6 +3364,20 @@ export const ROUTES2: RouteInfo[] = [
       //   role: [''],
       //   submenu: [],
       // }, 
+       
+    ],
+  },
+  {
+    path: '',
+    title: `Product Stock Inventory`,
+    iconType: 'material-icons-outlined',
+    icon: 'space_dashboard',
+    class: 'menu-toggle',
+    groupTitle: false,
+    badge: '',
+    badgeClass: '',
+    role: ['manufacture','finishedGoodsManager'],
+    submenu: [
       {
         path: '/mnf/update-stocks-for-product',
         title: 'Stock Inventory',
@@ -3343,7 +3387,7 @@ export const ROUTES2: RouteInfo[] = [
         groupTitle: false,
         badge: '',
         badgeClass: '',
-        role: [''],
+        role: [],
         submenu: [],
       }, 
       {
@@ -3355,33 +3399,23 @@ export const ROUTES2: RouteInfo[] = [
         groupTitle: false,
         badge: '',
         badgeClass: '',
-        role: [''],
+        role: [],
         submenu: [],
       },    
-      {
-        path: '/mnf/product-bom-list',
-        title: 'BOM',
-        iconType: '',
-        icon: '',
-        class: 'ml-menu',
-        groupTitle: false,
-        badge: '',
-        badgeClass: '',
-        role: [''],
-        submenu: [],
-      },     
+        
+
     ],
   },
 {
     path: '',
     title: `Manage Raw Item`,
     iconType: 'material-icons-outlined',
-    icon: 'person',
+    icon: 'space_dashboard',
     class: 'menu-toggle',
     groupTitle: false,
     badge: '',
     badgeClass: '',
-    role: ['manufacture'],
+    role: ['manufacture','rawMaterialManager'],
     submenu: [
       {
         path: '/mnf/view-vendor-list',
@@ -3442,8 +3476,19 @@ export const ROUTES2: RouteInfo[] = [
         "badgeClass": "",
         "role": [""],
         "submenu": []
-      }
-
+      },
+      {
+        path: '/mnf/product-bom-list',
+        title: 'BOM',
+        iconType: '',
+        icon: '',
+        class: 'ml-menu',
+        groupTitle: false,
+        badge: '',
+        badgeClass: '',
+        role: ['manufacture'],
+        submenu: [],
+      },  
 
     ],
   },
@@ -3458,7 +3503,8 @@ export const ROUTES2: RouteInfo[] = [
     groupTitle: false,
     badge: '',
     badgeClass: '',
-    role: ['manufacture'],
+    role: ['manufacture',
+      'orderManager'],
     submenu: [
       
       {
@@ -3559,7 +3605,8 @@ export const ROUTES2: RouteInfo[] = [
     groupTitle: false,
     badge: '',
     badgeClass: '',
-    role: ['manufacture'],
+    role: ['manufacture',
+      'orderManager'],
     submenu: [
       {
         path: '/mnf/new/Return-products',

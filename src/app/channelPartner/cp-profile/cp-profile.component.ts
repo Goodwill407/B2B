@@ -252,7 +252,7 @@ export class CpProfileComponent implements OnInit {
     if (this.profileImgFile) formData.append('profileImg', this.profileImgFile);
     if (this.documentFile)   formData.append('file', this.documentFile);
 
-    this.authService.patchpimage(`channel-partner/${this.profileData?.id}`, formData).subscribe({
+    this.authService.patchpimage(`channel-partner/email/${this.profileData?.email}`, formData).subscribe({
       next: () => {
         this.isSubmitting = false;
         this.isEditing = false;

@@ -14,4 +14,5 @@ export class User {
   name!: string;
   asssignedTo!: string;
   userCategory!: string;
+  actualRole!: Role;
 }

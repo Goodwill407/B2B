@@ -83,7 +83,10 @@ export class SigninComponent
                 this.authService.setLoginDetails(res);
                 localStorage.setItem('currentUser', JSON.stringify(res.user));
                 this.authService.currentUserSubject.next(res.user);
-                const role = this.authService.currentUserValue.role;
+
+                const role = this.authService.currentUserValue.actualRole 
+             ?? this.authService.currentUserValue.role;
+
                 if (res.user.role === Role.Superadmin) {
                   this.router.navigate(['/super/Super-dashboard']);
                 } else if (role == Role.Manufacture) {
@@ -94,6 +97,15 @@ export class SigninComponent
                   this.router.navigate(['/retailer/dashboard']);
                 } else if (role === Role.ChannelPartner) {
                   this.router.navigate(['/cp/cp-dashboard']);
+                } else if (role === Role.RawMaterialManager) {
+                  this.router.navigate(['/mnf/sub-dashboard']);
+                } else if (role === Role.FinishedGoodsManager) {
+                  this.router.navigate(['/mnf/sub-dashboard']);
+                } else if (role === Role.ProductManager) {
+                  this.router.navigate(['/mnf/sub-dashboard']);
+                } else if (role === Role.OrderManager) {
+                  this.router.navigate(['/mnf/sub-dashboard']);
+
                 } else {
                   this.router.navigate(['/authentication/signin']);
                 }
