@@ -3,6 +3,7 @@ export const environment = {
   apiURL: 'http://167.71.226.223:3000/v1/',
   appURL: 'http://167.71.226.223',
   twoFactorApiKey: 'd5e40971-765b-11ef-8b17-0200cd936042',
+  razorpayKey: 'rzp_test_SpgpUBGAXkpuUW',
   firebase: {
     apiKey: "AIzaSyAJ4F2B6H5vvGSdLC9Vp8_KONxQVusVllo",
     authDomain: "dmf-sundargarh.firebaseapp.com",

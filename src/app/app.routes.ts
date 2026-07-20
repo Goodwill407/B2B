@@ -1,10 +1,12 @@
 import { Route } from '@angular/router';
 import { MainLayoutComponent } from './layout/app-layout/main-layout/main-layout.component';
 import { AuthGuard } from '@core/guard/auth.guard';
+import { SubscriptionGuard } from '@core/guard/subscription.guard';
 import { AuthLayoutComponent } from './layout/app-layout/auth-layout/auth-layout.component';
 import { Page404Component } from './authentication/page404/page404.component';
 import { Role } from '@core';
 import { SA_Auth } from './super-admin/super-admin.routes';
+
 
 export const APP_ROUTE: Route[] = [
   {
@@ -13,7 +15,7 @@ export const APP_ROUTE: Route[] = [
     children: [
       { path: '', redirectTo: '/authentication/signin', pathMatch: 'full' },
       // { path: '', redirectTo: '/authentication/landingPage', pathMatch: 'full' },
-             
+
       {
         path: 'ui',
         loadChildren: () => import('./ui/ui.routes').then((m) => m.UI_ROUTE),
@@ -22,17 +24,18 @@ export const APP_ROUTE: Route[] = [
         path: 'common',
         loadChildren: () => import('./common/view-profile.route').then((m) => m.Common_Route),
       },
-      
+
       {
         path: 'super',
-        canActivate:[AuthGuard],
-        data:{role:Role.Superadmin},
+        canActivate: [AuthGuard],
+        data: { role: Role.Superadmin },
         loadChildren: () =>
           import('./super-admin/super-admin.routes').then((m) => SA_Auth),
       },
       {
         path: 'mnf',
-        canActivate:[AuthGuard],
+        canActivate: [AuthGuard, SubscriptionGuard],
+        canActivateChild: [SubscriptionGuard],
         data: {
           role: [
             Role.Manufacture,
@@ -47,18 +50,22 @@ export const APP_ROUTE: Route[] = [
       },
       {
         path: 'wholesaler',
+        canActivate: [AuthGuard, SubscriptionGuard],
+        data: { role: [Role.Wholesaler] },
         loadChildren: () =>
           import('./wholseller/wholseller.routes').then((m) => m.R_Auth),
       },
       {
         path: 'retailer',
+        canActivate: [AuthGuard, SubscriptionGuard],
+        data: { role: [Role.Retailer] },
         loadChildren: () =>
           import('./retailer/retailer.routes').then((m) => m.Retailer_Route),
       },
       {
         path: 'cp',
-        canActivate:[AuthGuard],
-        data:{role:Role.ChannelPartner},
+        canActivate: [AuthGuard, SubscriptionGuard],
+        data: { role: Role.ChannelPartner },
         loadChildren: () =>
           import('./channelPartner/channelPartner.routes').then((m) => m.CP_Auth),
       },

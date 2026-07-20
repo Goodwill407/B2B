@@ -70,6 +70,7 @@ import { AddCommissionListComponent } from "./add-distributor/add-channel-partne
 import { CpBrokerRequestsComponent } from "./wholselers-requests/cp-broker-requests/cp-broker-requests.component";
 import { MfgAddStaffComponent } from "./add-staff/mfg-add-staff/mfg-add-staff.component";
 import { SubDashboardComponent } from "./sub-dashboard/sub-dashboard.component";
+import { PaymentComponent } from "./payment/payment.component";
 
 export const M_Auth: Route[] = [
     { path: 'new', loadChildren:()=> import('./new-flow/new_flow.route').then((m)=>m.NewFlow)},
@@ -162,4 +163,5 @@ export const M_Auth: Route[] = [
     { path: 'list-ch-partner', component: ListChannelPartnerComponent },
     { path: 'add-commission', component: AddCommissionListComponent },
 
+    { path: 'test-payment', component: PaymentComponent },
 ]

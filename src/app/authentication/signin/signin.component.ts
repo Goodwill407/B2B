@@ -30,112 +30,119 @@ import { environment } from 'environments/environment';
 export class SigninComponent
   extends UnsubscribeOnDestroyAdapter
   implements OnInit {
-  
-    authForm!: UntypedFormGroup;
-    submitted = false;
-    loading = false;
-    error = '';
-    hide = true;
-    constructor(
-      private formBuilder: UntypedFormBuilder,
-      private route: ActivatedRoute,
-      private router: Router,
-      private communicationService: CommunicationService,
-      private authService: AuthService,
-      
-    ) {
-      super();
-    }
-  
-    ngOnInit() {
-      this.authForm = this.formBuilder.group({
-        email: ['', Validators.required],
-        password: ['', Validators.required],
-      });
-    }
-  
-    get f() {
-      return this.authForm.controls;
-    }
 
-    togglePasswordVisibility() {
-      this.hide = !this.hide;
+  authForm!: UntypedFormGroup;
+  submitted = false;
+  loading = false;
+  error = '';
+  hide = true;
+  constructor(
+    private formBuilder: UntypedFormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
+    private communicationService: CommunicationService,
+    private authService: AuthService,
+
+  ) {
+    super();
+  }
+
+  ngOnInit() {
+    this.authForm = this.formBuilder.group({
+      email: ['', Validators.required],
+      password: ['', Validators.required],
+    });
+  }
+
+  get f() {
+    return this.authForm.controls;
+  }
+
+  togglePasswordVisibility() {
+    this.hide = !this.hide;
+  }
+
+  onSubmit() {
+  this.submitted = true;
+  this.loading = true;
+  this.error = '';
+  if (this.authForm.invalid) {
+    this.error = 'Username and Password not valid !';
+    return;
+  } else {
+
+    const data = {
+      email: this.f['email'].value,
+      password: this.f['password'].value
     }
-  
-    onSubmit() {
-      this.submitted = true;
-      this.loading = true;
-      this.error = '';
-      if (this.authForm.invalid) {
-        this.error = 'Username and Password not valid !';
-        return;
-      } else {
-       
-        const data = {
-          email: this.f['email'].value,
-          password: this.f['password'].value
-        }
-        this.authService.post('auth/login', data).subscribe({
-          next: (res) => {
-            if (res) {
-              setTimeout(() => {
-                res.user.token = res.tokens.access.token;
-                this.authService.setLoginDetails(res);
-                localStorage.setItem('currentUser', JSON.stringify(res.user));
-                this.authService.currentUserSubject.next(res.user);
+    this.authService.post('auth/login', data).subscribe({
+      next: (res) => {
+        if (res) {
+          setTimeout(() => {
+            res.user.token = res.tokens.access.token;
+            this.authService.setLoginDetails(res);
+            localStorage.setItem('currentUser', JSON.stringify(res.user));
+            this.authService.currentUserSubject.next(res.user);
 
-                const role = this.authService.currentUserValue.actualRole 
-             ?? this.authService.currentUserValue.role;
+            const role = this.authService.currentUserValue.actualRole
+              ?? this.authService.currentUserValue.role;
 
-                if (res.user.role === Role.Superadmin) {
-                  this.router.navigate(['/super/Super-dashboard']);
-                } else if (role == Role.Manufacture) {
-                  this.router.navigate(['/mnf/dashboard']);
-                } else if (role === Role.Wholesaler) {
-                  this.router.navigate(['/wholesaler/dashboard']);
-                } else if (role === Role.Retailer) {
-                  this.router.navigate(['/retailer/dashboard']);
-                } else if (role === Role.ChannelPartner) {
-                  this.router.navigate(['/cp/cp-dashboard']);
-                } else if (role === Role.RawMaterialManager) {
-                  this.router.navigate(['/mnf/sub-dashboard']);
-                } else if (role === Role.FinishedGoodsManager) {
-                  this.router.navigate(['/mnf/sub-dashboard']);
-                } else if (role === Role.ProductManager) {
-                  this.router.navigate(['/mnf/sub-dashboard']);
-                } else if (role === Role.OrderManager) {
-                  this.router.navigate(['/mnf/sub-dashboard']);
+            const subStatus = (res.user as any).subscriptionStatus;
+            const isActive = subStatus === 'active';
 
-                } else {
-                  this.router.navigate(['/authentication/signin']);
-                }
-                this.communicationService.customSuccess(`Login Successfully...!!!`);
-                this.loading = false;
-              }, 500);
-            } else {
-              this.error = 'Invalid Login';
-            }
-          },
-          error: (error) => {
-            this.error = 'Invalid Credentials';
-            this.submitted = false;
+            // ✅ Superadmin skips subscription check entirely
+            // if (role !== Role.Superadmin && !isActive) {
+            //   this.router.navigate(['/authentication/subscription']); // ✅ UPDATED PATH
+            // } else {
+              if (role === Role.Superadmin) {
+                this.router.navigate(['/super/Super-dashboard']);
+              } else if (role == Role.Manufacture) {
+                this.router.navigate(['/mnf/dashboard']);
+              } else if (role === Role.Wholesaler) {
+                this.router.navigate(['/wholesaler/dashboard']);
+              } else if (role === Role.Retailer) {
+                this.router.navigate(['/retailer/dashboard']);
+              } else if (role === Role.ChannelPartner) {
+                this.router.navigate(['/cp/cp-dashboard']);
+              } else if (role === Role.RawMaterialManager) {
+                this.router.navigate(['/mnf/sub-dashboard']);
+              } else if (role === Role.FinishedGoodsManager) {
+                this.router.navigate(['/mnf/sub-dashboard']);
+              } else if (role === Role.ProductManager) {
+                this.router.navigate(['/mnf/sub-dashboard']);
+              } else if (role === Role.OrderManager) {
+                this.router.navigate(['/mnf/sub-dashboard']);
+              } else {
+                this.router.navigate(['/authentication/signin']);
+              }
+            // }
+
+            this.communicationService.customSuccess(`Login Successfully...!!!`);
             this.loading = false;
-          },
-        })
-      }
-    }
+          }, 500);
+        } else {
+          this.error = 'Invalid Login';
+        }
+      },
+      error: (error) => {
+        this.error = 'Invalid Credentials';
+        this.submitted = false;
+        this.loading = false;
+      },
+    })
+  }
+}
 
-    gotoHome(){
-      window.open(environment.appURL,'_self');
-    }
+  gotoHome() {
+    window.open(environment.appURL, '_self');
+  }
 
-    navigate(email:string){
-      if(email){
-        this.router.navigate(['/authentication/forgot-password'],{queryParams:{email:email}});
-      }else{
-        this.communicationService.showNotification('snackbar-danger',`Please Enter your Email`,'bottom','center');
-      }      
+  navigate(email: string) {
+    if (email) {
+      this.router.navigate(['/authentication/forgot-password'], { queryParams: { email: email } });
+    } else {
+      this.communicationService.showNotification('snackbar-danger', `Please Enter your Email`, 'bottom', 'center');
     }
   }
-  
-  
+}
+

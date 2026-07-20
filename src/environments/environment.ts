@@ -3,6 +3,7 @@ export const environment = {
   apiURL: 'https://backend.fashiontradershub.com/v1/',
   appURL: 'https://fashiontradershub.com',
   twoFactorApiKey: 'd5e40971-765b-11ef-8b17-0200cd936042',
+  razorpayKey: 'rzp_test_SpgpUBGAXkpuUW',
   firebase: {
     apiKey: "AIzaSyAJ4F2B6H5vvGSdLC9Vp8_KONxQVusVllo",
     authDomain: "dmf-sundargarh.firebaseapp.com",

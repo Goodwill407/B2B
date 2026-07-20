@@ -1,0 +1,65 @@
+<section class="subscription-wrapper">
+  <div class="container-fluid subscription-container">
+
+    <div class="brand-logo">
+      <img src="assets/images/auth-image/fth-logo.png" alt="Fashion Traders Hub Logo" />
+    </div>
+
+    <div class="hero-section">
+    <div class="hero-title-row">
+        <h1>Choose a plan to continue using Fashion Traders Hub</h1>
+        <button type="button" class="referral-link-btn" (click)="openReferralPopup()">
+        <i class="bi bi-gift-fill"></i> Have a Referral Code?
+        </button>
+    </div>
+    </div>
+
+    <div class="plans-grid">
+      <div
+        class="plan-card"
+        *ngFor="let plan of plans"
+        [class.featured]="plan.featured"
+      >
+        <div class="plan-badge" *ngIf="plan.badge">{{ plan.badge }}</div>
+
+        <div class="plan-top">
+          <h3>{{ plan.title }}</h3>
+          <p class="subtitle">{{ plan.subtitle }}</p>
+        </div>
+
+        <div class="price-block">
+          <div class="price-row">
+            <span class="currency">₹</span>
+            <span class="amount">{{ plan.amount | number:'1.0-0' }}</span>
+          </div>
+          <div class="price-caption">
+            <span *ngIf="plan.extraDays > 0">+ {{ plan.extraDays }} extra days included</span>
+            <span *ngIf="plan.extraDays === 0">No extra days included</span>
+          </div>
+        </div>
+
+        <div class="feature-list">
+          <div class="feature-item" *ngFor="let feature of plan.features">
+            <i class="bi bi-check-circle-fill"></i>
+            <span>{{ feature }}</span>
+          </div>
+        </div>
+
+        <button
+            type="button"
+            class="pay-btn"
+            [class.loading]="isPaying && selectedPlanId === plan.id"
+            [disabled]="isPaying"
+            (click)="payNow(plan)"
+            >
+            <span *ngIf="!(isPaying && selectedPlanId === plan.id)">Pay Now</span>
+            <span *ngIf="isPaying && selectedPlanId === plan.id">Processing...</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="bottom-note">
+      Secure payments powered by Razorpay.
+    </div>
+  </div>
+</section>

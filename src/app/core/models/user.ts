@@ -15,4 +15,5 @@ export class User {
   asssignedTo!: string;
   userCategory!: string;
   actualRole!: Role;
+  subscriptionStatus?: string;
 }
